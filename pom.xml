@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<axis.version>1.6.2</axis.version>
+		<junit.version>4.8.2</junit.version>
+		<unitTests>**/*Test.class</unitTests>
+		<integrationTests>**/*Integration*.class</integrationTests>
+		<instrumentedTests>**/*Test*__*.class</instrumentedTests>
+		<nestedClassTests>**/*Test*$*.class</nestedClassTests>
+		<integration.test.skip>false</integration.test.skip>
+	</properties>
+
+
+	<groupId>de.nrw.hbz.edoweb2</groupId>
+	<artifactId>edoweb2</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>edoweb2</name>
+	<url>http://www.hbz-nrw.de/</url>
+
+
+	<organization>
+		<name>Hochschulbibliothekszentrum NRW</name>
+		<url>http://www.hbz-nrw.de/</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 1.0</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html</url>
+			<comments>Copyright (c) 2012 hbz - Hochschulbibliothekszentrum NRW</comments>
+		</license>
+	</licenses>
+
+	<issueManagement>
+		<system>none</system>
+		<url>none</url>
+	</issueManagement>
+
+	<ciManagement>
+		<system>none</system>
+		<url>none</url>
+	</ciManagement>
+
+
+	<developers>
+		<developer>
+			<name>Schnasse, Jan</name>
+			<email>schnasse@hbz-nrw.de</email>
+		</developer>
+	</developers>
+
+
+
+	<repositories>
+		<repository>
+			<id>aduna</id>
+			<name>Aduna Releases Maven Repository</name>
+			<url>http://repo.aduna-software.org/maven2/releases/</url>
+		</repository>
+		<repository>
+			<id>duraspace-thirdparty</id>
+			<name>Duraspace Thirdparty Maven Repository</name>
+			<url>http://m2.duraspace.org/content/repositories/thirdparty</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ejb-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-idea-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<jdkLevel>1.6</jdkLevel>
+				</configuration>
+			</plugin>
+
+
+
+		</plugins>
+		</build>
+	<dependencies>
+
+
+	</dependencies>
+	<modules>
+		<module>archive</module>
+		<module>pidReporter</module>
+		<module>digitoolDownloader</module>
+		<module>edowebSync</module>
+		<module>edoweb2-api</module>
+		<module>edowebOAI</module>
+		<module>integrationTests</module>
+	</modules>
+
+
+
+</project>
