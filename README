@@ -1,6 +1,6 @@
 Edoweb2 is the successor of edoweb http://www.hbz-nrw.de/angebote/hosting/edoweb/
 
-Unless you haven't installed a test fedora on port 8080 and the edoweb2-api ready for use you should build with the skipTests option on.
+Unless you haven't installed a test fedora on port 8080 and the edoweb2-api you should build with the skipTests option on.
 
 mvn clean install -DskipTests
 
