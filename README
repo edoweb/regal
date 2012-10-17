@@ -1,4 +1,9 @@
+
+h1. About
+
 Edoweb2 is the successor of edoweb http://www.hbz-nrw.de/angebote/hosting/edoweb/
+
+h1. Build
 
 Unless you haven't installed a test fedora on port 8080 and the edoweb2-api you should build with the skipTests option on.
 
@@ -10,4 +15,7 @@ cd edoweb2-api
 mvn clean install war:war
 cp target/edoweb2-api.war $FEDORA_HOME/tomcat/webapps
 
+h1. License
 
+Apache License  Version 2.0, January 2004  http://www.apache.org/licenses/
+Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
