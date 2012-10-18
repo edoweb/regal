@@ -34,6 +34,7 @@ import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
 import de.nrw.hbz.edoweb2.fedora.FedoraInterface;
+import de.nrw.hbz.edoweb2.sesame.SesameFacade;
 
 /**
  * Class Archive
@@ -54,12 +55,13 @@ class Archive implements ArchiveInterface
 	// .getLogger(HBZFedoraIngester.class);
 
 	private FedoraInterface fedoraInterface = null;
+	private SesameFacade sesame = null;
 
 	public Archive(String host, String user, String password)
 	{
 
 		fedoraInterface = new FedoraFacade(host, user, password);
-
+		sesame = new SesameFacade();
 	}
 
 	public FedoraInterface getFedoraInterface()
@@ -210,6 +212,7 @@ class Archive implements ArchiveInterface
 				node.addRelation(nodeToMe);
 
 				fedoraInterface.updateNode(node);
+				sesame.updateNode(node);
 			}
 
 			fedoraInterface.updateNode(parent);
