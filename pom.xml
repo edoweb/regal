@@ -61,6 +61,7 @@
         <developerConnection>scm:git:git@github.com:edoweb/edoweb2.git</developerConnection>
         <url>http://github.com/jschnasse/edoweb2</url>
     </scm>
+    
     <distributionManagement>
           <repository>
             <id>repo</id>
@@ -71,6 +72,7 @@
             <url>https://github.com/edoweb/maven-repo/raw/master/snapshots</url>
           </snapshotRepository>
     </distributionManagement>
+    
 	<repositories>
 		<repository>
 			<id>aduna</id>
@@ -114,9 +116,6 @@
 					<jdkLevel>1.6</jdkLevel>
 				</configuration>
 			</plugin>
-
-
-
 		</plugins>
 		</build>
 	<dependencies>

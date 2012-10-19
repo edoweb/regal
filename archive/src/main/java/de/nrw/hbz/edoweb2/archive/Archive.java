@@ -56,8 +56,18 @@ class Archive implements ArchiveInterface
 
 	private FedoraInterface fedoraInterface = null;
 	private SesameFacade sesame = null;
+	private static Archive me = null;
 
-	public Archive(String host, String user, String password)
+	public static Archive getInstance(String host, String user, String password)
+	{
+		if (me == null)
+		{
+			me = new Archive(host, user, password);
+		}
+		return me;
+	}
+
+	private Archive(String host, String user, String password)
 	{
 
 		fedoraInterface = new FedoraFacade(host, user, password);
@@ -216,6 +226,7 @@ class Archive implements ArchiveInterface
 			}
 
 			fedoraInterface.updateNode(parent);
+			sesame.updateNode(node);
 		}
 		catch (RemoteException e)
 		{
@@ -342,6 +353,7 @@ class Archive implements ArchiveInterface
 		{
 			node.setPID(nodePid);
 			fedoraInterface.updateNode(node);
+			sesame.updateNode(node);
 		}
 		catch (RemoteException e)
 		{
@@ -384,6 +396,7 @@ class Archive implements ArchiveInterface
 								+ " node is shared by other objects.");
 						node.removeRelation(REL_BELONGS_TO_OBJECT, rootPID);
 						fedoraInterface.updateNode(node);
+						sesame.updateNode(node);
 					}
 				}
 		}
@@ -430,6 +443,7 @@ class Archive implements ArchiveInterface
 			throws RemoteException
 	{
 		updateNode(nodePid, object);
+		sesame.updateNode(object);
 
 	}
 
@@ -460,6 +474,7 @@ class Archive implements ArchiveInterface
 	{
 		Node node = tnode.getMe();
 		updateNode(node.getPID(), node);
+		sesame.updateNode(node);
 		for (int i = 0; i < tnode.sizeOfChildren(); i++)
 		{
 			ComplexObjectNode n1 = tnode.getChild(i);

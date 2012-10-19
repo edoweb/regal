@@ -24,6 +24,6 @@ public class ArchiveFactory
 	public static ArchiveInterface getArchiveImpl(String host, String user,
 			String passwd)
 	{
-		return new Archive(host, user, passwd);
+		return Archive.getInstance(host, user, passwd);
 	}
 }
