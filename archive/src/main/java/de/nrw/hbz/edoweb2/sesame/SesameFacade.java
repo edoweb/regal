@@ -28,9 +28,16 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
 public class SesameFacade
 {
 
-	public SesameFacade()
-	{
+	String fedoraUser = null;
+	String fedoraPwd = null;
+	String sesameRepository = null;
 
+	public SesameFacade(String fedoraUser, String fedoraPwd,
+			String sesameRepository)
+	{
+		this.fedoraUser = fedoraUser;
+		this.fedoraPwd = fedoraPwd;
+		this.sesameRepository = sesameRepository;
 	}
 
 	public void addTurtleStream(InputStream turtleStream, String baseURI)
@@ -38,7 +45,7 @@ public class SesameFacade
 
 		RepositoryConnection con = null;
 
-		File dataDir = new File("/tmp/myRepository/");
+		File dataDir = new File(sesameRepository);
 		Repository myRepository = new SailRepository(new NativeStore(dataDir));
 
 		try
@@ -55,15 +62,12 @@ public class SesameFacade
 			con = myRepository.getConnection();
 			try
 			{
-
 				try
 				{
-
 					con.add(turtleStream, baseURI, RDFFormat.TURTLE);
 				}
 				catch (IOException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				finally
@@ -74,7 +78,6 @@ public class SesameFacade
 			}
 			catch (OpenRDFException e)
 			{
-				// handle exception
 				e.printStackTrace();
 			}
 
@@ -116,7 +119,7 @@ public class SesameFacade
 
 		RepositoryConnection con = null;
 
-		File dataDir = new File("/tmp/myRepository/");
+		File dataDir = new File(sesameRepository);
 		Repository myRepository = new SailRepository(new NativeStore(dataDir));
 
 		try
@@ -217,16 +220,13 @@ public class SesameFacade
 		if (metadata == null)
 			return;
 
-		String user = "fedoraAdmin";
-		String passwd = "fedoraAdmin1";
-
 		try
 		{
 
 			HttpClient httpClient = new HttpClient();
 			httpClient.getState().setCredentials(
 					new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
-					new UsernamePasswordCredentials(user, passwd));
+					new UsernamePasswordCredentials(fedoraUser, fedoraPwd));
 			HttpMethod method = new GetMethod(metadata.toString());
 
 			httpClient.executeMethod(method);

@@ -64,7 +64,8 @@ public class Actions
 		archive = ArchiveFactory.getArchiveImpl(
 				properties.getProperty("fedoraUrl"),
 				properties.getProperty("user"),
-				properties.getProperty("password"));
+				properties.getProperty("password"),
+				properties.getProperty("sesameStore"));
 
 	}
 

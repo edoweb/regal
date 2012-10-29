@@ -58,20 +58,22 @@ class Archive implements ArchiveInterface
 	private SesameFacade sesame = null;
 	private static Archive me = null;
 
-	public static Archive getInstance(String host, String user, String password)
+	public static Archive getInstance(String host, String user,
+			String password, String sesameNativeStore)
 	{
 		if (me == null)
 		{
-			me = new Archive(host, user, password);
+			me = new Archive(host, user, password, sesameNativeStore);
 		}
 		return me;
 	}
 
-	private Archive(String host, String user, String password)
+	private Archive(String host, String user, String password,
+			String sesameNativeStore)
 	{
 
 		fedoraInterface = new FedoraFacade(host, user, password);
-		sesame = new SesameFacade();
+		sesame = new SesameFacade(user, password, sesameNativeStore);
 	}
 
 	public FedoraInterface getFedoraInterface()
