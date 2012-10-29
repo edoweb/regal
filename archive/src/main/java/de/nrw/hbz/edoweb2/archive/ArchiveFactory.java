@@ -22,8 +22,8 @@ package de.nrw.hbz.edoweb2.archive;
 public class ArchiveFactory
 {
 	public static ArchiveInterface getArchiveImpl(String host, String user,
-			String passwd)
+			String passwd, String sesameNativeStore)
 	{
-		return new Archive(host, user, passwd);
+		return Archive.getInstance(host, user, passwd, sesameNativeStore);
 	}
 }

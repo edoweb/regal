@@ -34,6 +34,7 @@ import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
 import de.nrw.hbz.edoweb2.fedora.FedoraInterface;
+import de.nrw.hbz.edoweb2.sesame.SesameFacade;
 
 /**
  * Class Archive
@@ -54,12 +55,25 @@ class Archive implements ArchiveInterface
 	// .getLogger(HBZFedoraIngester.class);
 
 	private FedoraInterface fedoraInterface = null;
+	private SesameFacade sesame = null;
+	private static Archive me = null;
 
-	public Archive(String host, String user, String password)
+	public static Archive getInstance(String host, String user,
+			String password, String sesameNativeStore)
+	{
+		if (me == null)
+		{
+			me = new Archive(host, user, password, sesameNativeStore);
+		}
+		return me;
+	}
+
+	private Archive(String host, String user, String password,
+			String sesameNativeStore)
 	{
 
 		fedoraInterface = new FedoraFacade(host, user, password);
-
+		sesame = new SesameFacade(user, password, sesameNativeStore);
 	}
 
 	public FedoraInterface getFedoraInterface()
@@ -210,9 +224,11 @@ class Archive implements ArchiveInterface
 				node.addRelation(nodeToMe);
 
 				fedoraInterface.updateNode(node);
+				sesame.updateNode(node);
 			}
 
 			fedoraInterface.updateNode(parent);
+			sesame.updateNode(node);
 		}
 		catch (RemoteException e)
 		{
@@ -339,6 +355,7 @@ class Archive implements ArchiveInterface
 		{
 			node.setPID(nodePid);
 			fedoraInterface.updateNode(node);
+			sesame.updateNode(node);
 		}
 		catch (RemoteException e)
 		{
@@ -381,6 +398,7 @@ class Archive implements ArchiveInterface
 								+ " node is shared by other objects.");
 						node.removeRelation(REL_BELONGS_TO_OBJECT, rootPID);
 						fedoraInterface.updateNode(node);
+						sesame.updateNode(node);
 					}
 				}
 		}
@@ -427,6 +445,7 @@ class Archive implements ArchiveInterface
 			throws RemoteException
 	{
 		updateNode(nodePid, object);
+		sesame.updateNode(object);
 
 	}
 
@@ -457,6 +476,7 @@ class Archive implements ArchiveInterface
 	{
 		Node node = tnode.getMe();
 		updateNode(node.getPID(), node);
+		sesame.updateNode(node);
 		for (int i = 0; i < tnode.sizeOfChildren(); i++)
 		{
 			ComplexObjectNode n1 = tnode.getChild(i);
