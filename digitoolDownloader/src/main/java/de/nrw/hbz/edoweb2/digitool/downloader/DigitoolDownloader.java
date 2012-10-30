@@ -68,7 +68,7 @@ public class DigitoolDownloader
 	final static Logger logger = LoggerFactory
 			.getLogger(DigitoolDownloader.class);
 
-	DigitalEntityBeanBuilder beanBuilder = null;
+	// DigitalEntityBeanBuilder beanBuilder = null;
 	String downloadLoaction = null;
 	String objectDirectory = null;
 	String server = null;
@@ -80,7 +80,7 @@ public class DigitoolDownloader
 	 */
 	private DigitoolDownloader()
 	{
-		beanBuilder = new DigitalEntityBeanBuilder();
+		// beanBuilder = new DigitalEntityBeanBuilder();
 
 	}
 
@@ -92,7 +92,7 @@ public class DigitoolDownloader
 	{
 		this.downloadLoaction = downloadLocation;
 		this.server = server;
-		beanBuilder = new DigitalEntityBeanBuilder();
+		// beanBuilder = new DigitalEntityBeanBuilder();
 	}
 
 	public String download(String pid) throws IOException
@@ -126,7 +126,7 @@ public class DigitoolDownloader
 			File digitalEntityFile = getView(pid);
 			getRelated(digitalEntityFile, pid);
 			getStream(digitalEntityFile, pid);
-			beanBuilder.buildComplexBean(objectDirectory, pid);
+			// beanBuilder.buildComplexBean(objectDirectory, pid);
 			setUpdated(false);
 			setDownloaded(true);
 		}
@@ -139,7 +139,7 @@ public class DigitoolDownloader
 			File digitalEntityFile = getView(pid);
 			getRelated(digitalEntityFile, pid);
 			getStream(digitalEntityFile, pid);
-			beanBuilder.buildComplexBean(objectDirectory, pid);
+			// beanBuilder.buildComplexBean(objectDirectory, pid);
 			setUpdated(true);
 			setDownloaded(true);
 		}

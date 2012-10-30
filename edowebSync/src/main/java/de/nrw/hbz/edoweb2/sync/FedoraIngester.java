@@ -89,6 +89,7 @@ public class FedoraIngester implements IngestInterface
 		if (partitionC.compareTo("EJO01") == 0)
 		{
 			logger.debug(pid + ": is a eJournal");
+			ingestEJournal(dtlBean);
 		}
 		else if (partitionC.compareTo("WPD01") == 0)
 		{
@@ -230,7 +231,7 @@ public class FedoraIngester implements IngestInterface
 				data.mime = "text/text";
 				wpdOcrData.post(data);
 
-				wpdOcrDC.post(new DCBeanAnnotated().addTitle("OCR XML"));
+				wpdViewDC.post(new DCBeanAnnotated().addTitle("OCR XML"));
 				wpdOcrDC.post(new DCBeanAnnotated().addTitle("OCR Data"));
 			}
 		}
@@ -353,7 +354,33 @@ public class FedoraIngester implements IngestInterface
 
 	private void ingestEJournal(DigitalEntityBean dtlBean)
 	{
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
 
+		WebResource ejournal = c
+				.resource("http://localhost:8080/edoweb2-api/ejournal/"
+						+ edowebNamespace + ":" + dtlBean.getPid());
+
+		String request = "content";
+		String response = ejournal.put(String.class, request);
+		logger.debug(response);
+
+		WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
+		WebResource reportMetadata = c.resource(ejournal.toString()
+				+ "/metadata");
+		try
+		{
+			DCBeanAnnotated dc = marc2dc(dtlBean);
+			dc.addType("journal");
+			ejournalDC.post(DCBeanAnnotated.class, dc);
+		}
+		catch (Exception e)
+		{
+			logger.debug(e.getMessage());
+		}
 	}
 
 	private DCBeanAnnotated marc2dc(DigitalEntityBean dtlBean)

@@ -38,6 +38,7 @@ import org.openrdf.sail.memory.MemoryStore;
 import de.nrw.hbz.edoweb2.archive.ArchiveFactory;
 import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
+import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
 
@@ -343,6 +344,15 @@ public class Actions
 		return "updateMetadata";
 	}
 
+	public String findVolume(String rdfQuery)
+	{
+		String volumePid = null;
+		InputStream stream = archive.findTriples(rdfQuery,
+				FedoraFacade.TYPE_SPO, FedoraFacade.FORMAT_N3);
+
+		return volumePid;
+	}
+
 	public String find(String pid, String pred)
 	{
 		InputStream stream = archive.findTriples("info:fedora/" + pid + "> <"
@@ -410,5 +420,36 @@ public class Actions
 	public String addUriPrefix(String pid)
 	{
 		return archive.addUriPrefix(pid);
+	}
+
+	public String getPid(String namespace) throws RemoteException
+	{
+		return archive.getPids(namespace, 1)[0];
+	}
+
+	public String addLinks(String pid, Vector<Link> links)
+	{
+		try
+		{
+			Node node = archive.readNode(pid);
+			for (Link link : links)
+			{
+				node.addRelation(link);
+			}
+			archive.updateNode(node.getPID(), node);
+			return "Links succesfuly added";
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "FAILED! No links added";
+	}
+
+	public void addLink(String pid, Link link)
+	{
+		// TODO Auto-generated method stub
+
 	}
 }

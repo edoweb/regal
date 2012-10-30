@@ -84,6 +84,7 @@ public class WPDResource
 			if (actions.nodeExists(pid))
 				return "ERROR: Node already exists";
 			Node root = new Node();
+			root.addTitle("RootObject (not initialized yet)");
 			root.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
@@ -95,12 +96,17 @@ public class WPDResource
 					type));
 
 			Node view_main = new Node(pid + "_1");
+			view_main.addTitle("Fulltext XML (not initialized yet)");
 			Node view = new Node(pid + "_2");
+			view.addTitle("OCR XML (not initialized yet)");
 			Node index = new Node(pid + "_3");
-
+			index.addTitle("TOC XML (not initialized yet)");
 			Node fulltext = new Node(pid + "_4");
+			fulltext.addTitle("Fulltext Data(not initialized yet)");
 			Node ocr = new Node(pid + "_5");
+			ocr.addTitle("OCR Data (not initialized yet)");
 			Node toc = new Node(pid + "_6");
+			toc.addTitle("TOC DATA (not initialized yet)");
 
 			root.addRelation(new Link(VIEW_MAIN, actions.addUriPrefix(view_main
 					.getPID()), false));
