@@ -17,7 +17,7 @@
 package de.nrw.hbz.edoweb2.sync;
 
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
-import de.nrw.hbz.edoweb2.digitool.downloader.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de

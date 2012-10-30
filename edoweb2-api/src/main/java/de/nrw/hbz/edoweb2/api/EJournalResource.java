@@ -173,9 +173,9 @@ public class EJournalResource
 	}
 
 	@PUT
-	@Path("/{pid}/volume/{volId}")
+	@Path("/{pid}/volume/{volName}")
 	public String createEJournalVolume(@PathParam("pid") String pid,
-			@PathParam("volId") String volId)
+			@PathParam("volName") String volName)
 	{
 
 		System.out.println("create EJournal Volume");
@@ -199,7 +199,7 @@ public class EJournalResource
 
 			link = new Link();
 			link.setPredicate(this.HAS_VOLUME_NAME);
-			link.setObject(volId, true);
+			link.setObject(volName, true);
 			rootObject.addRelation(link);
 
 			rootObject.setNamespace(namespace).setPID(volumeId)
@@ -228,69 +228,126 @@ public class EJournalResource
 	}
 
 	@GET
-	@Path("/{pid}/volume/{volId}/data")
+	@Path("/{pid}/volume/{volName}")
 	@Produces({ "application/*" })
-	public Response readVolumeData(@PathParam("pid") String pid,
-			@PathParam("volId") String volId)
+	public String readVolume(@PathParam("pid") String pid,
+			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
-		// 1. Ask pid about a volume with Id volId
-		// 2. Get the fedoraPid and store it in volumePid
+		String query = "SELECT ?volPid ?p ?o WHERE "
+				+ "	{"
+				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVolumeOf> <info:fedora/"
+				+ pid
+				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVolumeName> \""
+				+ volName + "\". ?volPid ?p ?o .	} ";
+		volumePid = actions.findVolume(query);
 
-		// pid hasVolume ?volumePid
-		// ?volumePid hasName volId
+		return volumePid;
+	}
+
+	@GET
+	@Path("/{pid}/volume/{volName}/data")
+	@Produces({ "application/*" })
+	public Response readVolumeData(@PathParam("pid") String pid,
+			@PathParam("volName") String volName)
+	{
+		String volumePid = null;
+		String query = "SELECT ?volPid ?p ?o WHERE "
+				+ "	{"
+				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVolumeOf> <info:fedora/"
+				+ pid
+				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVolumeName> \""
+				+ volName + "\". ?volPid ?p ?o .	} ";
+		volumePid = actions.findVolume(query);
 
 		return actions.readData(volumePid);
 	}
 
 	@POST
-	@Path("/{pid}/volume/{volId}/data")
+	@Path("/{pid}/volume/{volName}/data")
 	@Produces({ "application/xml", "application/json" })
 	@Consumes({ "application/xml", "application/json" })
 	public String updateVolumeData(@PathParam("pid") String pid,
-			UploadDataBean content)
+			@PathParam("volName") String volName, UploadDataBean content)
 	{
 		String volumePid = null;
+		String query = "SELECT ?volPid ?p ?o WHERE "
+				+ "	{"
+				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVolumeOf> <info:fedora/"
+				+ pid
+				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVolumeName> \""
+				+ volName + "\". ?volPid ?p ?o .	} ";
+		volumePid = actions.findVolume(query);
 		return actions.updateData(volumePid, content);
 	}
 
 	@GET
-	@Path("/{pid}/volume/{volId}/dc")
+	@Path("/{pid}/volume/{volName}/dc")
 	@Produces({ "application/*" })
-	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid)
+	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
+			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
+		String query = "SELECT ?volPid ?p ?o WHERE "
+				+ "	{"
+				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVolumeOf> <info:fedora/"
+				+ pid
+				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVolumeName> \""
+				+ volName + "\". ?volPid ?p ?o .	} ";
+		volumePid = actions.findVolume(query);
 		return actions.readDC(volumePid);
 	}
 
 	@POST
-	@Path("/{pid}/volume/{volId}/dc")
+	@Path("/{pid}/volume/{volName}/dc")
 	@Produces({ "application/xml", "application/json" })
 	@Consumes({ "application/xml", "application/json" })
 	public String updateVolumeDC(@PathParam("pid") String pid,
-			DCBeanAnnotated content)
+			@PathParam("volName") String volName, DCBeanAnnotated content)
 	{
 		String volumePid = null;
+		String query = "SELECT ?volPid ?p ?o WHERE "
+				+ "	{"
+				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVolumeOf> <info:fedora/"
+				+ pid
+				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVolumeName> \""
+				+ volName + "\". ?volPid ?p ?o .	} ";
+		volumePid = actions.findVolume(query);
 		return actions.updateDC(volumePid, content);
 	}
 
 	@GET
-	@Path("/{pid}/volume/{volId}/metadata")
+	@Path("/{pid}/volume/{volName}/metadata")
 	@Produces({ "application/*" })
-	public Response readVolumeMetadata(@PathParam("pid") String pid)
+	public Response readVolumeMetadata(@PathParam("pid") String pid,
+			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
+		String query = "SELECT ?volPid ?p ?o WHERE "
+				+ "	{"
+				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVolumeOf> <info:fedora/"
+				+ pid
+				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVolumeName> \""
+				+ volName + "\". ?volPid ?p ?o .	} ";
+		volumePid = actions.findVolume(query);
 		return actions.readMetadata(volumePid);
 	}
 
 	@POST
-	@Path("/{pid}/volume/{volId}/metadata")
+	@Path("/{pid}/volume/{volName}/metadata")
 	@Produces({ "application/xml", "application/json" })
 	@Consumes({ "application/xml", "application/json" })
 	public String updateVolumeMetadata(@PathParam("pid") String pid,
-			UploadDataBean content)
+			@PathParam("volName") String volName, UploadDataBean content)
 	{
 		String volumePid = null;
+		String query = "SELECT ?volPid ?p ?o WHERE "
+				+ "	{"
+				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVolumeOf> <info:fedora/"
+				+ pid
+				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVolumeName> \""
+				+ volName + "\". ?volPid ?p ?o .	} ";
+		volumePid = actions.findVolume(query);
 		return actions.updateMetadata(volumePid, content);
 	}
 }

@@ -129,6 +129,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 	 */
 	public final static String TYPE_SIMPLE = "simple";
 	public static final String TYPE_SPO = "spo";
+	public static final String TYPE_SPARQL = "sparql";
 	public static final String FORMAT_N3 = "N3";
 	private FedoraAPIAMTOM fedoraAccess;
 	private FedoraAPIMMTOM fedoraManager;

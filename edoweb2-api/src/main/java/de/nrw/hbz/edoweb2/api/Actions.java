@@ -348,7 +348,58 @@ public class Actions
 	{
 		String volumePid = null;
 		InputStream stream = archive.findTriples(rdfQuery,
-				FedoraFacade.TYPE_SPO, FedoraFacade.FORMAT_N3);
+				FedoraFacade.TYPE_SPARQL, FedoraFacade.FORMAT_N3);
+
+		RepositoryConnection con = null;
+		Repository myRepository = new SailRepository(new MemoryStore());
+		try
+		{
+			myRepository.initialize();
+			con = myRepository.getConnection();
+			String baseURI = "";
+
+			con.add(stream, baseURI, RDFFormat.N3);
+
+			RepositoryResult<Statement> statements = con.getStatements(null,
+					null, null, true);
+
+			while (statements.hasNext())
+			{
+				Statement st = statements.next();
+				volumePid = st.getSubject().stringValue()
+						.replace("info:fedora/", "");
+				break;
+			}
+		}
+		catch (RepositoryException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (RDFParseException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (con != null)
+			{
+				try
+				{
+					con.close();
+				}
+				catch (RepositoryException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 
 		return volumePid;
 	}
@@ -447,9 +498,10 @@ public class Actions
 		return "FAILED! No links added";
 	}
 
-	public void addLink(String pid, Link link)
+	public String addLink(String pid, Link link)
 	{
-		// TODO Auto-generated method stub
-
+		Vector<Link> v = new Vector<Link>();
+		v.add(link);
+		return addLinks(pid, v);
 	}
 }

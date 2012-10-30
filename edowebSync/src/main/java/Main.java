@@ -27,12 +27,12 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.nrw.hbz.edoweb2.digitool.downloader.DigitalEntityBean;
-import de.nrw.hbz.edoweb2.digitool.downloader.DigitalEntityBeanBuilder;
 import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 import de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber;
 import de.nrw.hbz.edoweb2.sync.FedoraIngester;
 import de.nrw.hbz.edoweb2.sync.IngestInterface;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBeanBuilder;
 
 /**
  * Class Main
