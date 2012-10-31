@@ -291,7 +291,7 @@ public class FedoraIngester implements IngestInterface
 		try
 		{
 			DCBeanAnnotated dc = marc2dc(dtlBean);
-			dc.addType("amtsdruckschrift");
+			dc.addType(ObjectType.wpd.toString());
 
 			wpdDC.post(DCBeanAnnotated.class, dc);
 
@@ -339,7 +339,7 @@ public class FedoraIngester implements IngestInterface
 		try
 		{
 			DCBeanAnnotated dc = marc2dc(dtlBean);
-			dc.addType("report");
+			dc.addType(ObjectType.report.toString());
 			reportDC.post(DCBeanAnnotated.class, dc);
 		}
 		catch (Exception e)
@@ -421,16 +421,16 @@ public class FedoraIngester implements IngestInterface
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// try
-			// {
-			// DCBeanAnnotated dc = marc2dc(b);
-			// dc.addType(ObjectType.ejournal.toString());
-			// ejournalVolumeDC.post(DCBeanAnnotated.class, dc);
-			// }
-			// catch (Exception e)
-			// {
-			// logger.debug(e.getMessage());
-			// }
+			try
+			{
+				DCBeanAnnotated dc = marc2dc(b);
+				dc.addType(ObjectType.ejournalVolume.toString());
+				ejournalVolumeDC.post(DCBeanAnnotated.class, dc);
+			}
+			catch (Exception e)
+			{
+				logger.debug(e.getMessage());
+			}
 
 		}
 

@@ -59,7 +59,7 @@ public class WPDResource
 	String OCR = HBZ_MODEL_NAMESPACE + "ocr";
 	String TOC = HBZ_MODEL_NAMESPACE + "toc";
 
-	ObjectType type = ObjectType.wpd;
+	ObjectType wpdType = ObjectType.wpd;
 	String namespace = "dtl";
 
 	Actions actions = new Actions();
@@ -72,7 +72,7 @@ public class WPDResource
 	@DELETE
 	public String deleteAll()
 	{
-		return actions.deleteAll(actions.findByType(type));
+		return actions.deleteAll(actions.findByType(wpdType));
 	}
 
 	@PUT
@@ -91,9 +91,9 @@ public class WPDResource
 			link.setObject(TYPE_OBJECT, true);
 			root.addRelation(link);
 			root.setNamespace(namespace).setPID(pid).addCreator("REST Service")
-					.addType(type.toString()).addRights("me");
+					.addType(wpdType.toString()).addRights("me");
 			root.addContentModel(ContentModelFactory.createWpdCM(namespace,
-					type));
+					wpdType));
 
 			Node view_main = new Node(pid + "_1");
 			view_main.addTitle("Fulltext XML (not initialized yet)");

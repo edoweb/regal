@@ -44,7 +44,8 @@ public class EJournalResource
 	String HAS_VOLUME = HBZ_MODEL_NAMESPACE + "hasVolume";
 	String HAS_VOLUME_NAME = HBZ_MODEL_NAMESPACE + "hasVolumeName";
 
-	ObjectType objectType = ObjectType.ejournal;
+	ObjectType ejournalType = ObjectType.ejournal;
+	ObjectType volumeType = ObjectType.ejournalVolume;
 	String namespace = "edoweb";
 
 	Actions actions = new Actions();
@@ -58,7 +59,10 @@ public class EJournalResource
 	@Produces("application/json")
 	public String deleteAll()
 	{
-		return actions.deleteAll(actions.findByType(objectType));
+		String eJournal = actions.deleteAll(actions.findByType(ejournalType));
+		String eJournalVolume = actions.deleteAll(actions
+				.findByType(volumeType));
+		return eJournal + "\n" + eJournalVolume;
 	}
 
 	@PUT
@@ -78,10 +82,10 @@ public class EJournalResource
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid)
 					.addCreator("EjournalRessource")
-					.addType(objectType.toString()).addRights("me");
+					.addType(ejournalType.toString()).addRights("me");
 
 			rootObject.addContentModel(ContentModelFactory.createReportCM(
-					namespace, objectType));
+					namespace, ejournalType));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object);
@@ -139,24 +143,6 @@ public class EJournalResource
 		return actions.updateDC(pid, content);
 	}
 
-	// @GET
-	// @Path("/{pid}/data")
-	// @Produces({ "application/*" })
-	// public Response readEJournalData(@PathParam("pid") String pid)
-	// {
-	// return actions.readData(pid);
-	// }
-
-	// @POST
-	// @Path("/{pid}/data")
-	// @Produces({ "application/xml", "application/json" })
-	// @Consumes({ "application/xml", "application/json" })
-	// public String updateEJournalData(@PathParam("pid") String pid,
-	// UploadDataBean content)
-	// {
-	// return actions.updateData(pid, content);
-	// }
-
 	@GET
 	@Path("/{pid}/metadata")
 	public Response readEJournalMetadata(@PathParam("pid") String pid)
@@ -179,7 +165,6 @@ public class EJournalResource
 	{
 
 		System.out.println("create EJournal Volume");
-
 		try
 		{
 			String volumeId = actions.getPid(namespace);
@@ -204,10 +189,10 @@ public class EJournalResource
 
 			rootObject.setNamespace(namespace).setPID(volumeId)
 					.addCreator("EjournalVolumeRessource")
-					.addType(objectType.toString()).addRights("me");
+					.addType(volumeType.toString()).addRights("me");
 
 			rootObject.addContentModel(ContentModelFactory.createReportCM(
-					namespace, objectType));
+					namespace, volumeType));
 
 			ComplexObject object = new ComplexObject(rootObject);
 
