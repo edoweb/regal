@@ -36,6 +36,10 @@ import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 
+/**
+ * @author Jan Schnasse, schnasse@hbz-nrw.de
+ * 
+ */
 @Path("/ejournal")
 public class EJournalResource
 {

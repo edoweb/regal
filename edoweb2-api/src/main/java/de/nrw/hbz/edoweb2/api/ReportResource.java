@@ -55,12 +55,6 @@ public class ReportResource
 
 	}
 
-	/**
-	 * Deletes all reports curl -X DELETE
-	 * http://localhost:8080/edoweb2-api/report; echo
-	 * 
-	 * @return
-	 */
 	@DELETE
 	@Produces("application/json")
 	public String deleteAll()
@@ -68,16 +62,6 @@ public class ReportResource
 		return actions.deleteAll(actions.findByType(objectType));
 	}
 
-	/**
-	 * Erzeugt eine neue Amtsdruckschrift. curl -X PUT
-	 * http://localhost:8080/edoweb2-api/report/edoweb:123; echo
-	 * 
-	 * @param pid
-	 *            Die gewünschte PID für die Amtsdruckschrift
-	 * @param content
-	 *            Administrative Metadaten
-	 * @return
-	 */
 	@PUT
 	@Path("/{pid}")
 	public String createReport(@PathParam("pid") String pid)
@@ -112,13 +96,6 @@ public class ReportResource
 		return "Create Failed";
 	}
 
-	/**
-	 * Liest die administrativen Metadaten einer Amtsdruckschrift curl -X GET
-	 * http://localhost:8080/edoweb2-api/report/edoweb:123; echo
-	 * 
-	 * @param pid
-	 * @return
-	 */
 	@GET
 	@Path("/{pid}")
 	@Produces("application/json")
@@ -127,18 +104,6 @@ public class ReportResource
 		return actions.read(pid);
 	}
 
-	/**
-	 * Updated die Administrativen Metadaten einer Amtsdruckschrift curl -XPOST
-	 * -H "accept:application/json" -H "Content-Type: application/json"
-	 * http://localhost:8080/edoweb2-api/report/edoweb:123 -d
-	 * '{"dc":{"creator":"fedoraAdmin","identifier":"edoweb:123","type":"report"
-	 * } , " d o c T y p e " : " r e p o r t " , " v i s i b l e F o r " :
-	 * " m e " } ' ; echo
-	 * 
-	 * @param pid
-	 * @param content
-	 * @return
-	 */
 	@POST
 	@Path("/{pid}")
 	@Produces({ "application/xml", "application/json" })
@@ -148,13 +113,6 @@ public class ReportResource
 		return actions.update(pid, status);
 	}
 
-	/**
-	 * Löscht die komplette Amtsdruckschrift. curl -X DELETE
-	 * http://localhost:8080/edoweb2-api/report/edoweb:123; echo
-	 * 
-	 * @param pid
-	 * @return
-	 */
 	@DELETE
 	@Path("/{pid}")
 	public String deleteReport(@PathParam("pid") String pid)
@@ -164,12 +122,6 @@ public class ReportResource
 		return pid + " DELETED!";
 	}
 
-	/**
-	 * Liest die Dublin Core Metadaten einer Amtsdruckschrift
-	 * 
-	 * @param pid
-	 * @return
-	 */
 	@GET
 	@Path("/{pid}/dc")
 	@Produces("application/json")
@@ -178,13 +130,6 @@ public class ReportResource
 		return actions.readDC(pid);
 	}
 
-	/**
-	 * Updated die Dublin Core Metadaten einer Amtsdruckschrift
-	 * 
-	 * @param pid
-	 * @param content
-	 * @return
-	 */
 	@POST
 	@Path("/{pid}/dc")
 	@Produces({ "application/xml", "application/json" })
@@ -195,12 +140,6 @@ public class ReportResource
 		return actions.updateDC(pid, content);
 	}
 
-	/**
-	 * Liest die Daten einer Amtsdruckschrift
-	 * 
-	 * @param pid
-	 * @return
-	 */
 	@GET
 	@Path("/{pid}/data")
 	@Produces({ "application/*" })
@@ -209,13 +148,6 @@ public class ReportResource
 		return actions.readData(pid);
 	}
 
-	/**
-	 * Updated die Daten einer Amtsdruckschrift
-	 * 
-	 * @param pid
-	 * @param content
-	 * @return
-	 */
 	@POST
 	@Path("/{pid}/data")
 	@Produces({ "application/xml", "application/json" })
@@ -226,12 +158,6 @@ public class ReportResource
 		return actions.updateData(pid, content);
 	}
 
-	/**
-	 * Liest die Metadaten einer Amtsdruckschrift
-	 * 
-	 * @param pid
-	 * @return
-	 */
 	@GET
 	@Path("/{pid}/metadata")
 	public Response readReportMetadata(@PathParam("pid") String pid)
@@ -239,13 +165,6 @@ public class ReportResource
 		return actions.readMetadata(pid);
 	}
 
-	/**
-	 * Updated die Metadaten einer Amtsdruckschrift
-	 * 
-	 * @param pid
-	 * @param content
-	 * @return
-	 */
 	@POST
 	@Path("/{pid}/metadata")
 	public String updateReportMetadata(@PathParam("pid") String pid,

@@ -504,4 +504,30 @@ public class Actions
 		v.add(link);
 		return addLinks(pid, v);
 	}
+
+	public String updateLink(String pid, Link link)
+	{
+		try
+		{
+			Node node = archive.readNode(pid);
+			Vector<Link> links = node.getRelsExt();
+			for (Link l : links)
+			{
+				if (l.getPredicate().compareTo(link.getPredicate()) == 0)
+				{
+					links.remove(l);
+				}
+			}
+			links.add(link);
+			node.setRelsExt(links);
+			archive.updateNode(node.getPID(), node);
+			return "Link succesfuly updated";
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "FAILED! No links added";
+	}
 }
