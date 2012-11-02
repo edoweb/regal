@@ -59,7 +59,7 @@ public class WebpageResource
 	}
 
 	@DELETE
-	@Produces("application/json")
+	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
 		return actions.deleteAll(actions.findByType(webpageType));
@@ -101,7 +101,7 @@ public class WebpageResource
 
 	@GET
 	@Path("/{pid}")
-	@Produces("application/json")
+	@Produces({ "application/json", "application/xml" })
 	public StatusBean readWebpage(@PathParam("pid") String pid)
 	{
 		return actions.read(pid);
@@ -109,8 +109,8 @@ public class WebpageResource
 
 	@POST
 	@Path("/{pid}")
-	@Produces({ "application/xml", "application/json" })
-	@Consumes({ "application/xml", "application/json" })
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
 	public String updateWebpage(@PathParam("pid") String pid, StatusBean status)
 	{
 		return actions.update(pid, status);
@@ -127,7 +127,7 @@ public class WebpageResource
 
 	@GET
 	@Path("/{pid}/dc")
-	@Produces("application/json")
+	@Produces({ "application/json", "application/xml" })
 	public DCBeanAnnotated readWebpageDC(@PathParam("pid") String pid)
 	{
 		return actions.readDC(pid);
@@ -135,8 +135,8 @@ public class WebpageResource
 
 	@POST
 	@Path("/{pid}/dc")
-	@Produces({ "application/xml", "application/json" })
-	@Consumes({ "application/xml", "application/json" })
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
 	public String updateWebpageDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
@@ -216,13 +216,8 @@ public class WebpageResource
 			DCBeanAnnotated content)
 	{
 		String versionPid = null;
-		String query = "SELECT ?volPid ?p ?o WHERE "
-				+ "	{"
-				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVersionOf> <info:fedora/"
-				+ pid
-				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVersionName> \""
-				+ versionName + "\". ?volPid ?p ?o .	} ";
-		versionPid = actions.findVolume(query);
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
 		return actions.updateDC(versionPid, content);
 	}
 
@@ -232,13 +227,8 @@ public class WebpageResource
 			@PathParam("versionName") String versionName, UploadDataBean content)
 	{
 		String versionPid = null;
-		String query = "SELECT ?volPid ?p ?o WHERE "
-				+ "	{"
-				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVersionOf> <info:fedora/"
-				+ pid
-				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVersionName> \""
-				+ versionName + "\". ?volPid ?p ?o .	} ";
-		versionPid = actions.findVolume(query);
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
 		return actions.updateData(versionPid, content);
 	}
 
@@ -248,13 +238,8 @@ public class WebpageResource
 			@PathParam("versionName") String versionName, UploadDataBean content)
 	{
 		String versionPid = null;
-		String query = "SELECT ?volPid ?p ?o WHERE "
-				+ "	{"
-				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVersionOf> <info:fedora/"
-				+ pid
-				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVersionName> \""
-				+ versionName + "\". ?volPid ?p ?o .	} ";
-		versionPid = actions.findVolume(query);
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
 		return actions.updateMetadata(versionPid, content);
 	}
 
@@ -265,13 +250,8 @@ public class WebpageResource
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = "SELECT ?volPid ?p ?o WHERE "
-				+ "	{"
-				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVersionOf> <info:fedora/"
-				+ pid
-				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVersionName> \""
-				+ versionName + "\". ?volPid ?p ?o .	} ";
-		versionPid = actions.findVolume(query);
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
 		return actions.readMetadata(versionPid);
 	}
 
@@ -282,30 +262,20 @@ public class WebpageResource
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = "SELECT ?volPid ?p ?o WHERE "
-				+ "	{"
-				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVersionOf> <info:fedora/"
-				+ pid
-				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVersionName> \""
-				+ versionName + "\". ?volPid ?p ?o .	} ";
-		versionPid = actions.findVolume(query);
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
 		return actions.readData(versionPid);
 	}
 
 	@GET
 	@Path("/{pid}/version/{versionName}")
-	@Produces("application/json")
+	@Produces({ "application/json", "application/xml" })
 	public String readWebpageVersion(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = "SELECT ?volPid ?p ?o WHERE "
-				+ "	{"
-				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVersionOf> <info:fedora/"
-				+ pid
-				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVersionName> \""
-				+ versionName + "\". ?volPid ?p ?o .	} ";
-		versionPid = actions.findVolume(query);
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
 		return versionPid;
 	}
 
@@ -315,16 +285,21 @@ public class WebpageResource
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = "SELECT ?volPid ?p ?o WHERE "
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
+		Link link = new Link();
+		link.setPredicate(IS_CURRENT_VERSION);
+		link.setObject(versionPid);
+		return actions.updateLink(pid, link);
+	}
+
+	String getVersionQuery(String versionName, String pid)
+	{
+		return "SELECT ?volPid ?p ?o WHERE "
 				+ "	{"
 				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVersionOf> <info:fedora/"
 				+ pid
 				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVersionName> \""
 				+ versionName + "\". ?volPid ?p ?o .	} ";
-		versionPid = actions.findVolume(query);
-		Link link = new Link();
-		link.setPredicate(IS_CURRENT_VERSION);
-		link.setObject(versionPid);
-		return actions.updateLink(pid, link);
 	}
 }

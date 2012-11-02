@@ -344,7 +344,7 @@ public class Actions
 		return "updateMetadata";
 	}
 
-	public String findVolume(String rdfQuery)
+	public String findSubject(String rdfQuery)
 	{
 		String volumePid = null;
 		InputStream stream = archive.findTriples(rdfQuery,
@@ -404,7 +404,7 @@ public class Actions
 		return volumePid;
 	}
 
-	public String find(String pid, String pred)
+	public String findObject(String pid, String pred)
 	{
 		InputStream stream = archive.findTriples("info:fedora/" + pid + "> <"
 				+ pred + "> *", FedoraFacade.TYPE_SPO, FedoraFacade.FORMAT_N3);
@@ -492,7 +492,6 @@ public class Actions
 		}
 		catch (RemoteException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "FAILED! No links added";
@@ -525,7 +524,6 @@ public class Actions
 		}
 		catch (RemoteException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "FAILED! No links added";

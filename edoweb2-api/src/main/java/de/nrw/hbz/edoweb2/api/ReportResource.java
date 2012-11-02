@@ -56,7 +56,7 @@ public class ReportResource
 	}
 
 	@DELETE
-	@Produces("application/json")
+	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
 		return actions.deleteAll(actions.findByType(objectType));
@@ -98,7 +98,7 @@ public class ReportResource
 
 	@GET
 	@Path("/{pid}")
-	@Produces("application/json")
+	@Produces({ "application/json", "application/xml" })
 	public StatusBean readReport(@PathParam("pid") String pid)
 	{
 		return actions.read(pid);
@@ -106,8 +106,8 @@ public class ReportResource
 
 	@POST
 	@Path("/{pid}")
-	@Produces({ "application/xml", "application/json" })
-	@Consumes({ "application/xml", "application/json" })
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
 	public String updateReport(@PathParam("pid") String pid, StatusBean status)
 	{
 		return actions.update(pid, status);
@@ -124,7 +124,7 @@ public class ReportResource
 
 	@GET
 	@Path("/{pid}/dc")
-	@Produces("application/json")
+	@Produces({ "application/json", "application/xml" })
 	public DCBeanAnnotated readReportDC(@PathParam("pid") String pid)
 	{
 		return actions.readDC(pid);
@@ -132,8 +132,8 @@ public class ReportResource
 
 	@POST
 	@Path("/{pid}/dc")
-	@Produces({ "application/xml", "application/json" })
-	@Consumes({ "application/xml", "application/json" })
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
 	public String updateReportDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
@@ -150,8 +150,8 @@ public class ReportResource
 
 	@POST
 	@Path("/{pid}/data")
-	@Produces({ "application/xml", "application/json" })
-	@Consumes({ "application/xml", "application/json" })
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
 	public String updateReportData(@PathParam("pid") String pid,
 			UploadDataBean content)
 	{
