@@ -36,7 +36,6 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-
 @XmlRootElement
 public class DCBeanAnnotated
 {

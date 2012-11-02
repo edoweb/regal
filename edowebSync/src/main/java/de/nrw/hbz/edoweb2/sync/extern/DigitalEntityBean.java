@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.edoweb2.digitool.downloader;
+package de.nrw.hbz.edoweb2.sync.extern;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Vector;
 
 /**
  * Class DigitalEntityBean
@@ -42,6 +43,10 @@ public class DigitalEntityBean
 	public static String ARCHIVE = "ARCHIVE";
 	public static String THUMBNAIL = "THUMBNAIL";
 	public static String VIEW = "VIEW";
+	public static String VIEW_MAIN = "VIEW_MAIN";
+
+	public static String MANIFESTATION = "manifestation";
+	public static String INCLUDE = "include";
 
 	String pid = null;
 	String usageType = null;
@@ -81,9 +86,13 @@ public class DigitalEntityBean
 	DigitalEntityBean indexLink = null;
 	private DigitalEntityBean viewLink;
 
+	Vector<DigitalEntityBean> viewMainLinks = null;
+	private String label = null;
+
 	public DigitalEntityBean(String location)
 	{
 		this.location = location;
+		viewMainLinks = new Vector<DigitalEntityBean>();
 	}
 
 	/**
@@ -470,4 +479,23 @@ public class DigitalEntityBean
 		return new File(location + File.separator + pid + ".xml");
 	}
 
+	public void addViewMainLink(DigitalEntityBean b)
+	{
+		viewMainLinks.add(b);
+	}
+
+	public Vector<DigitalEntityBean> getViewMains()
+	{
+		return viewMainLinks;
+	}
+
+	public void setLabel(String label)
+	{
+		this.label = label;
+	}
+
+	public String getLabel()
+	{
+		return label;
+	}
 }

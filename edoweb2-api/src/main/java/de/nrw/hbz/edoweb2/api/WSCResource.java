@@ -14,22 +14,26 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.edoweb2.sync;
+package de.nrw.hbz.edoweb2.api;
 
-import de.nrw.hbz.edoweb2.datatypes.ContentModel;
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import javax.ws.rs.Path;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public interface IngestInterface
+@Path("/wsc")
+public class WSCResource
 {
-	public abstract void ingest(DigitalEntityBean dtlBean);
 
-	public abstract void delete(String pid);
+	ObjectType objectType = ObjectType.wsc;
+	String namespace = "dtl";
 
-	public abstract void update(DigitalEntityBean dtlBean);
+	Actions actions = new Actions();
 
-	public abstract ContentModel createContentModel();
+	public WSCResource()
+	{
+
+	}
+
 }

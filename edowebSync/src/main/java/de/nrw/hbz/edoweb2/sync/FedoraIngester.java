@@ -36,9 +36,10 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 
 import de.nrw.hbz.edoweb2.api.DCBeanAnnotated;
+import de.nrw.hbz.edoweb2.api.ObjectType;
 import de.nrw.hbz.edoweb2.api.UploadDataBean;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
-import de.nrw.hbz.edoweb2.digitool.downloader.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
 import de.nrw.hbz.edoweb2.sync.mapper.ControlBean;
 import de.nrw.hbz.edoweb2.sync.mapper.DCBean;
 
@@ -89,6 +90,7 @@ public class FedoraIngester implements IngestInterface
 		if (partitionC.compareTo("EJO01") == 0)
 		{
 			logger.debug(pid + ": is a eJournal");
+			ingestEJournal(dtlBean);
 		}
 		else if (partitionC.compareTo("WPD01") == 0)
 		{
@@ -230,7 +232,7 @@ public class FedoraIngester implements IngestInterface
 				data.mime = "text/text";
 				wpdOcrData.post(data);
 
-				wpdOcrDC.post(new DCBeanAnnotated().addTitle("OCR XML"));
+				wpdViewDC.post(new DCBeanAnnotated().addTitle("OCR XML"));
 				wpdOcrDC.post(new DCBeanAnnotated().addTitle("OCR Data"));
 			}
 		}
@@ -289,7 +291,7 @@ public class FedoraIngester implements IngestInterface
 		try
 		{
 			DCBeanAnnotated dc = marc2dc(dtlBean);
-			dc.addType("amtsdruckschrift");
+			dc.addType(ObjectType.wpd.toString());
 
 			wpdDC.post(DCBeanAnnotated.class, dc);
 
@@ -337,7 +339,7 @@ public class FedoraIngester implements IngestInterface
 		try
 		{
 			DCBeanAnnotated dc = marc2dc(dtlBean);
-			dc.addType("report");
+			dc.addType(ObjectType.report.toString());
 			reportDC.post(DCBeanAnnotated.class, dc);
 		}
 		catch (Exception e)
@@ -353,6 +355,84 @@ public class FedoraIngester implements IngestInterface
 
 	private void ingestEJournal(DigitalEntityBean dtlBean)
 	{
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
+
+		WebResource ejournal = c
+				.resource("http://localhost:8080/edoweb2-api/ejournal/"
+						+ edowebNamespace + ":" + dtlBean.getPid());
+
+		String request = "content";
+		String response = ejournal.put(String.class, request);
+		logger.debug(response);
+
+		WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
+		WebResource ejournalMetadata = c.resource(ejournal.toString()
+				+ "/metadata");
+		try
+		{
+			DCBeanAnnotated dc = marc2dc(dtlBean);
+			dc.addType(ObjectType.ejournal.toString());
+			ejournalDC.post(DCBeanAnnotated.class, dc);
+		}
+		catch (Exception e)
+		{
+			logger.debug(e.getMessage());
+		}
+		for (DigitalEntityBean b : dtlBean.getViewMains())
+		{
+			String volName = b.getPid();
+			WebResource ejournalVolume = c.resource(ejournal.toString()
+					+ "/volume/" + volName);
+			ejournalVolume.put();
+			WebResource ejournalVolumeDC = c.resource(ejournalVolume.toString()
+					+ "/dc");
+			WebResource ejournalVolumeData = c.resource(ejournalVolume
+					.toString() + "/data");
+			WebResource ejournalVolumeMetadata = c.resource(ejournalVolume
+					.toString() + "/metadata");
+			/*
+			 * Workaround START
+			 */
+			try
+			{
+				Thread.sleep(10000);
+			}
+			catch (InterruptedException e1)
+			{
+
+				e1.printStackTrace();
+			}
+			/*
+			 * Workaround END
+			 */
+			UploadDataBean data = new UploadDataBean();
+			try
+			{
+				data.path = new URI(b.getStream().getAbsolutePath());
+				data.mime = "application/pdf";
+				ejournalVolumeData.post(data);
+			}
+			catch (URISyntaxException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try
+			{
+				DCBeanAnnotated dc = marc2dc(b);
+				dc.addType(ObjectType.ejournalVolume.toString());
+				ejournalVolumeDC.post(DCBeanAnnotated.class, dc);
+			}
+			catch (Exception e)
+			{
+				logger.debug(e.getMessage());
+			}
+
+		}
 
 	}
 
@@ -411,8 +491,13 @@ public class FedoraIngester implements IngestInterface
 				.resource("http://localhost:8080/edoweb2-api/report/"
 						+ dtlNamespace + ":" + pid);
 
+		WebResource deleteEJournal = c
+				.resource("http://localhost:8080/edoweb2-api/ejournal/"
+						+ edowebNamespace + ":" + pid);
+
 		deleteReport.delete();
 		deleteWpd.delete();
+		deleteEJournal.delete();
 	}
 
 }

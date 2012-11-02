@@ -38,6 +38,7 @@ import org.openrdf.sail.memory.MemoryStore;
 import de.nrw.hbz.edoweb2.archive.ArchiveFactory;
 import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
+import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
 
@@ -343,7 +344,67 @@ public class Actions
 		return "updateMetadata";
 	}
 
-	public String find(String pid, String pred)
+	public String findSubject(String rdfQuery)
+	{
+		String volumePid = null;
+		InputStream stream = archive.findTriples(rdfQuery,
+				FedoraFacade.TYPE_SPARQL, FedoraFacade.FORMAT_N3);
+
+		RepositoryConnection con = null;
+		Repository myRepository = new SailRepository(new MemoryStore());
+		try
+		{
+			myRepository.initialize();
+			con = myRepository.getConnection();
+			String baseURI = "";
+
+			con.add(stream, baseURI, RDFFormat.N3);
+
+			RepositoryResult<Statement> statements = con.getStatements(null,
+					null, null, true);
+
+			while (statements.hasNext())
+			{
+				Statement st = statements.next();
+				volumePid = st.getSubject().stringValue()
+						.replace("info:fedora/", "");
+				break;
+			}
+		}
+		catch (RepositoryException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (RDFParseException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (con != null)
+			{
+				try
+				{
+					con.close();
+				}
+				catch (RepositoryException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return volumePid;
+	}
+
+	public String findObject(String pid, String pred)
 	{
 		InputStream stream = archive.findTriples("info:fedora/" + pid + "> <"
 				+ pred + "> *", FedoraFacade.TYPE_SPO, FedoraFacade.FORMAT_N3);
@@ -410,5 +471,61 @@ public class Actions
 	public String addUriPrefix(String pid)
 	{
 		return archive.addUriPrefix(pid);
+	}
+
+	public String getPid(String namespace) throws RemoteException
+	{
+		return archive.getPids(namespace, 1)[0];
+	}
+
+	public String addLinks(String pid, Vector<Link> links)
+	{
+		try
+		{
+			Node node = archive.readNode(pid);
+			for (Link link : links)
+			{
+				node.addRelation(link);
+			}
+			archive.updateNode(node.getPID(), node);
+			return "Links succesfuly added";
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
+		}
+		return "FAILED! No links added";
+	}
+
+	public String addLink(String pid, Link link)
+	{
+		Vector<Link> v = new Vector<Link>();
+		v.add(link);
+		return addLinks(pid, v);
+	}
+
+	public String updateLink(String pid, Link link)
+	{
+		try
+		{
+			Node node = archive.readNode(pid);
+			Vector<Link> links = node.getRelsExt();
+			for (Link l : links)
+			{
+				if (l.getPredicate().compareTo(link.getPredicate()) == 0)
+				{
+					links.remove(l);
+				}
+			}
+			links.add(link);
+			node.setRelsExt(links);
+			archive.updateNode(node.getPID(), node);
+			return "Link succesfuly updated";
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
+		}
+		return "FAILED! No links added";
 	}
 }

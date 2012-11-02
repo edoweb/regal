@@ -59,7 +59,7 @@ public class WPDResource
 	String OCR = HBZ_MODEL_NAMESPACE + "ocr";
 	String TOC = HBZ_MODEL_NAMESPACE + "toc";
 
-	ObjectType type = ObjectType.wpd;
+	ObjectType wpdType = ObjectType.wpd;
 	String namespace = "dtl";
 
 	Actions actions = new Actions();
@@ -72,7 +72,7 @@ public class WPDResource
 	@DELETE
 	public String deleteAll()
 	{
-		return actions.deleteAll(actions.findByType(type));
+		return actions.deleteAll(actions.findByType(wpdType));
 	}
 
 	@PUT
@@ -84,23 +84,29 @@ public class WPDResource
 			if (actions.nodeExists(pid))
 				return "ERROR: Node already exists";
 			Node root = new Node();
+			root.addTitle("RootObject (not initialized yet)");
 			root.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
 			link.setObject(TYPE_OBJECT, true);
 			root.addRelation(link);
 			root.setNamespace(namespace).setPID(pid).addCreator("REST Service")
-					.addType(type.toString()).addRights("me");
+					.addType(wpdType.toString()).addRights("me");
 			root.addContentModel(ContentModelFactory.createWpdCM(namespace,
-					type));
+					wpdType));
 
 			Node view_main = new Node(pid + "_1");
+			view_main.addTitle("Fulltext XML (not initialized yet)");
 			Node view = new Node(pid + "_2");
+			view.addTitle("OCR XML (not initialized yet)");
 			Node index = new Node(pid + "_3");
-
+			index.addTitle("TOC XML (not initialized yet)");
 			Node fulltext = new Node(pid + "_4");
+			fulltext.addTitle("Fulltext Data(not initialized yet)");
 			Node ocr = new Node(pid + "_5");
+			ocr.addTitle("OCR Data (not initialized yet)");
 			Node toc = new Node(pid + "_6");
+			toc.addTitle("TOC DATA (not initialized yet)");
 
 			root.addRelation(new Link(VIEW_MAIN, actions.addUriPrefix(view_main
 					.getPID()), false));
@@ -210,7 +216,7 @@ public class WPDResource
 	public DCBeanAnnotated readViewMainDC(@PathParam("pid") String pid)
 	{
 
-		return actions.readDC(actions.find(pid, VIEW_MAIN));
+		return actions.readDC(actions.findObject(pid, VIEW_MAIN));
 	}
 
 	@GET
@@ -218,7 +224,7 @@ public class WPDResource
 	public Response readViewMainMetadata(@PathParam("pid") String pid)
 	{
 
-		return actions.readMetadata(actions.find(pid, VIEW_MAIN));
+		return actions.readMetadata(actions.findObject(pid, VIEW_MAIN));
 	}
 
 	@GET
@@ -226,7 +232,7 @@ public class WPDResource
 	public Response readViewMainData(@PathParam("pid") String pid)
 	{
 
-		return actions.readData(actions.find(pid, VIEW_MAIN));
+		return actions.readData(actions.findObject(pid, VIEW_MAIN));
 	}
 
 	@POST
@@ -235,7 +241,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		String viewMainPid = actions.find(pid, VIEW_MAIN);
+		String viewMainPid = actions.findObject(pid, VIEW_MAIN);
 
 		logger.debug("Updata view_main/data " + viewMainPid);
 		System.out.println("Updata view_main/data " + viewMainPid);
@@ -249,7 +255,7 @@ public class WPDResource
 			DCBeanAnnotated content)
 	{
 
-		return actions.updateDC(actions.find(pid, VIEW_MAIN), content);
+		return actions.updateDC(actions.findObject(pid, VIEW_MAIN), content);
 	}
 
 	@POST
@@ -258,7 +264,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateMetadata(actions.find(pid, VIEW_MAIN), content);
+		return actions.updateMetadata(actions.findObject(pid, VIEW_MAIN), content);
 	}
 
 	@GET
@@ -266,7 +272,7 @@ public class WPDResource
 	public DCBeanAnnotated readViewDC(@PathParam("pid") String pid)
 	{
 
-		return actions.readDC(actions.find(pid, VIEW));
+		return actions.readDC(actions.findObject(pid, VIEW));
 	}
 
 	@GET
@@ -274,7 +280,7 @@ public class WPDResource
 	public Response readViewMetadata(@PathParam("pid") String pid)
 	{
 
-		return actions.readMetadata(actions.find(pid, VIEW));
+		return actions.readMetadata(actions.findObject(pid, VIEW));
 	}
 
 	@POST
@@ -283,7 +289,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateData(actions.find(pid, VIEW), content);
+		return actions.updateData(actions.findObject(pid, VIEW), content);
 	}
 
 	@POST
@@ -292,7 +298,7 @@ public class WPDResource
 			DCBeanAnnotated content)
 	{
 
-		return actions.updateDC(actions.find(pid, VIEW), content);
+		return actions.updateDC(actions.findObject(pid, VIEW), content);
 	}
 
 	@POST
@@ -301,7 +307,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateMetadata(actions.find(pid, VIEW), content);
+		return actions.updateMetadata(actions.findObject(pid, VIEW), content);
 	}
 
 	@GET
@@ -309,7 +315,7 @@ public class WPDResource
 	public DCBeanAnnotated readIndexDC(@PathParam("pid") String pid)
 	{
 
-		return actions.readDC(actions.find(pid, INDEX));
+		return actions.readDC(actions.findObject(pid, INDEX));
 	}
 
 	@GET
@@ -317,7 +323,7 @@ public class WPDResource
 	public Response readIndexMetadata(@PathParam("pid") String pid)
 	{
 
-		return actions.readMetadata(actions.find(pid, INDEX));
+		return actions.readMetadata(actions.findObject(pid, INDEX));
 	}
 
 	@GET
@@ -325,7 +331,7 @@ public class WPDResource
 	public Response readIndexData(@PathParam("pid") String pid)
 	{
 
-		return actions.readData(actions.find(pid, INDEX));
+		return actions.readData(actions.findObject(pid, INDEX));
 	}
 
 	@POST
@@ -334,7 +340,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateData(actions.find(pid, INDEX), content);
+		return actions.updateData(actions.findObject(pid, INDEX), content);
 	}
 
 	@POST
@@ -343,7 +349,7 @@ public class WPDResource
 			DCBeanAnnotated content)
 	{
 
-		return actions.updateDC(actions.find(pid, INDEX), content);
+		return actions.updateDC(actions.findObject(pid, INDEX), content);
 	}
 
 	@POST
@@ -352,7 +358,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateMetadata(actions.find(pid, INDEX), content);
+		return actions.updateMetadata(actions.findObject(pid, INDEX), content);
 	}
 
 	@GET
@@ -360,7 +366,7 @@ public class WPDResource
 	public DCBeanAnnotated readFulltextDC(@PathParam("pid") String pid)
 	{
 
-		return actions.readDC(actions.find(pid, INDEX));
+		return actions.readDC(actions.findObject(pid, INDEX));
 	}
 
 	@GET
@@ -368,7 +374,7 @@ public class WPDResource
 	public Response readFulltextMetadata(@PathParam("pid") String pid)
 	{
 
-		return actions.readMetadata(actions.find(pid, INDEX));
+		return actions.readMetadata(actions.findObject(pid, INDEX));
 	}
 
 	@GET
@@ -376,7 +382,7 @@ public class WPDResource
 	public Response readFulltextData(@PathParam("pid") String pid)
 	{
 
-		return actions.readData(actions.find(pid, FULLTEXT));
+		return actions.readData(actions.findObject(pid, FULLTEXT));
 	}
 
 	@POST
@@ -385,7 +391,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateData(actions.find(pid, FULLTEXT), content);
+		return actions.updateData(actions.findObject(pid, FULLTEXT), content);
 	}
 
 	@POST
@@ -394,7 +400,7 @@ public class WPDResource
 			DCBeanAnnotated content)
 	{
 
-		return actions.updateDC(actions.find(pid, FULLTEXT), content);
+		return actions.updateDC(actions.findObject(pid, FULLTEXT), content);
 	}
 
 	@POST
@@ -403,7 +409,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateMetadata(actions.find(pid, FULLTEXT), content);
+		return actions.updateMetadata(actions.findObject(pid, FULLTEXT), content);
 	}
 
 	@GET
@@ -411,7 +417,7 @@ public class WPDResource
 	public DCBeanAnnotated readOcrDC(@PathParam("pid") String pid)
 	{
 
-		return actions.readDC(actions.find(pid, OCR));
+		return actions.readDC(actions.findObject(pid, OCR));
 	}
 
 	@GET
@@ -419,7 +425,7 @@ public class WPDResource
 	public Response readOcrMetadata(@PathParam("pid") String pid)
 	{
 
-		return actions.readMetadata(actions.find(pid, OCR));
+		return actions.readMetadata(actions.findObject(pid, OCR));
 	}
 
 	@GET
@@ -427,7 +433,7 @@ public class WPDResource
 	public Response readOcrData(@PathParam("pid") String pid)
 	{
 
-		return actions.readData(actions.find(pid, OCR));
+		return actions.readData(actions.findObject(pid, OCR));
 	}
 
 	@POST
@@ -436,7 +442,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateData(actions.find(pid, OCR), content);
+		return actions.updateData(actions.findObject(pid, OCR), content);
 	}
 
 	@POST
@@ -445,7 +451,7 @@ public class WPDResource
 			DCBeanAnnotated content)
 	{
 
-		return actions.updateDC(actions.find(pid, OCR), content);
+		return actions.updateDC(actions.findObject(pid, OCR), content);
 	}
 
 	@POST
@@ -454,7 +460,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateMetadata(actions.find(pid, OCR), content);
+		return actions.updateMetadata(actions.findObject(pid, OCR), content);
 	}
 
 	@GET
@@ -462,7 +468,7 @@ public class WPDResource
 	public DCBeanAnnotated readTocDC(@PathParam("pid") String pid)
 	{
 
-		return actions.readDC(actions.find(pid, TOC));
+		return actions.readDC(actions.findObject(pid, TOC));
 	}
 
 	@GET
@@ -470,7 +476,7 @@ public class WPDResource
 	public Response readTocMetadata(@PathParam("pid") String pid)
 	{
 
-		return actions.readMetadata(actions.find(pid, TOC));
+		return actions.readMetadata(actions.findObject(pid, TOC));
 	}
 
 	@GET
@@ -478,7 +484,7 @@ public class WPDResource
 	public Response readTocData(@PathParam("pid") String pid)
 	{
 
-		return actions.readData(actions.find(pid, TOC));
+		return actions.readData(actions.findObject(pid, TOC));
 	}
 
 	@POST
@@ -487,7 +493,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateData(actions.find(pid, TOC), content);
+		return actions.updateData(actions.findObject(pid, TOC), content);
 	}
 
 	@POST
@@ -496,7 +502,7 @@ public class WPDResource
 			DCBeanAnnotated content)
 	{
 
-		return actions.updateDC(actions.find(pid, TOC), content);
+		return actions.updateDC(actions.findObject(pid, TOC), content);
 	}
 
 	@POST
@@ -505,7 +511,7 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateMetadata(actions.find(pid, TOC), content);
+		return actions.updateMetadata(actions.findObject(pid, TOC), content);
 	}
 
 }

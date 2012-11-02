@@ -36,27 +36,25 @@ import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 
 /**
- * /report/{pid}/[dc|metadata|data]
- * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-@Path("/report")
-public class ReportResource
+@Path("/ejo")
+public class EJOResource
 {
 
-	ObjectType objectType = ObjectType.report;
-	String namespace = "edoweb";
+	ObjectType objectType = ObjectType.ejo;
+	String namespace = "dtl";
 
 	Actions actions = new Actions();
 
-	public ReportResource()
+	public EJOResource()
 	{
 
 	}
 
 	@DELETE
-	@Produces({ "application/json", "application/xml" })
+	@Produces("application/json")
 	public String deleteAll()
 	{
 		return actions.deleteAll(actions.findByType(objectType));
@@ -98,7 +96,7 @@ public class ReportResource
 
 	@GET
 	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
+	@Produces("application/json")
 	public StatusBean readReport(@PathParam("pid") String pid)
 	{
 		return actions.read(pid);
@@ -106,8 +104,8 @@ public class ReportResource
 
 	@POST
 	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
+	@Consumes({ "application/xml", "application/json" })
 	public String updateReport(@PathParam("pid") String pid, StatusBean status)
 	{
 		return actions.update(pid, status);
@@ -124,7 +122,7 @@ public class ReportResource
 
 	@GET
 	@Path("/{pid}/dc")
-	@Produces({ "application/json", "application/xml" })
+	@Produces("application/json")
 	public DCBeanAnnotated readReportDC(@PathParam("pid") String pid)
 	{
 		return actions.readDC(pid);
@@ -132,8 +130,8 @@ public class ReportResource
 
 	@POST
 	@Path("/{pid}/dc")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
+	@Consumes({ "application/xml", "application/json" })
 	public String updateReportDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
@@ -150,8 +148,8 @@ public class ReportResource
 
 	@POST
 	@Path("/{pid}/data")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
+	@Consumes({ "application/xml", "application/json" })
 	public String updateReportData(@PathParam("pid") String pid,
 			UploadDataBean content)
 	{
@@ -173,5 +171,4 @@ public class ReportResource
 		return actions.updateMetadata(pid, content);
 	}
 
-	// be it hot or be it not
 }

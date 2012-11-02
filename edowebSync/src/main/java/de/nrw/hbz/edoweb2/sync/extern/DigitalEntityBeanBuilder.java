@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.edoweb2.digitool.downloader;
+package de.nrw.hbz.edoweb2.sync.extern;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -32,6 +32,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -89,25 +91,39 @@ public class DigitalEntityBeanBuilder
 			String usageType = ((Element) item)
 					.getElementsByTagName("usage_type").item(0)
 					.getTextContent();
+			String type = ((Element) item).getElementsByTagName("type").item(0)
+					.getTextContent();
+
 			Element relRoot = getDocument(relPid);
-			DigitalEntityBean b = buildSimpleBean(relPid, usageType, relRoot);
-			if (usageType.compareTo(DigitalEntityBean.INDEX) == 0)
+
+			if (type.compareTo(DigitalEntityBean.MANIFESTATION) == 0)
 			{
-				// System.out.println("Set Index Link");
-				// System.out.println(b.getStream().getAbsolutePath());
-				dtlDe.setIndexLink(b);
+				DigitalEntityBean b = buildSimpleBean(relPid, usageType,
+						relRoot);
+				if (usageType.compareTo(DigitalEntityBean.INDEX) == 0)
+				{
+					dtlDe.setIndexLink(b);
+				}
+				else if (usageType.compareTo(DigitalEntityBean.ARCHIVE) == 0)
+				{
+					dtlDe.setArchiveLink(b);
+				}
+				else if (usageType.compareTo(DigitalEntityBean.THUMBNAIL) == 0)
+				{
+					dtlDe.setThumbnailLink(b);
+				}
+				else if (usageType.compareTo(DigitalEntityBean.VIEW) == 0)
+				{
+					dtlDe.setViewLink(b);
+				}
 			}
-			else if (usageType.compareTo(DigitalEntityBean.ARCHIVE) == 0)
+			else if (type.compareTo(DigitalEntityBean.INCLUDE) == 0)
 			{
-				dtlDe.setArchiveLink(b);
-			}
-			else if (usageType.compareTo(DigitalEntityBean.THUMBNAIL) == 0)
-			{
-				dtlDe.setThumbnailLink(b);
-			}
-			else if (usageType.compareTo(DigitalEntityBean.VIEW) == 0)
-			{
-				dtlDe.setViewLink(b);
+				DigitalEntityBean b = buildComplexBean(baseDir, relPid);
+				if (usageType.compareTo(DigitalEntityBean.VIEW_MAIN) == 0)
+				{
+					dtlDe.addViewMainLink(b);
+				}
 			}
 		}
 
@@ -181,7 +197,16 @@ public class DigitalEntityBeanBuilder
 		DigitalEntityBean dtlDe = new DigitalEntityBean(baseDir);
 		// System.out.println("BaseDir "+baseDir);
 		dtlDe.setPid(pid);
-
+		try
+		{
+			dtlDe.setLabel(URIUtil.encodeQuery(root
+					.getElementsByTagName("label").item(0).getTextContent()));
+		}
+		catch (URIException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		dtlDe.setControl(nodeToString(root.getElementsByTagName("control")
 				.item(0)));
 

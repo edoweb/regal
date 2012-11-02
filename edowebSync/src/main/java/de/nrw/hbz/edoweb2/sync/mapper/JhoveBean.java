@@ -32,7 +32,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.nrw.hbz.edoweb2.digitool.downloader.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
 import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
 
 /**

@@ -27,12 +27,12 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.nrw.hbz.edoweb2.digitool.downloader.DigitalEntityBean;
-import de.nrw.hbz.edoweb2.digitool.downloader.DigitalEntityBeanBuilder;
 import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 import de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber;
 import de.nrw.hbz.edoweb2.sync.FedoraIngester;
 import de.nrw.hbz.edoweb2.sync.IngestInterface;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBeanBuilder;
 
 /**
  * Class Main
@@ -224,7 +224,7 @@ public class Main
 			Vector<String> pids = harvester.harvest(new String[] { setSpec },
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-			logger.info("Erzeuge ca. " + pids.size() * 17 + " Fedoraobjekte.");
+
 			DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
 			// IngestInterface ingester = new FedoraIngester("ellinet",
 			// fedoraBase, user, password, axisHome);
@@ -233,7 +233,7 @@ public class Main
 			{
 				try
 				{
-					logger.info(i + "\n");
+					logger.info((i + 1) + "\n");
 					String pid = pids.get(i);
 					String baseDir = downloader.download(pid, forceDownload);
 					logger.info("\tBuild Bean \t" + pid);
@@ -378,7 +378,7 @@ public class Main
 
 							ingester.ingest(dtlBean);
 							dtlBean = null;
-							logger.info(i + "/" + size + " " + pid
+							logger.info((i + 1) + "/" + size + " " + pid
 									+ " has been ingested!\n");
 						}
 						else if (downloader.hasUpdated())
@@ -388,7 +388,7 @@ public class Main
 									.buildComplexBean(baseDir, pids.get(i));
 							ingester.update(dtlBean);
 							dtlBean = null;
-							logger.info(i + "/" + size + " " + pid
+							logger.info((i + 1) + "/" + size + " " + pid
 									+ " has been updated!\n");
 						}
 
@@ -425,7 +425,8 @@ public class Main
 					String pid = pids.get(i);
 
 					ingester.delete(pid);
-					logger.info(i + "/" + size + " " + pid + " deleted!\n");
+					logger.info((i + 1) + "/" + size + " " + pid
+							+ " deleted!\n");
 
 				}
 
