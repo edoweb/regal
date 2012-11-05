@@ -447,27 +447,28 @@ public class FedoraIngester implements IngestInterface
 	@Override
 	public void delete(String pid)
 	{
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
-
-		WebResource deleteReport = c
-				.resource("http://localhost:8080/edoweb2-api/report/"
-						+ edowebNamespace + ":" + pid);
-
-		WebResource deleteWpd = c
-				.resource("http://localhost:8080/edoweb2-api/wpd/"
-						+ dtlNamespace + ":" + pid);
-
-		WebResource deleteEJournal = c
-				.resource("http://localhost:8080/edoweb2-api/ejournal/"
-						+ edowebNamespace + ":" + pid);
-
-		deleteReport.delete();
-		deleteWpd.delete();
-		deleteEJournal.delete();
+		// ClientConfig cc = new DefaultClientConfig();
+		// cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		// cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
+		// true);
+		// Client c = Client.create(cc);
+		// c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
+		//
+		// WebResource deleteReport = c
+		// .resource("http://localhost:8080/edoweb2-api/report/"
+		// + edowebNamespace + ":" + pid);
+		//
+		// WebResource deleteWpd = c
+		// .resource("http://localhost:8080/edoweb2-api/wpd/"
+		// + dtlNamespace + ":" + pid);
+		//
+		// WebResource deleteEJournal = c
+		// .resource("http://localhost:8080/edoweb2-api/ejournal/"
+		// + edowebNamespace + ":" + pid);
+		//
+		// deleteReport.delete();
+		// deleteWpd.delete();
+		// deleteEJournal.delete();
 	}
 
 }
