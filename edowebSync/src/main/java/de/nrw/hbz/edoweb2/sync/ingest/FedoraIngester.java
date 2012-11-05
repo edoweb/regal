@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.edoweb2.sync;
+package de.nrw.hbz.edoweb2.sync.ingest;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -134,22 +134,6 @@ public class FedoraIngester implements IngestInterface
 		String request = "content";
 		String response = wpd.put(String.class, request);
 		logger.debug(response);
-
-		/*
-		 * Workaround START
-		 */
-		try
-		{
-			Thread.sleep(10000);
-		}
-		catch (InterruptedException e1)
-		{
-
-			e1.printStackTrace();
-		}
-		/*
-		 * Workaround END
-		 */
 
 		WebResource wpdDC = c.resource(wpd.toString() + "/dc");
 		WebResource wpdData = c.resource(wpd.toString() + "/data");
@@ -394,21 +378,7 @@ public class FedoraIngester implements IngestInterface
 					.toString() + "/data");
 			WebResource ejournalVolumeMetadata = c.resource(ejournalVolume
 					.toString() + "/metadata");
-			/*
-			 * Workaround START
-			 */
-			try
-			{
-				Thread.sleep(10000);
-			}
-			catch (InterruptedException e1)
-			{
 
-				e1.printStackTrace();
-			}
-			/*
-			 * Workaround END
-			 */
 			UploadDataBean data = new UploadDataBean();
 			try
 			{

@@ -1,3 +1,4 @@
+package de.nrw.hbz.edoweb2.digitool.downloader;
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *

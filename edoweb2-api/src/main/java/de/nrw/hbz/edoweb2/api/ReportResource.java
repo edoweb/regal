@@ -55,6 +55,13 @@ public class ReportResource
 
 	}
 
+	@GET
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAll()
+	{
+		return new ObjectList(actions.findByType(objectType));
+	}
+
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()

@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.fedora.ingest.service;
+package de.nrw.hbz.edoweb2.archive;
 
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;

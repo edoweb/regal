@@ -28,7 +28,7 @@
 							<classpathPrefix>lib</classpathPrefix>
 							<classpathLayoutType>repository</classpathLayoutType>
 							<classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
-							<mainClass>Main</mainClass>
+							<mainClass>de.nrw.hbz.edoweb2.sync.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

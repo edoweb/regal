@@ -1,3 +1,4 @@
+package de.nrw.hbz.edoweb2.sync;
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -29,10 +30,10 @@ import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 import de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber;
-import de.nrw.hbz.edoweb2.sync.FedoraIngester;
-import de.nrw.hbz.edoweb2.sync.IngestInterface;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBeanBuilder;
+import de.nrw.hbz.edoweb2.sync.ingest.FedoraIngester;
+import de.nrw.hbz.edoweb2.sync.ingest.IngestInterface;
 
 /**
  * Class Main

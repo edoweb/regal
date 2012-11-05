@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.fedora.ingest.utils;
+package de.nrw.hbz.edoweb2.fedora;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

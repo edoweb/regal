@@ -1,3 +1,4 @@
+package de.nrw.hbz.edoweb2.sync;
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -14,22 +15,30 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.edoweb2.sync;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
-import de.nrw.hbz.edoweb2.datatypes.ContentModel;
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import org.apache.commons.configuration.BaseConfiguration;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public interface IngestInterface
+public class MyPreferences extends BaseConfiguration
 {
-	public abstract void ingest(DigitalEntityBean dtlBean);
-
-	public abstract void delete(String pid);
-
-	public abstract void update(DigitalEntityBean dtlBean);
-
-	public abstract ContentModel createContentModel();
+	public MyPreferences(Class<?> cl)
+	{
+		try
+		{
+			Preferences p = Preferences.userNodeForPackage(cl);
+			for (String preference : p.keys())
+			{
+				this.addProperty(preference, p.get(preference, null));
+			}
+		}
+		catch (BackingStoreException e)
+		{
+			// then we end up with an empty set of preferences, no big deal
+		}
+	}
 }

@@ -72,12 +72,13 @@ public class Actions
 
 	public String deleteAll(Vector<String> pids)
 	{
-
+		System.out.println("Delete All");
 		for (String pid : pids)
 		{
 			try
 			{
 				archive.deleteComplexObject(pid);
+				waitWorkaround();
 			}
 			catch (RemoteException e)
 			{
@@ -152,6 +153,7 @@ public class Actions
 	public String create(ComplexObject object) throws RemoteException
 	{
 		archive.createComplexObject(object);
+		waitWorkaround();
 		return object.getRoot().getPID() + " CREATED!";
 	}
 
@@ -180,6 +182,7 @@ public class Actions
 				v.add(status.visibleFor.toString());
 				node.setRights(v);
 				archive.updateNode(pid, node);
+				waitWorkaround();
 			}
 		}
 		catch (RemoteException e)
@@ -195,6 +198,7 @@ public class Actions
 		try
 		{
 			archive.deleteComplexObject(pid);
+			waitWorkaround();
 		}
 		catch (RemoteException e)
 		{
@@ -527,5 +531,26 @@ public class Actions
 			e.printStackTrace();
 		}
 		return "FAILED! No links added";
+	}
+
+	private void waitWorkaround()
+	{
+		/*
+		 * Workaround START
+		 */
+		try
+		{
+			System.out.println("Wait 10 sec! Nasty workaround.");
+			Thread.sleep(10000);
+			System.out.println("Stop Waiting! Nasty workaround.");
+		}
+		catch (InterruptedException e1)
+		{
+
+			e1.printStackTrace();
+		}
+		/*
+		 * Workaround END
+		 */
 	}
 }
