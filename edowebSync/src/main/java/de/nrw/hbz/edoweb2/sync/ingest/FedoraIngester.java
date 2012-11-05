@@ -458,7 +458,7 @@ public class FedoraIngester implements IngestInterface
 						+ edowebNamespace + ":" + pid);
 
 		WebResource deleteWpd = c
-				.resource("http://localhost:8080/edoweb2-api/report/"
+				.resource("http://localhost:8080/edoweb2-api/wpd/"
 						+ dtlNamespace + ":" + pid);
 
 		WebResource deleteEJournal = c

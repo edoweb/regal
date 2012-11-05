@@ -97,11 +97,17 @@ public class TestEdoweb2Fedora
 		pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();
 		Main main = new Main();
 
-		main.run("DELE", user, password, piddownloaderServer,
-				piddownloaderDownloadLocation, pidreporterServer,
-				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-				pidreporterPidFile);
+		try
+		{
+			main.run("DELE", user, password, piddownloaderServer,
+					piddownloaderDownloadLocation, pidreporterServer,
+					pidreporterSet, pidreporterTimestampFile, fedoraUrl,
+					pidreporterPidFile);
+		}
+		catch (Exception e)
+		{
 
+		}
 		try
 		{
 
