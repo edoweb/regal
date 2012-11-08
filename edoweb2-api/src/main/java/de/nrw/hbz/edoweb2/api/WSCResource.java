@@ -93,13 +93,15 @@ public class WSCResource
 					actions.addUriPrefix(view.getPID()), false));
 			root.addRelation(new Link(INDEX, actions.addUriPrefix(index
 					.getPID()), false));
-
-			root.addRelation(new Link(FULLTEXT, actions.addUriPrefix(fulltext
-					.getPID()), false));
-			root.addRelation(new Link(OCR, actions.addUriPrefix(ocr.getPID()),
-					false));
-			root.addRelation(new Link(TOC, actions.addUriPrefix(toc.getPID()),
-					false));
+			//
+			// root.addRelation(new Link(FULLTEXT, actions.addUriPrefix(fulltext
+			// .getPID()), false));
+			// root.addRelation(new Link(OCR,
+			// actions.addUriPrefix(ocr.getPID()),
+			// false));
+			// root.addRelation(new Link(TOC,
+			// actions.addUriPrefix(toc.getPID()),
+			// false));
 
 			ComplexObject object = new ComplexObject(root);
 			object.addChild(new ComplexObjectNode(view_main));
