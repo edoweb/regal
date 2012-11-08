@@ -129,7 +129,7 @@
 		<module>edowebSync</module>
 		<module>edoweb2-api</module>
 		<module>edowebOAI</module>
-		<module>integrationTests</module>
+	<!--	<module>integrationTests</module>-->
 	</modules>
 
 
