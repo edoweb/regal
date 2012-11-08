@@ -267,7 +267,8 @@ public class DigitalEntityBeanBuilder
 		Node streamRef = root.getElementsByTagName("stream_ref").item(0);
 		String filename = ((Element) streamRef)
 				.getElementsByTagName("file_name").item(0).getTextContent();
-		File file = new File(baseDir + File.separator + filename);
+		File file = new File(baseDir + File.separator + pid + File.separator
+				+ filename);
 		dtlDe.setStream(file);
 		File xmlFile = new File(baseDir + File.separator + pid + ".xml");
 		dtlDe.setXml(xmlFile);

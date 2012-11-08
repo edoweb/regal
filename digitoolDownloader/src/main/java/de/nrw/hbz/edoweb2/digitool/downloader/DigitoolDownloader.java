@@ -174,11 +174,28 @@ public class DigitoolDownloader
 		String filename = ((Element) streamRef)
 				.getElementsByTagName("file_name").item(0).getTextContent();
 		// DIFF between pdfs and zips here! Make different DeliveryRule in
-		// Digitool
-		File pdfFile = new File(objectDirectory + File.separator + filename);
-
-		URL url = new URL(server + "/webclient/DeliveryManager?pid=" + pid
-				+ "&amp;custom_att_2=simple_viewer");
+		// Digitoo
+		if (filename == null || filename.isEmpty())
+			return;
+		File streamDir = new File(objectDirectory + File.separator + pid);
+		if (!streamDir.exists())
+		{
+			streamDir.mkdir();
+		}
+		String path = streamDir.getAbsolutePath() + File.separator + filename;
+		String fileExtension = path.substring(path.lastIndexOf('.'));
+		File streamFile = new File(path);
+		URL url = null;
+		if (fileExtension.compareTo("zip") == 0)
+		{
+			url = new URL(server + "/webclient/DeliveryManager?pid=" + pid
+					+ "&amp;custom_att_2=default_viewer");
+		}
+		else
+		{
+			url = new URL(server + "/webclient/DeliveryManager?pid=" + pid
+					+ "&amp;custom_att_2=simple_viewer");
+		}
 
 		URLConnection con = url.openConnection();
 		BufferedInputStream in = null;
@@ -186,7 +203,7 @@ public class DigitoolDownloader
 		try
 		{
 			in = new BufferedInputStream(con.getInputStream());
-			out = new BufferedOutputStream(new FileOutputStream(pdfFile));
+			out = new BufferedOutputStream(new FileOutputStream(streamFile));
 			byte[] buf = new byte[1024];
 			int n;
 			while ((n = in.read(buf)) != -1)

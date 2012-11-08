@@ -33,8 +33,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.edoweb2.archive.ArchiveFactory;
-import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObjectNode;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
@@ -124,7 +122,7 @@ public class ArchiveIntegrationTest
 		}
 	}
 
-	@Test
+	// @Test
 	public void createObject()
 	{
 		try
@@ -140,7 +138,7 @@ public class ArchiveIntegrationTest
 		}
 	}
 
-	@Test
+	// @Test
 	public void readObject()
 	{
 		try
@@ -172,7 +170,7 @@ public class ArchiveIntegrationTest
 		}
 	}
 
-	@Test
+	// @Test
 	public void updateObject()
 	{
 		try
