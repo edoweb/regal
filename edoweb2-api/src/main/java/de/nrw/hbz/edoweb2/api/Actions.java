@@ -553,4 +553,20 @@ public class Actions
 		 * Workaround END
 		 */
 	}
+
+	// public void addChildToParent(String childPid, String parentPid)
+	// {
+	// try
+	// {
+	// ComplexObject parent = archive.readComplexObject(parentPid);
+	// Node child = archive.readNode(childPid);
+	// parent.addChild(new ComplexObjectNode(child));
+	// archive.updateComplexObject(parent);
+	// }
+	// catch (RemoteException e)
+	// {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
 }

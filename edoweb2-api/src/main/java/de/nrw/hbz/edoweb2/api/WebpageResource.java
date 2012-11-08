@@ -17,6 +17,7 @@
 package de.nrw.hbz.edoweb2.api;
 
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.HBZ_MODEL_NAMESPACE;
+import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
@@ -186,6 +187,11 @@ public class WebpageResource
 			link.setObject(versionName, true);
 			rootObject.addRelation(link);
 
+			link = new Link();
+			link.setPredicate(REL_BELONGS_TO_OBJECT);
+			link.setObject(pid, false);
+			rootObject.addRelation(link);
+
 			rootObject.setNamespace(namespace).setPID(volumeId)
 					.addType(ObjectType.webpageVersion.toString())
 					.addRights("me");
@@ -200,7 +206,9 @@ public class WebpageResource
 			link.setObject(volumeId, false);
 			actions.addLink(pid, link);
 
-			return actions.create(object);
+			String result = actions.create(object);
+			// actions.addChildToParent(volumeId, pid);
+			return result;
 		}
 		catch (RemoteException e)
 		{

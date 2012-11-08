@@ -122,7 +122,7 @@ public class ArchiveIntegrationTest
 		}
 	}
 
-	// @Test
+	@Test
 	public void createObject()
 	{
 		try
@@ -138,7 +138,7 @@ public class ArchiveIntegrationTest
 		}
 	}
 
-	// @Test
+	@Test
 	public void readObject()
 	{
 		try
@@ -170,7 +170,7 @@ public class ArchiveIntegrationTest
 		}
 	}
 
-	// @Test
+	@Test
 	public void updateObject()
 	{
 		try

@@ -4,7 +4,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-@Path("/delete")
+@Path("/edowebAdmin")
 public class EdowebAdminResource
 {
 	Actions actions = new Actions();
