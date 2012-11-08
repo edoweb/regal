@@ -19,6 +19,10 @@ cd edoweb2-api
 mvn clean install war:war
 cp target/edoweb2-api.war $FEDORA_HOME/tomcat/webapps
 
+h1. Status
+
+!https://secure.travis-ci.org/jschnasse/edoweb2.png?branch=master!:https://travis-ci.org/jschnasse/edoweb2
+
 h1. License
 
 Apache License  Version 2.0, January 2004  http://www.apache.org/licenses/
