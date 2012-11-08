@@ -78,6 +78,7 @@ public class DigitalEntityBean
 	File structMap = null;
 	File fileSec = null;
 
+	String streamMime = null;
 	File stream = null;
 	File xml = null;
 
@@ -498,4 +499,15 @@ public class DigitalEntityBean
 	{
 		return label;
 	}
+
+	public String getStreamMime()
+	{
+		return streamMime;
+	}
+
+	public void setStreamMime(String streamMime)
+	{
+		this.streamMime = streamMime;
+	}
+
 }

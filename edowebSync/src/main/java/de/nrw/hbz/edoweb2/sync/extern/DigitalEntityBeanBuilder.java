@@ -270,6 +270,8 @@ public class DigitalEntityBeanBuilder
 		File file = new File(baseDir + File.separator + pid + File.separator
 				+ filename);
 		dtlDe.setStream(file);
+		dtlDe.setStreamMime(((Element) streamRef)
+				.getElementsByTagName("mime_type").item(0).getTextContent());
 		File xmlFile = new File(baseDir + File.separator + pid + ".xml");
 		dtlDe.setXml(xmlFile);
 

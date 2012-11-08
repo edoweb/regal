@@ -368,6 +368,9 @@ public class FedoraIngester implements IngestInterface
 		}
 		for (DigitalEntityBean b : dtlBean.getViewMains())
 		{
+			String mimeType = b.getStreamMime();
+			if (mimeType.compareTo("application/pdf") != 0)
+				continue;
 			String volName = b.getPid();
 			WebResource ejournalVolume = c.resource(ejournal.toString()
 					+ "/volume/" + volName);
@@ -380,10 +383,11 @@ public class FedoraIngester implements IngestInterface
 					.toString() + "/metadata");
 
 			UploadDataBean data = new UploadDataBean();
+
 			try
 			{
 				data.path = new URI(b.getStream().getAbsolutePath());
-				data.mime = "application/pdf";
+				data.mime = mimeType;
 				ejournalVolumeData.post(data);
 			}
 			catch (URISyntaxException e)
