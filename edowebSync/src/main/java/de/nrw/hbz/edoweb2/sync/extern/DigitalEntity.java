@@ -539,4 +539,10 @@ public class DigitalEntity
 		this.streamMime = streamMime;
 	}
 
+	public File getMarcFile()
+	{
+		// TODO Auto-generated method stub
+		return this.marc;
+	}
+
 }

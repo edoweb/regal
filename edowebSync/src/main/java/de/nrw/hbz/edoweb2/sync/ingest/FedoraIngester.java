@@ -16,7 +16,6 @@
  */
 package de.nrw.hbz.edoweb2.sync.ingest;
 
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -359,11 +358,15 @@ public class FedoraIngester implements IngestInterface
 		WebResource webpageDC = c.resource(webpage.toString() + "/dc");
 		WebResource webpageMetadata = c.resource(webpage.toString()
 				+ "/metadata");
+
+		String title = "";
+
 		try
 		{
 			DCBeanAnnotated dc = marc2dc(dtlBean);
 			dc.addType(ObjectType.webpage.toString());
 			webpageDC.post(DCBeanAnnotated.class, dc);
+			title = dc.getFirstTitle();
 		}
 		catch (Exception e)
 		{
@@ -400,16 +403,20 @@ public class FedoraIngester implements IngestInterface
 			}
 			try
 			{
-				DCBeanAnnotated dc = marc2dc(b);
-				dc.addType(ObjectType.webpageVersion.toString());
+				DCBeanAnnotated dc = webpageVersionDC
+						.get(DCBeanAnnotated.class);
+				dc.addTitle("Version of: " + dtlBean.getPid() + " " + title);
 				webpageVersionDC.post(DCBeanAnnotated.class, dc);
 			}
 			catch (Exception e)
 			{
-				logger.debug(e.getMessage());
+				logger.info(e.getMessage());
 			}
 
 		}
+
+		// WebResource webpageCurrent = c.resource(webpage.toString() +
+		// "/current/");
 	}
 
 	private void ingestEJournal(DigitalEntity dtlBean)
@@ -499,8 +506,7 @@ public class FedoraIngester implements IngestInterface
 			Transformer transformer = tFactory
 					.newTransformer(new StreamSource(ClassLoader
 							.getSystemResourceAsStream("MARC21slim2OAIDC.xsl")));
-			transformer.transform(
-					new StreamSource(new StringReader(dtlBean.getMarc())),
+			transformer.transform(new StreamSource(dtlBean.getMarcFile()),
 					new StreamResult(str));
 
 			String xmlStr = str.getBuffer().toString();

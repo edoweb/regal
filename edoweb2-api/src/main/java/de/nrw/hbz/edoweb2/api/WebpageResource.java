@@ -187,8 +187,8 @@ public class WebpageResource
 			rootObject.addRelation(link);
 
 			rootObject.setNamespace(namespace).setPID(volumeId)
-					.addCreator("WebpageResource")
-					.addType(webpageType.toString()).addRights("me");
+					.addType(ObjectType.webpageVersion.toString())
+					.addRights("me");
 
 			rootObject.addContentModel(ContentModelFactory.createReportCM(
 					namespace, webpageType));
@@ -253,6 +253,18 @@ public class WebpageResource
 		String query = getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
 		return actions.readMetadata(versionPid);
+	}
+
+	@GET
+	@Path("/{pid}/version/{versionName}/dc")
+	@Produces({ "application/*" })
+	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
+			@PathParam("versionName") String versionName)
+	{
+		String versionPid = null;
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
+		return actions.readDC(versionPid);
 	}
 
 	@GET
