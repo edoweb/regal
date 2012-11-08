@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
@@ -186,18 +187,24 @@ public class DigitoolDownloader
 		String fileExtension = path.substring(path.lastIndexOf('.'));
 		File streamFile = new File(path);
 		URL url = null;
-		if (fileExtension.compareTo("zip") == 0)
+		if (fileExtension.compareTo(".zip") == 0)
 		{
+			// System.out.println("Found zip!");
 			url = new URL(server + "/webclient/DeliveryManager?pid=" + pid
-					+ "&amp;custom_att_2=default_viewer");
+					+ "&custom_att_2=default_viewer");
+			// System.out.println("wget -O test.zip \"" + url.toString() +
+			// "\"");
 		}
 		else
 		{
+			// System.out.println("Found not zip!");
 			url = new URL(server + "/webclient/DeliveryManager?pid=" + pid
 					+ "&amp;custom_att_2=simple_viewer");
 		}
 
-		URLConnection con = url.openConnection();
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setInstanceFollowRedirects(true);
+
 		BufferedInputStream in = null;
 		BufferedOutputStream out = null;
 		try

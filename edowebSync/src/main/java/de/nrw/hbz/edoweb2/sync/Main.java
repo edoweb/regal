@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 import de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber;
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBeanBuilder;
 import de.nrw.hbz.edoweb2.sync.ingest.FedoraIngester;
 import de.nrw.hbz.edoweb2.sync.ingest.IngestInterface;
@@ -194,7 +194,7 @@ public class Main
 					if (!downloader.hasUpdated())
 					{
 						logger.info("New Files Available: Start Ingest!");
-						DigitalEntityBean dtlBean = builder.buildComplexBean(
+						DigitalEntity dtlBean = builder.buildComplexBean(
 								baseDir, pids.get(i));
 
 						ingester.update(dtlBean);
@@ -203,7 +203,7 @@ public class Main
 					else if (downloader.hasUpdated())
 					{
 						logger.info("Update Files!");
-						DigitalEntityBean dtlBean = builder.buildComplexBean(
+						DigitalEntity dtlBean = builder.buildComplexBean(
 								baseDir, pids.get(i));
 						ingester.update(dtlBean);
 						dtlBean = null;
@@ -242,7 +242,7 @@ public class Main
 					if (!downloader.hasUpdated())
 					{
 						logger.info("New Files Available: Start Ingest!");
-						DigitalEntityBean dtlBean = builder.buildComplexBean(
+						DigitalEntity dtlBean = builder.buildComplexBean(
 								baseDir, pids.get(i));
 
 						ingester.ingest(dtlBean);
@@ -251,7 +251,7 @@ public class Main
 					else if (downloader.hasUpdated())
 					{
 						logger.info("Update Files!");
-						DigitalEntityBean dtlBean = builder.buildComplexBean(
+						DigitalEntity dtlBean = builder.buildComplexBean(
 								baseDir, pids.get(i));
 						ingester.update(dtlBean);
 						dtlBean = null;
@@ -290,7 +290,7 @@ public class Main
 					if (!downloader.hasUpdated() && downloader.hasDownloaded())
 					{
 						logger.info("New Files Available: Start Ingest!");
-						DigitalEntityBean dtlBean = builder.buildComplexBean(
+						DigitalEntity dtlBean = builder.buildComplexBean(
 								baseDir, pids.get(i));
 
 						ingester.ingest(dtlBean);
@@ -329,7 +329,7 @@ public class Main
 					if (!downloader.hasUpdated())
 					{
 						logger.info("New Files Available: Start Ingest!");
-						DigitalEntityBean dtlBean = builder.buildComplexBean(
+						DigitalEntity dtlBean = builder.buildComplexBean(
 								baseDir, pids.get(i));
 
 						ingester.ingest(dtlBean);
@@ -338,7 +338,7 @@ public class Main
 					else if (downloader.hasUpdated())
 					{
 						logger.info("Update Files!");
-						DigitalEntityBean dtlBean = builder.buildComplexBean(
+						DigitalEntity dtlBean = builder.buildComplexBean(
 								baseDir, pids.get(i));
 						ingester.update(dtlBean);
 						dtlBean = null;
@@ -374,7 +374,7 @@ public class Main
 						if (!downloader.hasUpdated())
 						{
 
-							DigitalEntityBean dtlBean = builder
+							DigitalEntity dtlBean = builder
 									.buildComplexBean(baseDir, pids.get(i));
 
 							ingester.ingest(dtlBean);
@@ -385,7 +385,7 @@ public class Main
 						else if (downloader.hasUpdated())
 						{
 
-							DigitalEntityBean dtlBean = builder
+							DigitalEntity dtlBean = builder
 									.buildComplexBean(baseDir, pids.get(i));
 							ingester.update(dtlBean);
 							dtlBean = null;

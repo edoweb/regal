@@ -19,7 +19,7 @@ package de.nrw.hbz.edoweb2.sync.mapper;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
 
 /**
@@ -37,7 +37,7 @@ import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
  */
 public class DCBean extends de.nrw.hbz.edoweb2.datatypes.DCBean
 {
-	DigitalEntityBean dtlBean = null;
+	DigitalEntity dtlBean = null;
 	DigitoolDc2RdfMap map = new DigitoolDc2RdfMap();
 
 	public DCBean(String dcXMLString) throws Exception
@@ -45,7 +45,7 @@ public class DCBean extends de.nrw.hbz.edoweb2.datatypes.DCBean
 		parse(dcXMLString);
 	}
 
-	public DCBean(DigitalEntityBean dtlBean) throws Exception
+	public DCBean(DigitalEntity dtlBean) throws Exception
 	{
 		this.dtlBean = dtlBean;
 

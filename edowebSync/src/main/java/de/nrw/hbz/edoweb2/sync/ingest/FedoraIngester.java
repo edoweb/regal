@@ -39,7 +39,7 @@ import de.nrw.hbz.edoweb2.api.DCBeanAnnotated;
 import de.nrw.hbz.edoweb2.api.ObjectType;
 import de.nrw.hbz.edoweb2.api.UploadDataBean;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.mapper.ControlBean;
 import de.nrw.hbz.edoweb2.sync.mapper.DCBean;
 
@@ -70,7 +70,7 @@ public class FedoraIngester implements IngestInterface
 	}
 
 	@Override
-	public void ingest(DigitalEntityBean dtlBean)
+	public void ingest(DigitalEntity dtlBean)
 	{
 		logger.info("Start ingest: " + dtlNamespace + ":" + dtlBean.getPid());
 
@@ -99,27 +99,29 @@ public class FedoraIngester implements IngestInterface
 		}
 		else if (partitionC.compareTo("WPD02") == 0)
 		{
-			logger.debug(pid + ": is a Amtsdruckschrift new style");
+			logger.info(pid
+					+ ": is a Amtsdruckschrift new style - NOT IMPLEMENTED YET");
 		}
 		else if (partitionC.compareTo("WSC01") == 0)
 		{
 			logger.debug(pid + ": is a Webschnitt");
+			ingestWebpage(dtlBean);
 		}
 		else if (partitionC.compareTo("WSI01") == 0)
 		{
-			logger.debug(pid + ": is a Webside");
+			logger.info(pid + ": is a Webside - NOT IMPLEMENTED YET");
 		}
 
 	}
 
-	private void ingestReports(DigitalEntityBean dtlBean)
+	private void ingestReports(DigitalEntity dtlBean)
 	{
 
 		ingestReportsOriginalObject(dtlBean);
 		ingestReportsNew(dtlBean);
 	}
 
-	private void ingestReportsOriginalObject(DigitalEntityBean dtlBean)
+	private void ingestReportsOriginalObject(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -185,7 +187,8 @@ public class FedoraIngester implements IngestInterface
 		}
 		try
 		{
-			if (dtlBean.getViewLink() != null)
+			if (dtlBean.getViewLinks() != null
+					&& !dtlBean.getViewLinks().isEmpty())
 			{
 				// WPD - view
 				WebResource wpdView = c.resource(wpd.toString() + "/view");
@@ -203,15 +206,17 @@ public class FedoraIngester implements IngestInterface
 						+ "/metadata");
 
 				logger.debug("Upload: "
-						+ dtlBean.getViewLink().getMe().getAbsolutePath());
-				data.path = new URI(dtlBean.getViewLink().getMe()
+						+ dtlBean.getViewLinks().get(0).getMe()
+								.getAbsolutePath());
+				data.path = new URI(dtlBean.getViewLinks().get(0).getMe()
 						.getAbsolutePath());
 				data.mime = "text/xml";
 				wpdViewData.post(data);
 
 				logger.debug("Upload: "
-						+ dtlBean.getViewLink().getStream().getAbsolutePath());
-				data.path = new URI(dtlBean.getViewLink().getStream()
+						+ dtlBean.getViewLinks().get(0).getStream()
+								.getAbsolutePath());
+				data.path = new URI(dtlBean.getViewLinks().get(0).getStream()
 						.getAbsolutePath());
 				data.mime = "text/text";
 				wpdOcrData.post(data);
@@ -227,7 +232,8 @@ public class FedoraIngester implements IngestInterface
 		}
 		try
 		{
-			if (dtlBean.getIndexLink() != null)
+			if (dtlBean.getIndexLinks() != null
+					&& !dtlBean.getIndexLinks().isEmpty())
 			{
 				// WPD - index
 				WebResource wpdIndex = c.resource(wpd.toString() + "/index");
@@ -247,15 +253,17 @@ public class FedoraIngester implements IngestInterface
 						+ "/metadata");
 
 				logger.debug("Upload: "
-						+ dtlBean.getIndexLink().getMe().getAbsolutePath());
-				data.path = new URI(dtlBean.getIndexLink().getMe()
+						+ dtlBean.getIndexLinks().get(0).getMe()
+								.getAbsolutePath());
+				data.path = new URI(dtlBean.getIndexLinks().get(0).getMe()
 						.getAbsolutePath());
 				data.mime = "text/xml";
 				wpdIndexData.post(data);
 
 				logger.debug("Upload: "
-						+ dtlBean.getIndexLink().getStream().getAbsolutePath());
-				data.path = new URI(dtlBean.getIndexLink().getStream()
+						+ dtlBean.getIndexLinks().get(0).getStream()
+								.getAbsolutePath());
+				data.path = new URI(dtlBean.getIndexLinks().get(0).getStream()
 						.getAbsolutePath());
 				data.mime = "text/html";
 				wpdTocData.post(data);
@@ -287,7 +295,7 @@ public class FedoraIngester implements IngestInterface
 
 	}
 
-	private void ingestReportsNew(DigitalEntityBean dtlBean)
+	private void ingestReportsNew(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -332,12 +340,79 @@ public class FedoraIngester implements IngestInterface
 		}
 	}
 
-	private void ingestWebschnitt(DigitalEntityBean dtlBean)
+	private void ingestWebpage(DigitalEntity dtlBean)
 	{
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
 
+		WebResource webpage = c
+				.resource("http://localhost:8080/edoweb2-api/webpage/"
+						+ edowebNamespace + ":" + dtlBean.getPid());
+
+		String request = "content";
+		String response = webpage.put(String.class, request);
+		logger.debug(response);
+
+		WebResource webpageDC = c.resource(webpage.toString() + "/dc");
+		WebResource webpageMetadata = c.resource(webpage.toString()
+				+ "/metadata");
+		try
+		{
+			DCBeanAnnotated dc = marc2dc(dtlBean);
+			dc.addType(ObjectType.webpage.toString());
+			webpageDC.post(DCBeanAnnotated.class, dc);
+		}
+		catch (Exception e)
+		{
+			logger.debug(e.getMessage());
+		}
+		for (DigitalEntity b : dtlBean.getArchiveLinks())
+		{
+			String mimeType = b.getStreamMime();
+			if (mimeType.compareTo("application/zip") != 0)
+				continue;
+			String version = b.getPid();
+			WebResource webpageVersion = c.resource(webpage.toString()
+					+ "/version/" + version);
+			webpageVersion.put();
+			WebResource webpageVersionDC = c.resource(webpageVersion.toString()
+					+ "/dc");
+			WebResource webpageVersionData = c.resource(webpageVersion
+					.toString() + "/data");
+			WebResource webpageVersionMetadata = c.resource(webpageVersion
+					.toString() + "/metadata");
+
+			UploadDataBean data = new UploadDataBean();
+
+			try
+			{
+				data.path = new URI(b.getStream().getAbsolutePath());
+				data.mime = mimeType;
+				webpageVersionData.post(data);
+			}
+			catch (URISyntaxException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try
+			{
+				DCBeanAnnotated dc = marc2dc(b);
+				dc.addType(ObjectType.webpageVersion.toString());
+				webpageVersionDC.post(DCBeanAnnotated.class, dc);
+			}
+			catch (Exception e)
+			{
+				logger.debug(e.getMessage());
+			}
+
+		}
 	}
 
-	private void ingestEJournal(DigitalEntityBean dtlBean)
+	private void ingestEJournal(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -366,7 +441,7 @@ public class FedoraIngester implements IngestInterface
 		{
 			logger.debug(e.getMessage());
 		}
-		for (DigitalEntityBean b : dtlBean.getViewMains())
+		for (DigitalEntity b : dtlBean.getViewMains())
 		{
 			String mimeType = b.getStreamMime();
 			if (mimeType.compareTo("application/pdf") != 0)
@@ -410,7 +485,7 @@ public class FedoraIngester implements IngestInterface
 
 	}
 
-	private DCBeanAnnotated marc2dc(DigitalEntityBean dtlBean)
+	private DCBeanAnnotated marc2dc(DigitalEntity dtlBean)
 	{
 		try
 		{
@@ -442,7 +517,7 @@ public class FedoraIngester implements IngestInterface
 	}
 
 	@Override
-	public void update(DigitalEntityBean dtlBean)
+	public void update(DigitalEntity dtlBean)
 	{
 		// delete(dtlBean.getPid());
 		ingest(dtlBean);

@@ -22,7 +22,7 @@ import java.util.Vector;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
 
 /**
@@ -40,7 +40,7 @@ import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
  */
 public class DCQBean
 {
-	DigitalEntityBean dtlBean = null;
+	DigitalEntity dtlBean = null;
 	DigitoolQDc2RdfMap map = new DigitoolQDc2RdfMap();
 
 	Vector<String> medium = new Vector<String>();
@@ -65,7 +65,7 @@ public class DCQBean
 	Vector<String> anAbstract = new Vector<String>();
 	Vector<String> alternative = new Vector<String>();
 
-	public DCQBean(DigitalEntityBean dtlBean) throws Exception
+	public DCQBean(DigitalEntity dtlBean) throws Exception
 	{
 		this.dtlBean = dtlBean;
 

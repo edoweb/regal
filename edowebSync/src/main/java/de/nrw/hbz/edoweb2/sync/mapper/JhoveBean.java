@@ -32,7 +32,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
 
 /**
@@ -50,7 +50,7 @@ import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
  */
 public class JhoveBean
 {
-	DigitalEntityBean dtlBean = null;
+	DigitalEntity dtlBean = null;
 	DigitoolJhove2RdfMap map = new DigitoolJhove2RdfMap();
 
 	Vector<String> format = new Vector<String>();
@@ -76,7 +76,7 @@ public class JhoveBean
 	Vector<String> imageWidth = new Vector<String>();
 	Vector<String> imageLength = new Vector<String>();
 
-	public JhoveBean(DigitalEntityBean dtlBean) throws Exception
+	public JhoveBean(DigitalEntity dtlBean) throws Exception
 	{
 		this.dtlBean = dtlBean;
 

@@ -17,7 +17,7 @@
 package de.nrw.hbz.edoweb2.sync.ingest;
 
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -25,11 +25,11 @@ import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
  */
 public interface IngestInterface
 {
-	public abstract void ingest(DigitalEntityBean dtlBean);
+	public abstract void ingest(DigitalEntity dtlBean);
 
 	public abstract void delete(String pid);
 
-	public abstract void update(DigitalEntityBean dtlBean);
+	public abstract void update(DigitalEntity dtlBean);
 
 	public abstract ContentModel createContentModel();
 }

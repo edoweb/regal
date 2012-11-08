@@ -22,7 +22,7 @@ import java.util.Vector;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
 
 /**
@@ -41,7 +41,7 @@ import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
 public class DCDBean
 {
 
-	DigitalEntityBean dtlBean = null;
+	DigitalEntity dtlBean = null;
 	DigitoolDcD2RdfMap map = new DigitoolDcD2RdfMap();
 
 	Vector<String> creatorPersonalName = new Vector<String>();
@@ -53,7 +53,7 @@ public class DCDBean
 	Vector<String> placeOfPublication = new Vector<String>();
 	Vector<String> furtherTitle = new Vector<String>();
 
-	public DCDBean(DigitalEntityBean dtlBean) throws Exception
+	public DCDBean(DigitalEntity dtlBean) throws Exception
 	{
 		this.dtlBean = dtlBean;
 

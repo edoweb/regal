@@ -29,7 +29,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
 
 /**
@@ -47,7 +47,7 @@ import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
  */
 public class ControlBean
 {
-	DigitalEntityBean dtlBean = null;
+	DigitalEntity dtlBean = null;
 	DigitoolControl2RdfMap map = new DigitoolControl2RdfMap();
 
 	Vector<String> label = new Vector<String>();
@@ -68,7 +68,7 @@ public class ControlBean
 	Vector<String> modifiedBy = new Vector<String>();
 	Vector<String> adminUnit = new Vector<String>();
 
-	public ControlBean(DigitalEntityBean dtlBean) throws Exception
+	public ControlBean(DigitalEntity dtlBean) throws Exception
 	{
 		this.dtlBean = dtlBean;
 
