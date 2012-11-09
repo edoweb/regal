@@ -18,7 +18,7 @@ bc.. cd edoweb2-api
 mvn clean install war:war
 cp target/edoweb2-api.war $FEDORA_HOME/tomcat/webapps
 
-p.launch tests with
+p. launch tests with
 
 bc.. cd integrationTests
 mvn clean install
