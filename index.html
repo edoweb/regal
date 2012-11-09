@@ -39,20 +39,23 @@ Current Version is still SNAPSHOT-0.0.1.</p>
 
 <h1>Build</h1> 
 
-<code> mvn clean install </code>
+<pre> mvn clean install </pre>
 
 <h1>Test</h1>
+<p>
+To make use of the integrationTests install a fedora-3.6 and make the edoweb2-api.war available e.g.
+</p>
 
-<p>To make use of the integrationTests install a fedora-3.6 and make the edoweb2-api.war available e.g.</p>
-
-<code> cd edoweb2-api
+<pre> cd edoweb2-api
 mvn clean install war:war
-cp target/edoweb2-api.war $FEDORA_HOME/tomcat/webapps</code>
+cp target/edoweb2-api.war $FEDORA_HOME/tomcat/webapps</pre>
 
-<p>launch tests with</p>
+<p>
+launch tests with
+</p>
 
-<code> cd integrationTests
-mvn clean install</code>
+<pre> cd integrationTests
+mvn clean install</pre>
 
 <h1>Status</h1> 
 
