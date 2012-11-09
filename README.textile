@@ -9,15 +9,19 @@ Current Version is still SNAPSHOT-0.0.1.
 
 h1. Build
 
-Unless you haven't installed a test fedora on port 8080 and the edoweb2-api you should build with the skipTests option on.
 
-mvn clean install -DskipTests
+bc mvn clean install 
 
 To make use of the integrationTests install a fedora-3.6 and make the edoweb2-api.war available e.g.
 
-cd edoweb2-api
+bc cd edoweb2-api
 mvn clean install war:war
 cp target/edoweb2-api.war $FEDORA_HOME/tomcat/webapps
+
+launch tests with
+
+bc cd integrationTests
+mvn clean install
 
 h1. Status
 
