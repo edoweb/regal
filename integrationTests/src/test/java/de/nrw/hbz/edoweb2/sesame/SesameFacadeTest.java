@@ -1,3 +1,4 @@
+package de.nrw.hbz.edoweb2.sesame;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
