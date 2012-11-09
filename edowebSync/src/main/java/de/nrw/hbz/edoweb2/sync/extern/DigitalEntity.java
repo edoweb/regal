@@ -37,7 +37,7 @@ import java.util.Vector;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class DigitalEntityBean
+public class DigitalEntity
 {
 	public static String INDEX = "INDEX";
 	public static String ARCHIVE = "ARCHIVE";
@@ -78,21 +78,26 @@ public class DigitalEntityBean
 	File structMap = null;
 	File fileSec = null;
 
+	String streamMime = null;
 	File stream = null;
 	File xml = null;
 
-	DigitalEntityBean archiveLink = null;
-	DigitalEntityBean thumbnailLink = null;
-	DigitalEntityBean indexLink = null;
-	private DigitalEntityBean viewLink;
-
-	Vector<DigitalEntityBean> viewMainLinks = null;
+	Vector<DigitalEntity> archiveLinks = null;
+	Vector<DigitalEntity> thumbnailLinks = null;
+	Vector<DigitalEntity> indexLinks = null;
+	Vector<DigitalEntity> viewLinks;
+	Vector<DigitalEntity> viewMainLinks = null;
 	private String label = null;
 
-	public DigitalEntityBean(String location)
+	public DigitalEntity(String location)
 	{
 		this.location = location;
-		viewMainLinks = new Vector<DigitalEntityBean>();
+		archiveLinks = new Vector<DigitalEntity>();
+		thumbnailLinks = new Vector<DigitalEntity>();
+		indexLinks = new Vector<DigitalEntity>();
+		viewLinks = new Vector<DigitalEntity>();
+		viewMainLinks = new Vector<DigitalEntity>();
+
 	}
 
 	/**
@@ -114,6 +119,7 @@ public class DigitalEntityBean
 			throw new Exception("Can't set Attribute please set PID first.");
 		if (file == null || !file.exists())
 		{
+			System.out.println("NO MARC METADATA");
 			return "";
 		}
 		byte[] buffer = new byte[(int) file.length()];
@@ -424,44 +430,48 @@ public class DigitalEntityBean
 		this.stream = stream;
 	}
 
-	public DigitalEntityBean getArchiveLink()
+	public Vector<DigitalEntity> getArchiveLinks()
 	{
-		return archiveLink;
+		return archiveLinks;
 	}
 
-	public void setArchiveLink(DigitalEntityBean archiveLink)
+	public void setArchiveLink(DigitalEntity archiveLink)
 	{
-		this.archiveLink = archiveLink;
+		archiveLinks = new Vector<DigitalEntity>();
+		archiveLinks.add(archiveLink);
 	}
 
-	public DigitalEntityBean getThumbnailLink()
+	public Vector<DigitalEntity> getThumbnailLinks()
 	{
-		return thumbnailLink;
+		return thumbnailLinks;
 	}
 
-	public void setThumbnailLink(DigitalEntityBean thumbnailLink)
+	public void setThumbnailLink(DigitalEntity thumbnailLink)
 	{
-		this.thumbnailLink = thumbnailLink;
+		thumbnailLinks = new Vector<DigitalEntity>();
+		thumbnailLinks.add(thumbnailLink);
 	}
 
-	public void setViewLink(DigitalEntityBean viewLink)
+	public void setViewLink(DigitalEntity viewLink)
 	{
-		this.viewLink = viewLink;
+		viewLinks = new Vector<DigitalEntity>();
+		viewLinks.add(viewLink);
 	}
 
-	public DigitalEntityBean getViewLink()
+	public Vector<DigitalEntity> getViewLinks()
 	{
-		return viewLink;
+		return viewLinks;
 	}
 
-	public DigitalEntityBean getIndexLink()
+	public Vector<DigitalEntity> getIndexLinks()
 	{
-		return indexLink;
+		return indexLinks;
 	}
 
-	public void setIndexLink(DigitalEntityBean indexLink)
+	public void setIndexLink(DigitalEntity indexLink)
 	{
-		this.indexLink = indexLink;
+		indexLinks = new Vector<DigitalEntity>();
+		indexLinks.add(indexLink);
 	}
 
 	public String getUsageType()
@@ -479,12 +489,32 @@ public class DigitalEntityBean
 		return new File(location + File.separator + pid + ".xml");
 	}
 
-	public void addViewMainLink(DigitalEntityBean b)
+	public void addViewMainLink(DigitalEntity b)
 	{
 		viewMainLinks.add(b);
 	}
 
-	public Vector<DigitalEntityBean> getViewMains()
+	public void addViewLink(DigitalEntity b)
+	{
+		viewMainLinks.add(b);
+	}
+
+	public void addIndexLink(DigitalEntity b)
+	{
+		indexLinks.add(b);
+	}
+
+	public void addArchiveLink(DigitalEntity b)
+	{
+		archiveLinks.add(b);
+	}
+
+	public void addThumbnailLink(DigitalEntity b)
+	{
+		thumbnailLinks.add(b);
+	}
+
+	public Vector<DigitalEntity> getViewMains()
 	{
 		return viewMainLinks;
 	}
@@ -498,4 +528,21 @@ public class DigitalEntityBean
 	{
 		return label;
 	}
+
+	public String getStreamMime()
+	{
+		return streamMime;
+	}
+
+	public void setStreamMime(String streamMime)
+	{
+		this.streamMime = streamMime;
+	}
+
+	public File getMarcFile()
+	{
+		// TODO Auto-generated method stub
+		return this.marc;
+	}
+
 }

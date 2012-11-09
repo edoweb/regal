@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
@@ -174,19 +175,42 @@ public class DigitoolDownloader
 		String filename = ((Element) streamRef)
 				.getElementsByTagName("file_name").item(0).getTextContent();
 		// DIFF between pdfs and zips here! Make different DeliveryRule in
-		// Digitool
-		File pdfFile = new File(objectDirectory + File.separator + filename);
+		// Digitoo
+		if (filename == null || filename.isEmpty())
+			return;
+		File streamDir = new File(objectDirectory + File.separator + pid);
+		if (!streamDir.exists())
+		{
+			streamDir.mkdir();
+		}
+		String path = streamDir.getAbsolutePath() + File.separator + filename;
+		String fileExtension = path.substring(path.lastIndexOf('.'));
+		File streamFile = new File(path);
+		URL url = null;
+		if (fileExtension.compareTo(".zip") == 0)
+		{
+			// System.out.println("Found zip!");
+			url = new URL(server + "/webclient/DeliveryManager?pid=" + pid
+					+ "&custom_att_2=default_viewer");
+			// System.out.println("wget -O test.zip \"" + url.toString() +
+			// "\"");
+		}
+		else
+		{
+			// System.out.println("Found not zip!");
+			url = new URL(server + "/webclient/DeliveryManager?pid=" + pid
+					+ "&amp;custom_att_2=simple_viewer");
+		}
 
-		URL url = new URL(server + "/webclient/DeliveryManager?pid=" + pid
-				+ "&amp;custom_att_2=simple_viewer");
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setInstanceFollowRedirects(true);
 
-		URLConnection con = url.openConnection();
 		BufferedInputStream in = null;
 		BufferedOutputStream out = null;
 		try
 		{
 			in = new BufferedInputStream(con.getInputStream());
-			out = new BufferedOutputStream(new FileOutputStream(pdfFile));
+			out = new BufferedOutputStream(new FileOutputStream(streamFile));
 			byte[] buf = new byte[1024];
 			int n;
 			while ((n = in.read(buf)) != -1)

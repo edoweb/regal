@@ -1,3 +1,5 @@
+package de.nrw.hbz.edoweb2.digitool.downloader;
+
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -25,8 +27,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
-
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
@@ -34,7 +34,7 @@ import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 public class TestDigitoolDownloader
 {
 	Properties properties = new Properties();
-	String pid = "1637992";
+	String pid = "2258539";
 	private final String piddownloaderServer;
 	private final String piddownloaderDownloadLocation;
 

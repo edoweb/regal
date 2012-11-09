@@ -1,3 +1,4 @@
+package de.nrw.hbz.edoweb2.sync;
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *

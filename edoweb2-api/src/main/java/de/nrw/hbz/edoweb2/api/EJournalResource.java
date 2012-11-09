@@ -17,10 +17,12 @@
 package de.nrw.hbz.edoweb2.api;
 
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.HBZ_MODEL_NAMESPACE;
+import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 import java.rmi.RemoteException;
+import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -59,6 +61,13 @@ public class EJournalResource
 
 	}
 
+	@GET
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAll()
+	{
+		return new ObjectList(actions.findByType(ejournalType));
+	}
+
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
@@ -70,21 +79,24 @@ public class EJournalResource
 	}
 
 	@PUT
-	@Path("/{pid}")
-	public String createEJournal(@PathParam("pid") String pid)
+	@Path("/{namespace}:{pid}")
+	public String createEJournal(@PathParam("pid") String pid,
+			@PathParam("namespace") String userNamespace)
 	{
 		System.out.println("create EJournal");
 		try
 		{
 			if (actions.nodeExists(pid))
 				return "ERROR: Node already exists";
+			if (userNamespace.compareTo(namespace) != 0)
+				return "ERROR: Namespace MUST be " + namespace;
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
 			link.setObject(TYPE_OBJECT, true);
 			rootObject.addRelation(link);
-			rootObject.setNamespace(namespace).setPID(pid)
+			rootObject.setNamespace(namespace).setPID(namespace + ":" + pid)
 					.addCreator("EjournalRessource")
 					.addType(ejournalType.toString()).addRights("me");
 
@@ -162,6 +174,22 @@ public class EJournalResource
 		return actions.updateMetadata(pid, content);
 	}
 
+	@GET
+	@Path("/{pid}/volume/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllVolumes()
+	{
+		Vector<String> v = new Vector<String>();
+
+		for (String volPid : actions.findByType(volumeType))
+		{
+
+			v.add(actions.findObject(volPid, HAS_VOLUME_NAME));
+
+		}
+		return new ObjectList(v);
+	}
+
 	@PUT
 	@Path("/{pid}/volume/{volName}")
 	public String createEJournalVolume(@PathParam("pid") String pid,
@@ -171,6 +199,7 @@ public class EJournalResource
 		System.out.println("create EJournal Volume");
 		try
 		{
+
 			String volumeId = actions.getPid(namespace);
 			if (actions.nodeExists(volumeId))
 				return "ERROR: Node already exists";
@@ -183,6 +212,11 @@ public class EJournalResource
 
 			link = new Link();
 			link.setPredicate(this.IS_VOLUME);
+			link.setObject(pid, false);
+			rootObject.addRelation(link);
+
+			link = new Link();
+			link.setPredicate(REL_BELONGS_TO_OBJECT);
 			link.setObject(pid, false);
 			rootObject.addRelation(link);
 
@@ -203,10 +237,16 @@ public class EJournalResource
 			link = new Link();
 			link.setPredicate(this.HAS_VOLUME);
 			link.setObject(volumeId, false);
+
+			link = new Link();
+			link.setPredicate(this.HAS_VOLUME);
+			link.setObject(volumeId, false);
+
 			actions.addLink(pid, link);
 
-			return actions.create(object);
-
+			String result = actions.create(object);
+			// actions.addChildToParent(volumeId, pid);
+			return result;
 		}
 		catch (RemoteException e)
 		{

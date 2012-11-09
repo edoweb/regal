@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.fedora.ingest.service;
+package de.nrw.hbz.edoweb2.archive;
 
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
@@ -33,8 +33,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.edoweb2.archive.ArchiveFactory;
-import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObjectNode;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;

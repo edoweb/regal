@@ -22,7 +22,7 @@ import java.util.Vector;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBean;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
 
 /**
@@ -41,12 +41,12 @@ import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
 public class PremisBean
 {
 
-	DigitalEntityBean dtlBean = null;
+	DigitalEntity dtlBean = null;
 	DigitoolPremis2RdfMap map = new DigitoolPremis2RdfMap();
 
 	Vector<String> urns = new Vector<String>();
 
-	public PremisBean(DigitalEntityBean dtlBean) throws Exception
+	public PremisBean(DigitalEntity dtlBean) throws Exception
 	{
 		this.dtlBean = dtlBean;
 

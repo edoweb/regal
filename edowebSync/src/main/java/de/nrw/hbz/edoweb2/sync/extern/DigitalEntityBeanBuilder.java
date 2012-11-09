@@ -61,22 +61,22 @@ public class DigitalEntityBeanBuilder
 
 	}
 
-	public DigitalEntityBean buildComplexBean(String baseDir, String pid)
+	public DigitalEntity buildComplexBean(String baseDir, String pid)
 	{
 		this.baseDir = baseDir;
 		Element root = getDocument(pid);
 		return buildComplexBean(root);
 	}
 
-	public DigitalEntityBean buildComplexBean(String baseDir, Element root)
+	public DigitalEntity buildComplexBean(String baseDir, Element root)
 	{
 		this.baseDir = baseDir;
 		return buildComplexBean(root);
 	}
 
-	private DigitalEntityBean buildComplexBean(Element root)
+	private DigitalEntity buildComplexBean(Element root)
 	{
-		DigitalEntityBean dtlDe = null;
+		DigitalEntity dtlDe = null;
 
 		String pid = root.getElementsByTagName("pid").item(0).getTextContent();
 
@@ -96,33 +96,48 @@ public class DigitalEntityBeanBuilder
 
 			Element relRoot = getDocument(relPid);
 
-			if (type.compareTo(DigitalEntityBean.MANIFESTATION) == 0)
+			if (type.compareTo(DigitalEntity.MANIFESTATION) == 0)
 			{
-				DigitalEntityBean b = buildSimpleBean(relPid, usageType,
-						relRoot);
-				if (usageType.compareTo(DigitalEntityBean.INDEX) == 0)
+				DigitalEntity b = buildSimpleBean(relPid, usageType, relRoot);
+				if (usageType.compareTo(DigitalEntity.INDEX) == 0)
 				{
 					dtlDe.setIndexLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntityBean.ARCHIVE) == 0)
+				else if (usageType.compareTo(DigitalEntity.ARCHIVE) == 0)
 				{
 					dtlDe.setArchiveLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntityBean.THUMBNAIL) == 0)
+				else if (usageType.compareTo(DigitalEntity.THUMBNAIL) == 0)
 				{
 					dtlDe.setThumbnailLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntityBean.VIEW) == 0)
+				else if (usageType.compareTo(DigitalEntity.VIEW) == 0)
 				{
 					dtlDe.setViewLink(b);
 				}
 			}
-			else if (type.compareTo(DigitalEntityBean.INCLUDE) == 0)
+			else if (type.compareTo(DigitalEntity.INCLUDE) == 0)
 			{
-				DigitalEntityBean b = buildComplexBean(baseDir, relPid);
-				if (usageType.compareTo(DigitalEntityBean.VIEW_MAIN) == 0)
+				DigitalEntity b = buildComplexBean(baseDir, relPid);
+				if (usageType.compareTo(DigitalEntity.VIEW_MAIN) == 0)
 				{
 					dtlDe.addViewMainLink(b);
+				}
+				else if (usageType.compareTo(DigitalEntity.INDEX) == 0)
+				{
+					dtlDe.addIndexLink(b);
+				}
+				else if (usageType.compareTo(DigitalEntity.ARCHIVE) == 0)
+				{
+					dtlDe.addArchiveLink(b);
+				}
+				else if (usageType.compareTo(DigitalEntity.THUMBNAIL) == 0)
+				{
+					dtlDe.addThumbnailLink(b);
+				}
+				else if (usageType.compareTo(DigitalEntity.VIEW) == 0)
+				{
+					dtlDe.addViewLink(b);
 				}
 			}
 		}
@@ -191,10 +206,10 @@ public class DigitalEntityBeanBuilder
 		return getDocument(digitalEntityFile);
 	}
 
-	public DigitalEntityBean buildSimpleBean(String pid, String usageType,
+	public DigitalEntity buildSimpleBean(String pid, String usageType,
 			Element root)
 	{
-		DigitalEntityBean dtlDe = new DigitalEntityBean(baseDir);
+		DigitalEntity dtlDe = new DigitalEntity(baseDir);
 		// System.out.println("BaseDir "+baseDir);
 		dtlDe.setPid(pid);
 		try
@@ -267,8 +282,11 @@ public class DigitalEntityBeanBuilder
 		Node streamRef = root.getElementsByTagName("stream_ref").item(0);
 		String filename = ((Element) streamRef)
 				.getElementsByTagName("file_name").item(0).getTextContent();
-		File file = new File(baseDir + File.separator + filename);
+		File file = new File(baseDir + File.separator + pid + File.separator
+				+ filename);
 		dtlDe.setStream(file);
+		dtlDe.setStreamMime(((Element) streamRef)
+				.getElementsByTagName("mime_type").item(0).getTextContent());
 		File xmlFile = new File(baseDir + File.separator + pid + ".xml");
 		dtlDe.setXml(xmlFile);
 

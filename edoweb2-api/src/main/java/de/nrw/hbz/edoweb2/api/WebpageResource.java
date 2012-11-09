@@ -17,6 +17,7 @@
 package de.nrw.hbz.edoweb2.api;
 
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.HBZ_MODEL_NAMESPACE;
+import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
@@ -186,9 +187,14 @@ public class WebpageResource
 			link.setObject(versionName, true);
 			rootObject.addRelation(link);
 
+			link = new Link();
+			link.setPredicate(REL_BELONGS_TO_OBJECT);
+			link.setObject(pid, false);
+			rootObject.addRelation(link);
+
 			rootObject.setNamespace(namespace).setPID(volumeId)
-					.addCreator("WebpageResource")
-					.addType(webpageType.toString()).addRights("me");
+					.addType(ObjectType.webpageVersion.toString())
+					.addRights("me");
 
 			rootObject.addContentModel(ContentModelFactory.createReportCM(
 					namespace, webpageType));
@@ -200,7 +206,9 @@ public class WebpageResource
 			link.setObject(volumeId, false);
 			actions.addLink(pid, link);
 
-			return actions.create(object);
+			String result = actions.create(object);
+			// actions.addChildToParent(volumeId, pid);
+			return result;
 		}
 		catch (RemoteException e)
 		{
@@ -253,6 +261,18 @@ public class WebpageResource
 		String query = getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
 		return actions.readMetadata(versionPid);
+	}
+
+	@GET
+	@Path("/{pid}/version/{versionName}/dc")
+	@Produces({ "application/*" })
+	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
+			@PathParam("versionName") String versionName)
+	{
+		String versionPid = null;
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
+		return actions.readDC(versionPid);
 	}
 
 	@GET

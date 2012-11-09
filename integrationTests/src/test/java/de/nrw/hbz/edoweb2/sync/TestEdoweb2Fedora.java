@@ -1,3 +1,5 @@
+package de.nrw.hbz.edoweb2.sync;
+
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -14,6 +16,7 @@
  * limitations under the License.
  *
  */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -88,17 +91,26 @@ public class TestEdoweb2Fedora
 
 	}
 
+	/*
+	 * 1637992 4676380 2258539 1638892 4628526
+	 */
 	@Before
 	public void setUp()
 	{
 		pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();
 		Main main = new Main();
 
-		main.run("DELE", user, password, piddownloaderServer,
-				piddownloaderDownloadLocation, pidreporterServer,
-				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-				pidreporterPidFile);
+		try
+		{
+			main.run("DELE", user, password, piddownloaderServer,
+					piddownloaderDownloadLocation, pidreporterServer,
+					pidreporterSet, pidreporterTimestampFile, fedoraUrl,
+					pidreporterPidFile);
+		}
+		catch (Exception e)
+		{
 
+		}
 		try
 		{
 
@@ -139,23 +151,23 @@ public class TestEdoweb2Fedora
 	@After
 	public void tearDown()
 	{
-		// Main main = new Main();
-		//
-		// main.run("DELE", user, password, piddownloaderServer,
-		// piddownloaderDownloadLocation, pidreporterServer,
-		// pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-		// pidreporterPidFile);
-		//
-		// try
-		// {
-		// FileUtils
-		// .deleteDirectory(new File("piddownloaderDownloadLocation"));
-		// }
-		// catch (IOException e)
-		// {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		Main main = new Main();
+
+		main.run("DELE", user, password, piddownloaderServer,
+				piddownloaderDownloadLocation, pidreporterServer,
+				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
+				pidreporterPidFile);
+
+		try
+		{
+			FileUtils
+					.deleteDirectory(new File("piddownloaderDownloadLocation"));
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 	// 1637996
