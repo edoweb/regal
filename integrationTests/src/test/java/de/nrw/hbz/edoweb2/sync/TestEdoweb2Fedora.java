@@ -81,7 +81,7 @@ public class TestEdoweb2Fedora
 		pidreporterSet = properties.getProperty("pidreporter.set");
 
 		pidreporterTimestampFile = properties
-				.getProperty("pidReporter.timestampFile");
+				.getProperty("pidreporter.timestampFile");
 		piddownloaderServer = properties.getProperty("piddownloader.server");
 		piddownloaderDownloadLocation = properties
 				.getProperty("piddownloader.downloadLocation");
@@ -92,7 +92,7 @@ public class TestEdoweb2Fedora
 	}
 
 	/*
-	 * 1637992 4676380 2258539 1638892 4628526
+	 * 1637992 4676380 2258539 1638892 4628526 2238484
 	 */
 	@Before
 	public void setUp()
@@ -141,7 +141,7 @@ public class TestEdoweb2Fedora
 	{
 		Main main = new Main();
 
-		main.run("PIDL", user, password, piddownloaderServer,
+		main.run("SYNC", user, password, piddownloaderServer,
 				piddownloaderDownloadLocation, pidreporterServer,
 				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
 				pidreporterPidFile);
@@ -151,23 +151,23 @@ public class TestEdoweb2Fedora
 	@After
 	public void tearDown()
 	{
-		Main main = new Main();
-
-		main.run("DELE", user, password, piddownloaderServer,
-				piddownloaderDownloadLocation, pidreporterServer,
-				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-				pidreporterPidFile);
-
-		try
-		{
-			FileUtils
-					.deleteDirectory(new File("piddownloaderDownloadLocation"));
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// Main main = new Main();
+		//
+		// main.run("DELE", user, password, piddownloaderServer,
+		// piddownloaderDownloadLocation, pidreporterServer,
+		// pidreporterSet, pidreporterTimestampFile, fedoraUrl,
+		// pidreporterPidFile);
+		//
+		// try
+		// {
+		// FileUtils
+		// .deleteDirectory(new File("piddownloaderDownloadLocation"));
+		// }
+		// catch (IOException e)
+		// {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 	}
 	// 1637996
