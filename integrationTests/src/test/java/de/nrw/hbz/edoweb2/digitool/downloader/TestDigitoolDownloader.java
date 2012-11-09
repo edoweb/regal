@@ -34,7 +34,10 @@ import org.junit.Test;
 public class TestDigitoolDownloader
 {
 	Properties properties = new Properties();
-	String pid = "2258539";
+	/*
+	 * 1637992 4676380 2258539 1638892 4628526
+	 */
+	String pid = "4676380";
 	private final String piddownloaderServer;
 	private final String piddownloaderDownloadLocation;
 

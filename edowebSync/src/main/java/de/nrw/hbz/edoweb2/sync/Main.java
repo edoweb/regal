@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 import de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBeanBuilder;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBuilder;
 import de.nrw.hbz.edoweb2.sync.ingest.FedoraIngester;
 import de.nrw.hbz.edoweb2.sync.ingest.IngestInterface;
 
@@ -179,7 +179,7 @@ public class Main
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 			logger.info("Erzeuge ca. " + pids.size() * 17 + " Fedoraobjekte.");
-			DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
+			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 
 			for (int i = 0; i < pids.size(); i++)
 			{
@@ -225,7 +225,7 @@ public class Main
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
-			DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
+			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 			// IngestInterface ingester = new FedoraIngester("ellinet",
 			// fedoraBase, user, password, axisHome);
 
@@ -273,7 +273,7 @@ public class Main
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 			logger.info("Erzeuge ca. " + pids.size() * 17 + " Fedoraobjekte.");
-			DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
+			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 			// IngestInterface ingester = new FedoraIngester("ellinet",
 			// fedoraBase, user, password, axisHome);
 
@@ -312,7 +312,7 @@ public class Main
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 			logger.info("Erzeuge ca. " + pids.size() * 17 + " Fedoraobjekte.");
-			DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
+			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 			// IngestInterface ingester = new FedoraIngester("ellinet",
 			// fedoraBase, user, password, axisHome);
 
@@ -357,7 +357,7 @@ public class Main
 			try
 			{
 				pids = readPidlist(pidListFile);
-				DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
+				DigitalEntityBuilder builder = new DigitalEntityBuilder();
 				// IngestInterface ingester = new FedoraIngester("ellinet",
 				// fedoraBase, user, password, axisHome);
 				int size = pids.size();

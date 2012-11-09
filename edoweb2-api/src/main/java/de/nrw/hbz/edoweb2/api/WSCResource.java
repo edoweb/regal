@@ -43,6 +43,8 @@ public class WSCResource
 	String INDEX = HBZ_MODEL_NAMESPACE + "index";
 	String ARCHIVE = HBZ_MODEL_NAMESPACE + "archive";
 	String WEBARCHIVE = HBZ_MODEL_NAMESPACE + "webarchive";
+	String WEBARCHIVE_VIEW = HBZ_MODEL_NAMESPACE + "webarchive_view";
+	String WEBARCHIVE_ARCHIVE = HBZ_MODEL_NAMESPACE + "webarchive_archive";
 
 	ObjectType objectType = ObjectType.wsc;
 	String namespace = "dtl";
@@ -74,42 +76,94 @@ public class WSCResource
 			root.addContentModel(ContentModelFactory.createWpdCM(namespace,
 					objectType));
 
-			Node view_main = new Node(pid + "_1");
-			view_main.addTitle("Fulltext XML (not initialized yet)");
+			Node complex = new Node(pid + "_1");
+			complex.addTitle("Webpage Complex Object XML (not initialized yet)");
 			Node view = new Node(pid + "_2");
-			view.addTitle("OCR XML (not initialized yet)");
-			Node index = new Node(pid + "_3");
-			index.addTitle("TOC XML (not initialized yet)");
-			Node fulltext = new Node(pid + "_4");
-			fulltext.addTitle("Fulltext Data(not initialized yet)");
-			Node ocr = new Node(pid + "_5");
-			ocr.addTitle("OCR Data (not initialized yet)");
-			Node toc = new Node(pid + "_6");
-			toc.addTitle("TOC DATA (not initialized yet)");
+			view.addTitle("Webarchive view XML (not initialized yet)");
+			Node archive = new Node(pid + "_3");
+			archive.addTitle("Webarchive archive XML (not initialized yet)");
+			Node archive_zip = new Node(pid + "_4");
+			archive_zip
+					.addTitle("Webarchive archive zip (not initialized yet)");
+			Node view_zip = new Node(pid + "_5");
+			view_zip.addTitle("Webarchive view zip (not initialized yet)");
 
-			root.addRelation(new Link(VIEW_MAIN, actions.addUriPrefix(view_main
+			root.addRelation(new Link(VIEW_MAIN, actions.addUriPrefix(complex
 					.getPID()), false));
 			root.addRelation(new Link(VIEW,
 					actions.addUriPrefix(view.getPID()), false));
-			root.addRelation(new Link(INDEX, actions.addUriPrefix(index
+			root.addRelation(new Link(INDEX, actions.addUriPrefix(archive
 					.getPID()), false));
-			//
-			// root.addRelation(new Link(FULLTEXT, actions.addUriPrefix(fulltext
-			// .getPID()), false));
-			// root.addRelation(new Link(OCR,
-			// actions.addUriPrefix(ocr.getPID()),
-			// false));
-			// root.addRelation(new Link(TOC,
-			// actions.addUriPrefix(toc.getPID()),
-			// false));
+			root.addRelation(new Link(WEBARCHIVE_VIEW, actions
+					.addUriPrefix(view.getPID()), false));
+			root.addRelation(new Link(WEBARCHIVE_ARCHIVE, actions
+					.addUriPrefix(archive.getPID()), false));
 
 			ComplexObject object = new ComplexObject(root);
-			object.addChild(new ComplexObjectNode(view_main));
+			object.addChild(new ComplexObjectNode(complex));
 			object.addChild(new ComplexObjectNode(view));
-			object.addChild(new ComplexObjectNode(index));
-			object.addChild(new ComplexObjectNode(fulltext));
-			object.addChild(new ComplexObjectNode(ocr));
-			object.addChild(new ComplexObjectNode(toc));
+			object.addChild(new ComplexObjectNode(archive));
+			object.addChild(new ComplexObjectNode(archive_zip));
+			object.addChild(new ComplexObjectNode(view_zip));
+
+			return actions.create(object);
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
+		}
+		return "failed";
+	}
+
+	@PUT
+	@Path("/{pid}")
+	public String createWSCVersion(@PathParam("pid") String pid)
+	{
+		try
+		{
+			if (actions.nodeExists(pid))
+				return "ERROR: Node already exists";
+			Node root = new Node();
+			root.addTitle("RootObject (not initialized yet)");
+			root.setNodeType(TYPE_OBJECT);
+			Link link = new Link();
+			link.setPredicate(REL_IS_NODE_TYPE);
+			link.setObject(TYPE_OBJECT, true);
+			root.addRelation(link);
+			root.setNamespace(namespace).setPID(pid)
+					.addType(objectType.toString()).addRights("me");
+			root.addContentModel(ContentModelFactory.createWpdCM(namespace,
+					objectType));
+
+			Node complex = new Node(pid + "_1");
+			complex.addTitle("Webpage Complex Object XML (not initialized yet)");
+			Node view = new Node(pid + "_2");
+			view.addTitle("Webarchive view XML (not initialized yet)");
+			Node archive = new Node(pid + "_3");
+			archive.addTitle("Webarchive archive XML (not initialized yet)");
+			Node archive_zip = new Node(pid + "_4");
+			archive_zip
+					.addTitle("Webarchive archive zip (not initialized yet)");
+			Node view_zip = new Node(pid + "_5");
+			view_zip.addTitle("Webarchive view zip (not initialized yet)");
+
+			root.addRelation(new Link(VIEW_MAIN, actions.addUriPrefix(complex
+					.getPID()), false));
+			root.addRelation(new Link(VIEW,
+					actions.addUriPrefix(view.getPID()), false));
+			root.addRelation(new Link(INDEX, actions.addUriPrefix(archive
+					.getPID()), false));
+			root.addRelation(new Link(WEBARCHIVE_VIEW, actions
+					.addUriPrefix(view.getPID()), false));
+			root.addRelation(new Link(WEBARCHIVE_ARCHIVE, actions
+					.addUriPrefix(archive.getPID()), false));
+
+			ComplexObject object = new ComplexObject(root);
+			object.addChild(new ComplexObjectNode(complex));
+			object.addChild(new ComplexObjectNode(view));
+			object.addChild(new ComplexObjectNode(archive));
+			object.addChild(new ComplexObjectNode(archive_zip));
+			object.addChild(new ComplexObjectNode(view_zip));
 
 			return actions.create(object);
 		}

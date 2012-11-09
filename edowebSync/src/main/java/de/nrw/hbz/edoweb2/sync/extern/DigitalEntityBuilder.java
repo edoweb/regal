@@ -52,11 +52,11 @@ import org.xml.sax.SAXException;
  * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
-public class DigitalEntityBeanBuilder
+public class DigitalEntityBuilder
 {
 	String baseDir = null;
 
-	public DigitalEntityBeanBuilder()
+	public DigitalEntityBuilder()
 	{
 
 	}

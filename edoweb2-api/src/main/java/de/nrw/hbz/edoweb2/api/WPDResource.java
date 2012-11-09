@@ -76,11 +76,13 @@ public class WPDResource
 	}
 
 	@PUT
-	@Path("/{pid}")
-	public String createWpd(@PathParam("pid") String pid)
+	@Path("/{pid}?versions={numberOfVersions}")
+	public String createWpd(@PathParam("pid") String pid,
+			@PathParam("numberOfVersions") String numberOfVersions)
 	{
 		try
 		{
+			int num = Integer.parseInt(numberOfVersions);
 			if (actions.nodeExists(pid))
 				return "ERROR: Node already exists";
 			Node root = new Node();
@@ -94,41 +96,42 @@ public class WPDResource
 					.addType(wpdType.toString()).addRights("me");
 			root.addContentModel(ContentModelFactory.createWpdCM(namespace,
 					wpdType));
-
-			Node view_main = new Node(pid + "_1");
-			view_main.addTitle("Fulltext XML (not initialized yet)");
-			Node view = new Node(pid + "_2");
-			view.addTitle("OCR XML (not initialized yet)");
-			Node index = new Node(pid + "_3");
-			index.addTitle("TOC XML (not initialized yet)");
-			Node fulltext = new Node(pid + "_4");
-			fulltext.addTitle("Fulltext Data(not initialized yet)");
-			Node ocr = new Node(pid + "_5");
-			ocr.addTitle("OCR Data (not initialized yet)");
-			Node toc = new Node(pid + "_6");
-			toc.addTitle("TOC DATA (not initialized yet)");
-
-			root.addRelation(new Link(VIEW_MAIN, actions.addUriPrefix(view_main
-					.getPID()), false));
-			root.addRelation(new Link(VIEW,
-					actions.addUriPrefix(view.getPID()), false));
-			root.addRelation(new Link(INDEX, actions.addUriPrefix(index
-					.getPID()), false));
-
-			root.addRelation(new Link(FULLTEXT, actions.addUriPrefix(fulltext
-					.getPID()), false));
-			root.addRelation(new Link(OCR, actions.addUriPrefix(ocr.getPID()),
-					false));
-			root.addRelation(new Link(TOC, actions.addUriPrefix(toc.getPID()),
-					false));
-
 			ComplexObject object = new ComplexObject(root);
-			object.addChild(new ComplexObjectNode(view_main));
-			object.addChild(new ComplexObjectNode(view));
-			object.addChild(new ComplexObjectNode(index));
-			object.addChild(new ComplexObjectNode(fulltext));
-			object.addChild(new ComplexObjectNode(ocr));
-			object.addChild(new ComplexObjectNode(toc));
+			for (int i = 0; i < num; i++)
+			{
+				Node view_main = new Node();
+				view_main.addTitle("Fulltext XML (not initialized yet)");
+				Node view = new Node();
+				view.addTitle("OCR XML (not initialized yet)");
+				Node index = new Node();
+				index.addTitle("TOC XML (not initialized yet)");
+				Node fulltext = new Node();
+				fulltext.addTitle("Fulltext Data(not initialized yet)");
+				Node ocr = new Node();
+				ocr.addTitle("OCR Data (not initialized yet)");
+				Node toc = new Node();
+				toc.addTitle("TOC DATA (not initialized yet)");
+
+				root.addRelation(new Link(VIEW_MAIN, actions
+						.addUriPrefix(view_main.getPID()), false));
+				root.addRelation(new Link(VIEW, actions.addUriPrefix(view
+						.getPID()), false));
+				root.addRelation(new Link(INDEX, actions.addUriPrefix(index
+						.getPID()), false));
+
+				root.addRelation(new Link(FULLTEXT, actions
+						.addUriPrefix(fulltext.getPID()), false));
+				root.addRelation(new Link(OCR, actions.addUriPrefix(ocr
+						.getPID()), false));
+				root.addRelation(new Link(TOC, actions.addUriPrefix(toc
+						.getPID()), false));
+				object.addChild(new ComplexObjectNode(view_main));
+				object.addChild(new ComplexObjectNode(view));
+				object.addChild(new ComplexObjectNode(index));
+				object.addChild(new ComplexObjectNode(fulltext));
+				object.addChild(new ComplexObjectNode(ocr));
+				object.addChild(new ComplexObjectNode(toc));
+			}
 
 			return actions.create(object);
 		}
@@ -264,7 +267,8 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateMetadata(actions.findObject(pid, VIEW_MAIN), content);
+		return actions.updateMetadata(actions.findObject(pid, VIEW_MAIN),
+				content);
 	}
 
 	@GET
@@ -409,7 +413,8 @@ public class WPDResource
 			UploadDataBean content)
 	{
 
-		return actions.updateMetadata(actions.findObject(pid, FULLTEXT), content);
+		return actions.updateMetadata(actions.findObject(pid, FULLTEXT),
+				content);
 	}
 
 	@GET
