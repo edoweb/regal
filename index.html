@@ -28,28 +28,37 @@
         </ul>
       </header>
       <section>
-        <h1>About</h1>
+        <p>h1. About</p>
 
 <p>Edoweb2 is the successor of edoweb <a href="http://www.hbz-nrw.de/angebote/hosting/edoweb/">http://www.hbz-nrw.de/angebote/hosting/edoweb/</a></p>
 
-<h1>Releases</h1>
+<p>h1. Releases</p>
 
 <p>Not released yet! The current status of this project is "in development". 
 Current Version is still SNAPSHOT-0.0.1.</p>
 
-<h1>Build</h1>
+<p>h1. Build</p>
 
-<p>Unless you haven't installed a test fedora on port 8080 and the edoweb2-api you should build with the skipTests option on.</p>
+<p>bc.. mvn clean install </p>
 
-<p>mvn clean install -DskipTests</p>
+<p>h1. Test</p>
 
 <p>To make use of the integrationTests install a fedora-3.6 and make the edoweb2-api.war available e.g.</p>
 
-<p>cd edoweb2-api
+<p>bc.. cd edoweb2-api
 mvn clean install war:war
 cp target/edoweb2-api.war $FEDORA_HOME/tomcat/webapps</p>
 
-<h1>License</h1>
+<p>p. launch tests with</p>
+
+<p>bc.. cd integrationTests
+mvn clean install</p>
+
+<p>h1. Status</p>
+
+<p>!<a href="https://secure.travis-ci.org/jschnasse/edoweb2.png?branch=master!:https://travis-ci.org/jschnasse/edoweb2">https://secure.travis-ci.org/jschnasse/edoweb2.png?branch=master!:https://travis-ci.org/jschnasse/edoweb2</a></p>
+
+<p>h1. License</p>
 
 <p>Apache License  Version 2.0, January 2004  <a href="http://www.apache.org/licenses/">http://www.apache.org/licenses/</a>
 Copyright 2012 hbz NRW (<a href="http://www.hbz-nrw.de/">http://www.hbz-nrw.de/</a>)</p>
