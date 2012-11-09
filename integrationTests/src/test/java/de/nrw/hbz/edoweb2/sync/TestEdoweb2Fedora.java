@@ -125,8 +125,8 @@ public class TestEdoweb2Fedora
 		// .println(piddownloaderDownloadLocation + " has been deleted!");
 		if (!new File(piddownloaderDownloadLocation).exists())
 		{
-			boolean success = (new File(piddownloaderDownloadLocation))
-					.mkdirs();
+			// boolean success =
+			(new File(piddownloaderDownloadLocation)).mkdirs();
 			// if (success)
 			// {
 			// // System.out.println(piddownloaderDownloadLocation

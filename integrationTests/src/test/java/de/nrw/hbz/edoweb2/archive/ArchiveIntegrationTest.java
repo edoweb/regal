@@ -177,7 +177,8 @@ public class ArchiveIntegrationTest
 		{
 
 			Node myObject = archive.createComplexObject(object);
-			Node node1 = archive.createNode(myObject.getPID());
+			// Node node1 =
+			archive.createNode(myObject.getPID());
 
 			Node node2 = new Node();
 			node2.addTitle("NEUER KNOTEN").setLabel("Cooler neuer Knoten");

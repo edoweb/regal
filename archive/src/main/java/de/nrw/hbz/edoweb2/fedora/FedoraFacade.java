@@ -230,6 +230,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 	 *            Node which will be replaced by this method
 	 * @throws RemoteException
 	 */
+	@SuppressWarnings("static-access")
 	@Override
 	public Node readNode(String nodePid) throws RemoteException
 	{
@@ -308,7 +309,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -389,7 +389,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 				}
 				catch (RepositoryException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -397,6 +396,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 		return null;
 	}
 
+	@SuppressWarnings("static-access")
 	private List<String> findPidsSimple(String rdfQuery)
 	{
 		FedoraCredentials credentials;
@@ -416,6 +416,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			List<String> result = response.getPids();
 			while (response.hasNext())
 			{
+
 				response = fedora.findObjects().pid()
 						.sessionToken(response.getToken()).maxResults(50)
 						.resultFormat("xml").execute();
@@ -427,12 +428,10 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (MalformedURLException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (FedoraClientException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

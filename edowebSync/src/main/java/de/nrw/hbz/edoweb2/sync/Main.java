@@ -1,4 +1,5 @@
 package de.nrw.hbz.edoweb2.sync;
+
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -127,9 +128,7 @@ public class Main
 			String oai = config.getOptionValue("oai");
 			String set = config.getOptionValue("set");
 			String timestamp = config.getOptionValue("timestamp");
-			String axisHome = config.getOptionValue("axisHome");
 			String fedoraBase = config.getOptionValue("fedoraBase");
-			String htmlExport = config.getOptionValue("htmlExport");
 			String pidListFile = null;
 			if (config.hasOption("list"))
 			{
@@ -374,8 +373,8 @@ public class Main
 						if (!downloader.hasUpdated())
 						{
 
-							DigitalEntity dtlBean = builder
-									.buildComplexBean(baseDir, pids.get(i));
+							DigitalEntity dtlBean = builder.buildComplexBean(
+									baseDir, pids.get(i));
 
 							ingester.ingest(dtlBean);
 							dtlBean = null;
@@ -385,8 +384,8 @@ public class Main
 						else if (downloader.hasUpdated())
 						{
 
-							DigitalEntity dtlBean = builder
-									.buildComplexBean(baseDir, pids.get(i));
+							DigitalEntity dtlBean = builder.buildComplexBean(
+									baseDir, pids.get(i));
 							ingester.update(dtlBean);
 							dtlBean = null;
 							logger.info((i + 1) + "/" + size + " " + pid

@@ -137,24 +137,24 @@ public class FedoraIngester implements IngestInterface
 		logger.debug(response);
 
 		WebResource wpdDC = c.resource(wpd.toString() + "/dc");
-		WebResource wpdData = c.resource(wpd.toString() + "/data");
-		WebResource wpdMetadata = c.resource(wpd.toString() + "/metadata");
+		// WebResource wpdData = c.resource(wpd.toString() + "/data");
+		// WebResource wpdMetadata = c.resource(wpd.toString() + "/metadata");
 
 		// WPD - view_main
 		WebResource wpdViewMain = c.resource(wpd.toString() + "/view_main");
 		WebResource wpdViewMainDC = c.resource(wpdViewMain.toString() + "/dc");
 		WebResource wpdViewMainData = c.resource(wpdViewMain.toString()
 				+ "/data");
-		WebResource wpdViewMainMetadata = c.resource(wpdViewMain.toString()
-				+ "/metadata");
+		// WebResource wpdViewMainMetadata = c.resource(wpdViewMain.toString()
+		// + "/metadata");
 
 		// WPD - fulltext
 		WebResource wpdFulltext = c.resource(wpd.toString() + "/fulltext");
 		WebResource wpdFulltextDC = c.resource(wpdFulltext.toString() + "/dc");
 		WebResource wpdFulltextData = c.resource(wpdFulltext.toString()
 				+ "/data");
-		WebResource wpdFulltextMetadata = c.resource(wpdFulltext.toString()
-				+ "/metadata");
+		// WebResource wpdFulltextMetadata = c.resource(wpdFulltext.toString()
+		// + "/metadata");
 
 		wpdViewMainDC.post(new DCBeanAnnotated().addTitle("Main XML"));
 		wpdFulltextDC.post(new DCBeanAnnotated().addTitle("Fulltext Data"));
@@ -169,7 +169,6 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (URISyntaxException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try
@@ -181,7 +180,6 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (URISyntaxException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try
@@ -194,15 +192,15 @@ public class FedoraIngester implements IngestInterface
 				WebResource wpdViewDC = c.resource(wpdView.toString() + "/dc");
 				WebResource wpdViewData = c.resource(wpdView.toString()
 						+ "/data");
-				WebResource wpdViewMetadata = c.resource(wpdView.toString()
-						+ "/metadata");
+				// WebResource wpdViewMetadata = c.resource(wpdView.toString()
+				// + "/metadata");
 				// WPD - ocr
 				WebResource wpdOcr = c.resource(wpd.toString() + "/ocr");
 				WebResource wpdOcrDC = c.resource(wpdOcr.toString() + "/dc");
 				WebResource wpdOcrData = c
 						.resource(wpdOcr.toString() + "/data");
-				WebResource wpdOcrMetadata = c.resource(wpdOcr.toString()
-						+ "/metadata");
+				// WebResource wpdOcrMetadata = c.resource(wpdOcr.toString()
+				// + "/metadata");
 
 				logger.debug("Upload: "
 						+ dtlBean.getViewLinks().get(0).getMe()
@@ -226,7 +224,6 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (URISyntaxException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try
@@ -240,16 +237,16 @@ public class FedoraIngester implements IngestInterface
 						.resource(wpdIndex.toString() + "/dc");
 				WebResource wpdIndexData = c.resource(wpdIndex.toString()
 						+ "/data");
-				WebResource wpdIndexMetadata = c.resource(wpdIndex.toString()
-						+ "/metadata");
+				// WebResource wpdIndexMetadata = c.resource(wpdIndex.toString()
+				// + "/metadata");
 
 				// WPD - toc
 				WebResource wpdToc = c.resource(wpd.toString() + "/toc");
 				WebResource wpdTocDC = c.resource(wpdToc.toString() + "/dc");
 				WebResource wpdTocData = c
 						.resource(wpdToc.toString() + "/data");
-				WebResource wpdTocMetadata = c.resource(wpdToc.toString()
-						+ "/metadata");
+				// WebResource wpdTocMetadata = c.resource(wpdToc.toString()
+				// + "/metadata");
 
 				logger.debug("Upload: "
 						+ dtlBean.getIndexLinks().get(0).getMe()
@@ -275,7 +272,6 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (URISyntaxException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -312,8 +308,8 @@ public class FedoraIngester implements IngestInterface
 
 		WebResource reportDC = c.resource(report.toString() + "/dc");
 		WebResource reportData = c.resource(report.toString() + "/data");
-		WebResource reportMetadata = c
-				.resource(report.toString() + "/metadata");
+		// WebResource reportMetadata = c
+		// .resource(report.toString() + "/metadata");
 		UploadDataBean data = new UploadDataBean();
 		try
 		{
@@ -323,7 +319,7 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (URISyntaxException e)
 		{
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
@@ -356,8 +352,8 @@ public class FedoraIngester implements IngestInterface
 		logger.debug(response);
 
 		WebResource webpageDC = c.resource(webpage.toString() + "/dc");
-		WebResource webpageMetadata = c.resource(webpage.toString()
-				+ "/metadata");
+		// WebResource webpageMetadata = c.resource(webpage.toString()
+		// + "/metadata");
 
 		String title = "";
 
@@ -385,8 +381,8 @@ public class FedoraIngester implements IngestInterface
 					+ "/dc");
 			WebResource webpageVersionData = c.resource(webpageVersion
 					.toString() + "/data");
-			WebResource webpageVersionMetadata = c.resource(webpageVersion
-					.toString() + "/metadata");
+			// WebResource webpageVersionMetadata = c.resource(webpageVersion
+			// .toString() + "/metadata");
 
 			UploadDataBean data = new UploadDataBean();
 
@@ -398,7 +394,6 @@ public class FedoraIngester implements IngestInterface
 			}
 			catch (URISyntaxException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			try
@@ -436,8 +431,8 @@ public class FedoraIngester implements IngestInterface
 		logger.debug(response);
 
 		WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
-		WebResource ejournalMetadata = c.resource(ejournal.toString()
-				+ "/metadata");
+		// WebResource ejournalMetadata = c.resource(ejournal.toString()
+		// + "/metadata");
 		try
 		{
 			DCBeanAnnotated dc = marc2dc(dtlBean);
@@ -461,8 +456,8 @@ public class FedoraIngester implements IngestInterface
 					+ "/dc");
 			WebResource ejournalVolumeData = c.resource(ejournalVolume
 					.toString() + "/data");
-			WebResource ejournalVolumeMetadata = c.resource(ejournalVolume
-					.toString() + "/metadata");
+			// WebResource ejournalVolumeMetadata = c.resource(ejournalVolume
+			// .toString() + "/metadata");
 
 			UploadDataBean data = new UploadDataBean();
 
@@ -474,7 +469,7 @@ public class FedoraIngester implements IngestInterface
 			}
 			catch (URISyntaxException e)
 			{
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
 			}
 			try
@@ -499,8 +494,8 @@ public class FedoraIngester implements IngestInterface
 			StringWriter str = new StringWriter();
 			TransformerFactory tFactory = TransformerFactory.newInstance();
 
-			String xslFile = ClassLoader.getSystemResource(
-					"MARC21slim2OAIDC.xsl").getPath();
+			// String xslFile = ClassLoader.getSystemResource(
+			// "MARC21slim2OAIDC.xsl").getPath();
 
 			// TODO jar path
 			Transformer transformer = tFactory
