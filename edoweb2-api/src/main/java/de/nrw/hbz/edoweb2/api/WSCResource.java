@@ -42,7 +42,7 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-@Path("/webpage")
+@Path("/wsc")
 public class WSCResource
 {
 	String IS_VERSION = HBZ_MODEL_NAMESPACE + "isVersionOf";

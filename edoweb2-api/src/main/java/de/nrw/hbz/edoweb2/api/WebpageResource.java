@@ -22,6 +22,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 import java.rmi.RemoteException;
+import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -50,6 +51,7 @@ public class WebpageResource
 	String IS_CURRENT_VERSION = HBZ_MODEL_NAMESPACE + "isCurrentVersion";
 
 	ObjectType webpageType = ObjectType.webpage;
+	ObjectType webpageVersionType = ObjectType.webpageVersion;
 	String namespace = "edoweb";
 
 	Actions actions = new Actions();
@@ -59,11 +61,21 @@ public class WebpageResource
 
 	}
 
+	@GET
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAll()
+	{
+		return new ObjectList(actions.findByType(webpageType));
+	}
+
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return actions.deleteAll(actions.findByType(webpageType));
+		String eJournal = actions.deleteAll(actions.findByType(webpageType));
+		String eJournalVolume = actions.deleteAll(actions
+				.findByType(webpageVersionType));
+		return eJournal + "\n" + eJournalVolume;
 	}
 
 	@PUT
@@ -297,6 +309,22 @@ public class WebpageResource
 		String query = getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
 		return versionPid;
+	}
+
+	@GET
+	@Path("/{pid}/version/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllVersions(@PathParam("pid") String pid)
+	{
+		Vector<String> v = new Vector<String>();
+
+		for (String volPid : actions.findObject(pid, HAS_VERSION))
+		{
+
+			v.add(actions.findObject(volPid, HAS_VERSION).get(0));
+
+		}
+		return new ObjectList(v);
 	}
 
 	@POST

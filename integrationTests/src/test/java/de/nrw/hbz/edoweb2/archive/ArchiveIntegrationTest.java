@@ -254,20 +254,5 @@ public class ArchiveIntegrationTest
 		{
 			archive.deleteNode(pid);
 		}
-		objects = archive.findNodes("changeme:*");
-		for (String pid : objects)
-		{
-			archive.deleteNode(pid);
-		}
-		objects = archive.findNodes("dtl:*");
-		for (String pid : objects)
-		{
-			archive.deleteNode(pid);
-		}
-		objects = archive.findNodes("edoweb:*");
-		for (String pid : objects)
-		{
-			archive.deleteNode(pid);
-		}
 	}
 }

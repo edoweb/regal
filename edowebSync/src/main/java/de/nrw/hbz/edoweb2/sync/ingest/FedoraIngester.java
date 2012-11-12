@@ -427,7 +427,11 @@ public class FedoraIngester implements IngestInterface
 
 			try
 			{
-				data.path = new URI(b.getStream().getAbsolutePath());
+				String protocol = "file";
+				String host = "";
+				String path = b.getStream().getAbsolutePath();
+				String fragment = "";
+				data.path = new URI(protocol, host, path, fragment);
 				data.mime = mimeType;
 				ejournalVolumeData.post(data);
 			}

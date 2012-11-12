@@ -120,6 +120,7 @@ public class EJournalResource
 	@Produces({ "application/json", "application/xml" })
 	public StatusBean readEJournal(@PathParam("pid") String pid)
 	{
+		System.out.println("read EJournal");
 		return actions.read(pid);
 	}
 
@@ -177,14 +178,14 @@ public class EJournalResource
 	@GET
 	@Path("/{pid}/volume/")
 	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVolumes()
+	public ObjectList getAllVolumes(@PathParam("pid") String pid)
 	{
 		Vector<String> v = new Vector<String>();
 
-		for (String volPid : actions.findByType(volumeType))
+		for (String volPid : actions.findObject(pid, HAS_VOLUME))
 		{
 
-			v.add(actions.findObject(volPid, HAS_VOLUME_NAME));
+			v.add(actions.findObject(volPid, HAS_VOLUME_NAME).get(0));
 
 		}
 		return new ObjectList(v);
@@ -259,13 +260,14 @@ public class EJournalResource
 	@GET
 	@Path("/{pid}/volume/{volName}")
 	@Produces({ "application/*" })
-	public String readVolume(@PathParam("pid") String pid,
+	public StatusBean readVolume(@PathParam("pid") String pid,
 			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
 		String query = getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
-		return volumePid;
+
+		return actions.read(volumePid);
 	}
 
 	@GET

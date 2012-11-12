@@ -17,12 +17,10 @@ package de.nrw.hbz.edoweb2.sync;
  *
  */
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -111,28 +109,28 @@ public class TestEdoweb2Fedora
 		{
 
 		}
-		try
-		{
-
-			FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
-
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		// System.out
-		// .println(piddownloaderDownloadLocation + " has been deleted!");
-		if (!new File(piddownloaderDownloadLocation).exists())
-		{
-			// boolean success =
-			(new File(piddownloaderDownloadLocation)).mkdirs();
-			// if (success)
-			// {
-			// // System.out.println(piddownloaderDownloadLocation
-			// // + " has been created!");
-			// }
-		}
+		// try
+		// {
+		//
+		// FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
+		//
+		// }
+		// catch (IOException e)
+		// {
+		// e.printStackTrace();
+		// }
+		// // System.out
+		// // .println(piddownloaderDownloadLocation + " has been deleted!");
+		// if (!new File(piddownloaderDownloadLocation).exists())
+		// {
+		// // boolean success =
+		// (new File(piddownloaderDownloadLocation)).mkdirs();
+		// // if (success)
+		// // {
+		// // // System.out.println(piddownloaderDownloadLocation
+		// // // + " has been created!");
+		// // }
+		// }
 
 	}
 
@@ -141,7 +139,7 @@ public class TestEdoweb2Fedora
 	{
 		Main main = new Main();
 
-		main.run("SYNC", user, password, piddownloaderServer,
+		main.run("PIDL", user, password, piddownloaderServer,
 				piddownloaderDownloadLocation, pidreporterServer,
 				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
 				pidreporterPidFile);

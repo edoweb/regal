@@ -311,7 +311,7 @@ public class Main
 			Vector<String> pids = harvester.harvest(new String[] { setSpec },
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-			logger.info("Erzeuge ca. " + pids.size() * 17 + " Fedoraobjekte.");
+
 			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 			// IngestInterface ingester = new FedoraIngester("ellinet",
 			// fedoraBase, user, password, axisHome);
@@ -367,7 +367,8 @@ public class Main
 					{
 						// logger.info(i + "\n");
 						String pid = pids.get(i);
-						String baseDir = downloader.download(pid);
+						// TODO Remove false parameter?
+						String baseDir = downloader.download(pid, false);
 						// logger.info("\tBuild Bean \t" + pid);
 
 						if (!downloader.hasUpdated())
