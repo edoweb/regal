@@ -78,6 +78,36 @@ public class EJournalResource
 		return eJournal + "\n" + eJournalVolume;
 	}
 
+	@GET
+	@Path("/{namespace}:{pid}")
+	@Produces({ "application/json", "application/xml" })
+	public StatusBean readEJournal(@PathParam("pid") String pid,
+			@PathParam("namespace") String userNamespace)
+	{
+		System.out.println("read EJournal");
+		return actions.read(namespace + ":" + pid);
+	}
+
+	@POST
+	@Path("/{namespace}:{pid}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public String updateEJournal(@PathParam("pid") String pid,
+			StatusBean status, @PathParam("namespace") String userNamespace)
+	{
+		return actions.update(namespace + ":" + pid, status);
+	}
+
+	@DELETE
+	@Path("/{namespace}:{pid}")
+	public String deleteEJournal(@PathParam("pid") String pid,
+			@PathParam("namespace") String userNamespace)
+	{
+		System.out.println("delete EJournal");
+		actions.delete(namespace + ":" + pid);
+		return namespace + ":" + pid + " EJournal deleted!";
+	}
+
 	@PUT
 	@Path("/{namespace}:{pid}")
 	public String createEJournal(@PathParam("pid") String pid,
@@ -113,33 +143,6 @@ public class EJournalResource
 			e.printStackTrace();
 		}
 		return "Create Failed";
-	}
-
-	@GET
-	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public StatusBean readEJournal(@PathParam("pid") String pid)
-	{
-		System.out.println("read EJournal");
-		return actions.read(pid);
-	}
-
-	@POST
-	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
-	public String updateEJournal(@PathParam("pid") String pid, StatusBean status)
-	{
-		return actions.update(pid, status);
-	}
-
-	@DELETE
-	@Path("/{pid}")
-	public String deleteEJournal(@PathParam("pid") String pid)
-	{
-		System.out.println("delete EJournal");
-		actions.delete(pid);
-		return pid + " EJournal deleted!";
 	}
 
 	@GET
