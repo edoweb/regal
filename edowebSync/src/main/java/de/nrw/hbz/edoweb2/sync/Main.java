@@ -1,4 +1,5 @@
 package de.nrw.hbz.edoweb2.sync;
+
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 import de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
-import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBeanBuilder;
+import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBuilder;
 import de.nrw.hbz.edoweb2.sync.ingest.FedoraIngester;
 import de.nrw.hbz.edoweb2.sync.ingest.IngestInterface;
 
@@ -127,9 +128,7 @@ public class Main
 			String oai = config.getOptionValue("oai");
 			String set = config.getOptionValue("set");
 			String timestamp = config.getOptionValue("timestamp");
-			String axisHome = config.getOptionValue("axisHome");
 			String fedoraBase = config.getOptionValue("fedoraBase");
-			String htmlExport = config.getOptionValue("htmlExport");
 			String pidListFile = null;
 			if (config.hasOption("list"))
 			{
@@ -180,7 +179,7 @@ public class Main
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 			logger.info("Erzeuge ca. " + pids.size() * 17 + " Fedoraobjekte.");
-			DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
+			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 
 			for (int i = 0; i < pids.size(); i++)
 			{
@@ -226,7 +225,7 @@ public class Main
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
-			DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
+			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 			// IngestInterface ingester = new FedoraIngester("ellinet",
 			// fedoraBase, user, password, axisHome);
 
@@ -274,7 +273,7 @@ public class Main
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 			logger.info("Erzeuge ca. " + pids.size() * 17 + " Fedoraobjekte.");
-			DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
+			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 			// IngestInterface ingester = new FedoraIngester("ellinet",
 			// fedoraBase, user, password, axisHome);
 
@@ -312,8 +311,8 @@ public class Main
 			Vector<String> pids = harvester.harvest(new String[] { setSpec },
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-			logger.info("Erzeuge ca. " + pids.size() * 17 + " Fedoraobjekte.");
-			DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
+
+			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 			// IngestInterface ingester = new FedoraIngester("ellinet",
 			// fedoraBase, user, password, axisHome);
 
@@ -358,7 +357,7 @@ public class Main
 			try
 			{
 				pids = readPidlist(pidListFile);
-				DigitalEntityBeanBuilder builder = new DigitalEntityBeanBuilder();
+				DigitalEntityBuilder builder = new DigitalEntityBuilder();
 				// IngestInterface ingester = new FedoraIngester("ellinet",
 				// fedoraBase, user, password, axisHome);
 				int size = pids.size();
@@ -368,14 +367,15 @@ public class Main
 					{
 						// logger.info(i + "\n");
 						String pid = pids.get(i);
-						String baseDir = downloader.download(pid);
+						// TODO Remove false parameter?
+						String baseDir = downloader.download(pid, false);
 						// logger.info("\tBuild Bean \t" + pid);
 
 						if (!downloader.hasUpdated())
 						{
 
-							DigitalEntity dtlBean = builder
-									.buildComplexBean(baseDir, pids.get(i));
+							DigitalEntity dtlBean = builder.buildComplexBean(
+									baseDir, pids.get(i));
 
 							ingester.ingest(dtlBean);
 							dtlBean = null;
@@ -385,8 +385,8 @@ public class Main
 						else if (downloader.hasUpdated())
 						{
 
-							DigitalEntity dtlBean = builder
-									.buildComplexBean(baseDir, pids.get(i));
+							DigitalEntity dtlBean = builder.buildComplexBean(
+									baseDir, pids.get(i));
 							ingester.update(dtlBean);
 							dtlBean = null;
 							logger.info((i + 1) + "/" + size + " " + pid

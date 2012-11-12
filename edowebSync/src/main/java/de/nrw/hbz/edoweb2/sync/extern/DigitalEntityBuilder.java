@@ -52,11 +52,11 @@ import org.xml.sax.SAXException;
  * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
-public class DigitalEntityBeanBuilder
+public class DigitalEntityBuilder
 {
 	String baseDir = null;
 
-	public DigitalEntityBeanBuilder()
+	public DigitalEntityBuilder()
 	{
 
 	}
@@ -99,21 +99,26 @@ public class DigitalEntityBeanBuilder
 			if (type.compareTo(DigitalEntity.MANIFESTATION) == 0)
 			{
 				DigitalEntity b = buildSimpleBean(relPid, usageType, relRoot);
+
 				if (usageType.compareTo(DigitalEntity.INDEX) == 0)
 				{
-					dtlDe.setIndexLink(b);
+					dtlDe.addIndexLink(b);
 				}
 				else if (usageType.compareTo(DigitalEntity.ARCHIVE) == 0)
 				{
-					dtlDe.setArchiveLink(b);
+					dtlDe.addArchiveLink(b);
 				}
 				else if (usageType.compareTo(DigitalEntity.THUMBNAIL) == 0)
 				{
-					dtlDe.setThumbnailLink(b);
+					dtlDe.addThumbnailLink(b);
 				}
 				else if (usageType.compareTo(DigitalEntity.VIEW) == 0)
 				{
-					dtlDe.setViewLink(b);
+					dtlDe.addViewLink(b);
+				}
+				else if (usageType.compareTo(DigitalEntity.VIEW_MAIN) == 0)
+				{
+					dtlDe.addViewMainLink(b);
 				}
 			}
 			else if (type.compareTo(DigitalEntity.INCLUDE) == 0)

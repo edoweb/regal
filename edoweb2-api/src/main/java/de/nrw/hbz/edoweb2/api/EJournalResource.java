@@ -78,6 +78,36 @@ public class EJournalResource
 		return eJournal + "\n" + eJournalVolume;
 	}
 
+	@GET
+	@Path("/{namespace}:{pid}")
+	@Produces({ "application/json", "application/xml" })
+	public StatusBean readEJournal(@PathParam("pid") String pid,
+			@PathParam("namespace") String userNamespace)
+	{
+		System.out.println("read EJournal");
+		return actions.read(namespace + ":" + pid);
+	}
+
+	@POST
+	@Path("/{namespace}:{pid}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public String updateEJournal(@PathParam("pid") String pid,
+			StatusBean status, @PathParam("namespace") String userNamespace)
+	{
+		return actions.update(namespace + ":" + pid, status);
+	}
+
+	@DELETE
+	@Path("/{namespace}:{pid}")
+	public String deleteEJournal(@PathParam("pid") String pid,
+			@PathParam("namespace") String userNamespace)
+	{
+		System.out.println("delete EJournal");
+		actions.delete(namespace + ":" + pid);
+		return namespace + ":" + pid + " EJournal deleted!";
+	}
+
 	@PUT
 	@Path("/{namespace}:{pid}")
 	public String createEJournal(@PathParam("pid") String pid,
@@ -116,32 +146,6 @@ public class EJournalResource
 	}
 
 	@GET
-	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public StatusBean readEJournal(@PathParam("pid") String pid)
-	{
-		return actions.read(pid);
-	}
-
-	@POST
-	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
-	public String updateEJournal(@PathParam("pid") String pid, StatusBean status)
-	{
-		return actions.update(pid, status);
-	}
-
-	@DELETE
-	@Path("/{pid}")
-	public String deleteEJournal(@PathParam("pid") String pid)
-	{
-		System.out.println("delete EJournal");
-		actions.delete(pid);
-		return pid + " EJournal deleted!";
-	}
-
-	@GET
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	public DCBeanAnnotated readEJournalDC(@PathParam("pid") String pid)
@@ -177,14 +181,14 @@ public class EJournalResource
 	@GET
 	@Path("/{pid}/volume/")
 	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVolumes()
+	public ObjectList getAllVolumes(@PathParam("pid") String pid)
 	{
 		Vector<String> v = new Vector<String>();
 
-		for (String volPid : actions.findByType(volumeType))
+		for (String volPid : actions.findObject(pid, HAS_VOLUME))
 		{
 
-			v.add(actions.findObject(volPid, HAS_VOLUME_NAME));
+			v.add(actions.findObject(volPid, HAS_VOLUME_NAME).get(0));
 
 		}
 		return new ObjectList(v);
@@ -259,13 +263,14 @@ public class EJournalResource
 	@GET
 	@Path("/{pid}/volume/{volName}")
 	@Produces({ "application/*" })
-	public String readVolume(@PathParam("pid") String pid,
+	public StatusBean readVolume(@PathParam("pid") String pid,
 			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
 		String query = getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
-		return volumePid;
+
+		return actions.read(volumePid);
 	}
 
 	@GET

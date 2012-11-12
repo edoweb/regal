@@ -408,11 +408,13 @@ public class Actions
 		return volumePid;
 	}
 
-	public String findObject(String pid, String pred)
+	public Vector<String> findObject(String pid, String pred)
 	{
-		InputStream stream = archive.findTriples("info:fedora/" + pid + "> <"
-				+ pred + "> *", FedoraFacade.TYPE_SPO, FedoraFacade.FORMAT_N3);
-		String findpid = null;
+		String query = "<info:fedora/" + pid + "> <" + pred + "> *";
+		System.out.println(query);
+		InputStream stream = archive.findTriples(query, FedoraFacade.TYPE_SPO,
+				FedoraFacade.FORMAT_N3);
+		Vector<String> findpids = new Vector<String>();
 		RepositoryConnection con = null;
 		Repository myRepository = new SailRepository(new MemoryStore());
 		try
@@ -429,9 +431,9 @@ public class Actions
 			while (statements.hasNext())
 			{
 				Statement st = statements.next();
-				findpid = st.getObject().stringValue()
-						.replace("info:fedora/", "");
-				break;
+				findpids.add(st.getObject().stringValue()
+						.replace("info:fedora/", ""));
+
 			}
 		}
 		catch (RepositoryException e)
@@ -463,7 +465,7 @@ public class Actions
 				}
 			}
 		}
-		return findpid;
+		return findpids;
 	}
 
 	public boolean nodeExists(String pid)

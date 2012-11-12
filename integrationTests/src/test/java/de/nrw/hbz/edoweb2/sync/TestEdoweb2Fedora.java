@@ -17,12 +17,10 @@ package de.nrw.hbz.edoweb2.sync;
  *
  */
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +79,7 @@ public class TestEdoweb2Fedora
 		pidreporterSet = properties.getProperty("pidreporter.set");
 
 		pidreporterTimestampFile = properties
-				.getProperty("pidReporter.timestampFile");
+				.getProperty("pidreporter.timestampFile");
 		piddownloaderServer = properties.getProperty("piddownloader.server");
 		piddownloaderDownloadLocation = properties
 				.getProperty("piddownloader.downloadLocation");
@@ -92,7 +90,7 @@ public class TestEdoweb2Fedora
 	}
 
 	/*
-	 * 1637992 4676380 2258539 1638892 4628526
+	 * 1637992 4676380 2258539 1638892 4628526 2238484
 	 */
 	@Before
 	public void setUp()
@@ -111,28 +109,28 @@ public class TestEdoweb2Fedora
 		{
 
 		}
-		try
-		{
-
-			FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
-
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		// System.out
-		// .println(piddownloaderDownloadLocation + " has been deleted!");
-		if (!new File(piddownloaderDownloadLocation).exists())
-		{
-			boolean success = (new File(piddownloaderDownloadLocation))
-					.mkdirs();
-			// if (success)
-			// {
-			// // System.out.println(piddownloaderDownloadLocation
-			// // + " has been created!");
-			// }
-		}
+		// try
+		// {
+		//
+		// FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
+		//
+		// }
+		// catch (IOException e)
+		// {
+		// e.printStackTrace();
+		// }
+		// // System.out
+		// // .println(piddownloaderDownloadLocation + " has been deleted!");
+		// if (!new File(piddownloaderDownloadLocation).exists())
+		// {
+		// // boolean success =
+		// (new File(piddownloaderDownloadLocation)).mkdirs();
+		// // if (success)
+		// // {
+		// // // System.out.println(piddownloaderDownloadLocation
+		// // // + " has been created!");
+		// // }
+		// }
 
 	}
 
@@ -151,23 +149,23 @@ public class TestEdoweb2Fedora
 	@After
 	public void tearDown()
 	{
-		Main main = new Main();
-
-		main.run("DELE", user, password, piddownloaderServer,
-				piddownloaderDownloadLocation, pidreporterServer,
-				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-				pidreporterPidFile);
-
-		try
-		{
-			FileUtils
-					.deleteDirectory(new File("piddownloaderDownloadLocation"));
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// Main main = new Main();
+		//
+		// main.run("DELE", user, password, piddownloaderServer,
+		// piddownloaderDownloadLocation, pidreporterServer,
+		// pidreporterSet, pidreporterTimestampFile, fedoraUrl,
+		// pidreporterPidFile);
+		//
+		// try
+		// {
+		// FileUtils
+		// .deleteDirectory(new File("piddownloaderDownloadLocation"));
+		// }
+		// catch (IOException e)
+		// {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 	}
 	// 1637996

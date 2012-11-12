@@ -163,8 +163,8 @@ public class DigitalEntity
 			throw new Exception("Can't set Attribute please set PID first.");
 		// System.out.println(location + File.separator + pid + "_" + streamId
 		// + ".xml");
-		File file = new File(location + File.separator + pid + "_" + streamId
-				+ ".xml");
+		File file = new File(location + File.separator + "." + pid + "_"
+				+ streamId + ".xml");
 
 		file.createNewFile();
 		BufferedWriter writer = null;
@@ -458,6 +458,12 @@ public class DigitalEntity
 		viewLinks.add(viewLink);
 	}
 
+	public void setViewMainLink(DigitalEntity viewLink)
+	{
+		viewMainLinks = new Vector<DigitalEntity>();
+		viewMainLinks.add(viewLink);
+	}
+
 	public Vector<DigitalEntity> getViewLinks()
 	{
 		return viewLinks;
@@ -496,7 +502,7 @@ public class DigitalEntity
 
 	public void addViewLink(DigitalEntity b)
 	{
-		viewMainLinks.add(b);
+		viewLinks.add(b);
 	}
 
 	public void addIndexLink(DigitalEntity b)
@@ -514,7 +520,7 @@ public class DigitalEntity
 		thumbnailLinks.add(b);
 	}
 
-	public Vector<DigitalEntity> getViewMains()
+	public Vector<DigitalEntity> getViewMainLinks()
 	{
 		return viewMainLinks;
 	}

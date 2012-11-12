@@ -177,7 +177,8 @@ public class ArchiveIntegrationTest
 		{
 
 			Node myObject = archive.createComplexObject(object);
-			Node node1 = archive.createNode(myObject.getPID());
+			// Node node1 =
+			archive.createNode(myObject.getPID());
 
 			Node node2 = new Node();
 			node2.addTitle("NEUER KNOTEN").setLabel("Cooler neuer Knoten");
@@ -249,21 +250,6 @@ public class ArchiveIntegrationTest
 	public void tearDown()
 	{
 		List<String> objects = archive.findNodes("test:*");
-		for (String pid : objects)
-		{
-			archive.deleteNode(pid);
-		}
-		objects = archive.findNodes("changeme:*");
-		for (String pid : objects)
-		{
-			archive.deleteNode(pid);
-		}
-		objects = archive.findNodes("dtl:*");
-		for (String pid : objects)
-		{
-			archive.deleteNode(pid);
-		}
-		objects = archive.findNodes("edoweb:*");
 		for (String pid : objects)
 		{
 			archive.deleteNode(pid);
