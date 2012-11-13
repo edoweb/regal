@@ -62,6 +62,15 @@ public class FedoraIngester implements IngestInterface
 	final static String dtlNamespace = "dtl";
 	final static String edowebNamespace = "edoweb";
 
+	String user = null;
+	String password = null;
+
+	public FedoraIngester(String usr, String pwd)
+	{
+		user = usr;
+		password = pwd;
+	}
+
 	@Override
 	public ContentModel createContentModel()
 	{
@@ -121,7 +130,7 @@ public class FedoraIngester implements IngestInterface
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource report = c
 				.resource("http://localhost:8080/edoweb2-api/report/"
@@ -166,7 +175,7 @@ public class FedoraIngester implements IngestInterface
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource report = c
 				.resource("http://localhost:8080/edoweb2-api/report/"
@@ -225,7 +234,7 @@ public class FedoraIngester implements IngestInterface
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource webpage = c
 				.resource("http://localhost:8080/edoweb2-api/webpage/"
@@ -304,7 +313,7 @@ public class FedoraIngester implements IngestInterface
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource webpage = c
 				.resource("http://localhost:8080/edoweb2-api/webpage/"
@@ -384,7 +393,7 @@ public class FedoraIngester implements IngestInterface
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource ejournal = c
 				.resource("http://localhost:8080/edoweb2-api/ejournal/"
@@ -499,7 +508,7 @@ public class FedoraIngester implements IngestInterface
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource delete = c
 				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/deleteMirror/"
@@ -514,7 +523,7 @@ public class FedoraIngester implements IngestInterface
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter("fedoraAdmin", "fedoraAdmin1"));
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		// WPD
 		WebResource wpd = c.resource("http://localhost:8080/edoweb2-api/wpd/"

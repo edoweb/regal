@@ -90,12 +90,8 @@ public class Main
 		options.addOption("set", "set", true, "Specify an OAI setSpec");
 		options.addOption("timestamp", "timestamp", true,
 				"Specify a local file e.g. .oaitimestamp");
-		options.addOption("axisHome", "axisHome", true,
-				"Specify a local file e.g. .oaitimestamp");
 		options.addOption("fedoraBase", "fedoraBase", true,
 				"The Fedora Baseurl");
-		options.addOption("htmlExport", "htmlExport", true,
-				"Local path to a directory");
 		options.addOption(
 				"list",
 				"list",
@@ -112,9 +108,8 @@ public class Main
 					| !config.hasOption("dtl") | !config.hasOption("cache")
 					| !config.hasOption("oai") | !config.hasOption("set")
 					| !config.hasOption("timestamp")
-					| !config.hasOption("axisHome")
-					| !config.hasOption("fedoraBase")
-					| !config.hasOption("htmlExport"))
+					| !config.hasOption("fedoraBase"))
+
 			{
 				showHelp(options);
 				return;
@@ -168,7 +163,7 @@ public class Main
 		DigitoolDownloader downloader = new DigitoolDownloader(server,
 				downloadLocation);
 
-		IngestInterface ingester = new FedoraIngester();
+		IngestInterface ingester = new FedoraIngester(user, password);
 
 		if (mode.compareTo("INIT") == 0)
 		{
