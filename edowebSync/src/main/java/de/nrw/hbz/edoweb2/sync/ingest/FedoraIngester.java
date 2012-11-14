@@ -59,7 +59,6 @@ public class FedoraIngester implements IngestInterface
 {
 	final static Logger logger = LoggerFactory.getLogger(FedoraIngester.class);
 
-	final static String dtlNamespace = "dtl";
 	final static String edowebNamespace = "edoweb";
 
 	String user = null;
@@ -80,7 +79,7 @@ public class FedoraIngester implements IngestInterface
 	@Override
 	public void ingest(DigitalEntity dtlBean)
 	{
-		logger.info("Start ingest: " + dtlNamespace + ":" + dtlBean.getPid());
+		logger.info("Start ingest: " + edowebNamespace + ":" + dtlBean.getPid());
 
 		String partitionC = null;
 		String pid = null;
@@ -113,7 +112,7 @@ public class FedoraIngester implements IngestInterface
 		}
 		else if (partitionC.compareTo("WSC01") == 0)
 		{
-			logger.debug(pid + ": is a Webschnitt");
+			logger.info(pid + ": is a Webschnitt");
 			ingestWebpage(dtlBean);
 		}
 		else if (partitionC.compareTo("WSI01") == 0)
@@ -138,7 +137,7 @@ public class FedoraIngester implements IngestInterface
 
 		String request = "content";
 		String response = report.put(String.class, request);
-		logger.debug(response);
+		logger.info(response);
 
 		WebResource reportDC = c.resource(report.toString() + "/dc");
 		WebResource reportData = c.resource(report.toString() + "/data");
@@ -183,7 +182,7 @@ public class FedoraIngester implements IngestInterface
 
 		String request = "content";
 		String response = report.put(String.class, request);
-		logger.debug(response);
+		logger.info(response);
 
 		WebResource reportDC = c.resource(report.toString() + "/dc");
 		WebResource reportData = c.resource(report.toString() + "/data");
@@ -242,7 +241,7 @@ public class FedoraIngester implements IngestInterface
 
 		String request = "content";
 		String response = webpage.put(String.class, request);
-		logger.debug(response);
+		logger.info(response);
 
 		WebResource webpageDC = c.resource(webpage.toString() + "/dc");
 		// WebResource webpageMetadata = c.resource(webpage.toString()
@@ -261,7 +260,7 @@ public class FedoraIngester implements IngestInterface
 		{
 			logger.debug(e.getMessage());
 		}
-		for (DigitalEntity b : dtlBean.getArchiveLinks())
+		for (DigitalEntity b : dtlBean.getViewLinks())
 		{
 			String mimeType = b.getStreamMime();
 			if (mimeType.compareTo("application/zip") != 0)
@@ -269,7 +268,8 @@ public class FedoraIngester implements IngestInterface
 			String version = b.getPid();
 			WebResource webpageVersion = c.resource(webpage.toString()
 					+ "/version/" + version);
-			webpageVersion.put();
+			response = webpageVersion.put(String.class);
+			logger.info(response);
 			WebResource webpageVersionDC = c.resource(webpageVersion.toString()
 					+ "/dc");
 			WebResource webpageVersionData = c.resource(webpageVersion
@@ -321,7 +321,7 @@ public class FedoraIngester implements IngestInterface
 
 		String request = "content";
 		String response = webpage.put(String.class, request);
-		logger.debug(response);
+		logger.info(response);
 
 		WebResource webpageDC = c.resource(webpage.toString() + "/dc");
 		// WebResource webpageMetadata = c.resource(webpage.toString()
@@ -340,16 +340,19 @@ public class FedoraIngester implements IngestInterface
 		{
 			logger.debug(e.getMessage());
 		}
-		for (DigitalEntity b : dtlBean.getViewMainLinks())
+		for (DigitalEntity b : dtlBean.getArchiveLinks())
 		{
 			logger.info(dtlBean.getPid() + ": has a Archive");
 			String mimeType = b.getStreamMime();
+			logger.debug(mimeType);
 			if (mimeType.compareTo("application/zip") != 0)
 				continue;
 			String version = b.getPid();
+			logger.info("Create webpage version: " + version);
 			WebResource webpageVersion = c.resource(webpage.toString()
 					+ "/version/" + version);
-			webpageVersion.put();
+			response = webpageVersion.put(String.class);
+			logger.info(response);
 			WebResource webpageVersionDC = c.resource(webpageVersion.toString()
 					+ "/dc");
 			WebResource webpageVersionData = c.resource(webpageVersion
@@ -373,12 +376,13 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = webpageVersionDC
 						.get(DCBeanAnnotated.class);
-				dc.addTitle("Version of: " + dtlBean.getPid() + " " + title);
+				dc.addTitle("Version of: edoweb:" + dtlBean.getPid() + " "
+						+ title);
 				webpageVersionDC.post(DCBeanAnnotated.class, dc);
 			}
 			catch (Exception e)
 			{
-				logger.info(e.getMessage());
+				logger.debug(e.getMessage());
 			}
 
 		}
@@ -401,7 +405,7 @@ public class FedoraIngester implements IngestInterface
 
 		String request = "content";
 		String response = ejournal.put(String.class, request);
-		logger.debug(response);
+		logger.info(response);
 
 		WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
 		// WebResource ejournalMetadata = c.resource(ejournal.toString()
@@ -422,6 +426,7 @@ public class FedoraIngester implements IngestInterface
 			if (mimeType.compareTo("application/pdf") != 0)
 				continue;
 			String volName = b.getPid();
+			logger.info("Create eJournal volume: " + volName);
 			WebResource ejournalVolume = c.resource(ejournal.toString()
 					+ "/volume/" + volName);
 			ejournalVolume.put();
@@ -451,8 +456,10 @@ public class FedoraIngester implements IngestInterface
 			}
 			try
 			{
-				DCBeanAnnotated dc = marc2dc(b);
-				dc.addType(ObjectType.ejournalVolume.toString());
+				DCBeanAnnotated dc = ejournalVolumeDC
+						.get(DCBeanAnnotated.class);
+
+				dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
 				ejournalVolumeDC.post(DCBeanAnnotated.class, dc);
 			}
 			catch (Exception e)
@@ -519,171 +526,177 @@ public class FedoraIngester implements IngestInterface
 
 	private void ingestReportsOriginalObject(DigitalEntity dtlBean)
 	{
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter(user, password));
-
-		// WPD
-		WebResource wpd = c.resource("http://localhost:8080/edoweb2-api/wpd/"
-				+ dtlNamespace + ":" + dtlBean.getPid());
-
-		String request = "content";
-		String response = wpd.put(String.class, request);
-		logger.debug(response);
-
-		WebResource wpdDC = c.resource(wpd.toString() + "/dc");
-		// WebResource wpdData = c.resource(wpd.toString() + "/data");
-		// WebResource wpdMetadata = c.resource(wpd.toString() + "/metadata");
-
-		// WPD - view_main
-		WebResource wpdViewMain = c.resource(wpd.toString() + "/view_main");
-		WebResource wpdViewMainDC = c.resource(wpdViewMain.toString() + "/dc");
-		WebResource wpdViewMainData = c.resource(wpdViewMain.toString()
-				+ "/data");
-		// WebResource wpdViewMainMetadata = c.resource(wpdViewMain.toString()
-		// + "/metadata");
-
-		// WPD - fulltext
-		WebResource wpdFulltext = c.resource(wpd.toString() + "/fulltext");
-		WebResource wpdFulltextDC = c.resource(wpdFulltext.toString() + "/dc");
-		WebResource wpdFulltextData = c.resource(wpdFulltext.toString()
-				+ "/data");
-		// WebResource wpdFulltextMetadata = c.resource(wpdFulltext.toString()
-		// + "/metadata");
-
-		wpdViewMainDC.post(new DCBeanAnnotated().addTitle("Main XML"));
-		wpdFulltextDC.post(new DCBeanAnnotated().addTitle("Fulltext Data"));
-
-		UploadDataBean data = new UploadDataBean();
-		try
-		{
-			logger.debug("Upload: " + dtlBean.getMe().getAbsolutePath());
-			data.path = new URI(dtlBean.getMe().getAbsolutePath());
-			data.mime = "text/xml";
-			wpdViewMainData.post(data);
-		}
-		catch (URISyntaxException e)
-		{
-			e.printStackTrace();
-		}
-		try
-		{
-			logger.debug("Upload: " + dtlBean.getStream().getAbsolutePath());
-			data.path = new URI(dtlBean.getStream().getAbsolutePath());
-			data.mime = "application/pdf";
-			wpdFulltextData.post(data);
-		}
-		catch (URISyntaxException e)
-		{
-			e.printStackTrace();
-		}
-		try
-		{
-			if (dtlBean.getViewLinks() != null
-					&& !dtlBean.getViewLinks().isEmpty())
-			{
-				// WPD - view
-				WebResource wpdView = c.resource(wpd.toString() + "/view");
-				WebResource wpdViewDC = c.resource(wpdView.toString() + "/dc");
-				WebResource wpdViewData = c.resource(wpdView.toString()
-						+ "/data");
-				// WebResource wpdViewMetadata = c.resource(wpdView.toString()
-				// + "/metadata");
-				// WPD - ocr
-				WebResource wpdOcr = c.resource(wpd.toString() + "/ocr");
-				WebResource wpdOcrDC = c.resource(wpdOcr.toString() + "/dc");
-				WebResource wpdOcrData = c
-						.resource(wpdOcr.toString() + "/data");
-				// WebResource wpdOcrMetadata = c.resource(wpdOcr.toString()
-				// + "/metadata");
-
-				logger.debug("Upload: "
-						+ dtlBean.getViewLinks().get(0).getMe()
-								.getAbsolutePath());
-				data.path = new URI(dtlBean.getViewLinks().get(0).getMe()
-						.getAbsolutePath());
-				data.mime = "text/xml";
-				wpdViewData.post(data);
-
-				logger.debug("Upload: "
-						+ dtlBean.getViewLinks().get(0).getStream()
-								.getAbsolutePath());
-				data.path = new URI(dtlBean.getViewLinks().get(0).getStream()
-						.getAbsolutePath());
-				data.mime = "text/text";
-				wpdOcrData.post(data);
-
-				wpdViewDC.post(new DCBeanAnnotated().addTitle("OCR XML"));
-				wpdOcrDC.post(new DCBeanAnnotated().addTitle("OCR Data"));
-			}
-		}
-		catch (URISyntaxException e)
-		{
-			e.printStackTrace();
-		}
-		try
-		{
-			if (dtlBean.getIndexLinks() != null
-					&& !dtlBean.getIndexLinks().isEmpty())
-			{
-				// WPD - index
-				WebResource wpdIndex = c.resource(wpd.toString() + "/index");
-				WebResource wpdIndexDC = c
-						.resource(wpdIndex.toString() + "/dc");
-				WebResource wpdIndexData = c.resource(wpdIndex.toString()
-						+ "/data");
-				// WebResource wpdIndexMetadata = c.resource(wpdIndex.toString()
-				// + "/metadata");
-
-				// WPD - toc
-				WebResource wpdToc = c.resource(wpd.toString() + "/toc");
-				WebResource wpdTocDC = c.resource(wpdToc.toString() + "/dc");
-				WebResource wpdTocData = c
-						.resource(wpdToc.toString() + "/data");
-				// WebResource wpdTocMetadata = c.resource(wpdToc.toString()
-				// + "/metadata");
-
-				logger.debug("Upload: "
-						+ dtlBean.getIndexLinks().get(0).getMe()
-								.getAbsolutePath());
-				data.path = new URI(dtlBean.getIndexLinks().get(0).getMe()
-						.getAbsolutePath());
-				data.mime = "text/xml";
-				wpdIndexData.post(data);
-
-				logger.debug("Upload: "
-						+ dtlBean.getIndexLinks().get(0).getStream()
-								.getAbsolutePath());
-				data.path = new URI(dtlBean.getIndexLinks().get(0).getStream()
-						.getAbsolutePath());
-				data.mime = "text/html";
-				wpdTocData.post(data);
-
-				wpdIndexDC.post(new DCBeanAnnotated().addTitle("Index XML"));
-				wpdTocDC.post(new DCBeanAnnotated().addTitle("Index Data"));
-
-			}
-
-		}
-		catch (URISyntaxException e)
-		{
-			e.printStackTrace();
-		}
-
-		try
-		{
-			DCBeanAnnotated dc = marc2dc(dtlBean);
-			dc.addType(ObjectType.wpd.toString());
-
-			wpdDC.post(DCBeanAnnotated.class, dc);
-
-		}
-		catch (Exception e)
-		{
-			logger.debug(e.getMessage());
-		}
+		// ClientConfig cc = new DefaultClientConfig();
+		// cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		// cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
+		// true);
+		// Client c = Client.create(cc);
+		// c.addFilter(new HTTPBasicAuthFilter(user, password));
+		//
+		// // WPD
+		// WebResource wpd = c.resource("http://localhost:8080/edoweb2-api/wpd/"
+		// + dtlNamespace + ":" + dtlBean.getPid());
+		//
+		// String request = "content";
+		// String response = wpd.put(String.class, request);
+		// logger.debug(response);
+		//
+		// WebResource wpdDC = c.resource(wpd.toString() + "/dc");
+		// // WebResource wpdData = c.resource(wpd.toString() + "/data");
+		// // WebResource wpdMetadata = c.resource(wpd.toString() +
+		// "/metadata");
+		//
+		// // WPD - view_main
+		// WebResource wpdViewMain = c.resource(wpd.toString() + "/view_main");
+		// WebResource wpdViewMainDC = c.resource(wpdViewMain.toString() +
+		// "/dc");
+		// WebResource wpdViewMainData = c.resource(wpdViewMain.toString()
+		// + "/data");
+		// // WebResource wpdViewMainMetadata =
+		// c.resource(wpdViewMain.toString()
+		// // + "/metadata");
+		//
+		// // WPD - fulltext
+		// WebResource wpdFulltext = c.resource(wpd.toString() + "/fulltext");
+		// WebResource wpdFulltextDC = c.resource(wpdFulltext.toString() +
+		// "/dc");
+		// WebResource wpdFulltextData = c.resource(wpdFulltext.toString()
+		// + "/data");
+		// // WebResource wpdFulltextMetadata =
+		// c.resource(wpdFulltext.toString()
+		// // + "/metadata");
+		//
+		// wpdViewMainDC.post(new DCBeanAnnotated().addTitle("Main XML"));
+		// wpdFulltextDC.post(new DCBeanAnnotated().addTitle("Fulltext Data"));
+		//
+		// UploadDataBean data = new UploadDataBean();
+		// try
+		// {
+		// logger.debug("Upload: " + dtlBean.getMe().getAbsolutePath());
+		// data.path = new URI(dtlBean.getMe().getAbsolutePath());
+		// data.mime = "text/xml";
+		// wpdViewMainData.post(data);
+		// }
+		// catch (URISyntaxException e)
+		// {
+		// e.printStackTrace();
+		// }
+		// try
+		// {
+		// logger.debug("Upload: " + dtlBean.getStream().getAbsolutePath());
+		// data.path = new URI(dtlBean.getStream().getAbsolutePath());
+		// data.mime = "application/pdf";
+		// wpdFulltextData.post(data);
+		// }
+		// catch (URISyntaxException e)
+		// {
+		// e.printStackTrace();
+		// }
+		// try
+		// {
+		// if (dtlBean.getViewLinks() != null
+		// && !dtlBean.getViewLinks().isEmpty())
+		// {
+		// // WPD - view
+		// WebResource wpdView = c.resource(wpd.toString() + "/view");
+		// WebResource wpdViewDC = c.resource(wpdView.toString() + "/dc");
+		// WebResource wpdViewData = c.resource(wpdView.toString()
+		// + "/data");
+		// // WebResource wpdViewMetadata = c.resource(wpdView.toString()
+		// // + "/metadata");
+		// // WPD - ocr
+		// WebResource wpdOcr = c.resource(wpd.toString() + "/ocr");
+		// WebResource wpdOcrDC = c.resource(wpdOcr.toString() + "/dc");
+		// WebResource wpdOcrData = c
+		// .resource(wpdOcr.toString() + "/data");
+		// // WebResource wpdOcrMetadata = c.resource(wpdOcr.toString()
+		// // + "/metadata");
+		//
+		// logger.debug("Upload: "
+		// + dtlBean.getViewLinks().get(0).getMe()
+		// .getAbsolutePath());
+		// data.path = new URI(dtlBean.getViewLinks().get(0).getMe()
+		// .getAbsolutePath());
+		// data.mime = "text/xml";
+		// wpdViewData.post(data);
+		//
+		// logger.debug("Upload: "
+		// + dtlBean.getViewLinks().get(0).getStream()
+		// .getAbsolutePath());
+		// data.path = new URI(dtlBean.getViewLinks().get(0).getStream()
+		// .getAbsolutePath());
+		// data.mime = "text/text";
+		// wpdOcrData.post(data);
+		//
+		// wpdViewDC.post(new DCBeanAnnotated().addTitle("OCR XML"));
+		// wpdOcrDC.post(new DCBeanAnnotated().addTitle("OCR Data"));
+		// }
+		// }
+		// catch (URISyntaxException e)
+		// {
+		// e.printStackTrace();
+		// }
+		// try
+		// {
+		// if (dtlBean.getIndexLinks() != null
+		// && !dtlBean.getIndexLinks().isEmpty())
+		// {
+		// // WPD - index
+		// WebResource wpdIndex = c.resource(wpd.toString() + "/index");
+		// WebResource wpdIndexDC = c
+		// .resource(wpdIndex.toString() + "/dc");
+		// WebResource wpdIndexData = c.resource(wpdIndex.toString()
+		// + "/data");
+		// // WebResource wpdIndexMetadata = c.resource(wpdIndex.toString()
+		// // + "/metadata");
+		//
+		// // WPD - toc
+		// WebResource wpdToc = c.resource(wpd.toString() + "/toc");
+		// WebResource wpdTocDC = c.resource(wpdToc.toString() + "/dc");
+		// WebResource wpdTocData = c
+		// .resource(wpdToc.toString() + "/data");
+		// // WebResource wpdTocMetadata = c.resource(wpdToc.toString()
+		// // + "/metadata");
+		//
+		// logger.debug("Upload: "
+		// + dtlBean.getIndexLinks().get(0).getMe()
+		// .getAbsolutePath());
+		// data.path = new URI(dtlBean.getIndexLinks().get(0).getMe()
+		// .getAbsolutePath());
+		// data.mime = "text/xml";
+		// wpdIndexData.post(data);
+		//
+		// logger.debug("Upload: "
+		// + dtlBean.getIndexLinks().get(0).getStream()
+		// .getAbsolutePath());
+		// data.path = new URI(dtlBean.getIndexLinks().get(0).getStream()
+		// .getAbsolutePath());
+		// data.mime = "text/html";
+		// wpdTocData.post(data);
+		//
+		// wpdIndexDC.post(new DCBeanAnnotated().addTitle("Index XML"));
+		// wpdTocDC.post(new DCBeanAnnotated().addTitle("Index Data"));
+		//
+		// }
+		//
+		// }
+		// catch (URISyntaxException e)
+		// {
+		// e.printStackTrace();
+		// }
+		//
+		// try
+		// {
+		// DCBeanAnnotated dc = marc2dc(dtlBean);
+		// dc.addType(ObjectType.wpd.toString());
+		//
+		// wpdDC.post(DCBeanAnnotated.class, dc);
+		//
+		// }
+		// catch (Exception e)
+		// {
+		// logger.debug(e.getMessage());
+		// }
 
 	}
 }

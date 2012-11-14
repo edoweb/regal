@@ -31,6 +31,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
@@ -44,7 +47,7 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
 @Path("/report")
 public class ReportResource
 {
-
+	final static Logger logger = LoggerFactory.getLogger(ReportResource.class);
 	ObjectType objectType = ObjectType.report;
 	String namespace = "edoweb";
 
@@ -71,13 +74,17 @@ public class ReportResource
 
 	@PUT
 	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml" })
 	public String createReport(@PathParam("pid") String pid)
 	{
-		System.out.println("CREATE");
+		logger.info("create Report");
 		try
 		{
 			if (actions.nodeExists(pid))
-				return "ERROR: Node already exists";
+			{
+				logger.warn("Node exists: " + pid);
+				return "{\"message\":\" Node already exists. I do nothing!\"}";
+			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -124,7 +131,7 @@ public class ReportResource
 	@Path("/{pid}")
 	public String deleteReport(@PathParam("pid") String pid)
 	{
-		System.out.println("DELETE");
+		logger.info("DELETE");
 		actions.delete(pid);
 		return pid + " DELETED!";
 	}

@@ -34,6 +34,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
@@ -45,6 +48,7 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
 @Path("/webpage")
 public class WebpageResource
 {
+	final static Logger logger = LoggerFactory.getLogger(WebpageResource.class);
 	String IS_VERSION = HBZ_MODEL_NAMESPACE + "isVersionOf";
 	String HAS_VERSION = HBZ_MODEL_NAMESPACE + "hasVersion";
 	String HAS_VERSION_NAME = HBZ_MODEL_NAMESPACE + "hasVersionName";
@@ -53,6 +57,7 @@ public class WebpageResource
 	ObjectType webpageType = ObjectType.webpage;
 	ObjectType webpageVersionType = ObjectType.webpageVersion;
 	String namespace = "edoweb";
+	String subnamespace = "edoweb";
 
 	Actions actions = new Actions();
 
@@ -80,13 +85,17 @@ public class WebpageResource
 
 	@PUT
 	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml" })
 	public String createWebpage(@PathParam("pid") String pid)
 	{
-		System.out.println("CREATE");
+		logger.info("create Webpage");
 		try
 		{
 			if (actions.nodeExists(pid))
-				return "ERROR: Node already exists";
+			{
+				logger.warn("Node exists: " + pid);
+				return "{\"message\":\" Node already exists. I do nothing!\"}";
+			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -133,7 +142,6 @@ public class WebpageResource
 	@Path("/{pid}")
 	public String deleteWebpage(@PathParam("pid") String pid)
 	{
-		System.out.println("DELETE");
 		actions.delete(pid);
 		return pid + " DELETED!";
 	}
@@ -153,7 +161,7 @@ public class WebpageResource
 	public String updateWebpageDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return actions.updateDC(pid, content);
+		return "{\"message\":[\"" + actions.updateDC(pid, content) + "\"]}";
 	}
 
 	@GET
@@ -173,10 +181,11 @@ public class WebpageResource
 
 	@PUT
 	@Path("/{pid}/version/{versionName}")
+	@Produces({ "application/json", "application/xml" })
 	public String createWebpageVersion(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionName)
 	{
-		System.out.println("create Webpage Version");
+		logger.info("create Webpage Version");
 		try
 		{
 			String volumeId = actions.getPid(namespace);
@@ -220,17 +229,20 @@ public class WebpageResource
 
 			String result = actions.create(object);
 			// actions.addChildToParent(volumeId, pid);
-			return result;
+
+			return "{\"message\":\"" + result + "\"}";
 		}
 		catch (RemoteException e)
 		{
 			e.printStackTrace();
 		}
-		return "create WebpageVersion Failed";
+		return "{\"message\":\"create WebpageVersion Failed\"}";
 	}
 
 	@POST
 	@Path("/{pid}/version/{versionName}/dc")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
 	public String updateWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionName,
 			DCBeanAnnotated content)
@@ -238,7 +250,8 @@ public class WebpageResource
 		String versionPid = null;
 		String query = getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
-		return actions.updateDC(versionPid, content);
+		return "{\"message\":[\"" + actions.updateDC(versionPid, content)
+				+ "\"]}";
 	}
 
 	@POST
@@ -277,7 +290,7 @@ public class WebpageResource
 
 	@GET
 	@Path("/{pid}/version/{versionName}/dc")
-	@Produces({ "application/*" })
+	@Produces({ "application/json", "application/xml" })
 	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionName)
 	{
@@ -302,13 +315,14 @@ public class WebpageResource
 	@GET
 	@Path("/{pid}/version/{versionName}")
 	@Produces({ "application/json", "application/xml" })
-	public String readWebpageVersion(@PathParam("pid") String pid,
+	public StatusBean readWebpageVersion(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
 		String query = getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
-		return versionPid;
+
+		return actions.read(versionPid);
 	}
 
 	@GET
@@ -321,7 +335,7 @@ public class WebpageResource
 		for (String volPid : actions.findObject(pid, HAS_VERSION))
 		{
 
-			v.add(actions.findObject(volPid, HAS_VERSION).get(0));
+			v.add(actions.findObject(volPid, HAS_VERSION_NAME).get(0));
 
 		}
 		return new ObjectList(v);

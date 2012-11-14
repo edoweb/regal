@@ -34,6 +34,8 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.edoweb2.archive.ArchiveFactory;
 import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
@@ -48,6 +50,7 @@ import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
  */
 public class Actions
 {
+	final static Logger logger = LoggerFactory.getLogger(Actions.class);
 	ArchiveInterface archive = null;
 
 	public Actions()
@@ -72,7 +75,7 @@ public class Actions
 
 	public String deleteAll(Vector<String> pids)
 	{
-		System.out.println("Delete All");
+		logger.info("Delete All");
 		for (String pid : pids)
 		{
 			try
@@ -237,7 +240,7 @@ public class Actions
 	public DCBeanAnnotated readDC(String pid)
 	{
 
-		System.out.println("Read DC");
+		logger.info("Read DC");
 		try
 		{
 			Node node = archive.readNode(pid);
@@ -298,7 +301,7 @@ public class Actions
 
 	public String updateDC(String pid, DCBeanAnnotated content)
 	{
-		System.out.println("Update DC");
+		logger.info("Update DC");
 		try
 		{
 			Node node = archive.readNode(pid);
@@ -411,7 +414,7 @@ public class Actions
 	public Vector<String> findObject(String pid, String pred)
 	{
 		String query = "<info:fedora/" + pid + "> <" + pred + "> *";
-		System.out.println(query);
+		logger.info(query);
 		InputStream stream = archive.findTriples(query, FedoraFacade.TYPE_SPO,
 				FedoraFacade.FORMAT_N3);
 		Vector<String> findpids = new Vector<String>();
@@ -542,9 +545,9 @@ public class Actions
 		 */
 		try
 		{
-			System.out.println("Wait 10 sec! Nasty workaround.");
+			logger.info("Wait 10 sec! Nasty workaround.");
 			Thread.sleep(10000);
-			System.out.println("Stop Waiting! Nasty workaround.");
+			logger.info("Stop Waiting! Nasty workaround.");
 		}
 		catch (InterruptedException e1)
 		{

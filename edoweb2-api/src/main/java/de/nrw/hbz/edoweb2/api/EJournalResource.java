@@ -34,6 +34,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
@@ -45,7 +48,8 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
 @Path("/ejournal")
 public class EJournalResource
 {
-
+	final static Logger logger = LoggerFactory
+			.getLogger(EJournalResource.class);
 	String IS_VOLUME = HBZ_MODEL_NAMESPACE + "isVolumeOf";
 	String HAS_VOLUME = HBZ_MODEL_NAMESPACE + "hasVolume";
 	String HAS_VOLUME_NAME = HBZ_MODEL_NAMESPACE + "hasVolumeName";
@@ -84,7 +88,7 @@ public class EJournalResource
 	public StatusBean readEJournal(@PathParam("pid") String pid,
 			@PathParam("namespace") String userNamespace)
 	{
-		System.out.println("read EJournal");
+
 		return actions.read(namespace + ":" + pid);
 	}
 
@@ -103,23 +107,30 @@ public class EJournalResource
 	public String deleteEJournal(@PathParam("pid") String pid,
 			@PathParam("namespace") String userNamespace)
 	{
-		System.out.println("delete EJournal");
+		logger.info("delete EJournal");
 		actions.delete(namespace + ":" + pid);
 		return namespace + ":" + pid + " EJournal deleted!";
 	}
 
 	@PUT
 	@Path("/{namespace}:{pid}")
+	@Produces({ "application/json", "application/xml" })
 	public String createEJournal(@PathParam("pid") String pid,
 			@PathParam("namespace") String userNamespace)
 	{
-		System.out.println("create EJournal");
+		logger.info("create EJournal");
 		try
 		{
-			if (actions.nodeExists(pid))
-				return "ERROR: Node already exists";
+			if (actions.nodeExists(namespace + ":" + pid))
+			{
+				logger.warn("Node exists: " + pid);
+				return "{\"message\":\" Node already exists. I do nothing!\"}";
+			}
 			if (userNamespace.compareTo(namespace) != 0)
-				return "ERROR: Namespace MUST be " + namespace;
+			{
+				return "{\"message\":\" Wrong namespace. Must be " + namespace
+						+ "\"}";
+			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -160,7 +171,7 @@ public class EJournalResource
 	public String updateEJournalDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return actions.updateDC(pid, content);
+		return "{\"message\":[\"" + actions.updateDC(pid, content) + "\"]}";
 	}
 
 	@GET
@@ -196,11 +207,12 @@ public class EJournalResource
 
 	@PUT
 	@Path("/{pid}/volume/{volName}")
+	@Produces({ "application/json", "application/xml" })
 	public String createEJournalVolume(@PathParam("pid") String pid,
 			@PathParam("volName") String volName)
 	{
 
-		System.out.println("create EJournal Volume");
+		logger.info("create EJournal Volume");
 		try
 		{
 
@@ -250,14 +262,13 @@ public class EJournalResource
 
 			String result = actions.create(object);
 			// actions.addChildToParent(volumeId, pid);
-			return result;
+			return "{\"message\":\"" + result + "\"}";
 		}
 		catch (RemoteException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "create EJournal Volume Failed";
+		return "{\"message\":\"create eJournal Volume Failed\"}";
 	}
 
 	@GET
@@ -301,7 +312,7 @@ public class EJournalResource
 
 	@GET
 	@Path("/{pid}/volume/{volName}/dc")
-	@Produces({ "application/*" })
+	@Produces({ "application/json", "application/xml" })
 	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volName") String volName)
 	{
@@ -321,7 +332,8 @@ public class EJournalResource
 		String volumePid = null;
 		String query = getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
-		return actions.updateDC(volumePid, content);
+		return "{\"message\":[\"" + actions.updateDC(volumePid, content)
+				+ "\"]}";
 	}
 
 	@GET
