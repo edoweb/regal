@@ -567,6 +567,21 @@ public class FedoraIngester implements IngestInterface
 
 		delete.delete();
 
+		// delete = c
+		// .resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/oai:report");
+		//
+		// delete.delete();
+		//
+		// delete = c
+		// .resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/oai:350");
+		//
+		// delete.delete();
+		//
+		// delete = c
+		// .resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/oai:ejournal");
+		//
+		// delete.delete();
+
 	}
 
 	private void ingestReportsOriginalObject(DigitalEntity dtlBean)

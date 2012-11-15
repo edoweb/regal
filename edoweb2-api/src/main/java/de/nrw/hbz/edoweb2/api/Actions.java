@@ -620,7 +620,37 @@ public class Actions
 					}
 					linkObjectToOaiSet(node, spec, oaipid);
 				}
+
 			}
+
+			for (String type : node.getType())
+			{
+				if (type.startsWith("doc-type"))
+				{
+					String docType = type.substring(9);
+					logger.info("Found docType: " + docType);
+
+					String name = docmap(docType);
+					String spec = "doc-type:" + docType;
+					String namespace = "oai";
+					String oaipid = namespace + ":" + docType;
+					if (!this.nodeExists(oaipid))
+					{
+						createOAISet(name, spec, oaipid);
+					}
+					linkObjectToOaiSet(node, spec, oaipid);
+				}
+			}
+
+			String name = "open_access";
+			String spec = "open_access";
+			String namespace = "oai";
+			String oaipid = namespace + ":" + "open_access";
+			if (!this.nodeExists(oaipid))
+			{
+				createOAISet(name, spec, oaipid);
+			}
+			linkObjectToOaiSet(node, spec, oaipid);
 		}
 		catch (RemoteException e)
 		{
@@ -651,6 +681,7 @@ public class Actions
 
 			setNameLink.setObject(name, true);
 			oaiset.addRelation(setNameLink);
+			oaiset.addTitle(name);
 			try
 			{
 				archive.createComplexObject(new ComplexObject(oaiset));
@@ -680,6 +711,23 @@ public class Actions
 			e.printStackTrace();
 		}
 
+	}
+
+	private String docmap(String type)
+	{
+		if (type.compareTo("report") == 0)
+		{
+			return "Report";
+		}
+		if (type.compareTo("webpage") == 0)
+		{
+			return "Webpage";
+		}
+		if (type.compareTo("ejournal") == 0)
+		{
+			return "EJournal";
+		}
+		return "";
 	}
 
 	private String ddcmap(String number)
