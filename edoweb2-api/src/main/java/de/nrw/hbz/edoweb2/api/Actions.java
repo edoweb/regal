@@ -16,15 +16,26 @@
  */
 package de.nrw.hbz.edoweb2.api;
 
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Properties;
 import java.util.Vector;
 
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -36,6 +47,9 @@ import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import de.nrw.hbz.edoweb2.archive.ArchiveFactory;
 import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
@@ -582,4 +596,146 @@ public class Actions
 	// e.printStackTrace();
 	// }
 	// }
+
+	public void makeOAISet(String pid)
+	{
+		try
+		{
+			Node node = archive.readNode(pid);
+
+			for (String subject : node.getSubject())
+			{
+				if (subject.startsWith("ddc"))
+				{
+					String ddc = subject.subSequence(4, 7).toString();
+					logger.info("Found ddc: " + ddc);
+
+					String name = ddcmap(ddc);
+					String spec = "ddc:" + ddc;
+					String namespace = "oai";
+					String oaipid = namespace + ":" + ddc;
+					if (!this.nodeExists(oaipid))
+					{
+						createOAISet(name, spec, oaipid);
+					}
+					linkObjectToOaiSet(node, spec, oaipid);
+				}
+			}
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void createOAISet(String name, String spec, String pid)
+	{
+		String setSpecPred = "http://www.openarchives.org/OAI/2.0/setSpec";
+		String setNamePred = "http://www.openarchives.org/OAI/2.0/setName";
+
+		Link setSpecLink = new Link();
+		setSpecLink.setPredicate(setSpecPred);
+
+		Link setNameLink = new Link();
+		setNameLink.setPredicate(setNamePred);
+
+		String namespace = "oai";
+		{
+			Node oaiset = new Node();
+			oaiset.setNamespace(namespace);
+			oaiset.setPID(pid);
+
+			setSpecLink.setObject(spec, true);
+			oaiset.addRelation(setSpecLink);
+
+			setNameLink.setObject(name, true);
+			oaiset.addRelation(setNameLink);
+			try
+			{
+				archive.createComplexObject(new ComplexObject(oaiset));
+			}
+			catch (RemoteException e)
+			{
+				e.printStackTrace();
+			}
+
+		}
+	}
+
+	void linkObjectToOaiSet(Node node, String spec, String pid)
+	{
+
+		Link link = new Link();
+		link.setPredicate(IS_MEMBER_OF);
+		link.setObject("info:fedora/" + pid, false);
+		node.addRelation(link);
+		try
+		{
+			archive.updateNode(node.getPID(), node);
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private String ddcmap(String number)
+	{
+		String name = "";
+		try
+		{
+			URL url = new URL("http://dewey.info/class/" + number
+					+ "/2009-08/about.en");
+			HttpClient httpClient = new HttpClient();
+
+			HttpMethod method = new GetMethod(url.toString());
+			httpClient.executeMethod(method);
+			InputStream stream = method.getResponseBodyAsStream();
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder docBuilder;
+			factory.setNamespaceAware(true);
+			factory.setExpandEntityReferences(false);
+			docBuilder = factory.newDocumentBuilder();
+
+			Document doc;
+
+			doc = docBuilder.parse(stream);
+			Element root = doc.getDocumentElement();
+			root.normalize();
+			name = root.getElementsByTagName("skos:prefLabel").item(0)
+					.getTextContent();
+			logger.info("Found ddc name: " + name);
+		}
+		catch (MalformedURLException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (HttpException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (ParserConfigurationException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (SAXException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return name;
+	}
 }

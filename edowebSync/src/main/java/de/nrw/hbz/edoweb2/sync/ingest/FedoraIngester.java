@@ -121,7 +121,15 @@ public class FedoraIngester implements IngestInterface
 			logger.info(pid + ": is a single Webside");
 			ingestSingleWebpage(dtlBean);
 		}
-
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
+		WebResource oaiSet = c
+				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/makeOaiSet/"
+						+ edowebNamespace + ":" + dtlBean.getPid());
+		oaiSet.post();
 	}
 
 	private void ingestReports(DigitalEntity dtlBean)
@@ -162,7 +170,7 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType(ObjectType.report.toString());
+				dc.addType("doc-type:" + ObjectType.report.toString());
 				reportDC.post(DCBeanAnnotated.class, dc);
 			}
 			catch (Exception e)
@@ -228,7 +236,7 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType(ObjectType.report.toString());
+				dc.addType("doc-type:" + ObjectType.report.toString());
 				reportDC.post(DCBeanAnnotated.class, dc);
 			}
 			catch (Exception e)
@@ -269,7 +277,7 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType(ObjectType.webpage.toString());
+				dc.addType("doc-type:" + ObjectType.webpage.toString());
 				webpageDC.post(DCBeanAnnotated.class, dc);
 				title = dc.getFirstTitle();
 			}
@@ -356,7 +364,7 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType(ObjectType.webpage.toString());
+				dc.addType("doc-type:" + ObjectType.webpage.toString());
 				webpageDC.post(DCBeanAnnotated.class, dc);
 				title = dc.getFirstTitle();
 			}
@@ -444,7 +452,7 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType(ObjectType.ejournal.toString());
+				dc.addType("doc-type:" + ObjectType.ejournal.toString());
 				ejournalDC.post(DCBeanAnnotated.class, dc);
 			}
 			catch (Exception e)
@@ -554,10 +562,11 @@ public class FedoraIngester implements IngestInterface
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource delete = c
-				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/deleteMirror/"
+				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/edoweb:"
 						+ pid);
 
 		delete.delete();
+
 	}
 
 	private void ingestReportsOriginalObject(DigitalEntity dtlBean)
