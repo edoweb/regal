@@ -100,10 +100,10 @@ public class TestEdoweb2Fedora
 
 		try
 		{
-			// main.run("DELE", user, password, piddownloaderServer,
-			// piddownloaderDownloadLocation, pidreporterServer,
-			// pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-			// pidreporterPidFile);
+			main.run("DELE", user, password, piddownloaderServer,
+					piddownloaderDownloadLocation, pidreporterServer,
+					pidreporterSet, pidreporterTimestampFile, fedoraUrl,
+					pidreporterPidFile);
 		}
 		catch (Exception e)
 		{

@@ -78,9 +78,10 @@ public class WebpageResource
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		String eJournal = actions.deleteAll(actions.findByType(webpageType));
-		String eJournalVolume = actions.deleteAll(actions
-				.findByType(webpageVersionType));
+		String eJournal = actions.deleteAll(actions.findByType(webpageType),
+				false);
+		String eJournalVolume = actions.deleteAll(
+				actions.findByType(webpageVersionType), false);
 		return eJournal + "\n" + eJournalVolume;
 	}
 
@@ -115,7 +116,7 @@ public class WebpageResource
 					namespace, webpageType));
 
 			ComplexObject object = new ComplexObject(rootObject);
-			MessageBean msg = new MessageBean(actions.create(object));
+			MessageBean msg = new MessageBean(actions.create(object, true));
 			return Response.ok().type(MediaType.APPLICATION_JSON).entity(msg)
 					.build();
 
@@ -144,14 +145,14 @@ public class WebpageResource
 	@Consumes({ "application/json", "application/xml" })
 	public String updateWebpage(@PathParam("pid") String pid, StatusBean status)
 	{
-		return actions.update(pid, status);
+		return actions.update(pid, status, false);
 	}
 
 	@DELETE
 	@Path("/{pid}")
 	public String deleteWebpage(@PathParam("pid") String pid)
 	{
-		actions.delete(pid);
+		actions.delete(pid, false);
 		return pid + " DELETED!";
 	}
 
@@ -236,7 +237,7 @@ public class WebpageResource
 			link.setObject(volumeId, false);
 			actions.addLink(pid, link);
 
-			String result = actions.create(object);
+			String result = actions.create(object, true);
 			// actions.addChildToParent(volumeId, pid);
 
 			return "{\"message\":\"" + result + "\"}";

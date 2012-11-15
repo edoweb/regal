@@ -19,8 +19,8 @@ public class EdowebAdminResource
 	public String deleteMirror(@PathParam("pid") String pid)
 	{
 
-		String edo = actions.delete("edoweb:" + pid);
-		String dtl = actions.delete("dtl:" + pid);
+		String edo = actions.delete("edoweb:" + pid, false);
+		String dtl = actions.delete("dtl:" + pid, false);
 		return edo + "\n" + dtl;
 	}
 }

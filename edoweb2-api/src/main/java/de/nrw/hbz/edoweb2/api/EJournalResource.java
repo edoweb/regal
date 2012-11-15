@@ -77,9 +77,10 @@ public class EJournalResource
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		String eJournal = actions.deleteAll(actions.findByType(ejournalType));
-		String eJournalVolume = actions.deleteAll(actions
-				.findByType(volumeType));
+		String eJournal = actions.deleteAll(actions.findByType(ejournalType),
+				false);
+		String eJournalVolume = actions.deleteAll(
+				actions.findByType(volumeType), false);
 		return eJournal + "\n" + eJournalVolume;
 	}
 
@@ -100,7 +101,7 @@ public class EJournalResource
 	public String updateEJournal(@PathParam("pid") String pid,
 			StatusBean status, @PathParam("namespace") String userNamespace)
 	{
-		return actions.update(namespace + ":" + pid, status);
+		return actions.update(namespace + ":" + pid, status, false);
 	}
 
 	@DELETE
@@ -109,7 +110,7 @@ public class EJournalResource
 			@PathParam("namespace") String userNamespace)
 	{
 		logger.info("delete EJournal");
-		actions.delete(namespace + ":" + pid);
+		actions.delete(namespace + ":" + pid, false);
 		return namespace + ":" + pid + " EJournal deleted!";
 	}
 
@@ -155,7 +156,7 @@ public class EJournalResource
 					namespace, ejournalType));
 
 			ComplexObject object = new ComplexObject(rootObject);
-			MessageBean msg = new MessageBean(actions.create(object));
+			MessageBean msg = new MessageBean(actions.create(object, true));
 			return Response.ok().type(MediaType.APPLICATION_JSON).entity(msg)
 					.build();
 
@@ -274,7 +275,7 @@ public class EJournalResource
 
 			actions.addLink(pid, link);
 
-			String result = actions.create(object);
+			String result = actions.create(object, true);
 			// actions.addChildToParent(volumeId, pid);
 			return "{\"message\":\"" + result + "\"}";
 		}

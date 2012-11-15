@@ -73,7 +73,8 @@ public class Actions
 
 	}
 
-	public String deleteAll(Vector<String> pids)
+	// ---------------------OPTIMIZE--------------------------
+	public String deleteAll(Vector<String> pids, boolean wait)
 	{
 		logger.info("Delete All");
 		for (String pid : pids)
@@ -81,7 +82,8 @@ public class Actions
 			try
 			{
 				archive.deleteComplexObject(pid);
-				waitWorkaround();
+				if (wait)
+					waitWorkaround();
 			}
 			catch (RemoteException e)
 			{
@@ -91,6 +93,76 @@ public class Actions
 
 		return "deleteAll";
 	}
+
+	public String create(ComplexObject object, boolean wait)
+			throws RemoteException
+	{
+		archive.createComplexObject(object);
+		if (wait)
+			waitWorkaround();
+		return object.getRoot().getPID() + " CREATED!";
+	}
+
+	public String update(String pid, StatusBean status, boolean wait)
+	{
+		try
+		{
+			Node node = archive.readNode(pid);
+			if (node != null)
+			{
+				Vector<String> v = new Vector<String>();
+				v.add(status.visibleFor.toString());
+				node.setRights(v);
+				archive.updateNode(pid, node);
+				if (wait)
+					waitWorkaround();
+			}
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
+		}
+		return "update";
+	}
+
+	public String delete(String pid, boolean wait)
+	{
+
+		try
+		{
+			archive.deleteComplexObject(pid);
+			if (wait)
+				waitWorkaround();
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
+		}
+		return "delete";
+	}
+
+	private void waitWorkaround()
+	{
+		/*
+		 * Workaround START
+		 */
+		try
+		{
+			logger.info("Wait 10 sec! Nasty workaround.");
+			Thread.sleep(10000);
+			logger.info("Stop Waiting! Nasty workaround.");
+		}
+		catch (InterruptedException e1)
+		{
+
+			e1.printStackTrace();
+		}
+		/*
+		 * Workaround END
+		 */
+	}
+
+	// -------------------------------------------------------
 
 	public Vector<String> findByType(ObjectType type)
 	{
@@ -153,13 +225,6 @@ public class Actions
 		return pids;
 	}
 
-	public String create(ComplexObject object) throws RemoteException
-	{
-		archive.createComplexObject(object);
-		waitWorkaround();
-		return object.getRoot().getPID() + " CREATED!";
-	}
-
 	public StatusBean read(String pid)
 	{
 		try
@@ -172,42 +237,6 @@ public class Actions
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public String update(String pid, StatusBean status)
-	{
-		try
-		{
-			Node node = archive.readNode(pid);
-			if (node != null)
-			{
-				Vector<String> v = new Vector<String>();
-				v.add(status.visibleFor.toString());
-				node.setRights(v);
-				archive.updateNode(pid, node);
-				waitWorkaround();
-			}
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return "update";
-	}
-
-	public String delete(String pid)
-	{
-
-		try
-		{
-			archive.deleteComplexObject(pid);
-			waitWorkaround();
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return "delete";
 	}
 
 	public Response readData(String pid)
@@ -536,27 +565,6 @@ public class Actions
 			e.printStackTrace();
 		}
 		return "FAILED! No links added";
-	}
-
-	private void waitWorkaround()
-	{
-		/*
-		 * Workaround START
-		 */
-		try
-		{
-			logger.info("Wait 10 sec! Nasty workaround.");
-			Thread.sleep(10000);
-			logger.info("Stop Waiting! Nasty workaround.");
-		}
-		catch (InterruptedException e1)
-		{
-
-			e1.printStackTrace();
-		}
-		/*
-		 * Workaround END
-		 */
 	}
 
 	// public void addChildToParent(String childPid, String parentPid)

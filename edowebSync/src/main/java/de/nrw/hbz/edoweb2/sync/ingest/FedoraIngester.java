@@ -145,6 +145,7 @@ public class FedoraIngester implements IngestInterface
 			WebResource reportData = c.resource(report.toString() + "/data");
 			// WebResource reportMetadata = c
 			// .resource(report.toString() + "/metadata");
+
 			UploadDataBean data = new UploadDataBean();
 			try
 			{

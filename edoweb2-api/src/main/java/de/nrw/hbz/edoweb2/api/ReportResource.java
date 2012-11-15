@@ -70,7 +70,7 @@ public class ReportResource
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return actions.deleteAll(actions.findByType(objectType));
+		return actions.deleteAll(actions.findByType(objectType), false);
 	}
 
 	@PUT
@@ -106,7 +106,7 @@ public class ReportResource
 					namespace, objectType));
 
 			ComplexObject object = new ComplexObject(rootObject);
-			MessageBean msg = new MessageBean(actions.create(object));
+			MessageBean msg = new MessageBean(actions.create(object, true));
 			return Response.ok().type(MediaType.APPLICATION_JSON).entity(msg)
 					.build();
 		}
@@ -134,7 +134,7 @@ public class ReportResource
 	@Consumes({ "application/json", "application/xml" })
 	public String updateReport(@PathParam("pid") String pid, StatusBean status)
 	{
-		return actions.update(pid, status);
+		return actions.update(pid, status, false);
 	}
 
 	@DELETE
@@ -142,7 +142,7 @@ public class ReportResource
 	public String deleteReport(@PathParam("pid") String pid)
 	{
 		logger.info("DELETE");
-		actions.delete(pid);
+		actions.delete(pid, false);
 		return pid + " DELETED!";
 	}
 
