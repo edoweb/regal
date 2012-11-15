@@ -29,6 +29,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
@@ -75,15 +76,21 @@ public class ReportResource
 	@PUT
 	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String createReport(@PathParam("pid") String pid)
+	public Response createReport(@PathParam("pid") String pid)
 	{
 		logger.info("create Report");
 		try
 		{
 			if (actions.nodeExists(pid))
 			{
+				// String msg =
+				// "{\"message\":\" Node already exists. I do nothing!\"}";
+				MessageBean msg = new MessageBean(
+						"Node already exists. I do nothing!");
+				Response response = Response.status(409)
+						.type(MediaType.APPLICATION_JSON).entity(msg).build();
 				logger.warn("Node exists: " + pid);
-				return "{\"message\":\" Node already exists. I do nothing!\"}";
+				return response;
 			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
@@ -99,15 +106,18 @@ public class ReportResource
 					namespace, objectType));
 
 			ComplexObject object = new ComplexObject(rootObject);
-			return actions.create(object);
-
+			MessageBean msg = new MessageBean(actions.create(object));
+			return Response.ok().type(MediaType.APPLICATION_JSON).entity(msg)
+					.build();
 		}
 		catch (RemoteException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "Create Failed";
+		MessageBean msg = new MessageBean("Create Failed");
+		return Response.serverError().type(MediaType.APPLICATION_JSON)
+				.entity(msg).build();
 	}
 
 	@GET

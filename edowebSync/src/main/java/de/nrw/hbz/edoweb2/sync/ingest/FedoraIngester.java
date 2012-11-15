@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -134,37 +135,43 @@ public class FedoraIngester implements IngestInterface
 		WebResource report = c
 				.resource("http://localhost:8080/edoweb2-api/report/"
 						+ edowebNamespace + ":" + dtlBean.getPid());
-
-		String request = "content";
-		String response = report.put(String.class, request);
-		logger.info(response);
-
-		WebResource reportDC = c.resource(report.toString() + "/dc");
-		WebResource reportData = c.resource(report.toString() + "/data");
-		// WebResource reportMetadata = c
-		// .resource(report.toString() + "/metadata");
-		UploadDataBean data = new UploadDataBean();
 		try
 		{
-			data.path = new URI(dtlBean.getStream().getAbsolutePath());
-			data.mime = "application/pdf";
-			reportData.post(data);
-		}
-		catch (URISyntaxException e)
-		{
+			String request = "content";
+			String response = report.put(String.class, request);
+			logger.info(response);
 
-			e.printStackTrace();
-		}
+			WebResource reportDC = c.resource(report.toString() + "/dc");
+			WebResource reportData = c.resource(report.toString() + "/data");
+			// WebResource reportMetadata = c
+			// .resource(report.toString() + "/metadata");
+			UploadDataBean data = new UploadDataBean();
+			try
+			{
+				data.path = new URI(dtlBean.getStream().getAbsolutePath());
+				data.mime = "application/pdf";
+				reportData.post(data);
+			}
+			catch (URISyntaxException e)
+			{
 
-		try
-		{
-			DCBeanAnnotated dc = marc2dc(dtlBean);
-			dc.addType(ObjectType.report.toString());
-			reportDC.post(DCBeanAnnotated.class, dc);
+				e.printStackTrace();
+			}
+
+			try
+			{
+				DCBeanAnnotated dc = marc2dc(dtlBean);
+				dc.addType(ObjectType.report.toString());
+				reportDC.post(DCBeanAnnotated.class, dc);
+			}
+			catch (Exception e)
+			{
+				logger.debug(e.getMessage());
+			}
 		}
-		catch (Exception e)
+		catch (UniformInterfaceException e)
 		{
-			logger.debug(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -180,50 +187,57 @@ public class FedoraIngester implements IngestInterface
 				.resource("http://localhost:8080/edoweb2-api/report/"
 						+ edowebNamespace + ":" + dtlBean.getPid());
 
-		String request = "content";
-		String response = report.put(String.class, request);
-		logger.info(response);
-
-		WebResource reportDC = c.resource(report.toString() + "/dc");
-		WebResource reportData = c.resource(report.toString() + "/data");
-		// WebResource reportMetadata = c
-		// .resource(report.toString() + "/metadata");
-		DigitalEntity fulltextObject = null;
-		for (DigitalEntity view : dtlBean.getViewLinks())
-		{
-			logger.info("I have a view: " + view.getPid());
-			if (view.getStreamMime().compareTo("application/pdf") == 0)
-			{
-				fulltextObject = view;
-				break;
-			}
-		}
-		if (fulltextObject != null)
-		{
-			try
-			{
-				UploadDataBean data = new UploadDataBean();
-				data.path = new URI(fulltextObject.getStream()
-						.getAbsolutePath());
-				data.mime = "application/pdf";
-				reportData.post(data);
-			}
-			catch (URISyntaxException e)
-			{
-
-				e.printStackTrace();
-			}
-		}
-
 		try
 		{
-			DCBeanAnnotated dc = marc2dc(dtlBean);
-			dc.addType(ObjectType.report.toString());
-			reportDC.post(DCBeanAnnotated.class, dc);
+			String request = "content";
+			String response = report.put(String.class, request);
+			logger.info(response);
+
+			WebResource reportDC = c.resource(report.toString() + "/dc");
+			WebResource reportData = c.resource(report.toString() + "/data");
+			// WebResource reportMetadata = c
+			// .resource(report.toString() + "/metadata");
+			DigitalEntity fulltextObject = null;
+			for (DigitalEntity view : dtlBean.getViewLinks())
+			{
+				logger.info("I have a view: " + view.getPid());
+				if (view.getStreamMime().compareTo("application/pdf") == 0)
+				{
+					fulltextObject = view;
+					break;
+				}
+			}
+			if (fulltextObject != null)
+			{
+				try
+				{
+					UploadDataBean data = new UploadDataBean();
+					data.path = new URI(fulltextObject.getStream()
+							.getAbsolutePath());
+					data.mime = "application/pdf";
+					reportData.post(data);
+				}
+				catch (URISyntaxException e)
+				{
+
+					e.printStackTrace();
+				}
+			}
+
+			try
+			{
+				DCBeanAnnotated dc = marc2dc(dtlBean);
+				dc.addType(ObjectType.report.toString());
+				reportDC.post(DCBeanAnnotated.class, dc);
+			}
+			catch (Exception e)
+			{
+				logger.debug(e.getMessage());
+			}
 		}
-		catch (Exception e)
+		catch (UniformInterfaceException e)
 		{
-			logger.debug(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -239,70 +253,77 @@ public class FedoraIngester implements IngestInterface
 				.resource("http://localhost:8080/edoweb2-api/webpage/"
 						+ edowebNamespace + ":" + dtlBean.getPid());
 
-		String request = "content";
-		String response = webpage.put(String.class, request);
-		logger.info(response);
-
-		WebResource webpageDC = c.resource(webpage.toString() + "/dc");
-		// WebResource webpageMetadata = c.resource(webpage.toString()
-		// + "/metadata");
-
-		String title = "";
-
 		try
 		{
-			DCBeanAnnotated dc = marc2dc(dtlBean);
-			dc.addType(ObjectType.webpage.toString());
-			webpageDC.post(DCBeanAnnotated.class, dc);
-			title = dc.getFirstTitle();
-		}
-		catch (Exception e)
-		{
-			logger.debug(e.getMessage());
-		}
-		for (DigitalEntity b : dtlBean.getViewLinks())
-		{
-			String mimeType = b.getStreamMime();
-			if (mimeType.compareTo("application/zip") != 0)
-				continue;
-			String version = b.getPid();
-			WebResource webpageVersion = c.resource(webpage.toString()
-					+ "/version/" + version);
-			response = webpageVersion.put(String.class);
+			String request = "content";
+			String response = webpage.put(String.class, request);
 			logger.info(response);
-			WebResource webpageVersionDC = c.resource(webpageVersion.toString()
-					+ "/dc");
-			WebResource webpageVersionData = c.resource(webpageVersion
-					.toString() + "/data");
-			// WebResource webpageVersionMetadata = c.resource(webpageVersion
-			// .toString() + "/metadata");
 
-			UploadDataBean data = new UploadDataBean();
+			WebResource webpageDC = c.resource(webpage.toString() + "/dc");
+			// WebResource webpageMetadata = c.resource(webpage.toString()
+			// + "/metadata");
+
+			String title = "";
 
 			try
 			{
-				data.path = new URI(b.getStream().getAbsolutePath());
-				data.mime = mimeType;
-				webpageVersionData.post(data);
-			}
-			catch (URISyntaxException e)
-			{
-				e.printStackTrace();
-			}
-			try
-			{
-				DCBeanAnnotated dc = webpageVersionDC
-						.get(DCBeanAnnotated.class);
-				dc.addTitle("Version of: " + dtlBean.getPid() + " " + title);
-				webpageVersionDC.post(DCBeanAnnotated.class, dc);
+				DCBeanAnnotated dc = marc2dc(dtlBean);
+				dc.addType(ObjectType.webpage.toString());
+				webpageDC.post(DCBeanAnnotated.class, dc);
+				title = dc.getFirstTitle();
 			}
 			catch (Exception e)
 			{
-				logger.info(e.getMessage());
+				logger.debug(e.getMessage());
 			}
+			for (DigitalEntity b : dtlBean.getViewLinks())
+			{
+				String mimeType = b.getStreamMime();
+				if (mimeType.compareTo("application/zip") != 0)
+					continue;
+				String version = b.getPid();
+				WebResource webpageVersion = c.resource(webpage.toString()
+						+ "/version/" + version);
+				response = webpageVersion.put(String.class);
+				logger.info(response);
+				WebResource webpageVersionDC = c.resource(webpageVersion
+						.toString() + "/dc");
+				WebResource webpageVersionData = c.resource(webpageVersion
+						.toString() + "/data");
+				// WebResource webpageVersionMetadata =
+				// c.resource(webpageVersion
+				// .toString() + "/metadata");
 
+				UploadDataBean data = new UploadDataBean();
+
+				try
+				{
+					data.path = new URI(b.getStream().getAbsolutePath());
+					data.mime = mimeType;
+					webpageVersionData.post(data);
+				}
+				catch (URISyntaxException e)
+				{
+					e.printStackTrace();
+				}
+				try
+				{
+					DCBeanAnnotated dc = webpageVersionDC
+							.get(DCBeanAnnotated.class);
+					dc.addTitle("Version of: " + dtlBean.getPid() + " " + title);
+					webpageVersionDC.post(DCBeanAnnotated.class, dc);
+				}
+				catch (Exception e)
+				{
+					logger.error(e.getMessage());
+				}
+
+			}
 		}
-
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getMessage());
+		}
 		// WebResource webpageCurrent = c.resource(webpage.toString() +
 		// "/current/");
 	}
@@ -320,73 +341,80 @@ public class FedoraIngester implements IngestInterface
 						+ edowebNamespace + ":" + dtlBean.getPid());
 
 		String request = "content";
-		String response = webpage.put(String.class, request);
-		logger.info(response);
-
-		WebResource webpageDC = c.resource(webpage.toString() + "/dc");
-		// WebResource webpageMetadata = c.resource(webpage.toString()
-		// + "/metadata");
-
-		String title = "";
-
 		try
 		{
-			DCBeanAnnotated dc = marc2dc(dtlBean);
-			dc.addType(ObjectType.webpage.toString());
-			webpageDC.post(DCBeanAnnotated.class, dc);
-			title = dc.getFirstTitle();
-		}
-		catch (Exception e)
-		{
-			logger.debug(e.getMessage());
-		}
-		for (DigitalEntity b : dtlBean.getArchiveLinks())
-		{
-			logger.info(dtlBean.getPid() + ": has a Archive");
-			String mimeType = b.getStreamMime();
-			logger.debug(mimeType);
-			if (mimeType.compareTo("application/zip") != 0)
-				continue;
-			String version = b.getPid();
-			logger.info("Create webpage version: " + version);
-			WebResource webpageVersion = c.resource(webpage.toString()
-					+ "/version/" + version);
-			response = webpageVersion.put(String.class);
+			String response = webpage.put(String.class, request);
 			logger.info(response);
-			WebResource webpageVersionDC = c.resource(webpageVersion.toString()
-					+ "/dc");
-			WebResource webpageVersionData = c.resource(webpageVersion
-					.toString() + "/data");
-			// WebResource webpageVersionMetadata = c.resource(webpageVersion
-			// .toString() + "/metadata");
 
-			UploadDataBean data = new UploadDataBean();
+			WebResource webpageDC = c.resource(webpage.toString() + "/dc");
+			// WebResource webpageMetadata = c.resource(webpage.toString()
+			// + "/metadata");
+
+			String title = "";
 
 			try
 			{
-				data.path = new URI(b.getStream().getAbsolutePath());
-				data.mime = mimeType;
-				webpageVersionData.post(data);
-			}
-			catch (URISyntaxException e)
-			{
-				e.printStackTrace();
-			}
-			try
-			{
-				DCBeanAnnotated dc = webpageVersionDC
-						.get(DCBeanAnnotated.class);
-				dc.addTitle("Version of: edoweb:" + dtlBean.getPid() + " "
-						+ title);
-				webpageVersionDC.post(DCBeanAnnotated.class, dc);
+				DCBeanAnnotated dc = marc2dc(dtlBean);
+				dc.addType(ObjectType.webpage.toString());
+				webpageDC.post(DCBeanAnnotated.class, dc);
+				title = dc.getFirstTitle();
 			}
 			catch (Exception e)
 			{
 				logger.debug(e.getMessage());
 			}
+			for (DigitalEntity b : dtlBean.getArchiveLinks())
+			{
+				logger.info(dtlBean.getPid() + ": has a Archive");
+				String mimeType = b.getStreamMime();
+				logger.debug(mimeType);
+				if (mimeType.compareTo("application/zip") != 0)
+					continue;
+				String version = b.getPid();
+				logger.info("Create webpage version: " + version);
+				WebResource webpageVersion = c.resource(webpage.toString()
+						+ "/version/" + version);
+				response = webpageVersion.put(String.class);
+				logger.info(response);
+				WebResource webpageVersionDC = c.resource(webpageVersion
+						.toString() + "/dc");
+				WebResource webpageVersionData = c.resource(webpageVersion
+						.toString() + "/data");
+				// WebResource webpageVersionMetadata =
+				// c.resource(webpageVersion
+				// .toString() + "/metadata");
 
+				UploadDataBean data = new UploadDataBean();
+
+				try
+				{
+					data.path = new URI(b.getStream().getAbsolutePath());
+					data.mime = mimeType;
+					webpageVersionData.post(data);
+				}
+				catch (URISyntaxException e)
+				{
+					e.printStackTrace();
+				}
+				try
+				{
+					DCBeanAnnotated dc = webpageVersionDC
+							.get(DCBeanAnnotated.class);
+					dc.addTitle("Version of: edoweb:" + dtlBean.getPid() + " "
+							+ title);
+					webpageVersionDC.post(DCBeanAnnotated.class, dc);
+				}
+				catch (Exception e)
+				{
+					logger.debug(e.getMessage());
+				}
+
+			}
 		}
-
+		catch (UniformInterfaceException e)
+		{
+			logger.error(e.getMessage());
+		}
 		// WebResource webpageCurrent = c.resource(webpage.toString() +
 		// "/current/");
 	}
@@ -403,72 +431,79 @@ public class FedoraIngester implements IngestInterface
 				.resource("http://localhost:8080/edoweb2-api/ejournal/"
 						+ edowebNamespace + ":" + dtlBean.getPid());
 
-		String request = "content";
-		String response = ejournal.put(String.class, request);
-		logger.info(response);
-
-		WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
-		// WebResource ejournalMetadata = c.resource(ejournal.toString()
-		// + "/metadata");
 		try
 		{
-			DCBeanAnnotated dc = marc2dc(dtlBean);
-			dc.addType(ObjectType.ejournal.toString());
-			ejournalDC.post(DCBeanAnnotated.class, dc);
-		}
-		catch (Exception e)
-		{
-			logger.debug(e.getMessage());
-		}
-		for (DigitalEntity b : dtlBean.getViewMainLinks())
-		{
-			String mimeType = b.getStreamMime();
-			if (mimeType.compareTo("application/pdf") != 0)
-				continue;
-			String volName = b.getPid();
-			logger.info("Create eJournal volume: " + volName);
-			WebResource ejournalVolume = c.resource(ejournal.toString()
-					+ "/volume/" + volName);
-			ejournalVolume.put();
-			WebResource ejournalVolumeDC = c.resource(ejournalVolume.toString()
-					+ "/dc");
-			WebResource ejournalVolumeData = c.resource(ejournalVolume
-					.toString() + "/data");
-			// WebResource ejournalVolumeMetadata = c.resource(ejournalVolume
-			// .toString() + "/metadata");
+			String request = "content";
+			String response = ejournal.put(String.class, request);
+			logger.info(response);
 
-			UploadDataBean data = new UploadDataBean();
-
+			WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
+			// WebResource ejournalMetadata = c.resource(ejournal.toString()
+			// + "/metadata");
 			try
 			{
-				String protocol = "file";
-				String host = "";
-				String path = b.getStream().getAbsolutePath();
-				String fragment = "";
-				data.path = new URI(protocol, host, path, fragment);
-				data.mime = mimeType;
-				ejournalVolumeData.post(data);
-			}
-			catch (URISyntaxException e)
-			{
-
-				e.printStackTrace();
-			}
-			try
-			{
-				DCBeanAnnotated dc = ejournalVolumeDC
-						.get(DCBeanAnnotated.class);
-
-				dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
-				ejournalVolumeDC.post(DCBeanAnnotated.class, dc);
+				DCBeanAnnotated dc = marc2dc(dtlBean);
+				dc.addType(ObjectType.ejournal.toString());
+				ejournalDC.post(DCBeanAnnotated.class, dc);
 			}
 			catch (Exception e)
 			{
 				logger.debug(e.getMessage());
 			}
+			for (DigitalEntity b : dtlBean.getViewMainLinks())
+			{
+				String mimeType = b.getStreamMime();
+				if (mimeType.compareTo("application/pdf") != 0)
+					continue;
+				String volName = b.getPid();
+				logger.info("Create eJournal volume: " + volName);
+				WebResource ejournalVolume = c.resource(ejournal.toString()
+						+ "/volume/" + volName);
+				ejournalVolume.put();
+				WebResource ejournalVolumeDC = c.resource(ejournalVolume
+						.toString() + "/dc");
+				WebResource ejournalVolumeData = c.resource(ejournalVolume
+						.toString() + "/data");
+				// WebResource ejournalVolumeMetadata =
+				// c.resource(ejournalVolume
+				// .toString() + "/metadata");
 
+				UploadDataBean data = new UploadDataBean();
+
+				try
+				{
+					String protocol = "file";
+					String host = "";
+					String path = b.getStream().getAbsolutePath();
+					String fragment = "";
+					data.path = new URI(protocol, host, path, fragment);
+					data.mime = mimeType;
+					ejournalVolumeData.post(data);
+				}
+				catch (URISyntaxException e)
+				{
+
+					e.printStackTrace();
+				}
+				try
+				{
+					DCBeanAnnotated dc = ejournalVolumeDC
+							.get(DCBeanAnnotated.class);
+
+					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
+					ejournalVolumeDC.post(DCBeanAnnotated.class, dc);
+				}
+				catch (Exception e)
+				{
+					logger.debug(e.getMessage());
+				}
+
+			}
 		}
-
+		catch (UniformInterfaceException e)
+		{
+			logger.error(e.getMessage());
+		}
 	}
 
 	private DCBeanAnnotated marc2dc(DigitalEntity dtlBean)

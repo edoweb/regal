@@ -374,7 +374,7 @@ public class Main
 							ingester.ingest(dtlBean);
 							dtlBean = null;
 							logger.info((i + 1) + "/" + size + " " + pid
-									+ " has been ingested!\n");
+									+ " has been processed!\n");
 						}
 						else if (downloader.hasUpdated())
 						{

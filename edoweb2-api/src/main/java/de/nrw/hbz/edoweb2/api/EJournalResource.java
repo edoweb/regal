@@ -32,6 +32,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
@@ -115,7 +116,7 @@ public class EJournalResource
 	@PUT
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String createEJournal(@PathParam("pid") String pid,
+	public Response createEJournal(@PathParam("pid") String pid,
 			@PathParam("namespace") String userNamespace)
 	{
 		logger.info("create EJournal");
@@ -124,12 +125,21 @@ public class EJournalResource
 			if (actions.nodeExists(namespace + ":" + pid))
 			{
 				logger.warn("Node exists: " + pid);
-				return "{\"message\":\" Node already exists. I do nothing!\"}";
+				MessageBean msg = new MessageBean(
+						"Node already exists. I do nothing!");
+				Response response = Response.status(409)
+						.type(MediaType.APPLICATION_JSON).entity(msg).build();
+				logger.warn("Node exists: " + pid);
+				return response;
 			}
 			if (userNamespace.compareTo(namespace) != 0)
 			{
-				return "{\"message\":\" Wrong namespace. Must be " + namespace
-						+ "\"}";
+				MessageBean msg = new MessageBean(" Wrong namespace. Must be "
+						+ namespace);
+				Response response = Response.status(409)
+						.type(MediaType.APPLICATION_JSON).entity(msg).build();
+				logger.warn("Node exists: " + pid);
+				return response;
 			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
@@ -145,7 +155,9 @@ public class EJournalResource
 					namespace, ejournalType));
 
 			ComplexObject object = new ComplexObject(rootObject);
-			return actions.create(object);
+			MessageBean msg = new MessageBean(actions.create(object));
+			return Response.ok().type(MediaType.APPLICATION_JSON).entity(msg)
+					.build();
 
 		}
 		catch (RemoteException e)
@@ -153,7 +165,9 @@ public class EJournalResource
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "Create Failed";
+		MessageBean msg = new MessageBean("Create Failed");
+		return Response.serverError().type(MediaType.APPLICATION_JSON)
+				.entity(msg).build();
 	}
 
 	@GET
