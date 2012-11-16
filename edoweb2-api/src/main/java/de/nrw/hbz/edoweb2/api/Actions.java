@@ -607,7 +607,10 @@ public class Actions
 			{
 				if (subject.startsWith("ddc"))
 				{
-					String ddc = subject.subSequence(4, 7).toString();
+					int end = 7;
+					if (subject.length() < 7)
+						end = subject.length();
+					String ddc = subject.subSequence(4, end).toString();
 					logger.info("Found ddc: " + ddc);
 
 					String name = ddcmap(ddc);
