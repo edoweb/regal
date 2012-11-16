@@ -70,17 +70,19 @@ public class EJournalResource
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return new ObjectList(actions.findByType(ejournalType));
+		return new ObjectList(actions.findByType("doc-type:"
+				+ ejournalType.toString()));
 	}
 
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
 	public MessageBean deleteAll()
 	{
-		String eJournal = actions.deleteAll(actions.findByType(ejournalType),
+		String eJournal = actions.deleteAll(
+				actions.findByType("doc-type:" + ejournalType.toString()),
 				false);
 		String eJournalVolume = actions.deleteAll(
-				actions.findByType(volumeType), false);
+				actions.findByType(volumeType.toString()), false);
 		return new MessageBean(eJournal + "\n" + eJournalVolume);
 	}
 

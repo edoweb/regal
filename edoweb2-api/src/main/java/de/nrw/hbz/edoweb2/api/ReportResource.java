@@ -63,7 +63,8 @@ public class ReportResource
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return new ObjectList(actions.findByType(objectType));
+		return new ObjectList(actions.findByType("doc-type:"
+				+ objectType.toString()));
 	}
 
 	@DELETE
@@ -71,7 +72,7 @@ public class ReportResource
 	public MessageBean deleteAll()
 	{
 		return new MessageBean(actions.deleteAll(
-				actions.findByType(objectType), false));
+				actions.findByType("doc-type:" + objectType.toString()), false));
 	}
 
 	@PUT

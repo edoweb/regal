@@ -180,11 +180,11 @@ public class Actions
 
 	// -------------------------------------------------------
 
-	public Vector<String> findByType(ObjectType type)
+	public Vector<String> findByType(String type)
 	{
 		Vector<String> pids = new Vector<String>();
-		String query = "* <http://purl.org/dc/elements/1.1/type> \""
-				+ type.toString() + "\"";
+		String query = "* <http://purl.org/dc/elements/1.1/type> \"" + type
+				+ "\"";
 		InputStream stream = archive.findTriples(query, FedoraFacade.TYPE_SPO,
 				FedoraFacade.FORMAT_N3);
 		String findpid = null;

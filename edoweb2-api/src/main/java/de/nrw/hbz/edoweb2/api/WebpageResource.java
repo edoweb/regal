@@ -71,17 +71,19 @@ public class WebpageResource
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return new ObjectList(actions.findByType(webpageType));
+		return new ObjectList(actions.findByType("doc-type:"
+				+ webpageType.toString()));
 	}
 
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
 	public MessageBean deleteAll()
 	{
-		String eJournal = actions.deleteAll(actions.findByType(webpageType),
-				false);
+		String eJournal = actions
+				.deleteAll(actions.findByType("doc-type:"
+						+ webpageType.toString()), false);
 		String eJournalVolume = actions.deleteAll(
-				actions.findByType(webpageVersionType), false);
+				actions.findByType(webpageVersionType.toString()), false);
 		return new MessageBean(eJournal + "\n" + eJournalVolume);
 	}
 
