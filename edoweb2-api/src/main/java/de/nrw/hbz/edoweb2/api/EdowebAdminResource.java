@@ -16,6 +16,13 @@ public class EdowebAdminResource
 	}
 
 	@DELETE
+	@Path("/formatAll")
+	public String formatAll()
+	{
+		return actions.formatAll();
+	}
+
+	@DELETE
 	@Path("/delete/{pid}")
 	public String deleteMirror(@PathParam("pid") String pid)
 	{

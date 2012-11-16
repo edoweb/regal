@@ -68,9 +68,10 @@ public class ReportResource
 
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
-	public String deleteAll()
+	public MessageBean deleteAll()
 	{
-		return actions.deleteAll(actions.findByType(objectType), false);
+		return new MessageBean(actions.deleteAll(
+				actions.findByType(objectType), false));
 	}
 
 	@PUT
@@ -132,18 +133,19 @@ public class ReportResource
 	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateReport(@PathParam("pid") String pid, StatusBean status)
+	public MessageBean updateReport(@PathParam("pid") String pid,
+			StatusBean status)
 	{
-		return actions.update(pid, status, false);
+		return new MessageBean(actions.update(pid, status, false));
 	}
 
 	@DELETE
 	@Path("/{pid}")
-	public String deleteReport(@PathParam("pid") String pid)
+	public MessageBean deleteReport(@PathParam("pid") String pid)
 	{
 		logger.info("DELETE");
 		actions.delete(pid, false);
-		return pid + " DELETED!";
+		return new MessageBean(pid + " DELETED!");
 	}
 
 	@GET
@@ -158,10 +160,10 @@ public class ReportResource
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateReportDC(@PathParam("pid") String pid,
+	public MessageBean updateReportDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return actions.updateDC(pid, content);
+		return new MessageBean(actions.updateDC(pid, content));
 	}
 
 	@GET
@@ -176,10 +178,10 @@ public class ReportResource
 	@Path("/{pid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateReportData(@PathParam("pid") String pid,
+	public MessageBean updateReportData(@PathParam("pid") String pid,
 			UploadDataBean content)
 	{
-		return actions.updateData(pid, content);
+		return new MessageBean(actions.updateData(pid, content));
 	}
 
 	@GET
@@ -191,10 +193,10 @@ public class ReportResource
 
 	@POST
 	@Path("/{pid}/metadata")
-	public String updateReportMetadata(@PathParam("pid") String pid,
+	public MessageBean updateReportMetadata(@PathParam("pid") String pid,
 			UploadDataBean content)
 	{
-		return actions.updateMetadata(pid, content);
+		return new MessageBean(actions.updateMetadata(pid, content));
 	}
 
 	// be it hot or be it not

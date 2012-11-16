@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -602,48 +603,48 @@ public class Actions
 		try
 		{
 			Node node = archive.readNode(pid);
-
-			for (String subject : node.getSubject())
-			{
-				if (subject.startsWith("ddc"))
+			if (node.getSubject() != null)
+				for (String subject : node.getSubject())
 				{
-					int end = 7;
-					if (subject.length() < 7)
-						end = subject.length();
-					String ddc = subject.subSequence(4, end).toString();
-					logger.info("Found ddc: " + ddc);
-
-					String name = ddcmap(ddc);
-					String spec = "ddc:" + ddc;
-					String namespace = "oai";
-					String oaipid = namespace + ":" + ddc;
-					if (!this.nodeExists(oaipid))
+					if (subject.startsWith("ddc"))
 					{
-						createOAISet(name, spec, oaipid);
+						int end = 7;
+						if (subject.length() < 7)
+							end = subject.length();
+						String ddc = subject.subSequence(4, end).toString();
+						logger.info("Found ddc: " + ddc);
+
+						String name = ddcmap(ddc);
+						String spec = "ddc:" + ddc;
+						String namespace = "oai";
+						String oaipid = namespace + ":" + ddc;
+						if (!this.nodeExists(oaipid))
+						{
+							createOAISet(name, spec, oaipid);
+						}
+						linkObjectToOaiSet(node, spec, oaipid);
 					}
-					linkObjectToOaiSet(node, spec, oaipid);
+
 				}
-
-			}
-
-			for (String type : node.getType())
-			{
-				if (type.startsWith("doc-type"))
+			if (node.getType() != null)
+				for (String type : node.getType())
 				{
-					String docType = type.substring(9);
-					logger.info("Found docType: " + docType);
-
-					String name = docmap(docType);
-					String spec = "doc-type:" + docType;
-					String namespace = "oai";
-					String oaipid = namespace + ":" + docType;
-					if (!this.nodeExists(oaipid))
+					if (type.startsWith("doc-type"))
 					{
-						createOAISet(name, spec, oaipid);
+						String docType = type.substring(9);
+						logger.info("Found docType: " + docType);
+
+						String name = docmap(docType);
+						String spec = "doc-type:" + docType;
+						String namespace = "oai";
+						String oaipid = namespace + ":" + docType;
+						if (!this.nodeExists(oaipid))
+						{
+							createOAISet(name, spec, oaipid);
+						}
+						linkObjectToOaiSet(node, spec, oaipid);
 					}
-					linkObjectToOaiSet(node, spec, oaipid);
 				}
-			}
 
 			String name = "open_access";
 			String spec = "open_access";
@@ -735,6 +736,8 @@ public class Actions
 
 	private String ddcmap(String number)
 	{
+		if (number == null || number.length() != 3)
+			logger.info("Didn't found ddc name for ddc:" + number);
 		String name = "";
 		try
 		{
@@ -757,9 +760,16 @@ public class Actions
 			doc = docBuilder.parse(stream);
 			Element root = doc.getDocumentElement();
 			root.normalize();
-			name = root.getElementsByTagName("skos:prefLabel").item(0)
-					.getTextContent();
-			logger.info("Found ddc name: " + name);
+			try
+			{
+				name = root.getElementsByTagName("skos:prefLabel").item(0)
+						.getTextContent();
+				logger.info("Found ddc name: " + name);
+			}
+			catch (Exception e)
+			{
+				logger.info("Didn't found ddc name for ddc:" + number);
+			}
 		}
 		catch (MalformedURLException e)
 		{
@@ -788,5 +798,30 @@ public class Actions
 		}
 
 		return name;
+	}
+
+	public String formatAll()
+	{
+		List<String> objects = archive.findNodes("test:*");
+		StringBuffer result = new StringBuffer();
+		for (String pid : objects)
+		{
+			result.append(pid + "\n");
+			archive.deleteNode(pid);
+
+		}
+		objects = archive.findNodes("edoweb:*");
+		for (String pid : objects)
+		{
+			result.append(pid + "\n");
+			archive.deleteNode(pid);
+		}
+		objects = archive.findNodes("oai:*");
+		for (String pid : objects)
+		{
+			result.append(pid + "\n");
+			archive.deleteNode(pid);
+		}
+		return result.toString();
 	}
 }

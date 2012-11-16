@@ -259,5 +259,10 @@ public class ArchiveIntegrationTest
 		// {
 		// archive.deleteNode(pid);
 		// }
+		// objects = archive.findNodes("oai:*");
+		// for (String pid : objects)
+		// {
+		// archive.deleteNode(pid);
+		// }
 	}
 }
