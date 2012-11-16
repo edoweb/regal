@@ -307,8 +307,8 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(node.getMetadataUrl().toString()))
-							.build();
+							new java.net.URI(host + "/objects/" + pid
+									+ "/datastreams/metadata/content")).build();
 				}
 				catch (URISyntaxException e)
 				{
