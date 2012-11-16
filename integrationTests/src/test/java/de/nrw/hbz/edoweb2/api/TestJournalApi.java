@@ -65,6 +65,7 @@ public class TestJournalApi
 		// --------------Clean up--------------------
 		{
 			String response = journals.delete(String.class);
+			waitWorkaround();
 			System.out.println(response);
 			ObjectList list = journals.get(ObjectList.class);
 			Assert.assertTrue(list.getList().isEmpty());
@@ -97,7 +98,7 @@ public class TestJournalApi
 			v.add("Test");
 			dc.setCreator(v);
 			aJournalDc.post(DCBeanAnnotated.class, dc);
-
+			waitWorkaround();
 			dc = aJournalDc.get(DCBeanAnnotated.class);
 			Assert.assertEquals("Test", dc.getCreator().get(0));
 		}
@@ -154,7 +155,7 @@ public class TestJournalApi
 			v.add("TestVolume");
 			dc.setCreator(v);
 			aJournalVolumeDc.post(DCBeanAnnotated.class, dc);
-
+			waitWorkaround();
 			dc = aJournalVolumeDc.get(DCBeanAnnotated.class);
 			Assert.assertEquals("TestVolume", dc.getCreator().get(0));
 		}
@@ -164,9 +165,31 @@ public class TestJournalApi
 		}
 
 		response = journals.delete(String.class);
+		waitWorkaround();
 		System.out.println(response);
 		list = journals.get(ObjectList.class);
 		Assert.assertTrue(list.getList().isEmpty());
+	}
+
+	private void waitWorkaround()
+	{
+		/*
+		 * Workaround START
+		 */
+		try
+		{
+
+			Thread.sleep(10000);
+
+		}
+		catch (InterruptedException e1)
+		{
+
+			e1.printStackTrace();
+		}
+		/*
+		 * Workaround END
+		 */
 	}
 
 	@After

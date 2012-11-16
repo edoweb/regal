@@ -30,6 +30,14 @@
 		<xsl:variable name="leader6" select="substring($leader,7,1)"/>
 		<xsl:variable name="leader7" select="substring($leader,8,1)"/>
 		<xsl:variable name="controlField008" select="marc:controlfield[@tag=008]"/>
+		<xsl:variable name="controlField001" select="marc:controlfield[@tag=001]"/>
+			<dc:identifier>
+				 <xsl:value-of select="$controlField001" />
+			</dc:identifier>
+<!-- 			<dc:identifier> -->
+<!-- 				 http://193.30.112.134/F/?func=find-a&amp;request=IDN%3D<xsl:value-of select="$controlField001" /> -->
+<!-- 			</dc:identifier> -->
+	
 		<xsl:for-each select="marc:datafield[@tag=245]">
 			<dc:title>
 				<xsl:call-template name="subfieldSelect">
@@ -70,6 +78,11 @@
 				<xsl:value-of select="."/>
 			</dc:type>
 		</xsl:for-each>
+		<xsl:for-each select="marc:datafield[@tag=501]">
+			<dc:type>
+				<xsl:value-of select="."/>
+			</dc:type>
+		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag=260]">
 			<dc:publisher>
 				<xsl:call-template name="subfieldSelect">
@@ -78,6 +91,11 @@
 			</dc:publisher>
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag=260]/marc:subfield[@code='c']">
+			<dc:date>
+				<xsl:value-of select="."/>
+			</dc:date>
+		</xsl:for-each>
+		<xsl:for-each select="marc:datafield[@tag=005]/marc:subfield[@code='a']">
 			<dc:date>
 				<xsl:value-of select="."/>
 			</dc:date>
@@ -147,6 +165,20 @@
 				</xsl:call-template>
 			</dc:subject>
 		</xsl:for-each>
+		<xsl:for-each select="marc:datafield[@tag=082]">
+			<dc:subject>ddc:<xsl:call-template name="subfieldSelect">
+					<xsl:with-param name="codes">a</xsl:with-param>
+				</xsl:call-template>
+			</dc:subject>
+		</xsl:for-each>
+	
+		<xsl:for-each select="marc:datafield[@tag=084]">
+			<dc:subject>
+				<xsl:call-template name="subfieldSelect">
+					<xsl:with-param name="codes">a</xsl:with-param>
+				</xsl:call-template>
+			</dc:subject>
+		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag=752]">
 			<dc:coverage>
 				<xsl:call-template name="subfieldSelect">
@@ -168,6 +200,11 @@
 				</xsl:call-template>
 			</dc:relation>
 		</xsl:for-each>
+<!-- 		<xsl:for-each select="marc:datafield[@tag=856]"> -->
+<!-- 			<dc:identifier> -->
+<!-- 				http://nbn-resolving.de/<xsl:value-of select="marc:subfield[@code='u']"/> -->
+<!-- 			</dc:identifier> -->
+<!-- 		</xsl:for-each> -->
 		<xsl:for-each select="marc:datafield[@tag=856]">
 			<dc:identifier>
 				<xsl:value-of select="marc:subfield[@code='u']"/>

@@ -90,12 +90,8 @@ public class Main
 		options.addOption("set", "set", true, "Specify an OAI setSpec");
 		options.addOption("timestamp", "timestamp", true,
 				"Specify a local file e.g. .oaitimestamp");
-		options.addOption("axisHome", "axisHome", true,
-				"Specify a local file e.g. .oaitimestamp");
 		options.addOption("fedoraBase", "fedoraBase", true,
 				"The Fedora Baseurl");
-		options.addOption("htmlExport", "htmlExport", true,
-				"Local path to a directory");
 		options.addOption(
 				"list",
 				"list",
@@ -112,9 +108,8 @@ public class Main
 					| !config.hasOption("dtl") | !config.hasOption("cache")
 					| !config.hasOption("oai") | !config.hasOption("set")
 					| !config.hasOption("timestamp")
-					| !config.hasOption("axisHome")
-					| !config.hasOption("fedoraBase")
-					| !config.hasOption("htmlExport"))
+					| !config.hasOption("fedoraBase"))
+
 			{
 				showHelp(options);
 				return;
@@ -168,17 +163,16 @@ public class Main
 		DigitoolDownloader downloader = new DigitoolDownloader(server,
 				downloadLocation);
 
-		IngestInterface ingester = new FedoraIngester();
+		IngestInterface ingester = new FedoraIngester(user, password);
 
 		if (mode.compareTo("INIT") == 0)
 		{
 			boolean harvestFromScratch = true;
-			boolean forceDownload = false;
+			boolean forceDownload = true;
 
 			Vector<String> pids = harvester.harvest(new String[] { setSpec },
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-			logger.info("Erzeuge ca. " + pids.size() * 17 + " Fedoraobjekte.");
 			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 
 			for (int i = 0; i < pids.size(); i++)
@@ -272,7 +266,6 @@ public class Main
 			Vector<String> pids = harvester.harvest(new String[] { setSpec },
 					harvestFromScratch);
 			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-			logger.info("Erzeuge ca. " + pids.size() * 17 + " Fedoraobjekte.");
 			DigitalEntityBuilder builder = new DigitalEntityBuilder();
 			// IngestInterface ingester = new FedoraIngester("ellinet",
 			// fedoraBase, user, password, axisHome);
@@ -307,6 +300,7 @@ public class Main
 		else if (mode.compareTo("UPDT") == 0)
 		{
 			boolean harvestFromScratch = true;
+			boolean forceDownload = false;
 
 			Vector<String> pids = harvester.harvest(new String[] { setSpec },
 					harvestFromScratch);
@@ -322,7 +316,7 @@ public class Main
 				{
 					logger.info(i + "\n");
 					String pid = pids.get(i);
-					String baseDir = downloader.download(pid);
+					String baseDir = downloader.download(pid, forceDownload);
 					logger.info("\tBuild Bean \t" + pid);
 
 					if (!downloader.hasUpdated())
@@ -380,7 +374,7 @@ public class Main
 							ingester.ingest(dtlBean);
 							dtlBean = null;
 							logger.info((i + 1) + "/" + size + " " + pid
-									+ " has been ingested!\n");
+									+ " has been processed!\n");
 						}
 						else if (downloader.hasUpdated())
 						{
@@ -448,29 +442,6 @@ public class Main
 
 		}
 
-		// if (generateHTMLBrowsing)
-		// {
-		// RDFExporter exporter = new RDFExporter(
-		// properties.getProperty("fedoraHttp"));
-		// try
-		// {
-		// exporter.export(properties.getProperty("rdfExport"));
-		// } catch (HttpException e)
-		// {
-		//
-		// e.printStackTrace();
-		// } catch (IOException e)
-		// {
-		//
-		// e.printStackTrace();
-		// }
-		// }
-
-		// EllinetIngestBrowser browser = new EllinetIngestBrowser(fedoraBase,
-		// user, password);
-		//
-		// HTMLViewGenerator viewGen = new HTMLViewGenerator();
-		// viewGen.export(browser, htmlExport);
 	}
 
 	private Vector<String> readPidlist(String pidListFile)
@@ -494,7 +465,6 @@ public class Main
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		finally
@@ -505,7 +475,6 @@ public class Main
 			}
 			catch (IOException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

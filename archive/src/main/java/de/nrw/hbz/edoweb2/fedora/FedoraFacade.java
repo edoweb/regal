@@ -684,7 +684,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 					node.getMimeType(), formatURI, location, "M", state,
 					checksumType, null, // checksum type and checksum
 					"A datastream");
-			node.setDataUrl(new URL(this.host + "/objects/" + node.getPID()
+			node.setDataUrl(new URL(host + "/objects/" + node.getPID()
 					+ "/datastreams/" + newID + "/content"));
 			Link link = new Link();
 			link.setObject(node.getFileName(), true);

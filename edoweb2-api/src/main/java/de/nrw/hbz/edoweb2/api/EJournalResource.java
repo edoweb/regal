@@ -32,7 +32,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
@@ -45,7 +49,8 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
 @Path("/ejournal")
 public class EJournalResource
 {
-
+	final static Logger logger = LoggerFactory
+			.getLogger(EJournalResource.class);
 	String IS_VOLUME = HBZ_MODEL_NAMESPACE + "isVolumeOf";
 	String HAS_VOLUME = HBZ_MODEL_NAMESPACE + "hasVolume";
 	String HAS_VOLUME_NAME = HBZ_MODEL_NAMESPACE + "hasVolumeName";
@@ -65,17 +70,20 @@ public class EJournalResource
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return new ObjectList(actions.findByType(ejournalType));
+		return new ObjectList(actions.findByType("doc-type:"
+				+ ejournalType.toString()));
 	}
 
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
-	public String deleteAll()
+	public MessageBean deleteAll()
 	{
-		String eJournal = actions.deleteAll(actions.findByType(ejournalType));
-		String eJournalVolume = actions.deleteAll(actions
-				.findByType(volumeType));
-		return eJournal + "\n" + eJournalVolume;
+		String eJournal = actions.deleteAll(
+				actions.findByType("doc-type:" + ejournalType.toString()),
+				false);
+		String eJournalVolume = actions.deleteAll(
+				actions.findByType(volumeType.toString()), false);
+		return new MessageBean(eJournal + "\n" + eJournalVolume);
 	}
 
 	@GET
@@ -84,7 +92,7 @@ public class EJournalResource
 	public StatusBean readEJournal(@PathParam("pid") String pid,
 			@PathParam("namespace") String userNamespace)
 	{
-		System.out.println("read EJournal");
+
 		return actions.read(namespace + ":" + pid);
 	}
 
@@ -92,34 +100,51 @@ public class EJournalResource
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateEJournal(@PathParam("pid") String pid,
+	public MessageBean updateEJournal(@PathParam("pid") String pid,
 			StatusBean status, @PathParam("namespace") String userNamespace)
 	{
-		return actions.update(namespace + ":" + pid, status);
+		return new MessageBean(actions.update(namespace + ":" + pid, status,
+				false));
 	}
 
 	@DELETE
 	@Path("/{namespace}:{pid}")
-	public String deleteEJournal(@PathParam("pid") String pid,
+	public MessageBean deleteEJournal(@PathParam("pid") String pid,
 			@PathParam("namespace") String userNamespace)
 	{
-		System.out.println("delete EJournal");
-		actions.delete(namespace + ":" + pid);
-		return namespace + ":" + pid + " EJournal deleted!";
+		logger.info("delete EJournal");
+		actions.delete(namespace + ":" + pid, false);
+		return new MessageBean(namespace + ":" + pid + " EJournal deleted!");
 	}
 
 	@PUT
 	@Path("/{namespace}:{pid}")
-	public String createEJournal(@PathParam("pid") String pid,
+	@Produces({ "application/json", "application/xml" })
+	public Response createEJournal(@PathParam("pid") String pid,
 			@PathParam("namespace") String userNamespace)
 	{
-		System.out.println("create EJournal");
+		logger.info("create EJournal");
 		try
 		{
-			if (actions.nodeExists(pid))
-				return "ERROR: Node already exists";
+			if (actions.nodeExists(namespace + ":" + pid))
+			{
+				logger.warn("Node exists: " + pid);
+				MessageBean msg = new MessageBean(
+						"Node already exists. I do nothing!");
+				Response response = Response.status(409)
+						.type(MediaType.APPLICATION_JSON).entity(msg).build();
+				logger.warn("Node exists: " + pid);
+				return response;
+			}
 			if (userNamespace.compareTo(namespace) != 0)
-				return "ERROR: Namespace MUST be " + namespace;
+			{
+				MessageBean msg = new MessageBean(" Wrong namespace. Must be "
+						+ namespace);
+				Response response = Response.status(409)
+						.type(MediaType.APPLICATION_JSON).entity(msg).build();
+				logger.warn("Node exists: " + pid);
+				return response;
+			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -134,7 +159,9 @@ public class EJournalResource
 					namespace, ejournalType));
 
 			ComplexObject object = new ComplexObject(rootObject);
-			return actions.create(object);
+			MessageBean msg = new MessageBean(actions.create(object, true));
+			return Response.ok().type(MediaType.APPLICATION_JSON).entity(msg)
+					.build();
 
 		}
 		catch (RemoteException e)
@@ -142,7 +169,9 @@ public class EJournalResource
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "Create Failed";
+		MessageBean msg = new MessageBean("Create Failed");
+		return Response.serverError().type(MediaType.APPLICATION_JSON)
+				.entity(msg).build();
 	}
 
 	@GET
@@ -157,10 +186,10 @@ public class EJournalResource
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateEJournalDC(@PathParam("pid") String pid,
+	public MessageBean updateEJournalDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return actions.updateDC(pid, content);
+		return new MessageBean(actions.updateDC(pid, content));
 	}
 
 	@GET
@@ -172,10 +201,10 @@ public class EJournalResource
 
 	@POST
 	@Path("/{pid}/metadata")
-	public String updateEJournalMetadata(@PathParam("pid") String pid,
+	public MessageBean updateEJournalMetadata(@PathParam("pid") String pid,
 			UploadDataBean content)
 	{
-		return actions.updateMetadata(pid, content);
+		return new MessageBean(actions.updateMetadata(pid, content));
 	}
 
 	@GET
@@ -196,17 +225,18 @@ public class EJournalResource
 
 	@PUT
 	@Path("/{pid}/volume/{volName}")
-	public String createEJournalVolume(@PathParam("pid") String pid,
+	@Produces({ "application/json", "application/xml" })
+	public MessageBean createEJournalVolume(@PathParam("pid") String pid,
 			@PathParam("volName") String volName)
 	{
 
-		System.out.println("create EJournal Volume");
+		logger.info("create EJournal Volume");
 		try
 		{
 
 			String volumeId = actions.getPid(namespace);
 			if (actions.nodeExists(volumeId))
-				return "ERROR: Node already exists";
+				return new MessageBean("ERROR: Node already exists");
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -248,16 +278,14 @@ public class EJournalResource
 
 			actions.addLink(pid, link);
 
-			String result = actions.create(object);
-			// actions.addChildToParent(volumeId, pid);
-			return result;
+			return new MessageBean(actions.create(object, true));
+
 		}
 		catch (RemoteException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "create EJournal Volume Failed";
+		return new MessageBean("create eJournal Volume Failed");
 	}
 
 	@GET
@@ -290,18 +318,18 @@ public class EJournalResource
 	@Path("/{pid}/volume/{volName}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateVolumeData(@PathParam("pid") String pid,
+	public MessageBean updateVolumeData(@PathParam("pid") String pid,
 			@PathParam("volName") String volName, UploadDataBean content)
 	{
 		String volumePid = null;
 		String query = getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
-		return actions.updateData(volumePid, content);
+		return new MessageBean(actions.updateData(volumePid, content));
 	}
 
 	@GET
 	@Path("/{pid}/volume/{volName}/dc")
-	@Produces({ "application/*" })
+	@Produces({ "application/json", "application/xml" })
 	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volName") String volName)
 	{
@@ -315,13 +343,13 @@ public class EJournalResource
 	@Path("/{pid}/volume/{volName}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateVolumeDC(@PathParam("pid") String pid,
+	public MessageBean updateVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volName") String volName, DCBeanAnnotated content)
 	{
 		String volumePid = null;
 		String query = getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
-		return actions.updateDC(volumePid, content);
+		return new MessageBean(actions.updateDC(volumePid, content));
 	}
 
 	@GET
@@ -340,13 +368,13 @@ public class EJournalResource
 	@Path("/{pid}/volume/{volName}/metadata")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateVolumeMetadata(@PathParam("pid") String pid,
+	public MessageBean updateVolumeMetadata(@PathParam("pid") String pid,
 			@PathParam("volName") String volName, UploadDataBean content)
 	{
 		String volumePid = null;
 		String query = getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
-		return actions.updateMetadata(volumePid, content);
+		return new MessageBean(actions.updateMetadata(volumePid, content));
 	}
 
 	private String getVolumeQuery(String volName, String pid)

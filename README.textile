@@ -11,6 +11,16 @@ h1. Build
 
 bc.. mvn clean install 
 
+h2. Api
+
+bc.. cd edoweb2-api
+mvn clean install war:war
+
+h2. Syncer
+
+bc.. cd edowebSync
+mvn assembly:assembly
+
 h1. Test
 
 To make use of the integrationTests install a fedora-3.6 and make the edoweb2-api.war available e.g.

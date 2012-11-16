@@ -85,6 +85,7 @@ public class TestReportApi
 		// --------------Clean up--------------------
 		{
 			String response = reports.delete(String.class);
+			waitWorkaround();
 			System.out.println(response);
 			ObjectList list = reports.get(ObjectList.class);
 			Assert.assertTrue(list.getList().isEmpty());
@@ -130,7 +131,7 @@ public class TestReportApi
 			v.add("Test");
 			dc.setCreator(v);
 			myReportDc.post(DCBeanAnnotated.class, dc);
-
+			waitWorkaround();
 			dc = myReportDc.get(DCBeanAnnotated.class);
 			Assert.assertEquals("Test", dc.getCreator().get(0));
 		}
@@ -140,9 +141,31 @@ public class TestReportApi
 		}
 
 		response = reports.delete(String.class);
+		waitWorkaround();
 		System.out.println(response);
 		list = reports.get(ObjectList.class);
 		Assert.assertTrue(list.getList().isEmpty());
+	}
+
+	private void waitWorkaround()
+	{
+		/*
+		 * Workaround START
+		 */
+		try
+		{
+
+			Thread.sleep(10000);
+
+		}
+		catch (InterruptedException e1)
+		{
+
+			e1.printStackTrace();
+		}
+		/*
+		 * Workaround END
+		 */
 	}
 
 	@After
