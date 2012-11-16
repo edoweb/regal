@@ -66,6 +66,7 @@ public class Actions
 {
 	final static Logger logger = LoggerFactory.getLogger(Actions.class);
 	ArchiveInterface archive = null;
+	String host = null;
 
 	public Actions()
 	{
@@ -78,9 +79,8 @@ public class Actions
 		{
 			e.printStackTrace();
 		}
-
-		archive = ArchiveFactory.getArchiveImpl(
-				properties.getProperty("fedoraUrl"),
+		host = properties.getProperty("fedoraUrl");
+		archive = ArchiveFactory.getArchiveImpl(host,
 				properties.getProperty("user"),
 				properties.getProperty("password"),
 				properties.getProperty("sesameStore"));
@@ -263,8 +263,8 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(node.getDataUrl().toString()))
-							.build();
+							new java.net.URI(host + "/objects/" + pid
+									+ "/datastreams/data/content")).build();
 				}
 				catch (URISyntaxException e)
 				{
