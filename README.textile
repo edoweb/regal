@@ -12,10 +12,12 @@ h1. Build
 bc.. mvn clean install 
 
 h2. Api
+
 bc.. cd edoweb2-api
 mvn clean install war:wa
 
 h2. Syncer
+
 bc.. cd edowebSync
 mvn assembly:assembly
 
