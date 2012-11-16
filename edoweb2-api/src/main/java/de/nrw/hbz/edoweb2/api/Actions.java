@@ -80,8 +80,9 @@ public class Actions
 		{
 			e.printStackTrace();
 		}
-		host = properties.getProperty("fedoraUrl");
-		archive = ArchiveFactory.getArchiveImpl(host,
+		host = properties.getProperty("hostName");
+		archive = ArchiveFactory.getArchiveImpl(
+				properties.getProperty("fedoraUrl"),
 				properties.getProperty("user"),
 				properties.getProperty("password"),
 				properties.getProperty("sesameStore"));
