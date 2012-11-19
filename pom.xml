@@ -130,6 +130,7 @@
 		<module>edoweb2-api</module>
 		<module>edowebOAI</module>
 	<!--	<module>integrationTests</module>-->
+	<module>edowebExporter</module>
 	</modules>
 
 

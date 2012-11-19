@@ -63,6 +63,17 @@ public class OaiPidGrabber
 		this.timestampfile = timestampFile;
 	}
 
+	public Vector<String> harvest(String set, boolean harvestFromScratch)
+	{
+
+		String[] sets = null;
+		if (set.compareTo("null") != 0)
+		{
+			sets = set.split(",");
+		}
+		return harvest(sets, harvestFromScratch);
+	}
+
 	/**
 	 * <p>
 	 * <em>Title: </em>

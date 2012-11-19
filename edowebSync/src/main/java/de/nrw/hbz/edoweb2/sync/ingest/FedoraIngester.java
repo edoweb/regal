@@ -461,6 +461,7 @@ public class FedoraIngester implements IngestInterface
 			}
 			for (DigitalEntity b : dtlBean.getViewMainLinks())
 			{
+
 				String mimeType = b.getStreamMime();
 				if (mimeType.compareTo("application/pdf") != 0)
 					continue;
