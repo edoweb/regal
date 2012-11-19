@@ -844,9 +844,9 @@ public class Actions
 	public View getView(UriInfo urlInfo, String pid, ObjectType type)
 	{
 
-		String apiUrl = urlInfo.getBaseUri().toString();
-		String url = urlInfo.getAbsolutePath().toString();
-		String objectUrl = url.substring(0, url.lastIndexOf('/'));
+		String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
+		String url = urlInfo.getPath();
+		String objectUrl = host + url.substring(0, url.lastIndexOf('/'));
 
 		View view = new View();
 		try
@@ -923,12 +923,12 @@ public class Actions
 
 				if (type == ObjectType.ejournalVolume)
 				{
-					relUrl = apiUrl + "ejournal/" + relPid;
+					relUrl = host + "ejournal/" + relPid;
 				}
 
 				if (type == ObjectType.webpageVersion)
 				{
-					relUrl = apiUrl + "webpage/" + relPid;
+					relUrl = host + "webpage/" + relPid;
 				}
 
 				view.addIsPartOf(relUrl);
