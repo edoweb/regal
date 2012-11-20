@@ -23,7 +23,8 @@ public class HTMLWriter implements MessageBodyWriter<Object>
 	public long getSize(Object arg0, Class<?> arg1, Type arg2,
 			Annotation[] arg3, MediaType arg4)
 	{
-		return str.length();
+		/* return -1 if the content length cannot be determined */
+		return -1;
 	}
 
 	@Override

@@ -862,8 +862,13 @@ public class Actions
 			view.setLocation(node.getSource());
 			view.setPublisher(node.getPublisher());
 			view.setUri(objectUrl);
-			view.addMedium(node.getMimeType());
-
+			String mime = node.getMimeType();
+			view.addMedium(mime);
+			if (mime != null && !mime.isEmpty()
+					&& mime.compareTo("application/pdf") == 0)
+			{
+				view.addPdfUrl(node.getDataUrl().toString());
+			}
 			for (String date : node.getDate())
 			{
 				view.addYear(date.substring(0, 4));

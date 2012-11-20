@@ -103,25 +103,8 @@ public class HtmlAdapter
 
 		tr = doc.createElement("tr");
 		Element td1 = doc.createElement("td");
-		// td1.setAttribute("class", "thumbnail");
-		// td1.setAttribute("rowspan", "15");
-		//
-		// Element fulltextLink = doc.createElement("a");
-		// fulltextLink.setAttribute("href", view.getFirstPdfUrl());
-		//
-		// Element thumb = doc.createElement("image");
-		// thumb.setAttribute("width", "128");
-		// thumb.setAttribute("height", "*");
-		// thumb.setAttribute("alt", "Fulltext");
-		// thumb.setAttribute("src", view.getFirstThumbnailUrl());
-		//
-		// fulltextLink.appendChild(thumb);
-		//
-		// td1.appendChild(fulltextLink);
 
-		tr.appendChild(td1);
-
-		table.appendChild(tr);
+		addToTable(doc, table, "Fulltext", view.getPdfUrl());
 
 		addToTable(doc, table, "Title", view.getTitle());
 
@@ -149,7 +132,7 @@ public class HtmlAdapter
 
 		addToTable(doc, table, "hasPart", view.getHasPart());
 
-		addToTable(doc, table, "IsPartOf", view.getIsPartOf());
+		addToTable(doc, table, "isPartOf", view.getIsPartOf());
 
 		tr = doc.createElement("tr");
 		td1 = doc.createElement("td");
@@ -168,6 +151,7 @@ public class HtmlAdapter
 		a.appendChild(doc.createTextNode("@ hbz-nrw.de"));
 		td1.appendChild(a);
 
+		tr.appendChild(td0);
 		tr.appendChild(td1);
 
 		table.appendChild(tr);
@@ -210,6 +194,7 @@ public class HtmlAdapter
 	{
 		String urnResolver = "http://nbn-resolving.de/";
 		String doiResolver = "http://dx.doi.org/";
+		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
 		if (fieldName == "DOI")
 		{
 
@@ -233,7 +218,7 @@ public class HtmlAdapter
 			}
 
 		}
-		else if (fieldName == "URN")
+		else if (fieldName.compareTo("URN") == 0)
 		{
 
 			for (String str : values)
@@ -250,6 +235,53 @@ public class HtmlAdapter
 				resolver.appendChild(doc.createTextNode(str));
 				td2.appendChild(resolver);
 
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				table.appendChild(tr);
+			}
+		}
+		else if (fieldName.compareTo("isPartOf") == 0
+				|| fieldName.compareTo("hasPart") == 0)
+		{
+			for (String str : values)
+			{
+				Element tr = doc.createElement("tr");
+				Element td1 = doc.createElement("td");
+				td1.setAttribute("class", "plabel");
+				Element td2 = doc.createElement("td");
+
+				td1.appendChild(doc.createTextNode(fieldName));
+
+				Element link = doc.createElement("a");
+				link.setAttribute("href", str + "/about");
+				link.appendChild(doc.createTextNode(str.substring(str
+						.lastIndexOf('/') + 1)));
+				td2.appendChild(link);
+				td2.setAttribute("class", "relation");
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				table.appendChild(tr);
+			}
+		}
+		else if (fieldName.compareTo("Fulltext") == 0)
+		{
+			for (String str : values)
+			{
+				Element tr = doc.createElement("tr");
+				Element td1 = doc.createElement("td");
+				td1.setAttribute("class", "plabel");
+				Element td2 = doc.createElement("td");
+
+				td1.appendChild(doc.createTextNode(fieldName));
+
+				Element image = doc.createElement("img");
+				image.setAttribute("src", pdfLogo);
+
+				Element link = doc.createElement("a");
+				link.setAttribute("href", str);
+				link.appendChild(image);
+				td2.appendChild(link);
+				td2.setAttribute("class", "textlink");
 				tr.appendChild(td1);
 				tr.appendChild(td2);
 				table.appendChild(tr);
