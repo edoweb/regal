@@ -145,7 +145,7 @@ public class WebpageResource
 
 	@GET
 	@Path("/{pid}/about")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid, @Context UriInfo info)
 	{
 		return actions.getView(info, pid, ObjectType.webpage);
@@ -352,7 +352,7 @@ public class WebpageResource
 
 	@GET
 	@Path("/{pid}/version/{versionName}/about")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVersionView(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionName, @Context UriInfo info)
 	{

@@ -134,7 +134,7 @@ public class ReportResource
 
 	@GET
 	@Path("/{pid}/about")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid, @Context UriInfo info)
 	{
 		return actions.getView(info, pid, this.objectType);

@@ -582,6 +582,8 @@ public class View
 
 	public String getFirstAlephId()
 	{
+		if (alephid.isEmpty())
+			return "";
 		String str = alephid.firstElement();
 		if (str == null)
 			str = "";
@@ -590,6 +592,8 @@ public class View
 
 	public String getFirstPdfUrl()
 	{
+		if (pdfUrl.isEmpty())
+			return "";
 		String str = pdfUrl.firstElement();
 		if (str == null)
 			str = "";
@@ -598,6 +602,8 @@ public class View
 
 	public String getFirstThumbnailUrl()
 	{
+		if (thumbnailUrl.isEmpty())
+			return "";
 		String str = thumbnailUrl.firstElement();
 		if (str == null)
 			str = "";
@@ -606,6 +612,8 @@ public class View
 
 	public String getFirstLobidUrl()
 	{
+		if (lobidUrl.isEmpty())
+			return "";
 		String str = lobidUrl.firstElement();
 		if (str == null)
 			str = "";
@@ -614,6 +622,8 @@ public class View
 
 	public String getFirstPid()
 	{
+		if (pid.isEmpty())
+			return "";
 		String str = pid.firstElement();
 		if (str == null)
 			str = "";
@@ -622,6 +632,8 @@ public class View
 
 	public String getFirstVerbundUrl()
 	{
+		if (verbundUrl.isEmpty())
+			return "";
 		String str = verbundUrl.firstElement();
 		if (str == null)
 			str = "";
@@ -651,6 +663,16 @@ public class View
 	public Vector<String> getVerbundUrl()
 	{
 		return verbundUrl;
+	}
+
+	public String getFirstDoi()
+	{
+		if (doi.isEmpty())
+			return "";
+		String str = doi.firstElement();
+		if (str == null)
+			str = "";
+		return str;
 	}
 
 	// public String getFirstQdcUrl()

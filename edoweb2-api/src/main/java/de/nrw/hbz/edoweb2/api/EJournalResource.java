@@ -99,7 +99,7 @@ public class EJournalResource
 
 	@GET
 	@Path("/{namespace}:{pid}/about")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid, @Context UriInfo info)
 	{
 		return actions
@@ -313,7 +313,7 @@ public class EJournalResource
 
 	@GET
 	@Path("/{pid}/volume/{volName}/about")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVolumeView(@PathParam("pid") String pid,
 			@PathParam("volName") String volName, @Context UriInfo info)
 	{
