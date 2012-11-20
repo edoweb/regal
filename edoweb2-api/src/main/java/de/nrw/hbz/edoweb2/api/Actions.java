@@ -16,6 +16,10 @@
  */
 package de.nrw.hbz.edoweb2.api;
 
+import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION_NAME;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME_NAME;
+import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
+import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
 
 import java.io.IOException;
@@ -29,6 +33,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -67,7 +72,12 @@ public class Actions
 {
 	final static Logger logger = LoggerFactory.getLogger(Actions.class);
 	ArchiveInterface archive = null;
-	String host = null;
+	String fedoraHost = null;
+	String culturegraphUrl = null;
+	String lobidUrl = null;
+	String verbundUrl = null;
+	String dataciteUrl = null;
+	String baseUrl = null;
 
 	public Actions()
 	{
@@ -80,7 +90,12 @@ public class Actions
 		{
 			e.printStackTrace();
 		}
-		host = properties.getProperty("hostName");
+		fedoraHost = properties.getProperty("hostName");
+		culturegraphUrl = properties.getProperty("culturegraphUrl");
+		lobidUrl = properties.getProperty("lobidUrl");
+		verbundUrl = properties.getProperty("verbundUrl");
+		dataciteUrl = properties.getProperty("dataciteUrl");
+		baseUrl = properties.getProperty("baseUrl");
 		archive = ArchiveFactory.getArchiveImpl(
 				properties.getProperty("fedoraUrl"),
 				properties.getProperty("user"),
@@ -265,7 +280,7 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(host + "/objects/" + pid
+							new java.net.URI(fedoraHost + "/objects/" + pid
 									+ "/datastreams/data/content")).build();
 				}
 				catch (URISyntaxException e)
@@ -309,7 +324,7 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(host + "/objects/" + pid
+							new java.net.URI(fedoraHost + "/objects/" + pid
 									+ "/datastreams/metadata/content")).build();
 				}
 				catch (URISyntaxException e)
@@ -824,5 +839,132 @@ public class Actions
 			archive.deleteNode(pid);
 		}
 		return result.toString();
+	}
+
+	public View getView(UriInfo urlInfo, String pid, ObjectType type)
+	{
+
+		String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
+		String url = urlInfo.getPath();
+		String objectUrl = host + url.substring(0, url.lastIndexOf('/'));
+
+		View view = new View();
+		try
+		{
+			Node node = archive.readNode(pid);
+			if (node == null)
+				return null;
+			view.setCreator(node.getCreator());
+			view.setTitle(node.getTitle());
+			view.setLanguage(node.getLanguage());
+			view.setSubject(node.getSubject());
+
+			view.setLocation(node.getSource());
+			view.setPublisher(node.getPublisher());
+			view.setUri(objectUrl);
+			String mime = node.getMimeType();
+			view.addMedium(mime);
+			if (mime != null && !mime.isEmpty()
+					&& mime.compareTo("application/pdf") == 0)
+			{
+				view.addPdfUrl(node.getDataUrl().toString());
+			}
+			for (String date : node.getDate())
+			{
+				view.addYear(date.substring(0, 4));
+			}
+			for (String ddc : node.getSubject())
+			{
+				if (ddc.startsWith("ddc"))
+				{
+					view.addDdc(ddc);
+					break;
+				}
+			}
+
+			for (String doi : node.getIdentifier())
+			{
+				if (doi.startsWith("doi"))
+				{
+					view.addDoi(doi);
+					view.addDataciteUrl(dataciteUrl + doi);
+					view.addBaseUrl(baseUrl + doi);
+					break;
+				}
+			}
+
+			for (String urn : node.getIdentifier())
+			{
+				if (urn.startsWith("urn"))
+				{
+					view.addUrn(urn);
+					break;
+				}
+			}
+
+			for (String alephid : node.getIdentifier())
+			{
+				if (alephid.startsWith("HT"))
+				{
+					view.addAlephId(alephid);
+					view.addCulturegraphUrl(culturegraphUrl + alephid);
+					view.addLobidUrl(lobidUrl + alephid);
+					view.addVerbundUrl(verbundUrl + alephid);
+					break;
+				}
+				if (alephid.startsWith("TT"))
+				{
+					view.addAlephId(alephid);
+					view.addCulturegraphUrl(culturegraphUrl + alephid);
+					view.addLobidUrl(lobidUrl + alephid);
+					view.addVerbundUrl(verbundUrl + alephid);
+					break;
+				}
+			}
+
+			for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
+			{
+				String relUrl = fedoraHost + "objects/" + relPid;
+
+				if (type == ObjectType.ejournalVolume)
+				{
+					relUrl = host + "ejournal/" + relPid;
+				}
+
+				if (type == ObjectType.webpageVersion)
+				{
+					relUrl = host + "webpage/" + relPid;
+				}
+
+				view.addIsPartOf(relUrl);
+			}
+
+			for (String relPid : findObject(pid, REL_IS_RELATED))
+			{
+				String relUrl = fedoraHost + "objects/" + relPid;
+
+				if (type == ObjectType.ejournal)
+				{
+					String name = findObject(relPid, HAS_VOLUME_NAME).get(0);
+					relUrl = objectUrl.concat("/volume/" + name);
+				}
+
+				if (type == ObjectType.webpage)
+				{
+					String name = findObject(relPid, HAS_VERSION_NAME).get(0);
+					relUrl = objectUrl.concat("/version/" + name);
+				}
+
+				view.addHasPart(relUrl);
+			}
+
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return view;
 	}
 }

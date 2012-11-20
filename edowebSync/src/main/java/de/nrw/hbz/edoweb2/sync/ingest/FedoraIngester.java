@@ -461,6 +461,7 @@ public class FedoraIngester implements IngestInterface
 			}
 			for (DigitalEntity b : dtlBean.getViewMainLinks())
 			{
+
 				String mimeType = b.getStreamMime();
 				if (mimeType.compareTo("application/pdf") != 0)
 					continue;
@@ -533,7 +534,7 @@ public class FedoraIngester implements IngestInterface
 					new StreamResult(str));
 
 			String xmlStr = str.getBuffer().toString();
-			logger.debug(xmlStr);
+			logger.info(xmlStr);
 			DCBeanAnnotated dc = new DCBeanAnnotated(new DCBean(xmlStr));
 			return dc;
 

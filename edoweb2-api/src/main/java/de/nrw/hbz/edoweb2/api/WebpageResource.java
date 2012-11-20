@@ -16,9 +16,13 @@
  */
 package de.nrw.hbz.edoweb2.api;
 
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.HBZ_MODEL_NAMESPACE;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION_NAME;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_CURRENT_VERSION;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VERSION;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
+import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 import java.rmi.RemoteException;
@@ -32,8 +36,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,10 +56,6 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
 public class WebpageResource
 {
 	final static Logger logger = LoggerFactory.getLogger(WebpageResource.class);
-	String IS_VERSION = HBZ_MODEL_NAMESPACE + "isVersionOf";
-	String HAS_VERSION = HBZ_MODEL_NAMESPACE + "hasVersion";
-	String HAS_VERSION_NAME = HBZ_MODEL_NAMESPACE + "hasVersionName";
-	String IS_CURRENT_VERSION = HBZ_MODEL_NAMESPACE + "isCurrentVersion";
 
 	ObjectType webpageType = ObjectType.webpage;
 	ObjectType webpageVersionType = ObjectType.webpageVersion;
@@ -141,6 +143,14 @@ public class WebpageResource
 		return actions.read(pid);
 	}
 
+	@GET
+	@Path("/{pid}/about")
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
+	public View getView(@PathParam("pid") String pid, @Context UriInfo info)
+	{
+		return actions.getView(info, pid, ObjectType.webpage);
+	}
+
 	@POST
 	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml" })
@@ -212,12 +222,12 @@ public class WebpageResource
 			rootObject.addRelation(link);
 
 			link = new Link();
-			link.setPredicate(this.IS_VERSION);
+			link.setPredicate(IS_VERSION);
 			link.setObject(pid, false);
 			rootObject.addRelation(link);
 
 			link = new Link();
-			link.setPredicate(this.HAS_VERSION_NAME);
+			link.setPredicate(HAS_VERSION_NAME);
 			link.setObject(versionName, true);
 			rootObject.addRelation(link);
 
@@ -236,7 +246,12 @@ public class WebpageResource
 			ComplexObject object = new ComplexObject(rootObject);
 
 			link = new Link();
-			link.setPredicate(this.HAS_VERSION);
+			link.setPredicate(HAS_VERSION);
+			link.setObject(volumeId, false);
+			actions.addLink(pid, link);
+
+			link = new Link();
+			link.setPredicate(REL_IS_RELATED);
 			link.setObject(volumeId, false);
 			actions.addLink(pid, link);
 
@@ -333,6 +348,18 @@ public class WebpageResource
 		versionPid = actions.findSubject(query);
 
 		return actions.read(versionPid);
+	}
+
+	@GET
+	@Path("/{pid}/version/{versionName}/about")
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
+	public View getVersionView(@PathParam("pid") String pid,
+			@PathParam("versionName") String versionName, @Context UriInfo info)
+	{
+		String versionPid = null;
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
+		return actions.getView(info, versionPid, ObjectType.webpageVersion);
 	}
 
 	@GET

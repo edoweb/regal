@@ -54,6 +54,10 @@ public class Main
 
 	final static Logger logger = LoggerFactory.getLogger(Main.class);
 
+	IngestInterface ingester = null;
+	OaiPidGrabber harvester = null;
+	DigitoolDownloader downloader = null;
+
 	public Main()
 	{
 
@@ -155,282 +159,41 @@ public class Main
 		// boolean generateHTMLBrowsing = true;
 		String server = dtl;
 		String downloadLocation = cache;
-		String setSpec = set;
+		String sets = set;
 		String oaiServer = oai;
 		String timestampFile = timestamp;
 
-		OaiPidGrabber harvester = new OaiPidGrabber(oaiServer, timestampFile);
-		DigitoolDownloader downloader = new DigitoolDownloader(server,
-				downloadLocation);
+		harvester = new OaiPidGrabber(oaiServer, timestampFile);
+		downloader = new DigitoolDownloader(server, downloadLocation);
 
-		IngestInterface ingester = new FedoraIngester(user, password);
+		ingester = new FedoraIngester(user, password);
 
 		if (mode.compareTo("INIT") == 0)
 		{
-			boolean harvestFromScratch = true;
-			boolean forceDownload = true;
-
-			Vector<String> pids = harvester.harvest(new String[] { setSpec },
-					harvestFromScratch);
-			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-			DigitalEntityBuilder builder = new DigitalEntityBuilder();
-
-			for (int i = 0; i < pids.size(); i++)
-			{
-				try
-				{
-					logger.info("Object number " + i + "\n");
-					String pid = pids.get(i);
-					String baseDir = downloader.download(pid, forceDownload);
-					logger.info("\tBuild Bean \t" + pid);
-
-					if (!downloader.hasUpdated())
-					{
-						logger.info("New Files Available: Start Ingest!");
-						DigitalEntity dtlBean = builder.buildComplexBean(
-								baseDir, pids.get(i));
-
-						ingester.update(dtlBean);
-						dtlBean = null;
-					}
-					else if (downloader.hasUpdated())
-					{
-						logger.info("Update Files!");
-						DigitalEntity dtlBean = builder.buildComplexBean(
-								baseDir, pids.get(i));
-						ingester.update(dtlBean);
-						dtlBean = null;
-					}
-
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-
+			init(sets);
 		}
 		else if (mode.compareTo("SYNC") == 0)
 		{
-			boolean harvestFromScratch = false;
-			boolean forceDownload = true;
-
-			Vector<String> pids = harvester.harvest(new String[] { setSpec },
-					harvestFromScratch);
-			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-
-			DigitalEntityBuilder builder = new DigitalEntityBuilder();
-			// IngestInterface ingester = new FedoraIngester("ellinet",
-			// fedoraBase, user, password, axisHome);
-
-			for (int i = 0; i < pids.size(); i++)
-			{
-				try
-				{
-					logger.info((i + 1) + "\n");
-					String pid = pids.get(i);
-					String baseDir = downloader.download(pid, forceDownload);
-					logger.info("\tBuild Bean \t" + pid);
-
-					if (!downloader.hasUpdated())
-					{
-						logger.info("New Files Available: Start Ingest!");
-						DigitalEntity dtlBean = builder.buildComplexBean(
-								baseDir, pids.get(i));
-
-						ingester.ingest(dtlBean);
-						dtlBean = null;
-					}
-					else if (downloader.hasUpdated())
-					{
-						logger.info("Update Files!");
-						DigitalEntity dtlBean = builder.buildComplexBean(
-								baseDir, pids.get(i));
-						ingester.update(dtlBean);
-						dtlBean = null;
-					}
-
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-
+			sync(sets);
 		}
 		else if (mode.compareTo("CONT") == 0)
 		{
-			boolean harvestFromScratch = true;
-			boolean forceDownload = false;
-
-			Vector<String> pids = harvester.harvest(new String[] { setSpec },
-					harvestFromScratch);
-			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-			DigitalEntityBuilder builder = new DigitalEntityBuilder();
-			// IngestInterface ingester = new FedoraIngester("ellinet",
-			// fedoraBase, user, password, axisHome);
-
-			for (int i = 0; i < pids.size(); i++)
-			{
-				try
-				{
-					logger.info(i + "\n");
-					String pid = pids.get(i);
-					String baseDir = downloader.download(pid, forceDownload);
-					logger.info("\tBuild Bean \t" + pid);
-
-					if (!downloader.hasUpdated() && downloader.hasDownloaded())
-					{
-						logger.info("New Files Available: Start Ingest!");
-						DigitalEntity dtlBean = builder.buildComplexBean(
-								baseDir, pids.get(i));
-
-						ingester.ingest(dtlBean);
-						dtlBean = null;
-					}
-
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-
+			cont(sets);
 		}
 		else if (mode.compareTo("UPDT") == 0)
 		{
-			boolean harvestFromScratch = true;
-			boolean forceDownload = false;
-
-			Vector<String> pids = harvester.harvest(new String[] { setSpec },
-					harvestFromScratch);
-			logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-
-			DigitalEntityBuilder builder = new DigitalEntityBuilder();
-			// IngestInterface ingester = new FedoraIngester("ellinet",
-			// fedoraBase, user, password, axisHome);
-
-			for (int i = 0; i < pids.size(); i++)
-			{
-				try
-				{
-					logger.info(i + "\n");
-					String pid = pids.get(i);
-					String baseDir = downloader.download(pid, forceDownload);
-					logger.info("\tBuild Bean \t" + pid);
-
-					if (!downloader.hasUpdated())
-					{
-						logger.info("New Files Available: Start Ingest!");
-						DigitalEntity dtlBean = builder.buildComplexBean(
-								baseDir, pids.get(i));
-
-						ingester.ingest(dtlBean);
-						dtlBean = null;
-					}
-					else if (downloader.hasUpdated())
-					{
-						logger.info("Update Files!");
-						DigitalEntity dtlBean = builder.buildComplexBean(
-								baseDir, pids.get(i));
-						ingester.update(dtlBean);
-						dtlBean = null;
-					}
-
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
+			updt(sets);
 		}
 		else if (mode.compareTo("PIDL") == 0)
 		{
 
-			Vector<String> pids;
-			try
-			{
-				pids = readPidlist(pidListFile);
-				DigitalEntityBuilder builder = new DigitalEntityBuilder();
-				// IngestInterface ingester = new FedoraIngester("ellinet",
-				// fedoraBase, user, password, axisHome);
-				int size = pids.size();
-				for (int i = 0; i < size; i++)
-				{
-					try
-					{
-						// logger.info(i + "\n");
-						String pid = pids.get(i);
-						// TODO Remove false parameter?
-						String baseDir = downloader.download(pid, false);
-						// logger.info("\tBuild Bean \t" + pid);
-
-						if (!downloader.hasUpdated())
-						{
-
-							DigitalEntity dtlBean = builder.buildComplexBean(
-									baseDir, pids.get(i));
-
-							ingester.ingest(dtlBean);
-							dtlBean = null;
-							logger.info((i + 1) + "/" + size + " " + pid
-									+ " has been processed!\n");
-						}
-						else if (downloader.hasUpdated())
-						{
-
-							DigitalEntity dtlBean = builder.buildComplexBean(
-									baseDir, pids.get(i));
-							ingester.update(dtlBean);
-							dtlBean = null;
-							logger.info((i + 1) + "/" + size + " " + pid
-									+ " has been updated!\n");
-						}
-
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-				}
-
-			}
-			catch (FileNotFoundException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			pidl(pidListFile);
 
 		}
 		else if (mode.compareTo("DELE") == 0)
 		{
 
-			Vector<String> pids;
-			try
-			{
-				pids = readPidlist(pidListFile);
-				// DigitalEntityBeanBuilder builder = new
-				// DigitalEntityBeanBuilder();
-				// IngestInterface ingester = new FedoraIngester("ellinet",
-				// fedoraBase, user, password, axisHome);
-				int size = pids.size();
-				for (int i = 0; i < size; i++)
-				{
-
-					String pid = pids.get(i);
-
-					ingester.delete(pid);
-					logger.info((i + 1) + "/" + size + " " + pid
-							+ " deleted!\n");
-
-				}
-
-			}
-			catch (FileNotFoundException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			dele(pidListFile);
 
 		}
 		else if (mode.compareTo("MODL") == 0)
@@ -481,4 +244,268 @@ public class Main
 		return result;
 	}
 
+	void init(String sets)
+	{
+		boolean harvestFromScratch = true;
+		boolean forceDownload = true;
+
+		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
+		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
+		DigitalEntityBuilder builder = new DigitalEntityBuilder();
+
+		for (int i = 0; i < pids.size(); i++)
+		{
+			try
+			{
+				logger.info("Object number " + i + "\n");
+				String pid = pids.get(i);
+				String baseDir = downloader.download(pid, forceDownload);
+				logger.info("\tBuild Bean \t" + pid);
+
+				if (!downloader.hasUpdated())
+				{
+					logger.info("New Files Available: Start Ingest!");
+					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
+							pids.get(i));
+
+					ingester.update(dtlBean);
+					dtlBean = null;
+				}
+				else if (downloader.hasUpdated())
+				{
+					logger.info("Update Files!");
+					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
+							pids.get(i));
+					ingester.update(dtlBean);
+					dtlBean = null;
+				}
+
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	void sync(String sets)
+	{
+		boolean harvestFromScratch = false;
+		boolean forceDownload = true;
+
+		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
+		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
+
+		DigitalEntityBuilder builder = new DigitalEntityBuilder();
+		// IngestInterface ingester = new FedoraIngester("ellinet",
+		// fedoraBase, user, password, axisHome);
+
+		for (int i = 0; i < pids.size(); i++)
+		{
+			try
+			{
+				logger.info((i + 1) + "\n");
+				String pid = pids.get(i);
+				String baseDir = downloader.download(pid, forceDownload);
+				logger.info("\tBuild Bean \t" + pid);
+
+				if (!downloader.hasUpdated())
+				{
+					logger.info("New Files Available: Start Ingest!");
+					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
+							pids.get(i));
+
+					ingester.ingest(dtlBean);
+					dtlBean = null;
+				}
+				else if (downloader.hasUpdated())
+				{
+					logger.info("Update Files!");
+					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
+							pids.get(i));
+					ingester.update(dtlBean);
+					dtlBean = null;
+				}
+
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	void cont(String sets)
+	{
+		boolean harvestFromScratch = true;
+		boolean forceDownload = false;
+
+		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
+		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
+		DigitalEntityBuilder builder = new DigitalEntityBuilder();
+		// IngestInterface ingester = new FedoraIngester("ellinet",
+		// fedoraBase, user, password, axisHome);
+
+		for (int i = 0; i < pids.size(); i++)
+		{
+			try
+			{
+				logger.info(i + "\n");
+				String pid = pids.get(i);
+				String baseDir = downloader.download(pid, forceDownload);
+				logger.info("\tBuild Bean \t" + pid);
+
+				if (!downloader.hasUpdated() && downloader.hasDownloaded())
+				{
+					logger.info("New Files Available: Start Ingest!");
+					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
+							pids.get(i));
+
+					ingester.ingest(dtlBean);
+					dtlBean = null;
+				}
+
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	void updt(String sets)
+	{
+		boolean harvestFromScratch = true;
+		boolean forceDownload = false;
+
+		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
+		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
+
+		DigitalEntityBuilder builder = new DigitalEntityBuilder();
+		// IngestInterface ingester = new FedoraIngester("ellinet",
+		// fedoraBase, user, password, axisHome);
+
+		for (int i = 0; i < pids.size(); i++)
+		{
+			try
+			{
+				logger.info(i + "\n");
+				String pid = pids.get(i);
+				String baseDir = downloader.download(pid, forceDownload);
+				logger.info("\tBuild Bean \t" + pid);
+
+				if (!downloader.hasUpdated())
+				{
+					logger.info("New Files Available: Start Ingest!");
+					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
+							pids.get(i));
+
+					ingester.ingest(dtlBean);
+					dtlBean = null;
+				}
+				else if (downloader.hasUpdated())
+				{
+					logger.info("Update Files!");
+					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
+							pids.get(i));
+					ingester.update(dtlBean);
+					dtlBean = null;
+				}
+
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	void pidl(String pidListFile)
+	{
+		Vector<String> pids;
+		try
+		{
+			pids = readPidlist(pidListFile);
+			DigitalEntityBuilder builder = new DigitalEntityBuilder();
+			// IngestInterface ingester = new FedoraIngester("ellinet",
+			// fedoraBase, user, password, axisHome);
+			int size = pids.size();
+			for (int i = 0; i < size; i++)
+			{
+				try
+				{
+					// logger.info(i + "\n");
+					String pid = pids.get(i);
+					// TODO Remove false parameter?
+					String baseDir = downloader.download(pid, false);
+					// logger.info("\tBuild Bean \t" + pid);
+
+					if (!downloader.hasUpdated())
+					{
+
+						DigitalEntity dtlBean = builder.buildComplexBean(
+								baseDir, pids.get(i));
+
+						ingester.ingest(dtlBean);
+						dtlBean = null;
+						logger.info((i + 1) + "/" + size + " " + pid
+								+ " has been processed!\n");
+					}
+					else if (downloader.hasUpdated())
+					{
+
+						DigitalEntity dtlBean = builder.buildComplexBean(
+								baseDir, pids.get(i));
+						ingester.update(dtlBean);
+						dtlBean = null;
+						logger.info((i + 1) + "/" + size + " " + pid
+								+ " has been updated!\n");
+					}
+
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+		}
+		catch (FileNotFoundException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	void dele(String pidListFile)
+	{
+		Vector<String> pids;
+		try
+		{
+			pids = readPidlist(pidListFile);
+			// DigitalEntityBeanBuilder builder = new
+			// DigitalEntityBeanBuilder();
+			// IngestInterface ingester = new FedoraIngester("ellinet",
+			// fedoraBase, user, password, axisHome);
+			int size = pids.size();
+			for (int i = 0; i < size; i++)
+			{
+
+				String pid = pids.get(i);
+
+				ingester.delete(pid);
+				logger.info((i + 1) + "/" + size + " " + pid + " deleted!\n");
+
+			}
+
+		}
+		catch (FileNotFoundException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
 }

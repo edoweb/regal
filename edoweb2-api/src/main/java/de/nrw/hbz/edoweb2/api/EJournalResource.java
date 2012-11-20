@@ -16,9 +16,12 @@
  */
 package de.nrw.hbz.edoweb2.api;
 
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.HBZ_MODEL_NAMESPACE;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME_NAME;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VOLUME;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
+import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 import java.rmi.RemoteException;
@@ -32,8 +35,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,10 +56,6 @@ public class EJournalResource
 {
 	final static Logger logger = LoggerFactory
 			.getLogger(EJournalResource.class);
-	String IS_VOLUME = HBZ_MODEL_NAMESPACE + "isVolumeOf";
-	String HAS_VOLUME = HBZ_MODEL_NAMESPACE + "hasVolume";
-	String HAS_VOLUME_NAME = HBZ_MODEL_NAMESPACE + "hasVolumeName";
-
 	ObjectType ejournalType = ObjectType.ejournal;
 	ObjectType volumeType = ObjectType.ejournalVolume;
 	String namespace = "edoweb";
@@ -94,6 +95,15 @@ public class EJournalResource
 	{
 
 		return actions.read(namespace + ":" + pid);
+	}
+
+	@GET
+	@Path("/{namespace}:{pid}/about")
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
+	public View getView(@PathParam("pid") String pid, @Context UriInfo info)
+	{
+		return actions
+				.getView(info, namespace + ":" + pid, ObjectType.ejournal);
 	}
 
 	@POST
@@ -245,7 +255,7 @@ public class EJournalResource
 			rootObject.addRelation(link);
 
 			link = new Link();
-			link.setPredicate(this.IS_VOLUME);
+			link.setPredicate(IS_VOLUME);
 			link.setObject(pid, false);
 			rootObject.addRelation(link);
 
@@ -255,7 +265,7 @@ public class EJournalResource
 			rootObject.addRelation(link);
 
 			link = new Link();
-			link.setPredicate(this.HAS_VOLUME_NAME);
+			link.setPredicate(HAS_VOLUME_NAME);
 			link.setObject(volName, true);
 			rootObject.addRelation(link);
 
@@ -269,13 +279,13 @@ public class EJournalResource
 			ComplexObject object = new ComplexObject(rootObject);
 
 			link = new Link();
-			link.setPredicate(this.HAS_VOLUME);
+			link.setPredicate(HAS_VOLUME);
 			link.setObject(volumeId, false);
+			actions.addLink(pid, link);
 
 			link = new Link();
-			link.setPredicate(this.HAS_VOLUME);
+			link.setPredicate(REL_IS_RELATED);
 			link.setObject(volumeId, false);
-
 			actions.addLink(pid, link);
 
 			return new MessageBean(actions.create(object, true));
@@ -299,6 +309,18 @@ public class EJournalResource
 		volumePid = actions.findSubject(query);
 
 		return actions.read(volumePid);
+	}
+
+	@GET
+	@Path("/{pid}/volume/{volName}/about")
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
+	public View getVolumeView(@PathParam("pid") String pid,
+			@PathParam("volName") String volName, @Context UriInfo info)
+	{
+		String volumePid = null;
+		String query = getVolumeQuery(volName, pid);
+		volumePid = actions.findSubject(query);
+		return actions.getView(info, volumePid, ObjectType.ejournalVolume);
 	}
 
 	@GET
