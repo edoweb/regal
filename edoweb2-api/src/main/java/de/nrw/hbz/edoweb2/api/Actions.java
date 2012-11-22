@@ -858,7 +858,7 @@ public class Actions
 			view.setTitle(node.getTitle());
 			view.setLanguage(node.getLanguage());
 			view.setSubject(node.getSubject());
-
+			view.setType(node.getType());
 			view.setLocation(node.getSource());
 			view.setPublisher(node.getPublisher());
 			view.setUri(objectUrl);
