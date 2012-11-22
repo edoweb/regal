@@ -96,6 +96,7 @@ public class Main
 				"Specify a local file e.g. .oaitimestamp");
 		options.addOption("fedoraBase", "fedoraBase", true,
 				"The Fedora Baseurl");
+		options.addOption("host", "host", true, "The Fedora Baseurl");
 		options.addOption(
 				"list",
 				"list",
@@ -112,7 +113,8 @@ public class Main
 					| !config.hasOption("dtl") | !config.hasOption("cache")
 					| !config.hasOption("oai") | !config.hasOption("set")
 					| !config.hasOption("timestamp")
-					| !config.hasOption("fedoraBase"))
+					| !config.hasOption("fedoraBase")
+					| !config.hasOption("host"))
 
 			{
 				showHelp(options);
@@ -128,6 +130,7 @@ public class Main
 			String set = config.getOptionValue("set");
 			String timestamp = config.getOptionValue("timestamp");
 			String fedoraBase = config.getOptionValue("fedoraBase");
+			String host = config.getOptionValue("host");
 			String pidListFile = null;
 			if (config.hasOption("list"))
 			{
@@ -135,7 +138,7 @@ public class Main
 			}
 			Main main = new Main();
 			main.run(mode, user, password, dtl, cache, oai, set, timestamp,
-					fedoraBase, pidListFile);
+					fedoraBase, host, pidListFile);
 
 		}
 		catch (ParseException e)
@@ -154,7 +157,7 @@ public class Main
 
 	public void run(String mode, String user, String password, String dtl,
 			String cache, String oai, String set, String timestamp,
-			String fedoraBase, String pidListFile)
+			String fedoraBase, String host, String pidListFile)
 	{
 		// boolean generateHTMLBrowsing = true;
 		String server = dtl;
@@ -166,7 +169,7 @@ public class Main
 		harvester = new OaiPidGrabber(oaiServer, timestampFile);
 		downloader = new DigitoolDownloader(server, downloadLocation);
 
-		ingester = new FedoraIngester(user, password);
+		ingester = new FedoraIngester(user, password, host);
 
 		if (mode.compareTo("INIT") == 0)
 		{

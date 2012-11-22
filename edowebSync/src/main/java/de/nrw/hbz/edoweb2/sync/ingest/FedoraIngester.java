@@ -64,11 +64,13 @@ public class FedoraIngester implements IngestInterface
 
 	String user = null;
 	String password = null;
+	String host = null;
 
-	public FedoraIngester(String usr, String pwd)
+	public FedoraIngester(String usr, String pwd, String host)
 	{
 		user = usr;
 		password = pwd;
+		this.host = host;
 	}
 
 	@Override
@@ -140,14 +142,14 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource index = c
-				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/index/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource index = c.resource(host
+				+ ":8080/edoweb2-api/edowebAdmin/index/" + edowebNamespace
+				+ ":" + dtlBean.getPid());
 		index.post();
 		logger.info(pid + ": got indexed!");
-		WebResource oaiSet = c
-				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/makeOaiSet/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource oaiSet = c.resource(host
+				+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/" + edowebNamespace
+				+ ":" + dtlBean.getPid());
 		oaiSet.post();
 		logger.info(pid + ": got set! Thanx and goodbye!");
 
@@ -161,9 +163,8 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource report = c
-				.resource("http://localhost:8080/edoweb2-api/report/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource report = c.resource(host + ":8080/edoweb2-api/report/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
 		try
 		{
 			String request = "content";
@@ -217,9 +218,8 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource report = c
-				.resource("http://localhost:8080/edoweb2-api/report/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource report = c.resource(host + ":8080/edoweb2-api/report/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
 
 		try
 		{
@@ -286,9 +286,8 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource webpage = c
-				.resource("http://localhost:8080/edoweb2-api/webpage/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource webpage = c.resource(host + ":8080/edoweb2-api/webpage/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
 
 		try
 		{
@@ -377,9 +376,8 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource webpage = c
-				.resource("http://localhost:8080/edoweb2-api/webpage/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource webpage = c.resource(host + ":8080/edoweb2-api/webpage/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
 
 		String request = "content";
 		try
@@ -472,9 +470,8 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource ejournal = c
-				.resource("http://localhost:8080/edoweb2-api/ejournal/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource ejournal = c.resource(host + ":8080/edoweb2-api/ejournal/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
 
 		try
 		{
@@ -598,24 +595,23 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource delete = c
-				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/edoweb:"
-						+ pid);
+		WebResource delete = c.resource(host
+				+ ":8080/edoweb2-api/edowebAdmin/delete/edoweb:" + pid);
 
 		delete.delete();
 
 		// delete = c
-		// .resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/oai:report");
+		// .resource(host+":8080/edoweb2-api/edowebAdmin/delete/oai:report");
 		//
 		// delete.delete();
 		//
 		// delete = c
-		// .resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/oai:350");
+		// .resource(host+":8080/edoweb2-api/edowebAdmin/delete/oai:350");
 		//
 		// delete.delete();
 		//
 		// delete = c
-		// .resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/oai:ejournal");
+		// .resource(host+":8080/edoweb2-api/edowebAdmin/delete/oai:ejournal");
 		//
 		// delete.delete();
 
@@ -631,7 +627,7 @@ public class FedoraIngester implements IngestInterface
 		// c.addFilter(new HTTPBasicAuthFilter(user, password));
 		//
 		// // WPD
-		// WebResource wpd = c.resource("http://localhost:8080/edoweb2-api/wpd/"
+		// WebResource wpd = c.resource(host+":8080/edoweb2-api/wpd/"
 		// + dtlNamespace + ":" + dtlBean.getPid());
 		//
 		// String request = "content";
