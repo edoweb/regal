@@ -72,7 +72,7 @@ public class Actions
 {
 	final static Logger logger = LoggerFactory.getLogger(Actions.class);
 	ArchiveInterface archive = null;
-	String fedoraHost = null;
+	String externalHost = null;
 	String culturegraphUrl = null;
 	String lobidUrl = null;
 	String verbundUrl = null;
@@ -90,7 +90,7 @@ public class Actions
 		{
 			e.printStackTrace();
 		}
-		fedoraHost = properties.getProperty("hostName");
+		externalHost = properties.getProperty("hostName");
 		culturegraphUrl = properties.getProperty("culturegraphUrl");
 		lobidUrl = properties.getProperty("lobidUrl");
 		verbundUrl = properties.getProperty("verbundUrl");
@@ -280,7 +280,7 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(fedoraHost + "/objects/" + pid
+							new java.net.URI(externalHost + "/objects/" + pid
 									+ "/datastreams/data/content")).build();
 				}
 				catch (URISyntaxException e)
@@ -324,7 +324,7 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(fedoraHost + "/objects/" + pid
+							new java.net.URI(externalHost + "/objects/" + pid
 									+ "/datastreams/metadata/content")).build();
 				}
 				catch (URISyntaxException e)
@@ -867,7 +867,7 @@ public class Actions
 			if (mime != null && !mime.isEmpty()
 					&& mime.compareTo("application/pdf") == 0)
 			{
-				view.addPdfUrl(node.getDataUrl().toString());
+				view.addPdfUrl(objectUrl + "/data");
 			}
 			for (String date : node.getDate())
 			{
@@ -924,7 +924,7 @@ public class Actions
 
 			for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
 			{
-				String relUrl = fedoraHost + "objects/" + relPid;
+				String relUrl = externalHost + "objects/" + relPid;
 
 				if (type == ObjectType.ejournalVolume)
 				{
@@ -941,7 +941,7 @@ public class Actions
 
 			for (String relPid : findObject(pid, REL_IS_RELATED))
 			{
-				String relUrl = fedoraHost + "objects/" + relPid;
+				String relUrl = externalHost + "objects/" + relPid;
 
 				if (type == ObjectType.ejournal)
 				{
