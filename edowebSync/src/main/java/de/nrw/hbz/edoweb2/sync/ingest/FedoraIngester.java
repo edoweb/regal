@@ -130,6 +130,11 @@ public class FedoraIngester implements IngestInterface
 				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/makeOaiSet/"
 						+ edowebNamespace + ":" + dtlBean.getPid());
 		oaiSet.post();
+
+		WebResource index = c
+				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/index/"
+						+ edowebNamespace + ":" + dtlBean.getPid());
+		index.post();
 	}
 
 	private void ingestReports(DigitalEntity dtlBean)

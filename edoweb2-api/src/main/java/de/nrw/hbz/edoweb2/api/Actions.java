@@ -22,26 +22,39 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.codehaus.jettison.mapped.Configuration;
+import org.codehaus.jettison.mapped.MappedNamespaceConvention;
+import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -133,9 +146,10 @@ public class Actions
 	public String create(ComplexObject object, boolean wait)
 			throws RemoteException
 	{
-		archive.createComplexObject(object);
+		Node node = archive.createComplexObject(object);
 		if (wait)
 			waitWorkaround();
+
 		return object.getRoot().getPID() + " CREATED!";
 	}
 
@@ -981,11 +995,59 @@ public class Actions
 		return view;
 	}
 
-	public String index(UriInfo urlInfo, String pid)
+	public String index(String host, String objectUrl, Node node,
+			ObjectType type)
 	{
-
 		String message = "";
 
+		View view = getView(node, host, objectUrl, type);
+
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		try
+		{
+			WebResource index = c
+					.resource("http://localhost:9200/edoweb/titel/"
+							+ node.getPID());
+			index.accept(MediaType.APPLICATION_JSON);
+
+			String viewAsString = "";
+			//
+			JAXBContext jc = JAXBContext.newInstance(View.class);
+			//
+			// Marshaller marshaller = jc.createMarshaller();
+			// marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			// marshaller.marshal(view, System.out);
+
+			Configuration config = new Configuration();
+			Map<String, String> xmlToJsonNamespaces = new HashMap<String, String>(
+					1);
+			config.setXmlToJsonNamespaces(xmlToJsonNamespaces);
+			MappedNamespaceConvention con = new MappedNamespaceConvention(
+					config);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(baos);
+			Writer writer = new OutputStreamWriter(out);
+			XMLStreamWriter xmlStreamWriter = new MappedXMLStreamWriter(con,
+					writer);
+
+			Marshaller marshaller = jc.createMarshaller();
+			marshaller.marshal(view, xmlStreamWriter);
+			viewAsString = baos.toString("utf-8");
+			System.out.println(viewAsString);
+			message = index.put(String.class, viewAsString);
+		}
+		catch (Exception e)
+		{
+			return "Error! " + message + e.getMessage();
+		}
+		return "Success! " + message;
+	}
+
+	public String index(UriInfo urlInfo, String pid)
+	{
 		try
 		{
 			Node node = archive.readNode(pid);
@@ -994,17 +1056,19 @@ public class Actions
 			ObjectType type = null;
 			for (String t : node.getType())
 			{
-				if (t.compareTo(ObjectType.report.toString()) == 0)
+				if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
 				{
 					type = ObjectType.report;
 					break;
 				}
-				else if (t.compareTo(ObjectType.ejournal.toString()) == 0)
+				else if (t.compareTo("doc-type:"
+						+ ObjectType.ejournal.toString()) == 0)
 				{
 					type = ObjectType.ejournal;
 					break;
 				}
-				else if (t.compareTo(ObjectType.webpage.toString()) == 0)
+				else if (t.compareTo("doc-type:"
+						+ ObjectType.webpage.toString()) == 0)
 				{
 					type = ObjectType.webpage;
 					break;
@@ -1015,25 +1079,13 @@ public class Actions
 
 			String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
 			String objectUrl = host + type.toString() + "/" + pid;
-
-			View view = getView(node, host, objectUrl, type);
-
-			ClientConfig cc = new DefaultClientConfig();
-			cc.getProperties()
-					.put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-			cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
-					true);
-			Client c = Client.create(cc);
-
-			WebResource index = c.resource("http://localhost:9200/edoweb/");
-			message = index.put(String.class, view);
-
+			return index(host, objectUrl, node, type);
 		}
 		catch (RemoteException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "Success! " + message;
+		return "Something unexpected occured! " + pid;
 	}
 }
