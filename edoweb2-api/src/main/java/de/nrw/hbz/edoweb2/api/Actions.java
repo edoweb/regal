@@ -57,6 +57,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+
 import de.nrw.hbz.edoweb2.archive.ArchiveFactory;
 import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
@@ -848,115 +853,180 @@ public class Actions
 		String url = urlInfo.getPath();
 		String objectUrl = host + url.substring(0, url.lastIndexOf('/'));
 
-		View view = new View();
 		try
 		{
 			Node node = archive.readNode(pid);
 			if (node == null)
 				return null;
-			view.setCreator(node.getCreator());
-			view.setTitle(node.getTitle());
-			view.setLanguage(node.getLanguage());
-			view.setSubject(node.getSubject());
-			view.setType(node.getType());
-			view.setLocation(node.getSource());
-			view.setPublisher(node.getPublisher());
-			view.setUri(objectUrl);
-			String mime = node.getMimeType();
-			view.addMedium(mime);
-			if (mime != null && !mime.isEmpty()
-					&& mime.compareTo("application/pdf") == 0)
+			return getView(node, host, objectUrl, type);
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public View getView(Node node, String host, String objectUrl,
+			ObjectType type)
+	{
+		View view = new View();
+		String pid = node.getPID();
+
+		view.setCreator(node.getCreator());
+		view.setTitle(node.getTitle());
+		view.setLanguage(node.getLanguage());
+		view.setSubject(node.getSubject());
+		view.setType(node.getType());
+		view.setLocation(node.getSource());
+		view.setPublisher(node.getPublisher());
+		view.setUri(objectUrl);
+		String mime = node.getMimeType();
+		view.addMedium(mime);
+		if (mime != null && !mime.isEmpty()
+				&& mime.compareTo("application/pdf") == 0)
+		{
+			view.addPdfUrl(objectUrl + "/data");
+		}
+		for (String date : node.getDate())
+		{
+			view.addYear(date.substring(0, 4));
+		}
+		for (String ddc : node.getSubject())
+		{
+			if (ddc.startsWith("ddc"))
 			{
-				view.addPdfUrl(objectUrl + "/data");
+				view.addDdc(ddc);
+				break;
 			}
-			for (String date : node.getDate())
+		}
+
+		for (String doi : node.getIdentifier())
+		{
+			if (doi.startsWith("doi"))
 			{
-				view.addYear(date.substring(0, 4));
+				view.addDoi(doi);
+				view.addDataciteUrl(dataciteUrl + doi);
+				view.addBaseUrl(baseUrl + doi);
+				break;
 			}
-			for (String ddc : node.getSubject())
+		}
+
+		for (String urn : node.getIdentifier())
+		{
+			if (urn.startsWith("urn"))
 			{
-				if (ddc.startsWith("ddc"))
+				view.addUrn(urn);
+				break;
+			}
+		}
+
+		for (String alephid : node.getIdentifier())
+		{
+			if (alephid.startsWith("HT"))
+			{
+				view.addAlephId(alephid);
+				view.addCulturegraphUrl(culturegraphUrl + alephid);
+				view.addLobidUrl(lobidUrl + alephid);
+				view.addVerbundUrl(verbundUrl + alephid);
+				break;
+			}
+			if (alephid.startsWith("TT"))
+			{
+				view.addAlephId(alephid);
+				view.addCulturegraphUrl(culturegraphUrl + alephid);
+				view.addLobidUrl(lobidUrl + alephid);
+				view.addVerbundUrl(verbundUrl + alephid);
+				break;
+			}
+		}
+
+		for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
+		{
+			String relUrl = externalHost + "objects/" + relPid;
+
+			if (type == ObjectType.ejournalVolume)
+			{
+				relUrl = host + "ejournal/" + relPid;
+			}
+
+			if (type == ObjectType.webpageVersion)
+			{
+				relUrl = host + "webpage/" + relPid;
+			}
+
+			view.addIsPartOf(relUrl);
+		}
+
+		for (String relPid : findObject(pid, REL_IS_RELATED))
+		{
+			String relUrl = externalHost + "objects/" + relPid;
+
+			if (type == ObjectType.ejournal)
+			{
+				String name = findObject(relPid, HAS_VOLUME_NAME).get(0);
+				relUrl = objectUrl.concat("/volume/" + name);
+			}
+
+			if (type == ObjectType.webpage)
+			{
+				String name = findObject(relPid, HAS_VERSION_NAME).get(0);
+				relUrl = objectUrl.concat("/version/" + name);
+			}
+
+			view.addHasPart(relUrl);
+		}
+
+		return view;
+	}
+
+	public String index(UriInfo urlInfo, String pid)
+	{
+
+		String message = "";
+
+		try
+		{
+			Node node = archive.readNode(pid);
+			if (node == null)
+				return "Node not found! " + pid;
+			ObjectType type = null;
+			for (String t : node.getType())
+			{
+				if (t.compareTo(ObjectType.report.toString()) == 0)
 				{
-					view.addDdc(ddc);
+					type = ObjectType.report;
+					break;
+				}
+				else if (t.compareTo(ObjectType.ejournal.toString()) == 0)
+				{
+					type = ObjectType.ejournal;
+					break;
+				}
+				else if (t.compareTo(ObjectType.webpage.toString()) == 0)
+				{
+					type = ObjectType.webpage;
 					break;
 				}
 			}
+			if (type == null)
+				return "Sorry the node has no type! ERROR! " + pid;
 
-			for (String doi : node.getIdentifier())
-			{
-				if (doi.startsWith("doi"))
-				{
-					view.addDoi(doi);
-					view.addDataciteUrl(dataciteUrl + doi);
-					view.addBaseUrl(baseUrl + doi);
-					break;
-				}
-			}
+			String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
+			String objectUrl = host + type.toString() + "/" + pid;
 
-			for (String urn : node.getIdentifier())
-			{
-				if (urn.startsWith("urn"))
-				{
-					view.addUrn(urn);
-					break;
-				}
-			}
+			View view = getView(node, host, objectUrl, type);
 
-			for (String alephid : node.getIdentifier())
-			{
-				if (alephid.startsWith("HT"))
-				{
-					view.addAlephId(alephid);
-					view.addCulturegraphUrl(culturegraphUrl + alephid);
-					view.addLobidUrl(lobidUrl + alephid);
-					view.addVerbundUrl(verbundUrl + alephid);
-					break;
-				}
-				if (alephid.startsWith("TT"))
-				{
-					view.addAlephId(alephid);
-					view.addCulturegraphUrl(culturegraphUrl + alephid);
-					view.addLobidUrl(lobidUrl + alephid);
-					view.addVerbundUrl(verbundUrl + alephid);
-					break;
-				}
-			}
+			ClientConfig cc = new DefaultClientConfig();
+			cc.getProperties()
+					.put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+			cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
+					true);
+			Client c = Client.create(cc);
 
-			for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
-			{
-				String relUrl = externalHost + "objects/" + relPid;
-
-				if (type == ObjectType.ejournalVolume)
-				{
-					relUrl = host + "ejournal/" + relPid;
-				}
-
-				if (type == ObjectType.webpageVersion)
-				{
-					relUrl = host + "webpage/" + relPid;
-				}
-
-				view.addIsPartOf(relUrl);
-			}
-
-			for (String relPid : findObject(pid, REL_IS_RELATED))
-			{
-				String relUrl = externalHost + "objects/" + relPid;
-
-				if (type == ObjectType.ejournal)
-				{
-					String name = findObject(relPid, HAS_VOLUME_NAME).get(0);
-					relUrl = objectUrl.concat("/volume/" + name);
-				}
-
-				if (type == ObjectType.webpage)
-				{
-					String name = findObject(relPid, HAS_VERSION_NAME).get(0);
-					relUrl = objectUrl.concat("/version/" + name);
-				}
-
-				view.addHasPart(relUrl);
-			}
+			WebResource index = c.resource("http://localhost:9200/edoweb/");
+			message = index.put(String.class, view);
 
 		}
 		catch (RemoteException e)
@@ -964,7 +1034,6 @@ public class Actions
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return view;
+		return "Success! " + message;
 	}
 }
