@@ -1013,20 +1013,17 @@ public class Actions
 							+ node.getPID());
 			index.accept(MediaType.APPLICATION_JSON);
 
-			String viewAsString = "";
-			//
 			JAXBContext jc = JAXBContext.newInstance(View.class);
-			//
-			// Marshaller marshaller = jc.createMarshaller();
-			// marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			// marshaller.marshal(view, System.out);
 
 			Configuration config = new Configuration();
 			Map<String, String> xmlToJsonNamespaces = new HashMap<String, String>(
 					1);
+			xmlToJsonNamespaces.put(
+					"http://www.w3.org/2001/XMLSchema-instance", "");
 			config.setXmlToJsonNamespaces(xmlToJsonNamespaces);
 			MappedNamespaceConvention con = new MappedNamespaceConvention(
 					config);
+
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(baos);
 			Writer writer = new OutputStreamWriter(out);
@@ -1035,8 +1032,10 @@ public class Actions
 
 			Marshaller marshaller = jc.createMarshaller();
 			marshaller.marshal(view, xmlStreamWriter);
-			viewAsString = baos.toString("utf-8");
-			System.out.println(viewAsString);
+			String viewAsString = baos.toString("utf-8");
+			logger.debug("JSON-------------------");
+			logger.debug(viewAsString);
+			logger.debug("-----------------------");
 			message = index.put(String.class, viewAsString);
 		}
 		catch (Exception e)

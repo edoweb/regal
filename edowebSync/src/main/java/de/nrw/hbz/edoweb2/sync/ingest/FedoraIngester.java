@@ -94,47 +94,63 @@ public class FedoraIngester implements IngestInterface
 		{
 			e.printStackTrace();
 		}
-
-		if (partitionC.compareTo("EJO01") == 0)
-		{
-			logger.info(pid + ": is a eJournal");
-			ingestEJournal(dtlBean);
-		}
-		else if (partitionC.compareTo("WPD01") == 0)
-		{
-			logger.info(pid + ": is a Amtsdruckschrift old style");
-			ingestReports(dtlBean);
-		}
-		else if (partitionC.compareTo("WPD02") == 0)
+		try
 		{
 
-			logger.info(pid + ": is a Amtsdruckschrift new style");
-			ingestReportsNewStyle(dtlBean);
+			if (partitionC.compareTo("EJO01") == 0)
+			{
+				logger.info(pid + ": start ingesting eJournal");
+				ingestEJournal(dtlBean);
+				logger.info(pid + ": end ingesting eJournal");
+			}
+			else if (partitionC.compareTo("WPD01") == 0)
+			{
+				logger.info(pid + ": start ingesting report (wpd01)");
+				ingestReports(dtlBean);
+				logger.info(pid + ": end ingesting report (wpd01)");
+			}
+			else if (partitionC.compareTo("WPD02") == 0)
+			{
+
+				logger.info(pid + ": start ingesting report (wpd02)");
+				ingestReportsNewStyle(dtlBean);
+				logger.info(pid + ": end ingesting report (wpd02)");
+			}
+			else if (partitionC.compareTo("WSC01") == 0)
+			{
+				logger.info(pid + ": start ingesting webpage (wsc01)");
+				ingestWebpage(dtlBean);
+				logger.info(pid + ": end ingesting webpage (wsc01)");
+			}
+			else if (partitionC.compareTo("WSI01") == 0)
+			{
+				logger.info(pid + ": start ingesting webpage (wsi01)");
+				ingestSingleWebpage(dtlBean);
+				logger.info(pid + ": end ingesting webpage (wsi01)");
+			}
 		}
-		else if (partitionC.compareTo("WSC01") == 0)
+		catch (Exception e)
 		{
-			logger.info(pid + ": is a Webschnitt");
-			ingestWebpage(dtlBean);
-		}
-		else if (partitionC.compareTo("WSI01") == 0)
-		{
-			logger.info(pid + ": is a single Webside");
-			ingestSingleWebpage(dtlBean);
+			e.printStackTrace();
+			logger.info(e.getMessage());
 		}
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
-		WebResource oaiSet = c
-				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/makeOaiSet/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
-		oaiSet.post();
 
 		WebResource index = c
 				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/index/"
 						+ edowebNamespace + ":" + dtlBean.getPid());
 		index.post();
+		logger.info(pid + ": got indexed!");
+		WebResource oaiSet = c
+				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/makeOaiSet/"
+						+ edowebNamespace + ":" + dtlBean.getPid());
+		oaiSet.post();
+		logger.info(pid + ": got set! Thanx and goodbye!");
+
 	}
 
 	private void ingestReports(DigitalEntity dtlBean)
@@ -340,7 +356,7 @@ public class FedoraIngester implements IngestInterface
 				}
 				catch (Exception e)
 				{
-					logger.error(e.getMessage());
+					// logger.error(e.getMessage());
 				}
 
 			}
@@ -477,7 +493,7 @@ public class FedoraIngester implements IngestInterface
 			}
 			catch (Exception e)
 			{
-				logger.debug(e.getMessage());
+				// logger.debug(e.getMessage());
 			}
 			for (DigitalEntity b : dtlBean.getViewMainLinks())
 			{
@@ -525,7 +541,7 @@ public class FedoraIngester implements IngestInterface
 				}
 				catch (Exception e)
 				{
-					logger.debug(e.getMessage());
+					// logger.debug(e.getMessage());
 				}
 
 			}
@@ -554,7 +570,7 @@ public class FedoraIngester implements IngestInterface
 					new StreamResult(str));
 
 			String xmlStr = str.getBuffer().toString();
-			logger.info(xmlStr);
+			// logger.debug(xmlStr);
 			DCBeanAnnotated dc = new DCBeanAnnotated(new DCBean(xmlStr));
 			return dc;
 
