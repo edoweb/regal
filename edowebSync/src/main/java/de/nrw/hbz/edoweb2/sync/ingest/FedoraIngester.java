@@ -157,7 +157,11 @@ public class FedoraIngester implements IngestInterface
 			UploadDataBean data = new UploadDataBean();
 			try
 			{
-				data.path = new URI(dtlBean.getStream().getAbsolutePath());
+				String protocol = "file";
+				String host = "";
+				String path = dtlBean.getStream().getAbsolutePath();
+				String fragment = "";
+				data.path = new URI(protocol, host, path, fragment);
 				data.mime = "application/pdf";
 				reportData.post(data);
 			}
@@ -221,8 +225,11 @@ public class FedoraIngester implements IngestInterface
 				try
 				{
 					UploadDataBean data = new UploadDataBean();
-					data.path = new URI(fulltextObject.getStream()
-							.getAbsolutePath());
+					String protocol = "file";
+					String host = "";
+					String path = fulltextObject.getStream().getAbsolutePath();
+					String fragment = "";
+					data.path = new URI(protocol, host, path, fragment);
 					data.mime = "application/pdf";
 					reportData.post(data);
 				}
@@ -307,7 +314,11 @@ public class FedoraIngester implements IngestInterface
 
 				try
 				{
-					data.path = new URI(b.getStream().getAbsolutePath());
+					String protocol = "file";
+					String host = "";
+					String path = b.getStream().getAbsolutePath();
+					String fragment = "";
+					data.path = new URI(protocol, host, path, fragment);
 					data.mime = mimeType;
 					webpageVersionData.post(data);
 				}
@@ -397,7 +408,11 @@ public class FedoraIngester implements IngestInterface
 
 				try
 				{
-					data.path = new URI(b.getStream().getAbsolutePath());
+					String protocol = "file";
+					String host = "";
+					String path = b.getStream().getAbsolutePath();
+					String fragment = "";
+					data.path = new URI(protocol, host, path, fragment);
 					data.mime = mimeType;
 					webpageVersionData.post(data);
 				}
