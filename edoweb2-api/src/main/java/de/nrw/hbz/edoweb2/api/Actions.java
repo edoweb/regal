@@ -896,12 +896,18 @@ public class Actions
 		view.setLocation(node.getSource());
 		view.setPublisher(node.getPublisher());
 		view.setUri(objectUrl);
+
 		String mime = node.getMimeType();
 		view.addMedium(mime);
 		if (mime != null && !mime.isEmpty()
 				&& mime.compareTo("application/pdf") == 0)
 		{
 			view.addPdfUrl(objectUrl + "/data");
+		}
+		if (mime != null && !mime.isEmpty()
+				&& mime.compareTo("application/zip") == 0)
+		{
+			view.addZipUrl(objectUrl + "/data");
 		}
 		for (String date : node.getDate())
 		{

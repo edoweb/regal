@@ -32,6 +32,7 @@ public class View
 	Vector<String> dataciteUrl = null;
 	Vector<String> baseUrl = null;
 	Vector<String> pdfUrl = null;
+	Vector<String> zipUrl = null;
 	Vector<String> thumbnailUrl = null;
 	Vector<String> ocrUrl = null;
 
@@ -76,6 +77,7 @@ public class View
 		hasPart = new Vector<String>();
 		dataciteUrl = new Vector<String>();
 		baseUrl = new Vector<String>();
+		zipUrl = new Vector<String>();
 		// Not Implemented yet: First make Cool URIs!
 		// metsUrl = new Vector<String>();
 		// oaioreUrl = new Vector<String>();
@@ -188,6 +190,16 @@ public class View
 	public Vector<String> getHasPart()
 	{
 		return hasPart;
+	}
+
+	public Vector<String> getZipUrl()
+	{
+		return zipUrl;
+	}
+
+	public void setZipUrl(Vector<String> zipUrl)
+	{
+		this.zipUrl = zipUrl;
 	}
 
 	public void setHasPart(Vector<String> hasPart)
@@ -550,6 +562,11 @@ public class View
 		return hasPart.add(e);
 	}
 
+	public boolean addZipUrl(String e)
+	{
+		return zipUrl.add(e);
+	}
+
 	// public boolean addQdcUrl(String e)
 	// {
 	// return qdcUrl.add(e);
@@ -670,6 +687,16 @@ public class View
 		if (doi.isEmpty())
 			return "";
 		String str = doi.firstElement();
+		if (str == null)
+			str = "";
+		return str;
+	}
+
+	public String getFirstZipUrl()
+	{
+		if (zipUrl.isEmpty())
+			return "";
+		String str = zipUrl.firstElement();
 		if (str == null)
 			str = "";
 		return str;

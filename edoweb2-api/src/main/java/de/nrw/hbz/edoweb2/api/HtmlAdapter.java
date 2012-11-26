@@ -106,6 +106,8 @@ public class HtmlAdapter
 
 		addToTable(doc, table, "Fulltext", view.getPdfUrl());
 
+		addToTable(doc, table, "Webarchive", view.getZipUrl());
+
 		addToTable(doc, table, "Title", view.getTitle());
 
 		addToTable(doc, table, "Creator", view.getCreator());
@@ -195,6 +197,7 @@ public class HtmlAdapter
 		String urnResolver = "http://nbn-resolving.de/";
 		String doiResolver = "http://dx.doi.org/";
 		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
+		String zipLogo = "http://orthos.hbz-nrw.de/zip.png";
 		if (fieldName == "DOI")
 		{
 
@@ -276,6 +279,30 @@ public class HtmlAdapter
 
 				Element image = doc.createElement("img");
 				image.setAttribute("src", pdfLogo);
+
+				Element link = doc.createElement("a");
+				link.setAttribute("href", str);
+				link.appendChild(image);
+				td2.appendChild(link);
+				td2.setAttribute("class", "textlink");
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				table.appendChild(tr);
+			}
+		}
+		else if (fieldName.compareTo("Webarchive") == 0)
+		{
+			for (String str : values)
+			{
+				Element tr = doc.createElement("tr");
+				Element td1 = doc.createElement("td");
+				td1.setAttribute("class", "plabel");
+				Element td2 = doc.createElement("td");
+
+				td1.appendChild(doc.createTextNode(fieldName));
+
+				Element image = doc.createElement("img");
+				image.setAttribute("src", zipLogo);
 
 				Element link = doc.createElement("a");
 				link.setAttribute("href", str);
