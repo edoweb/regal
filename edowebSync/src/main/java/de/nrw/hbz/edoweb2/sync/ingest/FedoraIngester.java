@@ -64,11 +64,13 @@ public class FedoraIngester implements IngestInterface
 
 	String user = null;
 	String password = null;
+	String host = null;
 
-	public FedoraIngester(String usr, String pwd)
+	public FedoraIngester(String usr, String pwd, String host)
 	{
 		user = usr;
 		password = pwd;
+		this.host = host;
 	}
 
 	@Override
@@ -94,42 +96,63 @@ public class FedoraIngester implements IngestInterface
 		{
 			e.printStackTrace();
 		}
-
-		if (partitionC.compareTo("EJO01") == 0)
-		{
-			logger.info(pid + ": is a eJournal");
-			ingestEJournal(dtlBean);
-		}
-		else if (partitionC.compareTo("WPD01") == 0)
-		{
-			logger.info(pid + ": is a Amtsdruckschrift old style");
-			ingestReports(dtlBean);
-		}
-		else if (partitionC.compareTo("WPD02") == 0)
+		try
 		{
 
-			logger.info(pid + ": is a Amtsdruckschrift new style");
-			ingestReportsNewStyle(dtlBean);
+			if (partitionC.compareTo("EJO01") == 0)
+			{
+				logger.info(pid + ": start ingesting eJournal");
+				ingestEJournal(dtlBean);
+				logger.info(pid + ": end ingesting eJournal");
+			}
+			else if (partitionC.compareTo("WPD01") == 0)
+			{
+				logger.info(pid + ": start ingesting report (wpd01)");
+				ingestReports(dtlBean);
+				logger.info(pid + ": end ingesting report (wpd01)");
+			}
+			else if (partitionC.compareTo("WPD02") == 0)
+			{
+
+				logger.info(pid + ": start ingesting report (wpd02)");
+				ingestReportsNewStyle(dtlBean);
+				logger.info(pid + ": end ingesting report (wpd02)");
+			}
+			else if (partitionC.compareTo("WSC01") == 0)
+			{
+				logger.info(pid + ": start ingesting webpage (wsc01)");
+				ingestWebpage(dtlBean);
+				logger.info(pid + ": end ingesting webpage (wsc01)");
+			}
+			else if (partitionC.compareTo("WSI01") == 0)
+			{
+				logger.info(pid + ": start ingesting webpage (wsi01)");
+				ingestSingleWebpage(dtlBean);
+				logger.info(pid + ": end ingesting webpage (wsi01)");
+			}
 		}
-		else if (partitionC.compareTo("WSC01") == 0)
+		catch (Exception e)
 		{
-			logger.info(pid + ": is a Webschnitt");
-			ingestWebpage(dtlBean);
-		}
-		else if (partitionC.compareTo("WSI01") == 0)
-		{
-			logger.info(pid + ": is a single Webside");
-			ingestSingleWebpage(dtlBean);
+			e.printStackTrace();
+			logger.info(e.getMessage());
 		}
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
-		WebResource oaiSet = c
-				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/makeOaiSet/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+
+		WebResource index = c.resource(host
+				+ ":8080/edoweb2-api/edowebAdmin/index/" + edowebNamespace
+				+ ":" + dtlBean.getPid());
+		index.post();
+		logger.info(pid + ": got indexed!");
+		WebResource oaiSet = c.resource(host
+				+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/" + edowebNamespace
+				+ ":" + dtlBean.getPid());
 		oaiSet.post();
+		logger.info(pid + ": got set! Thanx and goodbye!");
+
 	}
 
 	private void ingestReports(DigitalEntity dtlBean)
@@ -140,9 +163,8 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource report = c
-				.resource("http://localhost:8080/edoweb2-api/report/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource report = c.resource(host + ":8080/edoweb2-api/report/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
 		try
 		{
 			String request = "content";
@@ -157,7 +179,11 @@ public class FedoraIngester implements IngestInterface
 			UploadDataBean data = new UploadDataBean();
 			try
 			{
-				data.path = new URI(dtlBean.getStream().getAbsolutePath());
+				String protocol = "file";
+				String host = "";
+				String path = dtlBean.getStream().getAbsolutePath();
+				String fragment = "";
+				data.path = new URI(protocol, host, path, fragment);
 				data.mime = "application/pdf";
 				reportData.post(data);
 			}
@@ -171,7 +197,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.report.toString());
-				reportDC.post(DCBeanAnnotated.class, dc);
+				reportDC.post(dc);
 			}
 			catch (Exception e)
 			{
@@ -192,9 +218,8 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource report = c
-				.resource("http://localhost:8080/edoweb2-api/report/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource report = c.resource(host + ":8080/edoweb2-api/report/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
 
 		try
 		{
@@ -221,8 +246,11 @@ public class FedoraIngester implements IngestInterface
 				try
 				{
 					UploadDataBean data = new UploadDataBean();
-					data.path = new URI(fulltextObject.getStream()
-							.getAbsolutePath());
+					String protocol = "file";
+					String host = "";
+					String path = fulltextObject.getStream().getAbsolutePath();
+					String fragment = "";
+					data.path = new URI(protocol, host, path, fragment);
 					data.mime = "application/pdf";
 					reportData.post(data);
 				}
@@ -237,7 +265,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.report.toString());
-				reportDC.post(DCBeanAnnotated.class, dc);
+				reportDC.post(dc);
 			}
 			catch (Exception e)
 			{
@@ -258,9 +286,8 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource webpage = c
-				.resource("http://localhost:8080/edoweb2-api/webpage/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource webpage = c.resource(host + ":8080/edoweb2-api/webpage/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
 
 		try
 		{
@@ -278,7 +305,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.webpage.toString());
-				webpageDC.post(DCBeanAnnotated.class, dc);
+				webpageDC.post(dc);
 				title = dc.getFirstTitle();
 			}
 			catch (Exception e)
@@ -307,7 +334,11 @@ public class FedoraIngester implements IngestInterface
 
 				try
 				{
-					data.path = new URI(b.getStream().getAbsolutePath());
+					String protocol = "file";
+					String host = "";
+					String path = b.getStream().getAbsolutePath();
+					String fragment = "";
+					data.path = new URI(protocol, host, path, fragment);
 					data.mime = mimeType;
 					webpageVersionData.post(data);
 				}
@@ -320,11 +351,11 @@ public class FedoraIngester implements IngestInterface
 					DCBeanAnnotated dc = webpageVersionDC
 							.get(DCBeanAnnotated.class);
 					dc.addTitle("Version of: " + dtlBean.getPid() + " " + title);
-					webpageVersionDC.post(DCBeanAnnotated.class, dc);
+					webpageVersionDC.post(dc);
 				}
 				catch (Exception e)
 				{
-					logger.error(e.getMessage());
+					// logger.error(e.getMessage());
 				}
 
 			}
@@ -345,9 +376,8 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource webpage = c
-				.resource("http://localhost:8080/edoweb2-api/webpage/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource webpage = c.resource(host + ":8080/edoweb2-api/webpage/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
 
 		String request = "content";
 		try
@@ -365,7 +395,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.webpage.toString());
-				webpageDC.post(DCBeanAnnotated.class, dc);
+				webpageDC.post(dc);
 				title = dc.getFirstTitle();
 			}
 			catch (Exception e)
@@ -397,7 +427,11 @@ public class FedoraIngester implements IngestInterface
 
 				try
 				{
-					data.path = new URI(b.getStream().getAbsolutePath());
+					String protocol = "file";
+					String host = "";
+					String path = b.getStream().getAbsolutePath();
+					String fragment = "";
+					data.path = new URI(protocol, host, path, fragment);
 					data.mime = mimeType;
 					webpageVersionData.post(data);
 				}
@@ -411,7 +445,7 @@ public class FedoraIngester implements IngestInterface
 							.get(DCBeanAnnotated.class);
 					dc.addTitle("Version of: edoweb:" + dtlBean.getPid() + " "
 							+ title);
-					webpageVersionDC.post(DCBeanAnnotated.class, dc);
+					webpageVersionDC.post(dc);
 				}
 				catch (Exception e)
 				{
@@ -436,9 +470,8 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource ejournal = c
-				.resource("http://localhost:8080/edoweb2-api/ejournal/"
-						+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource ejournal = c.resource(host + ":8080/edoweb2-api/ejournal/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
 
 		try
 		{
@@ -453,11 +486,11 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.ejournal.toString());
-				ejournalDC.post(DCBeanAnnotated.class, dc);
+				ejournalDC.post(dc);
 			}
 			catch (Exception e)
 			{
-				logger.debug(e.getMessage());
+				// logger.debug(e.getMessage());
 			}
 			for (DigitalEntity b : dtlBean.getViewMainLinks())
 			{
@@ -501,11 +534,11 @@ public class FedoraIngester implements IngestInterface
 							.get(DCBeanAnnotated.class);
 
 					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
-					ejournalVolumeDC.post(DCBeanAnnotated.class, dc);
+					ejournalVolumeDC.post(dc);
 				}
 				catch (Exception e)
 				{
-					logger.debug(e.getMessage());
+					// logger.debug(e.getMessage());
 				}
 
 			}
@@ -534,7 +567,7 @@ public class FedoraIngester implements IngestInterface
 					new StreamResult(str));
 
 			String xmlStr = str.getBuffer().toString();
-			logger.info(xmlStr);
+			// logger.debug(xmlStr);
 			DCBeanAnnotated dc = new DCBeanAnnotated(new DCBean(xmlStr));
 			return dc;
 
@@ -562,24 +595,23 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource delete = c
-				.resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/edoweb:"
-						+ pid);
+		WebResource delete = c.resource(host
+				+ ":8080/edoweb2-api/edowebAdmin/delete/edoweb:" + pid);
 
 		delete.delete();
 
 		// delete = c
-		// .resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/oai:report");
+		// .resource(host+":8080/edoweb2-api/edowebAdmin/delete/oai:report");
 		//
 		// delete.delete();
 		//
 		// delete = c
-		// .resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/oai:350");
+		// .resource(host+":8080/edoweb2-api/edowebAdmin/delete/oai:350");
 		//
 		// delete.delete();
 		//
 		// delete = c
-		// .resource("http://localhost:8080/edoweb2-api/edowebAdmin/delete/oai:ejournal");
+		// .resource(host+":8080/edoweb2-api/edowebAdmin/delete/oai:ejournal");
 		//
 		// delete.delete();
 
@@ -595,7 +627,7 @@ public class FedoraIngester implements IngestInterface
 		// c.addFilter(new HTTPBasicAuthFilter(user, password));
 		//
 		// // WPD
-		// WebResource wpd = c.resource("http://localhost:8080/edoweb2-api/wpd/"
+		// WebResource wpd = c.resource(host+":8080/edoweb2-api/wpd/"
 		// + dtlNamespace + ":" + dtlBean.getPid());
 		//
 		// String request = "content";
@@ -751,7 +783,7 @@ public class FedoraIngester implements IngestInterface
 		// DCBeanAnnotated dc = marc2dc(dtlBean);
 		// dc.addType(ObjectType.wpd.toString());
 		//
-		// wpdDC.post(DCBeanAnnotated.class, dc);
+		// wpdDC.post( dc);
 		//
 		// }
 		// catch (Exception e)

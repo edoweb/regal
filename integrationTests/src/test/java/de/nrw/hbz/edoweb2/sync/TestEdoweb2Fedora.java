@@ -103,7 +103,7 @@ public class TestEdoweb2Fedora
 			main.run("DELE", user, password, piddownloaderServer,
 					piddownloaderDownloadLocation, pidreporterServer,
 					pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-					pidreporterPidFile);
+					"http://localhost", pidreporterPidFile);
 		}
 		catch (Exception e)
 		{
@@ -142,7 +142,7 @@ public class TestEdoweb2Fedora
 		main.run("PIDL", user, password, piddownloaderServer,
 				piddownloaderDownloadLocation, pidreporterServer,
 				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-				pidreporterPidFile);
+				"http://localhost", pidreporterPidFile);
 
 	}
 

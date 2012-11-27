@@ -22,26 +22,39 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.codehaus.jettison.mapped.Configuration;
+import org.codehaus.jettison.mapped.MappedNamespaceConvention;
+import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -56,6 +69,11 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import de.nrw.hbz.edoweb2.archive.ArchiveFactory;
 import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
@@ -72,7 +90,7 @@ public class Actions
 {
 	final static Logger logger = LoggerFactory.getLogger(Actions.class);
 	ArchiveInterface archive = null;
-	String fedoraHost = null;
+	String externalHost = null;
 	String culturegraphUrl = null;
 	String lobidUrl = null;
 	String verbundUrl = null;
@@ -90,7 +108,7 @@ public class Actions
 		{
 			e.printStackTrace();
 		}
-		fedoraHost = properties.getProperty("hostName");
+		externalHost = properties.getProperty("hostName");
 		culturegraphUrl = properties.getProperty("culturegraphUrl");
 		lobidUrl = properties.getProperty("lobidUrl");
 		verbundUrl = properties.getProperty("verbundUrl");
@@ -128,9 +146,10 @@ public class Actions
 	public String create(ComplexObject object, boolean wait)
 			throws RemoteException
 	{
-		archive.createComplexObject(object);
+		Node node = archive.createComplexObject(object);
 		if (wait)
 			waitWorkaround();
+
 		return object.getRoot().getPID() + " CREATED!";
 	}
 
@@ -280,7 +299,7 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(fedoraHost + "/objects/" + pid
+							new java.net.URI(externalHost + "/objects/" + pid
 									+ "/datastreams/data/content")).build();
 				}
 				catch (URISyntaxException e)
@@ -324,7 +343,7 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(fedoraHost + "/objects/" + pid
+							new java.net.URI(externalHost + "/objects/" + pid
 									+ "/datastreams/metadata/content")).build();
 				}
 				catch (URISyntaxException e)
@@ -848,123 +867,230 @@ public class Actions
 		String url = urlInfo.getPath();
 		String objectUrl = host + url.substring(0, url.lastIndexOf('/'));
 
-		View view = new View();
 		try
 		{
 			Node node = archive.readNode(pid);
 			if (node == null)
 				return null;
-			view.setCreator(node.getCreator());
-			view.setTitle(node.getTitle());
-			view.setLanguage(node.getLanguage());
-			view.setSubject(node.getSubject());
-
-			view.setLocation(node.getSource());
-			view.setPublisher(node.getPublisher());
-			view.setUri(objectUrl);
-			String mime = node.getMimeType();
-			view.addMedium(mime);
-			if (mime != null && !mime.isEmpty()
-					&& mime.compareTo("application/pdf") == 0)
-			{
-				view.addPdfUrl(node.getDataUrl().toString());
-			}
-			for (String date : node.getDate())
-			{
-				view.addYear(date.substring(0, 4));
-			}
-			for (String ddc : node.getSubject())
-			{
-				if (ddc.startsWith("ddc"))
-				{
-					view.addDdc(ddc);
-					break;
-				}
-			}
-
-			for (String doi : node.getIdentifier())
-			{
-				if (doi.startsWith("doi"))
-				{
-					view.addDoi(doi);
-					view.addDataciteUrl(dataciteUrl + doi);
-					view.addBaseUrl(baseUrl + doi);
-					break;
-				}
-			}
-
-			for (String urn : node.getIdentifier())
-			{
-				if (urn.startsWith("urn"))
-				{
-					view.addUrn(urn);
-					break;
-				}
-			}
-
-			for (String alephid : node.getIdentifier())
-			{
-				if (alephid.startsWith("HT"))
-				{
-					view.addAlephId(alephid);
-					view.addCulturegraphUrl(culturegraphUrl + alephid);
-					view.addLobidUrl(lobidUrl + alephid);
-					view.addVerbundUrl(verbundUrl + alephid);
-					break;
-				}
-				if (alephid.startsWith("TT"))
-				{
-					view.addAlephId(alephid);
-					view.addCulturegraphUrl(culturegraphUrl + alephid);
-					view.addLobidUrl(lobidUrl + alephid);
-					view.addVerbundUrl(verbundUrl + alephid);
-					break;
-				}
-			}
-
-			for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
-			{
-				String relUrl = fedoraHost + "objects/" + relPid;
-
-				if (type == ObjectType.ejournalVolume)
-				{
-					relUrl = host + "ejournal/" + relPid;
-				}
-
-				if (type == ObjectType.webpageVersion)
-				{
-					relUrl = host + "webpage/" + relPid;
-				}
-
-				view.addIsPartOf(relUrl);
-			}
-
-			for (String relPid : findObject(pid, REL_IS_RELATED))
-			{
-				String relUrl = fedoraHost + "objects/" + relPid;
-
-				if (type == ObjectType.ejournal)
-				{
-					String name = findObject(relPid, HAS_VOLUME_NAME).get(0);
-					relUrl = objectUrl.concat("/volume/" + name);
-				}
-
-				if (type == ObjectType.webpage)
-				{
-					String name = findObject(relPid, HAS_VERSION_NAME).get(0);
-					relUrl = objectUrl.concat("/version/" + name);
-				}
-
-				view.addHasPart(relUrl);
-			}
-
+			return getView(node, host, objectUrl, type);
 		}
 		catch (RemoteException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
+	}
+
+	public View getView(Node node, String host, String objectUrl,
+			ObjectType type)
+	{
+		View view = new View();
+		String pid = node.getPID();
+
+		view.setCreator(node.getCreator());
+		view.setTitle(node.getTitle());
+		view.setLanguage(node.getLanguage());
+		view.setSubject(node.getSubject());
+		view.setType(node.getType());
+		view.setLocation(node.getSource());
+		view.setPublisher(node.getPublisher());
+		view.setUri(objectUrl);
+
+		String mime = node.getMimeType();
+		view.addMedium(mime);
+		if (mime != null && !mime.isEmpty()
+				&& mime.compareTo("application/pdf") == 0)
+		{
+			view.addPdfUrl(objectUrl + "/data");
+		}
+		if (mime != null && !mime.isEmpty()
+				&& mime.compareTo("application/zip") == 0)
+		{
+			view.addZipUrl(objectUrl + "/data");
+		}
+		for (String date : node.getDate())
+		{
+			view.addYear(date.substring(0, 4));
+		}
+		for (String ddc : node.getSubject())
+		{
+			if (ddc.startsWith("ddc"))
+			{
+				view.addDdc(ddc);
+				break;
+			}
+		}
+
+		for (String doi : node.getIdentifier())
+		{
+			if (doi.startsWith("doi"))
+			{
+				view.addDoi(doi);
+				view.addDataciteUrl(dataciteUrl + doi);
+				view.addBaseUrl(baseUrl + doi);
+				break;
+			}
+		}
+
+		for (String urn : node.getIdentifier())
+		{
+			if (urn.startsWith("urn"))
+			{
+				view.addUrn(urn);
+				break;
+			}
+		}
+
+		for (String alephid : node.getIdentifier())
+		{
+			if (alephid.startsWith("HT"))
+			{
+				view.addAlephId(alephid);
+				view.addCulturegraphUrl(culturegraphUrl + alephid);
+				view.addLobidUrl(lobidUrl + alephid);
+				view.addVerbundUrl(verbundUrl + alephid);
+				break;
+			}
+			if (alephid.startsWith("TT"))
+			{
+				view.addAlephId(alephid);
+				view.addCulturegraphUrl(culturegraphUrl + alephid);
+				view.addLobidUrl(lobidUrl + alephid);
+				view.addVerbundUrl(verbundUrl + alephid);
+				break;
+			}
+		}
+
+		for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
+		{
+			String relUrl = externalHost + "objects/" + relPid;
+
+			if (type == ObjectType.ejournalVolume)
+			{
+				relUrl = host + "ejournal/" + relPid;
+			}
+
+			if (type == ObjectType.webpageVersion)
+			{
+				relUrl = host + "webpage/" + relPid;
+			}
+
+			view.addIsPartOf(relUrl);
+		}
+
+		for (String relPid : findObject(pid, REL_IS_RELATED))
+		{
+			String relUrl = externalHost + "objects/" + relPid;
+
+			if (type == ObjectType.ejournal)
+			{
+				String name = findObject(relPid, HAS_VOLUME_NAME).get(0);
+				relUrl = objectUrl.concat("/volume/" + name);
+			}
+
+			if (type == ObjectType.webpage)
+			{
+				String name = findObject(relPid, HAS_VERSION_NAME).get(0);
+				relUrl = objectUrl.concat("/version/" + name);
+			}
+
+			view.addHasPart(relUrl);
+		}
 
 		return view;
+	}
+
+	public String index(String host, String objectUrl, Node node,
+			ObjectType type)
+	{
+		String message = "";
+
+		View view = getView(node, host, objectUrl, type);
+
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		try
+		{
+			WebResource index = c
+					.resource("http://localhost:9200/edoweb/titel/"
+							+ node.getPID());
+			index.accept(MediaType.APPLICATION_JSON);
+
+			JAXBContext jc = JAXBContext.newInstance(View.class);
+
+			Configuration config = new Configuration();
+			Map<String, String> xmlToJsonNamespaces = new HashMap<String, String>(
+					1);
+			xmlToJsonNamespaces.put(
+					"http://www.w3.org/2001/XMLSchema-instance", "");
+			config.setXmlToJsonNamespaces(xmlToJsonNamespaces);
+			MappedNamespaceConvention con = new MappedNamespaceConvention(
+					config);
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(baos);
+			Writer writer = new OutputStreamWriter(out);
+			XMLStreamWriter xmlStreamWriter = new MappedXMLStreamWriter(con,
+					writer);
+
+			Marshaller marshaller = jc.createMarshaller();
+			marshaller.marshal(view, xmlStreamWriter);
+			String viewAsString = baos.toString("utf-8");
+			logger.debug("JSON-------------------");
+			logger.debug(viewAsString);
+			logger.debug("-----------------------");
+			message = index.put(String.class, viewAsString);
+		}
+		catch (Exception e)
+		{
+			return "Error! " + message + e.getMessage();
+		}
+		return "Success! " + message;
+	}
+
+	public String index(UriInfo urlInfo, String pid)
+	{
+		try
+		{
+			Node node = archive.readNode(pid);
+			if (node == null)
+				return "Node not found! " + pid;
+			ObjectType type = null;
+			for (String t : node.getType())
+			{
+				if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
+				{
+					type = ObjectType.report;
+					break;
+				}
+				else if (t.compareTo("doc-type:"
+						+ ObjectType.ejournal.toString()) == 0)
+				{
+					type = ObjectType.ejournal;
+					break;
+				}
+				else if (t.compareTo("doc-type:"
+						+ ObjectType.webpage.toString()) == 0)
+				{
+					type = ObjectType.webpage;
+					break;
+				}
+			}
+			if (type == null)
+				return "Sorry the node has no type! ERROR! " + pid;
+
+			String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
+			String objectUrl = host + type.toString() + "/" + pid;
+			return index(host, objectUrl, node, type);
+		}
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "Something unexpected occured! " + pid;
 	}
 }
