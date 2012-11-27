@@ -871,16 +871,16 @@ public class Actions
 	public View getView(UriInfo urlInfo, String pid, ObjectType type)
 	{
 
-		String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
-		String url = urlInfo.getPath();
-		String objectUrl = host + url.substring(0, url.lastIndexOf('/'));
+		// String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
+		// String url = urlInfo.getPath();
+		// String objectUrl = host + url.substring(0, url.lastIndexOf('/'));
 
 		try
 		{
 			Node node = archive.readNode(pid);
 			if (node == null)
 				return null;
-			return getView(node, host, objectUrl, type);
+			return getView(node, type);
 		}
 		catch (RemoteException e)
 		{
@@ -890,12 +890,11 @@ public class Actions
 		return null;
 	}
 
-	public View getView(Node node, String host, String objectUrl,
-			ObjectType type)
+	public View getView(Node node, ObjectType type)
 	{
 		View view = new View();
 		String pid = node.getPID();
-
+		String uri = getURI(node);
 		view.setCreator(node.getCreator());
 		view.setTitle(node.getTitle());
 		view.setLanguage(node.getLanguage());
@@ -903,19 +902,19 @@ public class Actions
 		view.setType(node.getType());
 		view.setLocation(node.getSource());
 		view.setPublisher(node.getPublisher());
-		view.setUri(objectUrl);
+		view.setUri(uri);
 
 		String mime = node.getMimeType();
 		view.addMedium(mime);
 		if (mime != null && !mime.isEmpty()
 				&& mime.compareTo("application/pdf") == 0)
 		{
-			view.addPdfUrl(objectUrl + "/data");
+			view.addPdfUrl(uri + "/data");
 		}
 		if (mime != null && !mime.isEmpty()
 				&& mime.compareTo("application/zip") == 0)
 		{
-			view.addZipUrl(objectUrl + "/data");
+			view.addZipUrl(uri + "/data");
 		}
 		for (String date : node.getDate())
 		{
@@ -960,7 +959,7 @@ public class Actions
 				view.addVerbundUrl(verbundUrl + alephid);
 				break;
 			}
-			if (alephid.startsWith("TT"))
+			else if (alephid.startsWith("TT"))
 			{
 				view.addAlephId(alephid);
 				view.addCulturegraphUrl(culturegraphUrl + alephid);
@@ -976,12 +975,12 @@ public class Actions
 
 			if (type == ObjectType.ejournalVolume)
 			{
-				relUrl = host + "ejournal/" + relPid;
+				relUrl = serverName + "/ejournal/" + relPid;
 			}
 
 			if (type == ObjectType.webpageVersion)
 			{
-				relUrl = host + "webpage/" + relPid;
+				relUrl = serverName + "/webpage/" + relPid;
 			}
 
 			view.addIsPartOf(relUrl);
@@ -994,13 +993,13 @@ public class Actions
 			if (type == ObjectType.ejournal)
 			{
 				String name = findObject(relPid, HAS_VOLUME_NAME).get(0);
-				relUrl = objectUrl.concat("/volume/" + name);
+				relUrl = uri.concat("/volume/" + name);
 			}
 
 			if (type == ObjectType.webpage)
 			{
 				String name = findObject(relPid, HAS_VERSION_NAME).get(0);
-				relUrl = objectUrl.concat("/version/" + name);
+				relUrl = uri.concat("/version/" + name);
 			}
 
 			view.addHasPart(relUrl);
@@ -1009,12 +1008,11 @@ public class Actions
 		return view;
 	}
 
-	public String index(String host, String objectUrl, Node node,
-			ObjectType type)
+	public String index(Node node, ObjectType type)
 	{
 		String message = "";
 
-		View view = getView(node, host, objectUrl, type);
+		View view = getView(node, type);
 
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -1090,9 +1088,7 @@ public class Actions
 			if (type == null)
 				return "Sorry the node has no type! ERROR! " + pid;
 
-			String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
-			String objectUrl = host + type.toString() + "/" + pid;
-			return index(host, objectUrl, node, type);
+			return index(node, type);
 		}
 		catch (RemoteException e)
 		{
