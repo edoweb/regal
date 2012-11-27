@@ -37,6 +37,9 @@ public abstract class FedoraVocabulary
 			+ "hasConstituent";
 	public static final String IS_MEMBER_OF = FEDORA_RELS_NAMESPACE + "#"
 			+ "isMemberOf";
+
+	public static final String ITEM_ID = "http://www.openarchives.org/OAI/2.0/itemID";
+
 	public static final String HAS_MEMBER = FEDORA_RELS_NAMESPACE + "#"
 			+ "hasMember";
 	public static final String IS_SUBSET_OF = FEDORA_RELS_NAMESPACE + "#"

@@ -349,7 +349,7 @@ public class FedoraIngester implements IngestInterface
 				try
 				{
 					DCBeanAnnotated dc = webpageVersionDC
-							.get(DCBeanAnnotated.class);
+							.get(DCBeanAnnotated.class); // Auth?
 					dc.addTitle("Version of: " + dtlBean.getPid() + " " + title);
 					webpageVersionDC.post(dc);
 				}
@@ -442,7 +442,7 @@ public class FedoraIngester implements IngestInterface
 				try
 				{
 					DCBeanAnnotated dc = webpageVersionDC
-							.get(DCBeanAnnotated.class);
+							.get(DCBeanAnnotated.class);// Auth
 					dc.addTitle("Version of: edoweb:" + dtlBean.getPid() + " "
 							+ title);
 					webpageVersionDC.post(dc);
@@ -531,7 +531,7 @@ public class FedoraIngester implements IngestInterface
 				try
 				{
 					DCBeanAnnotated dc = ejournalVolumeDC
-							.get(DCBeanAnnotated.class);
+							.get(DCBeanAnnotated.class); // Auth
 
 					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
 					ejournalVolumeDC.post(dc);

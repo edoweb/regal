@@ -21,6 +21,7 @@ import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME_NAME;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.ITEM_ID;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -90,12 +91,13 @@ public class Actions
 {
 	final static Logger logger = LoggerFactory.getLogger(Actions.class);
 	ArchiveInterface archive = null;
-	String externalHost = null;
+	String fedoraExtern = null;
 	String culturegraphUrl = null;
 	String lobidUrl = null;
 	String verbundUrl = null;
 	String dataciteUrl = null;
 	String baseUrl = null;
+	String serverName = null;
 
 	public Actions()
 	{
@@ -108,14 +110,15 @@ public class Actions
 		{
 			e.printStackTrace();
 		}
-		externalHost = properties.getProperty("hostName");
+		fedoraExtern = properties.getProperty("fedoraExtern");
 		culturegraphUrl = properties.getProperty("culturegraphUrl");
 		lobidUrl = properties.getProperty("lobidUrl");
 		verbundUrl = properties.getProperty("verbundUrl");
 		dataciteUrl = properties.getProperty("dataciteUrl");
 		baseUrl = properties.getProperty("baseUrl");
+		serverName = properties.getProperty("serverName");
 		archive = ArchiveFactory.getArchiveImpl(
-				properties.getProperty("fedoraUrl"),
+				properties.getProperty("fedoraIntern"),
 				properties.getProperty("user"),
 				properties.getProperty("password"),
 				properties.getProperty("sesameStore"));
@@ -299,7 +302,7 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(externalHost + "/objects/" + pid
+							new java.net.URI(fedoraExtern + "/objects/" + pid
 									+ "/datastreams/data/content")).build();
 				}
 				catch (URISyntaxException e)
@@ -343,7 +346,7 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(externalHost + "/objects/" + pid
+							new java.net.URI(fedoraExtern + "/objects/" + pid
 									+ "/datastreams/metadata/content")).build();
 				}
 				catch (URISyntaxException e)
@@ -740,6 +743,11 @@ public class Actions
 		link.setPredicate(IS_MEMBER_OF);
 		link.setObject("info:fedora/" + pid, false);
 		node.addRelation(link);
+
+		link = new Link();
+		link.setPredicate("info:fedora/" + ITEM_ID);
+		link.setObject(getURI(node), true);
+		node.addRelation(link);
 		try
 		{
 			archive.updateNode(node.getPID(), node);
@@ -964,7 +972,7 @@ public class Actions
 
 		for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
 		{
-			String relUrl = externalHost + "objects/" + relPid;
+			String relUrl = fedoraExtern + "objects/" + relPid;
 
 			if (type == ObjectType.ejournalVolume)
 			{
@@ -981,7 +989,7 @@ public class Actions
 
 		for (String relPid : findObject(pid, REL_IS_RELATED))
 		{
-			String relUrl = externalHost + "objects/" + relPid;
+			String relUrl = fedoraExtern + "objects/" + relPid;
 
 			if (type == ObjectType.ejournal)
 			{
@@ -1092,5 +1100,36 @@ public class Actions
 			e.printStackTrace();
 		}
 		return "Something unexpected occured! " + pid;
+	}
+
+	private String getURI(Node node)
+	{
+		ObjectType type = null;
+		String typePath = null;
+		for (String t : node.getType())
+		{
+			if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
+			{
+				type = ObjectType.report;
+				typePath = "report";
+				break;
+			}
+			else if (t.compareTo("doc-type:" + ObjectType.ejournal.toString()) == 0)
+			{
+				type = ObjectType.ejournal;
+				typePath = "ejournal";
+				break;
+			}
+			else if (t.compareTo("doc-type:" + ObjectType.webpage.toString()) == 0)
+			{
+				type = ObjectType.webpage;
+				typePath = "webpage";
+				break;
+			}
+		}
+		if (type == null)
+			return "Sorry the node has no type! ERROR! " + node.getPID();
+
+		return serverName + "/" + typePath + "/" + node.getPID();
 	}
 }

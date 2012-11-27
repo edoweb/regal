@@ -48,7 +48,7 @@ public class MyConfiguration extends BaseConfiguration
 		for (Option option : commandLine.getOptions())
 		{
 			String key = option.getLongOpt();
-			System.out.println(key);
+			// System.out.println(key);
 			if (key.compareTo("set") == 0)
 			{
 				String[] vals = option.getValues();
