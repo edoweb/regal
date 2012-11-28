@@ -26,15 +26,23 @@ public class View
 	Vector<String> urn = null;
 	Vector<String> url = null;
 	Vector<String> alephid = null;
-	Vector<String> lobidUrl = null;
-	Vector<String> culturegraphUrl = null;
-	Vector<String> verbundUrl = null;
-	Vector<String> dataciteUrl = null;
-	Vector<String> baseUrl = null;
+
+	// TODO refactor names
 	Vector<String> pdfUrl = null;
 	Vector<String> zipUrl = null;
 	Vector<String> thumbnailUrl = null;
 	Vector<String> ocrUrl = null;
+
+	// TODO make this configurable
+	Vector<String> verbundUrl = null;
+	Vector<String> dataciteUrl = null;
+	Vector<String> lobidUrl = null;
+	Vector<String> culturegraphUrl = null;
+	Vector<String> baseUrl = null;
+	Vector<String> digitoolUrl = null;
+	Vector<String> cacheUrl = null;
+	Vector<String> fedoraUrl = null;
+	Vector<String> risearchUrl = null;
 
 	// Vector<String> htmlUrl = null;
 	// Vector<String> metsUrl = null;
@@ -78,6 +86,10 @@ public class View
 		dataciteUrl = new Vector<String>();
 		baseUrl = new Vector<String>();
 		zipUrl = new Vector<String>();
+		digitoolUrl = new Vector<String>();
+		cacheUrl = new Vector<String>();
+		fedoraUrl = new Vector<String>();
+		risearchUrl = new Vector<String>();
 		// Not Implemented yet: First make Cool URIs!
 		// metsUrl = new Vector<String>();
 		// oaioreUrl = new Vector<String>();
@@ -186,6 +198,46 @@ public class View
 	// {
 	// return verbundUrl;
 	// }
+
+	public Vector<String> getDigitoolUrl()
+	{
+		return digitoolUrl;
+	}
+
+	public void setDigitoolUrl(Vector<String> digitoolUrl)
+	{
+		this.digitoolUrl = digitoolUrl;
+	}
+
+	public Vector<String> getCacheUrl()
+	{
+		return cacheUrl;
+	}
+
+	public void setCacheUrl(Vector<String> cacheUrl)
+	{
+		this.cacheUrl = cacheUrl;
+	}
+
+	public Vector<String> getFedoraUrl()
+	{
+		return fedoraUrl;
+	}
+
+	public void setFedoraUrl(Vector<String> fedoraUrl)
+	{
+		this.fedoraUrl = fedoraUrl;
+	}
+
+	public Vector<String> getRisearchUrl()
+	{
+		return risearchUrl;
+	}
+
+	public void setRisearchUrl(Vector<String> risearchUrl)
+	{
+		this.risearchUrl = risearchUrl;
+	}
 
 	public Vector<String> getHasPart()
 	{
@@ -567,6 +619,26 @@ public class View
 		return zipUrl.add(e);
 	}
 
+	public boolean addFedoraUrl(String e)
+	{
+		return fedoraUrl.add(e);
+	}
+
+	public boolean addCacheUrl(String e)
+	{
+		return cacheUrl.add(e);
+	}
+
+	public boolean addRisearchUrl(String e)
+	{
+		return risearchUrl.add(e);
+	}
+
+	public boolean addDigitoolUrl(String e)
+	{
+		return digitoolUrl.add(e);
+	}
+
 	// public boolean addQdcUrl(String e)
 	// {
 	// return qdcUrl.add(e);
@@ -702,6 +774,45 @@ public class View
 		return str;
 	}
 
+	public String getFirstFedoraUrl()
+	{
+		if (fedoraUrl.isEmpty())
+			return "";
+		String str = fedoraUrl.firstElement();
+		if (str == null)
+			str = "";
+		return str;
+	}
+
+	public String getFirstCacheUrl()
+	{
+		if (cacheUrl.isEmpty())
+			return "";
+		String str = cacheUrl.firstElement();
+		if (str == null)
+			str = "";
+		return str;
+	}
+
+	public String getFirstDigitoolUrl()
+	{
+		if (digitoolUrl.isEmpty())
+			return "";
+		String str = digitoolUrl.firstElement();
+		if (str == null)
+			str = "";
+		return str;
+	}
+
+	public String getFirstRisearchUrl()
+	{
+		if (risearchUrl.isEmpty())
+			return "";
+		String str = risearchUrl.firstElement();
+		if (str == null)
+			str = "";
+		return str;
+	}
 	// public String getFirstQdcUrl()
 	// {
 	// String str = qdcUrl.firstElement();

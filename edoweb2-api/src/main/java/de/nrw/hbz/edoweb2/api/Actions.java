@@ -18,6 +18,8 @@ package de.nrw.hbz.edoweb2.api;
 
 import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION_NAME;
 import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME_NAME;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VERSION;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VOLUME;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
@@ -52,7 +54,9 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
 import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
@@ -868,7 +872,7 @@ public class Actions
 		return result.toString();
 	}
 
-	public View getView(UriInfo urlInfo, String pid, ObjectType type)
+	public View getView(String pid, ObjectType type)
 	{
 
 		// String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
@@ -903,6 +907,22 @@ public class Actions
 		view.setLocation(node.getSource());
 		view.setPublisher(node.getPublisher());
 		view.setUri(uri);
+
+		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
+		view.addCacheUrl(this.serverName + "/edobase/" + pidWithoutNamespace);
+		view.addFedoraUrl(this.fedoraExtern + "/objects/" + pid);
+		view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
+				+ pidWithoutNamespace);
+		String query = "<info:fedora/" + pid + "> * *";
+		try
+		{
+			view.addRisearchUrl(this.fedoraExtern
+					+ "/risearch?type=triples&lang=spo&format=RDF/XML&query="
+					+ URIUtil.encodeQuery(query));
+		}
+		catch (URIException e)
+		{
+		}
 
 		String mime = node.getMimeType();
 		view.addMedium(mime);
@@ -1100,32 +1120,69 @@ public class Actions
 
 	private String getURI(Node node)
 	{
-		ObjectType type = null;
+
 		String typePath = null;
 		for (String t : node.getType())
 		{
 			if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
 			{
-				type = ObjectType.report;
+
 				typePath = "report";
 				break;
 			}
 			else if (t.compareTo("doc-type:" + ObjectType.ejournal.toString()) == 0)
 			{
-				type = ObjectType.ejournal;
+
 				typePath = "ejournal";
 				break;
 			}
 			else if (t.compareTo("doc-type:" + ObjectType.webpage.toString()) == 0)
 			{
-				type = ObjectType.webpage;
+
 				typePath = "webpage";
 				break;
 			}
+			else if (t.compareTo(ObjectType.webpageVersion.toString()) == 0)
+			{
+
+				typePath = "webpage";
+				return serverName + "/" + typePath + "/" + getWebpagePid(node)
+						+ "/version/" + getVersionName(node);
+
+			}
+			else if (t.compareTo(ObjectType.ejournalVolume.toString()) == 0)
+			{
+
+				typePath = "ejournal";
+				return serverName + "/" + typePath + "/" + getJournalPid(node)
+						+ "/volume/" + getVolumeName(node);
+			}
+
 		}
-		if (type == null)
+		if (typePath == null)
 			return "Sorry the node has no type! ERROR! " + node.getPID();
 
 		return serverName + "/" + typePath + "/" + node.getPID();
 	}
+
+	private String getVolumeName(Node node)
+	{
+		return findObject(node.getPID(), HAS_VOLUME_NAME).firstElement();
+	}
+
+	private String getJournalPid(Node node)
+	{
+		return findObject(node.getPID(), IS_VOLUME).firstElement();
+	}
+
+	private String getVersionName(Node node)
+	{
+		return findObject(node.getPID(), HAS_VERSION_NAME).firstElement();
+	}
+
+	private String getWebpagePid(Node node)
+	{
+		return findObject(node.getPID(), IS_VERSION).firstElement();
+	}
+
 }
