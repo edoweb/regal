@@ -128,6 +128,8 @@ public class HtmlAdapter
 
 		addToTable(doc, table, "Subject", view.getSubject());
 
+		addToTable(doc, table, "Description", view.getDescription());
+
 		addToTable(doc, table, "DDC", view.getDdc());
 
 		addToTable(doc, table, "DOI", view.getDoi());

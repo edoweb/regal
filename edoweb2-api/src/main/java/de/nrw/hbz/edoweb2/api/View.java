@@ -14,6 +14,7 @@ public class View
 	Vector<String> year = null;
 	Vector<String> type = null;
 	Vector<String> subject = null;
+	Vector<String> description = null;
 	Vector<String> ddc = null;
 	Vector<String> language = null;
 	Vector<String> location = null;
@@ -63,6 +64,7 @@ public class View
 		year = new Vector<String>();
 		type = new Vector<String>();
 		subject = new Vector<String>();
+		description = new Vector<String>();
 		ddc = new Vector<String>();
 		language = new Vector<String>();
 		location = new Vector<String>();
@@ -198,6 +200,16 @@ public class View
 	// {
 	// return verbundUrl;
 	// }
+
+	public Vector<String> getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(Vector<String> description)
+	{
+		this.description = description;
+	}
 
 	public Vector<String> getDigitoolUrl()
 	{
@@ -639,6 +651,11 @@ public class View
 		return digitoolUrl.add(e);
 	}
 
+	public boolean addDescription(String e)
+	{
+		return description.add(e);
+	}
+
 	// public boolean addQdcUrl(String e)
 	// {
 	// return qdcUrl.add(e);
@@ -809,6 +826,16 @@ public class View
 		if (risearchUrl.isEmpty())
 			return "";
 		String str = risearchUrl.firstElement();
+		if (str == null)
+			str = "";
+		return str;
+	}
+
+	public String getFirstDescription()
+	{
+		if (description.isEmpty())
+			return "";
+		String str = description.firstElement();
 		if (str == null)
 			str = "";
 		return str;

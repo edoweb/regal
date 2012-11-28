@@ -159,7 +159,7 @@ public class ReportResource
 
 	@GET
 	@Path("/{pid}/dc")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readReportDC(@PathParam("pid") String pid)
 	{
 		return actions.readDC(pid);

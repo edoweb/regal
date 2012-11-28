@@ -183,7 +183,7 @@ public class EJournalResource
 
 	@GET
 	@Path("/{pid}/dc")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readEJournalDC(@PathParam("pid") String pid)
 	{
 		return actions.readDC(pid);
@@ -348,7 +348,7 @@ public class EJournalResource
 
 	@GET
 	@Path("/{pid}/volume/{volName}/dc")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volName") String volName)
 	{

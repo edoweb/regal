@@ -169,7 +169,7 @@ public class WebpageResource
 
 	@GET
 	@Path("/{pid}/dc")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readWebpageDC(@PathParam("pid") String pid)
 	{
 		return actions.readDC(pid);
@@ -313,7 +313,7 @@ public class WebpageResource
 
 	@GET
 	@Path("/{pid}/version/{versionName}/dc")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionName)
 	{

@@ -400,7 +400,7 @@ public class Actions
 			node.setIdentifier(content.getIdentifier());
 			node.setLanguage(content.getLanguage());
 			node.setPublisher(content.getPublisher());
-			node.setDescription(content.getRelation());
+			node.setDescription(content.getDescription());
 			node.setRights(content.getRights());
 			node.setSource(content.getSource());
 			node.setSubject(content.getSubject());
@@ -906,6 +906,10 @@ public class Actions
 		view.setType(node.getType());
 		view.setLocation(node.getSource());
 		view.setPublisher(node.getPublisher());
+		view.setDescription(node.getDescription());
+		String label = node.getLabel();
+		if (label != null && !label.isEmpty())
+			view.addDescription(label);
 		view.setUri(uri);
 
 		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);

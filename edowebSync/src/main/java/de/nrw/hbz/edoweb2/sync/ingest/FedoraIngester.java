@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Vector;
 
+import javax.ws.rs.core.MediaType;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -198,6 +199,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.report.toString());
+				dc.addDescription(dtlBean.getLabel());
 				reportDC.post(dc);
 			}
 			catch (Exception e)
@@ -266,6 +268,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.report.toString());
+				dc.addDescription(dtlBean.getLabel());
 				reportDC.post(dc);
 			}
 			catch (Exception e)
@@ -306,6 +309,8 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.webpage.toString());
+
+				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
 				title = dc.getFirstTitle();
 			}
@@ -357,14 +362,16 @@ public class FedoraIngester implements IngestInterface
 				}
 				try
 				{
+					webpageVersionDC.accept(MediaType.APPLICATION_XML);
 					DCBeanAnnotated dc = webpageVersionDC
 							.get(DCBeanAnnotated.class); // Auth?
-					dc.addTitle("Version of: " + dtlBean.getPid() + " " + title);
+					dc.addTitle("Version of: " + dtlBean.getPid());
+					dc.addDescription(b.getLabel());
 					webpageVersionDC.post(dc);
 				}
 				catch (Exception e)
 				{
-					// logger.error(e.getMessage());
+					logger.error(e.getMessage());
 				}
 
 			}
@@ -404,6 +411,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.webpage.toString());
+				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
 				title = dc.getFirstTitle();
 			}
@@ -450,14 +458,18 @@ public class FedoraIngester implements IngestInterface
 				}
 				try
 				{
+
+					webpageVersionDC.accept(MediaType.APPLICATION_XML);
+
 					DCBeanAnnotated dc = webpageVersionDC
 							.get(DCBeanAnnotated.class);// Auth
-					dc.addTitle("Version of: edoweb:" + dtlBean.getPid() + " "
-							+ title);
+					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
+					dc.addDescription(b.getLabel());
 					webpageVersionDC.post(dc);
 				}
 				catch (Exception e)
 				{
+
 					logger.debug(e.getMessage());
 				}
 
@@ -544,15 +556,16 @@ public class FedoraIngester implements IngestInterface
 				}
 				try
 				{
+					ejournalVolumeDC.accept(MediaType.APPLICATION_XML);
 					DCBeanAnnotated dc = ejournalVolumeDC
 							.get(DCBeanAnnotated.class); // Auth
-
+					dc.addDescription(b.getLabel());
 					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
 					ejournalVolumeDC.post(dc);
 				}
 				catch (Exception e)
 				{
-					// logger.debug(e.getMessage());
+					logger.debug(e.getMessage());
 				}
 
 			}
