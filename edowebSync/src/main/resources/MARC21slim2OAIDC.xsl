@@ -41,7 +41,7 @@
 		<xsl:for-each select="marc:datafield[@tag=245]">
 			<dc:title>
 				<xsl:call-template name="subfieldSelect">
-					<xsl:with-param name="codes">abfghk</xsl:with-param>
+					<xsl:with-param name="codes">abfgk</xsl:with-param><!-- removed h -->
 				</xsl:call-template>
 			</dc:title>
 		</xsl:for-each>
