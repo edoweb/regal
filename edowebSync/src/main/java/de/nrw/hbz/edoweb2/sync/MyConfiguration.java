@@ -1,4 +1,5 @@
 package de.nrw.hbz.edoweb2.sync;
+
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -47,14 +48,38 @@ public class MyConfiguration extends BaseConfiguration
 		for (Option option : commandLine.getOptions())
 		{
 			String key = option.getLongOpt();
-			String val = option.getValue();
-			if (val == null)
+			// System.out.println(key);
+			if (key.compareTo("set") == 0)
 			{
-				this.addProperty(key, "N/A");
+				String[] vals = option.getValues();
+				if (vals == null || vals.length == 0)
+				{
+					this.addProperty(key, "N/A");
+				}
+				else
+				{
+					StringBuffer val = new StringBuffer();
+					for (int i = 0; i < vals.length; i++)
+					{
+						val.append(vals[i]);
+						val.append(",");
+					}
+					val.delete(val.length(), val.length());
+					this.addProperty(key, val.toString());
+				}
 			}
 			else
 			{
-				this.addProperty(key, val);
+				String val = option.getValue();
+				if (val == null)
+				{
+					this.addProperty(key, "N/A");
+				}
+				else
+				{
+
+					this.addProperty(key, val);
+				}
 			}
 		}
 	}

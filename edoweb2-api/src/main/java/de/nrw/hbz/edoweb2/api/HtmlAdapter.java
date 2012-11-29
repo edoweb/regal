@@ -93,9 +93,9 @@ public class HtmlAdapter
 		Element td = doc.createElement("td");
 		td.setAttribute("class", "rlabel");
 		td.setAttribute("colspan", "3");
-		Element a = doc.createElement("a");
-		a.setAttribute("href", view.getUri());
-		Text text = doc.createTextNode(view.getFirstAlephId());
+		Element a = doc.createElement("h1");
+		a.setAttribute("class", "titleHeading");
+		Text text = doc.createTextNode(view.getFirstPid());
 		a.appendChild(text);
 		td.appendChild(a);
 		tr.appendChild(td);
@@ -105,6 +105,10 @@ public class HtmlAdapter
 		Element td1 = doc.createElement("td");
 
 		addToTable(doc, table, "Fulltext", view.getPdfUrl());
+
+		addToTable(doc, table, "URI", view.getUri());
+
+		addToTable(doc, table, "Aleph Id", view.getAlephid());
 
 		addToTable(doc, table, "Webarchive", view.getZipUrl());
 
@@ -123,6 +127,8 @@ public class HtmlAdapter
 		addToTable(doc, table, "Location", view.getLocation());
 
 		addToTable(doc, table, "Subject", view.getSubject());
+
+		addToTable(doc, table, "Description", view.getDescription());
 
 		addToTable(doc, table, "DDC", view.getDdc());
 
@@ -145,18 +151,54 @@ public class HtmlAdapter
 
 		a = doc.createElement("a");
 		a.setAttribute("href", view.getFirstLobidUrl());
+		a.setAttribute("id", "lobidLink");
 		a.appendChild(doc.createTextNode("@ lobid.org"));
 		td1.appendChild(a);
 
 		a = doc.createElement("a");
 		a.setAttribute("href", view.getFirstVerbundUrl());
+		a.setAttribute("id", "verbundLink");
 		a.appendChild(doc.createTextNode("@ hbz-nrw.de"));
+		td1.appendChild(a);
+
+		a = doc.createElement("a");
+		a.setAttribute("href", view.getFirstDigitoolUrl());
+		a.setAttribute("id", "digitoolLink");
+		a.appendChild(doc.createTextNode("@ digitool.hbz-nrw.de"));
 		td1.appendChild(a);
 
 		tr.appendChild(td0);
 		tr.appendChild(td1);
 
 		table.appendChild(tr);
+
+		tr = doc.createElement("tr");
+		td1 = doc.createElement("td");
+		td0 = doc.createElement("td");
+
+		td0.setAttribute("class", "plabel");
+		td0.appendChild(doc.createTextNode("Internal"));
+
+		a = doc.createElement("a");
+		a.setAttribute("href", view.getFirstFedoraUrl());
+		a.setAttribute("id", "fedoraLink");
+		a.appendChild(doc.createTextNode("@ fedora"));
+		td1.appendChild(a);
+
+		a = doc.createElement("a");
+		a.setAttribute("href", view.getFirstRisearchUrl());
+		a.setAttribute("id", "risearchLink");
+		a.appendChild(doc.createTextNode("@ risearch"));
+		td1.appendChild(a);
+
+		a = doc.createElement("a");
+		a.setAttribute("href", view.getFirstCacheUrl());
+		a.setAttribute("id", "cacheLink");
+		a.appendChild(doc.createTextNode("@ cache"));
+		td1.appendChild(a);
+
+		tr.appendChild(td0);
+		tr.appendChild(td1);
 
 		table.appendChild(tr);
 
@@ -189,6 +231,14 @@ public class HtmlAdapter
 
 		ul.appendChild(li);
 
+	}
+
+	static void addToTable(Document doc, Element table, String fieldName,
+			String value)
+	{
+		Vector<String> values = new Vector<String>();
+		values.add(value);
+		addToTable(doc, table, fieldName, values);
 	}
 
 	static void addToTable(Document doc, Element table, String fieldName,
@@ -257,6 +307,7 @@ public class HtmlAdapter
 
 				Element link = doc.createElement("a");
 				link.setAttribute("href", str + "/about");
+				link.setAttribute("class", "relationLink");
 				link.appendChild(doc.createTextNode(str.substring(str
 						.lastIndexOf('/') + 1)));
 				td2.appendChild(link);
@@ -343,5 +394,4 @@ public class HtmlAdapter
 			}
 		}
 	}
-
 }

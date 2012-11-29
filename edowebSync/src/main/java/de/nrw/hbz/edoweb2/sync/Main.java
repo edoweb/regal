@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
@@ -73,6 +74,7 @@ public class Main
 	public static void main(String[] args)
 	{
 		Options options = new Options();
+
 		options.addOption("?", "help", false, "Print usage information");
 		options.addOption(
 				"m",
@@ -91,7 +93,11 @@ public class Main
 		options.addOption("dtl", "dtl", true, "Specify digitool url");
 		options.addOption("cache", "cache", true, "Specify local directory");
 		options.addOption("oai", "oai", true, "Specify the OAI-PMH endpoint");
-		options.addOption("set", "set", true, "Specify an OAI setSpec");
+		Option setOption = new Option("set", "set", true,
+				"Specify an OAI setSpec");
+		setOption.setValueSeparator(',');
+
+		options.addOption(setOption);
 		options.addOption("timestamp", "timestamp", true,
 				"Specify a local file e.g. .oaitimestamp");
 		options.addOption("fedoraBase", "fedoraBase", true,
@@ -163,6 +169,7 @@ public class Main
 		String server = dtl;
 		String downloadLocation = cache;
 		String sets = set;
+		System.out.println("---" + sets + "-----");
 		String oaiServer = oai;
 		String timestampFile = timestamp;
 
@@ -247,6 +254,9 @@ public class Main
 		return result;
 	}
 
+	/*
+	 * "INIT: All PIDs will be downloaded. All pids will be updated or created.\n"
+	 */
 	void init(String sets)
 	{
 		boolean harvestFromScratch = true;
@@ -292,6 +302,10 @@ public class Main
 
 	}
 
+	/*
+	 * +
+	 * "SYNC: Modified or new PIDs will be downloaded and updated or created\n "
+	 */
 	void sync(String sets)
 	{
 		boolean harvestFromScratch = false;
@@ -340,6 +354,10 @@ public class Main
 
 	}
 
+	/*
+	 * +
+	 * "CONT: All PIDs that aren't already downloaded will be downloaded and created or updated\n"
+	 */
 	void cont(String sets)
 	{
 		boolean harvestFromScratch = true;
@@ -379,6 +397,11 @@ public class Main
 
 	}
 
+	/*
+	 * + "UPDT: All PIDs in cache will be reingested"
+	 * 
+	 * TODO: The implementation doesn't fit to the specification
+	 */
 	void updt(String sets)
 	{
 		boolean harvestFromScratch = true;

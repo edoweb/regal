@@ -18,9 +18,12 @@ package de.nrw.hbz.edoweb2.api;
 
 import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION_NAME;
 import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME_NAME;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VERSION;
+import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VOLUME;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.ITEM_ID;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,7 +54,9 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
 import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
@@ -90,12 +95,13 @@ public class Actions
 {
 	final static Logger logger = LoggerFactory.getLogger(Actions.class);
 	ArchiveInterface archive = null;
-	String externalHost = null;
+	String fedoraExtern = null;
 	String culturegraphUrl = null;
 	String lobidUrl = null;
 	String verbundUrl = null;
 	String dataciteUrl = null;
 	String baseUrl = null;
+	String serverName = null;
 
 	public Actions()
 	{
@@ -108,14 +114,15 @@ public class Actions
 		{
 			e.printStackTrace();
 		}
-		externalHost = properties.getProperty("hostName");
+		fedoraExtern = properties.getProperty("fedoraExtern");
 		culturegraphUrl = properties.getProperty("culturegraphUrl");
 		lobidUrl = properties.getProperty("lobidUrl");
 		verbundUrl = properties.getProperty("verbundUrl");
 		dataciteUrl = properties.getProperty("dataciteUrl");
 		baseUrl = properties.getProperty("baseUrl");
+		serverName = properties.getProperty("serverName");
 		archive = ArchiveFactory.getArchiveImpl(
-				properties.getProperty("fedoraUrl"),
+				properties.getProperty("fedoraIntern"),
 				properties.getProperty("user"),
 				properties.getProperty("password"),
 				properties.getProperty("sesameStore"));
@@ -299,7 +306,7 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(externalHost + "/objects/" + pid
+							new java.net.URI(fedoraExtern + "/objects/" + pid
 									+ "/datastreams/data/content")).build();
 				}
 				catch (URISyntaxException e)
@@ -343,7 +350,7 @@ public class Actions
 				try
 				{
 					return Response.temporaryRedirect(
-							new java.net.URI(externalHost + "/objects/" + pid
+							new java.net.URI(fedoraExtern + "/objects/" + pid
 									+ "/datastreams/metadata/content")).build();
 				}
 				catch (URISyntaxException e)
@@ -393,7 +400,7 @@ public class Actions
 			node.setIdentifier(content.getIdentifier());
 			node.setLanguage(content.getLanguage());
 			node.setPublisher(content.getPublisher());
-			node.setDescription(content.getRelation());
+			node.setDescription(content.getDescription());
 			node.setRights(content.getRights());
 			node.setSource(content.getSource());
 			node.setSubject(content.getSubject());
@@ -740,6 +747,11 @@ public class Actions
 		link.setPredicate(IS_MEMBER_OF);
 		link.setObject("info:fedora/" + pid, false);
 		node.addRelation(link);
+
+		link = new Link();
+		link.setPredicate("info:fedora/" + ITEM_ID);
+		link.setObject(getURI(node), true);
+		node.addRelation(link);
 		try
 		{
 			archive.updateNode(node.getPID(), node);
@@ -860,19 +872,19 @@ public class Actions
 		return result.toString();
 	}
 
-	public View getView(UriInfo urlInfo, String pid, ObjectType type)
+	public View getView(String pid, ObjectType type)
 	{
 
-		String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
-		String url = urlInfo.getPath();
-		String objectUrl = host + url.substring(0, url.lastIndexOf('/'));
+		// String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
+		// String url = urlInfo.getPath();
+		// String objectUrl = host + url.substring(0, url.lastIndexOf('/'));
 
 		try
 		{
 			Node node = archive.readNode(pid);
 			if (node == null)
 				return null;
-			return getView(node, host, objectUrl, type);
+			return getView(node, type);
 		}
 		catch (RemoteException e)
 		{
@@ -882,12 +894,11 @@ public class Actions
 		return null;
 	}
 
-	public View getView(Node node, String host, String objectUrl,
-			ObjectType type)
+	public View getView(Node node, ObjectType type)
 	{
 		View view = new View();
 		String pid = node.getPID();
-
+		String uri = getURI(node);
 		view.setCreator(node.getCreator());
 		view.setTitle(node.getTitle());
 		view.setLanguage(node.getLanguage());
@@ -895,19 +906,39 @@ public class Actions
 		view.setType(node.getType());
 		view.setLocation(node.getSource());
 		view.setPublisher(node.getPublisher());
-		view.setUri(objectUrl);
+		view.setDescription(node.getDescription());
+		String label = node.getLabel();
+		if (label != null && !label.isEmpty())
+			view.addDescription(label);
+		view.setUri(uri);
+
+		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
+		view.addCacheUrl(this.serverName + "/edobase/" + pidWithoutNamespace);
+		view.addFedoraUrl(this.fedoraExtern + "/objects/" + pid);
+		view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
+				+ pidWithoutNamespace);
+		String query = "<info:fedora/" + pid + "> * *";
+		try
+		{
+			view.addRisearchUrl(this.fedoraExtern
+					+ "/risearch?type=triples&lang=spo&format=RDF/XML&query="
+					+ URIUtil.encodeQuery(query));
+		}
+		catch (URIException e)
+		{
+		}
 
 		String mime = node.getMimeType();
 		view.addMedium(mime);
 		if (mime != null && !mime.isEmpty()
 				&& mime.compareTo("application/pdf") == 0)
 		{
-			view.addPdfUrl(objectUrl + "/data");
+			view.addPdfUrl(uri + "/data");
 		}
 		if (mime != null && !mime.isEmpty()
 				&& mime.compareTo("application/zip") == 0)
 		{
-			view.addZipUrl(objectUrl + "/data");
+			view.addZipUrl(uri + "/data");
 		}
 		for (String date : node.getDate())
 		{
@@ -952,7 +983,7 @@ public class Actions
 				view.addVerbundUrl(verbundUrl + alephid);
 				break;
 			}
-			if (alephid.startsWith("TT"))
+			else if (alephid.startsWith("TT"))
 			{
 				view.addAlephId(alephid);
 				view.addCulturegraphUrl(culturegraphUrl + alephid);
@@ -964,16 +995,16 @@ public class Actions
 
 		for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
 		{
-			String relUrl = externalHost + "objects/" + relPid;
+			String relUrl = fedoraExtern + "objects/" + relPid;
 
 			if (type == ObjectType.ejournalVolume)
 			{
-				relUrl = host + "ejournal/" + relPid;
+				relUrl = serverName + "/ejournal/" + relPid;
 			}
 
 			if (type == ObjectType.webpageVersion)
 			{
-				relUrl = host + "webpage/" + relPid;
+				relUrl = serverName + "/webpage/" + relPid;
 			}
 
 			view.addIsPartOf(relUrl);
@@ -981,18 +1012,18 @@ public class Actions
 
 		for (String relPid : findObject(pid, REL_IS_RELATED))
 		{
-			String relUrl = externalHost + "objects/" + relPid;
+			String relUrl = fedoraExtern + "objects/" + relPid;
 
 			if (type == ObjectType.ejournal)
 			{
 				String name = findObject(relPid, HAS_VOLUME_NAME).get(0);
-				relUrl = objectUrl.concat("/volume/" + name);
+				relUrl = uri.concat("/volume/" + name);
 			}
 
 			if (type == ObjectType.webpage)
 			{
 				String name = findObject(relPid, HAS_VERSION_NAME).get(0);
-				relUrl = objectUrl.concat("/version/" + name);
+				relUrl = uri.concat("/version/" + name);
 			}
 
 			view.addHasPart(relUrl);
@@ -1001,12 +1032,11 @@ public class Actions
 		return view;
 	}
 
-	public String index(String host, String objectUrl, Node node,
-			ObjectType type)
+	public String index(Node node, ObjectType type)
 	{
 		String message = "";
 
-		View view = getView(node, host, objectUrl, type);
+		View view = getView(node, type);
 
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -1082,9 +1112,7 @@ public class Actions
 			if (type == null)
 				return "Sorry the node has no type! ERROR! " + pid;
 
-			String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
-			String objectUrl = host + type.toString() + "/" + pid;
-			return index(host, objectUrl, node, type);
+			return index(node, type);
 		}
 		catch (RemoteException e)
 		{
@@ -1093,4 +1121,72 @@ public class Actions
 		}
 		return "Something unexpected occured! " + pid;
 	}
+
+	private String getURI(Node node)
+	{
+
+		String typePath = null;
+		for (String t : node.getType())
+		{
+			if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
+			{
+
+				typePath = "report";
+				break;
+			}
+			else if (t.compareTo("doc-type:" + ObjectType.ejournal.toString()) == 0)
+			{
+
+				typePath = "ejournal";
+				break;
+			}
+			else if (t.compareTo("doc-type:" + ObjectType.webpage.toString()) == 0)
+			{
+
+				typePath = "webpage";
+				break;
+			}
+			else if (t.compareTo(ObjectType.webpageVersion.toString()) == 0)
+			{
+
+				typePath = "webpage";
+				return serverName + "/" + typePath + "/" + getWebpagePid(node)
+						+ "/version/" + getVersionName(node);
+
+			}
+			else if (t.compareTo(ObjectType.ejournalVolume.toString()) == 0)
+			{
+
+				typePath = "ejournal";
+				return serverName + "/" + typePath + "/" + getJournalPid(node)
+						+ "/volume/" + getVolumeName(node);
+			}
+
+		}
+		if (typePath == null)
+			return "Sorry the node has no type! ERROR! " + node.getPID();
+
+		return serverName + "/" + typePath + "/" + node.getPID();
+	}
+
+	private String getVolumeName(Node node)
+	{
+		return findObject(node.getPID(), HAS_VOLUME_NAME).firstElement();
+	}
+
+	private String getJournalPid(Node node)
+	{
+		return findObject(node.getPID(), IS_VOLUME).firstElement();
+	}
+
+	private String getVersionName(Node node)
+	{
+		return findObject(node.getPID(), HAS_VERSION_NAME).firstElement();
+	}
+
+	private String getWebpagePid(Node node)
+	{
+		return findObject(node.getPID(), IS_VERSION).firstElement();
+	}
+
 }

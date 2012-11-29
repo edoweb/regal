@@ -36,10 +36,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,9 +144,9 @@ public class WebpageResource
 	@GET
 	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getView(@PathParam("pid") String pid, @Context UriInfo info)
+	public View getView(@PathParam("pid") String pid)
 	{
-		return actions.getView(info, pid, ObjectType.webpage);
+		return actions.getView(pid, ObjectType.webpage);
 	}
 
 	@POST
@@ -171,7 +169,7 @@ public class WebpageResource
 
 	@GET
 	@Path("/{pid}/dc")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readWebpageDC(@PathParam("pid") String pid)
 	{
 		return actions.readDC(pid);
@@ -315,7 +313,7 @@ public class WebpageResource
 
 	@GET
 	@Path("/{pid}/version/{versionName}/dc")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionName)
 	{
@@ -354,12 +352,12 @@ public class WebpageResource
 	@Path("/{pid}/version/{versionName}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVersionView(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName, @Context UriInfo info)
+			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
 		String query = getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
-		return actions.getView(info, versionPid, ObjectType.webpageVersion);
+		return actions.getView(versionPid, ObjectType.webpageVersion);
 	}
 
 	@GET

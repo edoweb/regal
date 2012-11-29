@@ -19,7 +19,9 @@ package de.nrw.hbz.edoweb2.sync.ingest;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Vector;
 
+import javax.ws.rs.core.MediaType;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -197,6 +199,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.report.toString());
+				dc.addDescription(dtlBean.getLabel());
 				reportDC.post(dc);
 			}
 			catch (Exception e)
@@ -265,6 +268,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.report.toString());
+				dc.addDescription(dtlBean.getLabel());
 				reportDC.post(dc);
 			}
 			catch (Exception e)
@@ -305,6 +309,8 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.webpage.toString());
+
+				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
 				title = dc.getFirstTitle();
 			}
@@ -312,12 +318,20 @@ public class FedoraIngester implements IngestInterface
 			{
 				logger.debug(e.getMessage());
 			}
-			for (DigitalEntity b : dtlBean.getViewLinks())
+			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
+			int numOfVersions = viewLinks.size();
+			int num = 1;
+			logger.info("Found " + numOfVersions + " versions.");
+			for (DigitalEntity b : viewLinks)
 			{
+
 				String mimeType = b.getStreamMime();
 				if (mimeType.compareTo("application/zip") != 0)
 					continue;
 				String version = b.getPid();
+
+				logger.info("Create WebpageVersion volume: " + version + " "
+						+ (num++) + "/" + numOfVersions);
 				WebResource webpageVersion = c.resource(webpage.toString()
 						+ "/version/" + version);
 				response = webpageVersion.put(String.class);
@@ -348,14 +362,16 @@ public class FedoraIngester implements IngestInterface
 				}
 				try
 				{
+					webpageVersionDC.accept(MediaType.APPLICATION_XML);
 					DCBeanAnnotated dc = webpageVersionDC
-							.get(DCBeanAnnotated.class);
-					dc.addTitle("Version of: " + dtlBean.getPid() + " " + title);
+							.get(DCBeanAnnotated.class); // Auth?
+					dc.addTitle("Version of: " + dtlBean.getPid());
+					dc.addDescription(b.getLabel());
 					webpageVersionDC.post(dc);
 				}
 				catch (Exception e)
 				{
-					// logger.error(e.getMessage());
+					logger.error(e.getMessage());
 				}
 
 			}
@@ -395,6 +411,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 				dc.addType("doc-type:" + ObjectType.webpage.toString());
+				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
 				title = dc.getFirstTitle();
 			}
@@ -441,14 +458,18 @@ public class FedoraIngester implements IngestInterface
 				}
 				try
 				{
+
+					webpageVersionDC.accept(MediaType.APPLICATION_XML);
+
 					DCBeanAnnotated dc = webpageVersionDC
-							.get(DCBeanAnnotated.class);
-					dc.addTitle("Version of: edoweb:" + dtlBean.getPid() + " "
-							+ title);
+							.get(DCBeanAnnotated.class);// Auth
+					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
+					dc.addDescription(b.getLabel());
 					webpageVersionDC.post(dc);
 				}
 				catch (Exception e)
 				{
+
 					logger.debug(e.getMessage());
 				}
 
@@ -492,14 +513,19 @@ public class FedoraIngester implements IngestInterface
 			{
 				// logger.debug(e.getMessage());
 			}
-			for (DigitalEntity b : dtlBean.getViewMainLinks())
+			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
+			int numOfVols = viewMainLinks.size();
+			int num = 1;
+			logger.info("Found " + numOfVols + " volumes.");
+			for (DigitalEntity b : viewMainLinks)
 			{
 
 				String mimeType = b.getStreamMime();
 				if (mimeType.compareTo("application/pdf") != 0)
 					continue;
 				String volName = b.getPid();
-				logger.info("Create eJournal volume: " + volName);
+				logger.info("Create eJournal volume: " + volName + " "
+						+ (num++) + "/" + numOfVols);
 				WebResource ejournalVolume = c.resource(ejournal.toString()
 						+ "/volume/" + volName);
 				ejournalVolume.put();
@@ -530,15 +556,16 @@ public class FedoraIngester implements IngestInterface
 				}
 				try
 				{
+					ejournalVolumeDC.accept(MediaType.APPLICATION_XML);
 					DCBeanAnnotated dc = ejournalVolumeDC
-							.get(DCBeanAnnotated.class);
-
+							.get(DCBeanAnnotated.class); // Auth
+					dc.addDescription(b.getLabel());
 					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
 					ejournalVolumeDC.post(dc);
 				}
 				catch (Exception e)
 				{
-					// logger.debug(e.getMessage());
+					logger.debug(e.getMessage());
 				}
 
 			}

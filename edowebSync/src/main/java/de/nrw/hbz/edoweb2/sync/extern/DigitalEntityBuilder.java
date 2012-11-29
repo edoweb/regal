@@ -32,8 +32,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.util.URIUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -217,16 +215,10 @@ public class DigitalEntityBuilder
 		DigitalEntity dtlDe = new DigitalEntity(baseDir);
 		// System.out.println("BaseDir "+baseDir);
 		dtlDe.setPid(pid);
-		try
-		{
-			dtlDe.setLabel(URIUtil.encodeQuery(root
-					.getElementsByTagName("label").item(0).getTextContent()));
-		}
-		catch (URIException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		dtlDe.setLabel(root.getElementsByTagName("label").item(0)
+				.getTextContent());
+
 		dtlDe.setControl(nodeToString(root.getElementsByTagName("control")
 				.item(0)));
 

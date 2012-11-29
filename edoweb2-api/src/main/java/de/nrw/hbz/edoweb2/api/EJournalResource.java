@@ -35,10 +35,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,10 +98,9 @@ public class EJournalResource
 	@GET
 	@Path("/{namespace}:{pid}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getView(@PathParam("pid") String pid, @Context UriInfo info)
+	public View getView(@PathParam("pid") String pid)
 	{
-		return actions
-				.getView(info, namespace + ":" + pid, ObjectType.ejournal);
+		return actions.getView(namespace + ":" + pid, ObjectType.ejournal);
 	}
 
 	@POST
@@ -186,7 +183,7 @@ public class EJournalResource
 
 	@GET
 	@Path("/{pid}/dc")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readEJournalDC(@PathParam("pid") String pid)
 	{
 		return actions.readDC(pid);
@@ -315,12 +312,12 @@ public class EJournalResource
 	@Path("/{pid}/volume/{volName}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVolumeView(@PathParam("pid") String pid,
-			@PathParam("volName") String volName, @Context UriInfo info)
+			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
 		String query = getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
-		return actions.getView(info, volumePid, ObjectType.ejournalVolume);
+		return actions.getView(volumePid, ObjectType.ejournalVolume);
 	}
 
 	@GET
@@ -351,7 +348,7 @@ public class EJournalResource
 
 	@GET
 	@Path("/{pid}/volume/{volName}/dc")
-	@Produces({ "application/json", "application/xml" })
+	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volName") String volName)
 	{
