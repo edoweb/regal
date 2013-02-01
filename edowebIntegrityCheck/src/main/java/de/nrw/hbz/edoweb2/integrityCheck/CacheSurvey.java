@@ -11,7 +11,10 @@ import java.util.Vector;
 import org.apache.commons.io.FileUtils;
 import org.marc4j.MarcReader;
 import org.marc4j.MarcXmlReader;
+import org.marc4j.marc.ControlField;
+import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
+import org.marc4j.marc.Subfield;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +32,12 @@ public class CacheSurvey
 
 	public List<View> survey()
 	{
+		System.out
+				.println("Number, Pid, AlephId,Creator,Title,Year,Type,DDC,URN,Rights");
 
 		List<View> rows = new Vector<View>();
 		File cacheDirFile = new File(cacheDir);
+		int count = 1;
 		for (File file : cacheDirFile.listFiles())
 		{
 			if (file.isDirectory())
@@ -40,16 +46,46 @@ public class CacheSurvey
 				View row = createSurvey(new File(file + File.separator + "."
 						+ file.getName() + "_MARC.xml"), file.getName());
 
-				rows.add(row);
+				row.addRights(getRights(new File(file + File.separator + "."
+						+ file.getName() + "_RIGHTS.xml")));
+
+				System.out.println("\"" + count++ + "\", \"" + row.getPid()
+						+ "\",\"" + row.getAlephid() + "\",\""
+						+ row.getCreator() + "\",\"" + row.getTitle() + "\",\""
+						+ row.getYear() + "\",\"" + row.getType() + "\",\""
+						+ row.getDdc() + "\",\"" + row.getUrn() + "\",\""
+						+ row.getRights() + "\"");
 			}
 		}
 		return rows;
 	}
 
+	private String getRights(File file)
+	{
+		String result = "unknown";
+		try
+		{
+			String data = FileUtils.readFileToString(file);
+			if (data.contains("everyone"))
+			{
+				result = "everyone";
+			}
+			else
+			{
+				result = "restricted";
+			}
+		}
+		catch (IOException e)
+		{
+
+		}
+		return result;
+	}
+
 	private View createSurvey(File file, String pid)
 	{
-		logger.info(file.getAbsolutePath());
-		// preprocess(file);
+		// logger.info(file.getAbsolutePath());
+
 		View view = new View();
 		view.addPid(pid);
 		InputStream in;
@@ -61,92 +97,52 @@ public class CacheSurvey
 			while (reader.hasNext())
 			{
 				Record record = reader.next();
+				// logger.info(record.toString());
+				ControlField alephId = (ControlField) record
+						.getVariableField("001");
+				DataField title = (DataField) record.getVariableField("245");
+				DataField urn = (DataField) record.getVariableField("856");
+				DataField ddc = (DataField) record.getVariableField("082");
+				List creators = record.getVariableFields(new String[] { "100",
+						"110", "111", "700", "710", "711", "720" });
 
-				System.out.println(record.toString());
+				List types = record.getVariableFields(new String[] { "655",
+						"501" });
+
+				view.addAlephId(alephId.getData());
+
+				view.addTitle(title.getSubfield('a').getData());
+
+				view.addUrn(urn.getSubfield('u').getData());
+
+				view.addCreator(((DataField) (creators.get(0)))
+						.getSubfield('a').getData());
+
+				List stypes = ((DataField) (types.get(0)))
+
+				.getSubfields();
+
+				view.addType(((Subfield) stypes.get(0)).getData());
+
+				view.addDdc(ddc.getSubfield('a').getData());
+
+				DataField date = (DataField) record.getVariableField("260");
+				view.addYear(date.getSubfield('c').getData());
+				date = (DataField) record.getVariableField("005");
+				view.addYear(date.getSubfield('a').getData());
+
 			}
+
 		}
 		catch (FileNotFoundException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		catch (Exception e)
+		{
+
+		}
 		return view;
 	}
-
-	private void preprocess(File file)
-	{
-		/*
-		 * Todo : Workaround for some bug.
-		 */
-		try
-		{
-			String content = FileUtils.readFileToString(file);
-			content = content.replaceAll("nam  2200000 u 4500",
-					"00000    a2200000   4500");
-			FileUtils.writeStringToFile(file, content);
-		}
-		catch (IOException e)
-		{
-
-			e.printStackTrace();
-		}
-
-	}
-	// private View createSurvey(File file, String pid)
-	// {
-	// View view = new View();
-	// view.addPid(pid);
-	// logger.info(view.getFirstPid());
-	// try
-	// {
-	// Element root = XMLUtils.getDocument(FileUtils
-	// .readFileToString(file));
-	//
-	// NodeList fields = root.getElementsByTagName("controlfield");
-	// for (int i = 0; i < fields.getLength(); i++)
-	// {
-	// Element field = (Element) fields.item(i);
-	// if ("001".compareTo(field.getAttributeNode("tag")
-	// .getTextContent()) == 0)
-	// {
-	// view.addAlephId(field.getTextContent());
-	// logger.info(view.getFirstAlephId());
-	// }
-	// }
-	// fields = root.getElementsByTagName("datafield");
-	// for (int i = 0; i < fields.getLength(); i++)
-	// {
-	// Element field = (Element) fields.item(i);
-	// if ("245".compareTo(field.getAttributeNode("tag")
-	// .getTextContent()) == 0)
-	// {
-	// NodeList subfields = field.getElementsByTagName("subfield");
-	//
-	// for (int j = 0; j < subfields.getLength(); j++)
-	// {
-	// Element subfield = (Element) subfields.item(j);
-	// if ("h".compareTo(subfield.getAttributeNode("code")
-	// .getTextContent()) == 0)
-	// {
-	// // do nothing
-	// }
-	// else
-	// {
-	// view.addTitle(subfield.getTextContent());
-	// logger.info(view.getTitle().firstElement());
-	// }
-	// }
-	// }
-	// }
-	// }
-	// catch (NullPointerException e)
-	// {
-	// e.printStackTrace();
-	// }
-	// catch (IOException e)
-	// {
-	// e.printStackTrace();
-	// }
-	// return view;
-	// }
 }
