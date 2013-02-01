@@ -50,7 +50,7 @@ public class DigitoolDownloadConfiguration
 	}
 
 	/**
-	 * @param key
+	 * @param key 
 	 *            Option key to check
 	 * @return <code>true</code> if the configuration contains the key
 	 */

@@ -260,6 +260,11 @@ public class DigitalEntityBuilder
 						"record").item(0);
 				marc.setAttribute("xmlns", "http://www.loc.gov/MARC21/slim");
 				String xmlStr = nodeToString(marc);
+				/*
+				 * Todo : Workaround for some bug.
+				 */
+				xmlStr = xmlStr.replaceAll("nam  2200000 u 4500",
+						"00000    a2200000   4500");
 				dtlDe.setMarc(xmlStr);
 			}
 			else if (type.compareTo("metsHdr") == 0)
