@@ -27,6 +27,7 @@ public class View
 	Vector<String> urn = null;
 	Vector<String> url = null;
 	Vector<String> alephid = null;
+	Vector<String> rights = null;
 
 	// TODO refactor names
 	Vector<String> pdfUrl = null;
@@ -92,6 +93,7 @@ public class View
 		cacheUrl = new Vector<String>();
 		fedoraUrl = new Vector<String>();
 		risearchUrl = new Vector<String>();
+		rights = new Vector<String>();
 		// Not Implemented yet: First make Cool URIs!
 		// metsUrl = new Vector<String>();
 		// oaioreUrl = new Vector<String>();
@@ -209,6 +211,16 @@ public class View
 	public void setDescription(Vector<String> description)
 	{
 		this.description = description;
+	}
+	
+	public Vector<String> getRights()
+	{
+		return rights;
+	}
+
+	public void setRights(Vector<String> rights)
+	{
+		this.rights = rights;
 	}
 
 	public Vector<String> getDigitoolUrl()
@@ -654,6 +666,11 @@ public class View
 	public boolean addDescription(String e)
 	{
 		return description.add(e);
+	}
+	
+	public boolean addRights(String e)
+	{
+		return rights.add(e);
 	}
 
 	// public boolean addQdcUrl(String e)
