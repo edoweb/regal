@@ -32,8 +32,6 @@ public class CacheSurvey
 
 	public List<View> survey()
 	{
-		System.out
-				.println("Number, Pid, AlephId,Creator,Title,Year,Type,DDC,URN,Rights");
 
 		List<View> rows = new Vector<View>();
 		File cacheDirFile = new File(cacheDir);
@@ -48,13 +46,7 @@ public class CacheSurvey
 
 				row.addRights(getRights(new File(file + File.separator + "."
 						+ file.getName() + "_RIGHTS.xml")));
-
-				System.out.println("\"" + count++ + "\", \"" + row.getPid()
-						+ "\",\"" + row.getAlephid() + "\",\""
-						+ row.getCreator() + "\",\"" + row.getTitle() + "\",\""
-						+ row.getYear() + "\",\"" + row.getType() + "\",\""
-						+ row.getDdc() + "\",\"" + row.getUrn() + "\",\""
-						+ row.getRights() + "\"");
+				rows.add(row);
 			}
 		}
 		return rows;
