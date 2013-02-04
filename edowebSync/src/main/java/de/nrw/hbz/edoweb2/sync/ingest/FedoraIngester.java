@@ -628,34 +628,34 @@ public class FedoraIngester implements IngestInterface
 
 			if (partitionC.compareTo("EJO01") == 0)
 			{
-				logger.info(pid + ": start updateing eJournal");
+				logger.info(pid + ": start updating eJournal");
 				updateEJournal(dtlBean);
-				logger.info(pid + ": end updateing eJournal");
+				logger.info(pid + ": end updating eJournal");
 			}
 			else if (partitionC.compareTo("WPD01") == 0)
 			{
-				logger.info(pid + ": start updateing report (wpd01)");
+				logger.info(pid + ": start updating report (wpd01)");
 				updateReports(dtlBean);
-				logger.info(pid + ": end updateing report (wpd01)");
+				logger.info(pid + ": end updating report (wpd01)");
 			}
 			else if (partitionC.compareTo("WPD02") == 0)
 			{
 
-				logger.info(pid + ": start updateing report (wpd02)");
+				logger.info(pid + ": start updating report (wpd02)");
 				updateReportsNewStyle(dtlBean);
-				logger.info(pid + ": end updateing report (wpd02)");
+				logger.info(pid + ": end updating report (wpd02)");
 			}
 			else if (partitionC.compareTo("WSC01") == 0)
 			{
-				logger.info(pid + ": start updateing webpage (wsc01)");
+				logger.info(pid + ": start updating webpage (wsc01)");
 				updateWebpage(dtlBean);
-				logger.info(pid + ": end updateing webpage (wsc01)");
+				logger.info(pid + ": end updating webpage (wsc01)");
 			}
 			else if (partitionC.compareTo("WSI01") == 0)
 			{
-				logger.info(pid + ": start updateing webpage (wsi01)");
+				logger.info(pid + ": start updating webpage (wsi01)");
 				updateSingleWebpage(dtlBean);
-				logger.info(pid + ": end updateing webpage (wsi01)");
+				logger.info(pid + ": end updating webpage (wsi01)");
 			}
 		}
 		catch (Exception e)

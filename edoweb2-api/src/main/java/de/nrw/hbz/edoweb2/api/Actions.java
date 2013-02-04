@@ -749,7 +749,7 @@ public class Actions
 		node.addRelation(link);
 
 		link = new Link();
-		link.setPredicate("info:fedora/" + ITEM_ID);
+		link.setPredicate(ITEM_ID);
 		link.setObject(getURI(node), true);
 		node.addRelation(link);
 		try
