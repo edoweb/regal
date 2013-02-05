@@ -451,12 +451,12 @@ public class Node
 		return this;
 	}
 
-	public Vector<String> getRelation()
+	public Vector<String> getDCRelation()
 	{
 		return bean.getRelation();
 	}
 
-	public Node addRelation(String e)
+	public Node addDCRelation(String e)
 	{
 		bean.addRelation(e);
 		return this;
@@ -674,7 +674,7 @@ public class Node
 		bean.setPublisher(publisher);
 	}
 
-	public void setRelation(Vector<String> relation)
+	public void setDCRelation(Vector<String> relation)
 	{
 		bean.setRelation(relation);
 	}

@@ -281,7 +281,7 @@ public class Main
 					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
 							pids.get(i));
 
-					ingester.update(dtlBean);
+					ingester.ingest(dtlBean);
 					dtlBean = null;
 				}
 				else if (downloader.hasUpdated())

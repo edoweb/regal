@@ -759,7 +759,7 @@ public class Actions
 		link.setObject("info:fedora/" + pid, false);
 		relations.add(link);
 
-		link = new Link(); 
+		link = new Link();
 		link.setPredicate(ITEM_ID);
 		link.setObject(getURI(node), true);
 		relations.add(link);
@@ -776,8 +776,6 @@ public class Actions
 		}
 
 	}
-
-	
 
 	private String docmap(String type)
 	{
