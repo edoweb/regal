@@ -1,0 +1,143 @@
+body {
+	background-color: #ffffff;
+}
+.item {
+	border-style: solid;
+	border-width: 1px;
+	padding: 30px;
+	margin: 10px;
+	list-style: none;
+	background-color: #ffffff;
+}
+image {
+	width: 128px;
+	height: 128px;
+}
+ul a img {
+	display: block;
+	float: left;
+	width: 128px;
+	background-color: #ffffff;
+	line-height: 128px;
+	overflow: hidden;
+	position: relative;
+	z-index: 1;
+}
+.navigation:before {
+	display: block;
+	text-align: center;
+	white-space: pre;
+	content: "Navigation"
+}
+.navigation {
+	list-style: none;
+	border-style: solid;
+	border-width: 1px;
+	padding: 10px;
+	margin: 10px;
+	list-style: none;
+	background-color: #ffffff;
+	display: block;
+	width: 158px;
+	float: left;
+}
+.navigation a {
+	text-decoration: none;
+}
+.fedoraLogo a img {
+	width: 32px;
+}
+.lobidLogo a img {
+	width: 64px;
+	background-color: #1e90ff;
+}
+.dcLogo a img {
+	width: 32px;
+	display: inline;
+}
+.oaioreLogo a img {
+	width: 64px;
+	display: inline;
+}
+.editIcon a img {
+	width: 64px;//
+	display: inline;
+	float: right;
+}
+.footer {
+
+	border-style: solid;
+	border-width: 1px;
+	background-color: white;
+}
+.footer td {
+	background-color: yellow;
+	width: 64px;
+}
+#resultList li {
+	padding: 10px;
+	margin: 20px;
+	font-size:12px;
+}
+#resultList a:link {
+	text-decoration: underline;
+	color: black;
+	font-weight: bold;
+}
+#resultList a:visited {
+	text-decoration: none;
+	color: #339933;
+}
+#resultList a:hover {
+	text-decoration: none;
+}
+#resultList a:active {
+	text-decoration: none;
+}
+
+.searchform {
+
+}
+#outputDiv {
+	white-space: pre;
+//	font-family: monospace;
+	font-size: 10;
+}
+#queryDiv {
+	white-space: pre;
+	font-family: monospace;
+	font-size: 0.8em;
+}
+#debugDiv {
+	white-space: pre;
+	font-family: monospace;
+	font-size: 0.8em;
+#	visibility: hidden;
+}
+#queryForm {
+	visibility: hidden;
+}
+
+.metadata
+{
+	white-space: pre;
+	font-family: monospace;
+	font-size: 0.8em;
+}
+
+.links
+{
+	white-space: pre;
+	font-family: monospace;
+	font-size: 0.8em;
+}
+
+.plabel
+{
+	vertical-align: text-top;
+}
+
+table tr td a
+{
+	display:block;
+}
