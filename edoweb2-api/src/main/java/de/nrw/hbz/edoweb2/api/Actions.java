@@ -835,27 +835,22 @@ public class Actions
 		}
 		catch (MalformedURLException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (HttpException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (ParserConfigurationException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (SAXException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -870,7 +865,6 @@ public class Actions
 		{
 			result.append(pid + "\n");
 			archive.deleteNode(pid);
-
 		}
 		objects = archive.findNodes("edoweb:*");
 		for (String pid : objects)
@@ -903,7 +897,6 @@ public class Actions
 		}
 		catch (RemoteException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

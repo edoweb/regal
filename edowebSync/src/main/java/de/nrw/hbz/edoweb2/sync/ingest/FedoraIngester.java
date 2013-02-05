@@ -173,39 +173,7 @@ public class FedoraIngester implements IngestInterface
 			String response = report.put(String.class, request);
 			logger.info(response);
 
-			WebResource reportDC = c.resource(report.toString() + "/dc");
-			WebResource reportData = c.resource(report.toString() + "/data");
-			// WebResource reportMetadata = c
-			// .resource(report.toString() + "/metadata");
-
-			UploadDataBean data = new UploadDataBean();
-			try
-			{
-				String protocol = "file";
-				String host = "";
-				String path = dtlBean.getStream().getAbsolutePath();
-				String fragment = "";
-				data.path = new URI(protocol, host, path, fragment);
-				data.mime = "application/pdf";
-				reportData.post(data);
-			}
-			catch (URISyntaxException e)
-			{
-
-				e.printStackTrace();
-			}
-
-			try
-			{
-				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType("doc-type:" + ObjectType.report.toString());
-				dc.addDescription(dtlBean.getLabel());
-				reportDC.post(dc);
-			}
-			catch (Exception e)
-			{
-				logger.debug(e.getMessage());
-			}
+			updateReports(dtlBean);
 		}
 		catch (UniformInterfaceException e)
 		{
@@ -230,51 +198,7 @@ public class FedoraIngester implements IngestInterface
 			String response = report.put(String.class, request);
 			logger.info(response);
 
-			WebResource reportDC = c.resource(report.toString() + "/dc");
-			WebResource reportData = c.resource(report.toString() + "/data");
-			// WebResource reportMetadata = c
-			// .resource(report.toString() + "/metadata");
-			DigitalEntity fulltextObject = null;
-			for (DigitalEntity view : dtlBean.getViewLinks())
-			{
-				logger.info("I have a view: " + view.getPid());
-				if (view.getStreamMime().compareTo("application/pdf") == 0)
-				{
-					fulltextObject = view;
-					break;
-				}
-			}
-			if (fulltextObject != null)
-			{
-				try
-				{
-					UploadDataBean data = new UploadDataBean();
-					String protocol = "file";
-					String host = "";
-					String path = fulltextObject.getStream().getAbsolutePath();
-					String fragment = "";
-					data.path = new URI(protocol, host, path, fragment);
-					data.mime = "application/pdf";
-					reportData.post(data);
-				}
-				catch (URISyntaxException e)
-				{
-
-					e.printStackTrace();
-				}
-			}
-
-			try
-			{
-				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType("doc-type:" + ObjectType.report.toString());
-				dc.addDescription(dtlBean.getLabel());
-				reportDC.post(dc);
-			}
-			catch (Exception e)
-			{
-				logger.debug(e.getMessage());
-			}
+			updateReportsNewStyle(dtlBean);
 		}
 		catch (UniformInterfaceException e)
 		{
@@ -299,82 +223,7 @@ public class FedoraIngester implements IngestInterface
 			String response = webpage.put(String.class, request);
 			logger.info(response);
 
-			WebResource webpageDC = c.resource(webpage.toString() + "/dc");
-			// WebResource webpageMetadata = c.resource(webpage.toString()
-			// + "/metadata");
-
-			String title = "";
-
-			try
-			{
-				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType("doc-type:" + ObjectType.webpage.toString());
-
-				dc.addDescription(dtlBean.getLabel());
-				webpageDC.post(dc);
-				title = dc.getFirstTitle();
-			}
-			catch (Exception e)
-			{
-				logger.debug(e.getMessage());
-			}
-			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
-			int numOfVersions = viewLinks.size();
-			int num = 1;
-			logger.info("Found " + numOfVersions + " versions.");
-			for (DigitalEntity b : viewLinks)
-			{
-
-				String mimeType = b.getStreamMime();
-				if (mimeType.compareTo("application/zip") != 0)
-					continue;
-				String version = b.getPid();
-
-				logger.info("Create WebpageVersion volume: " + version + " "
-						+ (num++) + "/" + numOfVersions);
-				WebResource webpageVersion = c.resource(webpage.toString()
-						+ "/version/" + version);
-				response = webpageVersion.put(String.class);
-				logger.info(response);
-				WebResource webpageVersionDC = c.resource(webpageVersion
-						.toString() + "/dc");
-				WebResource webpageVersionData = c.resource(webpageVersion
-						.toString() + "/data");
-				// WebResource webpageVersionMetadata =
-				// c.resource(webpageVersion
-				// .toString() + "/metadata");
-
-				UploadDataBean data = new UploadDataBean();
-
-				try
-				{
-					String protocol = "file";
-					String host = "";
-					String path = b.getStream().getAbsolutePath();
-					String fragment = "";
-					data.path = new URI(protocol, host, path, fragment);
-					data.mime = mimeType;
-					webpageVersionData.post(data);
-				}
-				catch (URISyntaxException e)
-				{
-					e.printStackTrace();
-				}
-				try
-				{
-					webpageVersionDC.accept(MediaType.APPLICATION_XML);
-					DCBeanAnnotated dc = webpageVersionDC
-							.get(DCBeanAnnotated.class); // Auth?
-					dc.addTitle("Version of: " + dtlBean.getPid());
-					dc.addDescription(b.getLabel());
-					webpageVersionDC.post(dc);
-				}
-				catch (Exception e)
-				{
-					logger.error(e.getMessage());
-				}
-
-			}
+			updateWebpage(dtlBean);
 		}
 		catch (UniformInterfaceException e)
 		{
@@ -401,79 +250,7 @@ public class FedoraIngester implements IngestInterface
 			String response = webpage.put(String.class, request);
 			logger.info(response);
 
-			WebResource webpageDC = c.resource(webpage.toString() + "/dc");
-			// WebResource webpageMetadata = c.resource(webpage.toString()
-			// + "/metadata");
-
-			String title = "";
-
-			try
-			{
-				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType("doc-type:" + ObjectType.webpage.toString());
-				dc.addDescription(dtlBean.getLabel());
-				webpageDC.post(dc);
-				title = dc.getFirstTitle();
-			}
-			catch (Exception e)
-			{
-				logger.debug(e.getMessage());
-			}
-			for (DigitalEntity b : dtlBean.getArchiveLinks())
-			{
-				logger.info(dtlBean.getPid() + ": has a Archive");
-				String mimeType = b.getStreamMime();
-				logger.debug(mimeType);
-				if (mimeType.compareTo("application/zip") != 0)
-					continue;
-				String version = b.getPid();
-				logger.info("Create webpage version: " + version);
-				WebResource webpageVersion = c.resource(webpage.toString()
-						+ "/version/" + version);
-				response = webpageVersion.put(String.class);
-				logger.info(response);
-				WebResource webpageVersionDC = c.resource(webpageVersion
-						.toString() + "/dc");
-				WebResource webpageVersionData = c.resource(webpageVersion
-						.toString() + "/data");
-				// WebResource webpageVersionMetadata =
-				// c.resource(webpageVersion
-				// .toString() + "/metadata");
-
-				UploadDataBean data = new UploadDataBean();
-
-				try
-				{
-					String protocol = "file";
-					String host = "";
-					String path = b.getStream().getAbsolutePath();
-					String fragment = "";
-					data.path = new URI(protocol, host, path, fragment);
-					data.mime = mimeType;
-					webpageVersionData.post(data);
-				}
-				catch (URISyntaxException e)
-				{
-					e.printStackTrace();
-				}
-				try
-				{
-
-					webpageVersionDC.accept(MediaType.APPLICATION_XML);
-
-					DCBeanAnnotated dc = webpageVersionDC
-							.get(DCBeanAnnotated.class);// Auth
-					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
-					dc.addDescription(b.getLabel());
-					webpageVersionDC.post(dc);
-				}
-				catch (Exception e)
-				{
-
-					logger.debug(e.getMessage());
-				}
-
-			}
+			updateSingleWebpage(dtlBean);
 		}
 		catch (UniformInterfaceException e)
 		{
@@ -500,75 +277,7 @@ public class FedoraIngester implements IngestInterface
 			String response = ejournal.put(String.class, request);
 			logger.info(response);
 
-			WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
-			// WebResource ejournalMetadata = c.resource(ejournal.toString()
-			// + "/metadata");
-			try
-			{
-				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType("doc-type:" + ObjectType.ejournal.toString());
-				ejournalDC.post(dc);
-			}
-			catch (Exception e)
-			{
-				// logger.debug(e.getMessage());
-			}
-			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
-			int numOfVols = viewMainLinks.size();
-			int num = 1;
-			logger.info("Found " + numOfVols + " volumes.");
-			for (DigitalEntity b : viewMainLinks)
-			{
-
-				String mimeType = b.getStreamMime();
-				if (mimeType.compareTo("application/pdf") != 0)
-					continue;
-				String volName = b.getPid();
-				logger.info("Create eJournal volume: " + volName + " "
-						+ (num++) + "/" + numOfVols);
-				WebResource ejournalVolume = c.resource(ejournal.toString()
-						+ "/volume/" + volName);
-				ejournalVolume.put();
-				WebResource ejournalVolumeDC = c.resource(ejournalVolume
-						.toString() + "/dc");
-				WebResource ejournalVolumeData = c.resource(ejournalVolume
-						.toString() + "/data");
-				// WebResource ejournalVolumeMetadata =
-				// c.resource(ejournalVolume
-				// .toString() + "/metadata");
-
-				UploadDataBean data = new UploadDataBean();
-
-				try
-				{
-					String protocol = "file";
-					String host = "";
-					String path = b.getStream().getAbsolutePath();
-					String fragment = "";
-					data.path = new URI(protocol, host, path, fragment);
-					data.mime = mimeType;
-					ejournalVolumeData.post(data);
-				}
-				catch (URISyntaxException e)
-				{
-
-					e.printStackTrace();
-				}
-				try
-				{
-					ejournalVolumeDC.accept(MediaType.APPLICATION_XML);
-					DCBeanAnnotated dc = ejournalVolumeDC
-							.get(DCBeanAnnotated.class); // Auth
-					dc.addDescription(b.getLabel());
-					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
-					ejournalVolumeDC.post(dc);
-				}
-				catch (Exception e)
-				{
-					logger.debug(e.getMessage());
-				}
-
-			}
+			updateEJournal(dtlBean);
 		}
 		catch (UniformInterfaceException e)
 		{
@@ -681,6 +390,7 @@ public class FedoraIngester implements IngestInterface
 		logger.info(pid + ": got set! Thanx and goodbye!");
 
 	}
+
 	private void updateReports(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
@@ -693,9 +403,9 @@ public class FedoraIngester implements IngestInterface
 				+ edowebNamespace + ":" + dtlBean.getPid());
 		try
 		{
-//			String request = "content";
-//			String response = report.put(String.class, request);
-//			logger.info(response);
+			// String request = "content";
+			// String response = report.put(String.class, request);
+			// logger.info(response);
 
 			WebResource reportDC = c.resource(report.toString() + "/dc");
 			WebResource reportData = c.resource(report.toString() + "/data");
@@ -736,7 +446,7 @@ public class FedoraIngester implements IngestInterface
 			logger.error(e.getMessage());
 		}
 	}
-	
+
 	private void updateReportsNewStyle(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
@@ -750,9 +460,9 @@ public class FedoraIngester implements IngestInterface
 
 		try
 		{
-//			String request = "content";
-//			String response = report.put(String.class, request);
-//			logger.info(response);
+			// String request = "content";
+			// String response = report.put(String.class, request);
+			// logger.info(response);
 
 			WebResource reportDC = c.resource(report.toString() + "/dc");
 			WebResource reportData = c.resource(report.toString() + "/data");
@@ -805,7 +515,7 @@ public class FedoraIngester implements IngestInterface
 			logger.error(e.getMessage());
 		}
 	}
-	
+
 	private void updateEJournal(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
@@ -819,9 +529,9 @@ public class FedoraIngester implements IngestInterface
 
 		try
 		{
-//			String request = "content";
-//			String response = ejournal.put(String.class, request);
-//			logger.info(response);
+			// String request = "content";
+			// String response = ejournal.put(String.class, request);
+			// logger.info(response);
 
 			WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
 			// WebResource ejournalMetadata = c.resource(ejournal.toString()
@@ -851,7 +561,7 @@ public class FedoraIngester implements IngestInterface
 						+ (num++) + "/" + numOfVols);
 				WebResource ejournalVolume = c.resource(ejournal.toString()
 						+ "/volume/" + volName);
-//				ejournalVolume.put();
+				// ejournalVolume.put();
 				WebResource ejournalVolumeDC = c.resource(ejournalVolume
 						.toString() + "/dc");
 				WebResource ejournalVolumeData = c.resource(ejournalVolume
@@ -898,6 +608,7 @@ public class FedoraIngester implements IngestInterface
 			logger.error(e.getMessage());
 		}
 	}
+
 	private void updateWebpage(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
@@ -911,10 +622,10 @@ public class FedoraIngester implements IngestInterface
 
 		try
 		{
-//			String request = "content";
-//			String response = webpage.put(String.class, request);
-//			logger.info(response);
-			String response="";
+			// String request = "content";
+			// String response = webpage.put(String.class, request);
+			// logger.info(response);
+			String response = "";
 			WebResource webpageDC = c.resource(webpage.toString() + "/dc");
 			// WebResource webpageMetadata = c.resource(webpage.toString()
 			// + "/metadata");
@@ -950,7 +661,7 @@ public class FedoraIngester implements IngestInterface
 						+ (num++) + "/" + numOfVersions);
 				WebResource webpageVersion = c.resource(webpage.toString()
 						+ "/version/" + version);
-//				response = webpageVersion.put(String.class);
+				// response = webpageVersion.put(String.class);
 				logger.info(response);
 				WebResource webpageVersionDC = c.resource(webpageVersion
 						.toString() + "/dc");
@@ -999,6 +710,7 @@ public class FedoraIngester implements IngestInterface
 		// WebResource webpageCurrent = c.resource(webpage.toString() +
 		// "/current/");
 	}
+
 	private void updateSingleWebpage(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
@@ -1013,8 +725,8 @@ public class FedoraIngester implements IngestInterface
 		String request = "content";
 		try
 		{
-//			String response = webpage.put(String.class, request);
-//			logger.info(response);
+			// String response = webpage.put(String.class, request);
+			// logger.info(response);
 
 			WebResource webpageDC = c.resource(webpage.toString() + "/dc");
 			// WebResource webpageMetadata = c.resource(webpage.toString()
@@ -1045,8 +757,8 @@ public class FedoraIngester implements IngestInterface
 				logger.info("Create webpage version: " + version);
 				WebResource webpageVersion = c.resource(webpage.toString()
 						+ "/version/" + version);
-//				String response = webpageVersion.put(String.class);
-//				logger.info(response);
+				// String response = webpageVersion.put(String.class);
+				// logger.info(response);
 				WebResource webpageVersionDC = c.resource(webpageVersion
 						.toString() + "/dc");
 				WebResource webpageVersionData = c.resource(webpageVersion
@@ -1097,6 +809,7 @@ public class FedoraIngester implements IngestInterface
 		// WebResource webpageCurrent = c.resource(webpage.toString() +
 		// "/current/");
 	}
+
 	@Override
 	public void delete(String pid)
 	{
