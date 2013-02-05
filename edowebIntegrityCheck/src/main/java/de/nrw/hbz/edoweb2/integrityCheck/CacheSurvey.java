@@ -32,7 +32,6 @@ public class CacheSurvey
 
 	public List<View> survey()
 	{
-
 		List<View> rows = new Vector<View>();
 		File cacheDirFile = new File(cacheDir);
 		int count = 1;
@@ -90,49 +89,104 @@ public class CacheSurvey
 			{
 				Record record = reader.next();
 				// logger.info(record.toString());
-				ControlField alephId = (ControlField) record
-						.getVariableField("001");
-				DataField title = (DataField) record.getVariableField("245");
-				DataField urn = (DataField) record.getVariableField("856");
-				DataField ddc = (DataField) record.getVariableField("082");
-				List creators = record.getVariableFields(new String[] { "100",
-						"110", "111", "700", "710", "711", "720" });
 
-				List types = record.getVariableFields(new String[] { "655",
-						"501" });
+				try
+				{
+					ControlField alephId = (ControlField) record
+							.getVariableField("001");
+					view.addAlephId(alephId.getData());
+				}
+				catch (Exception e)
+				{
 
-				view.addAlephId(alephId.getData());
+				}
 
-				view.addTitle(title.getSubfield('a').getData());
+				try
+				{
+					DataField title = (DataField) record
+							.getVariableField("245");
+					view.addTitle(title.getSubfield('a').getData());
+				}
+				catch (Exception e)
+				{
 
-				view.addUrn(urn.getSubfield('u').getData());
+				}
 
-				view.addCreator(((DataField) (creators.get(0)))
-						.getSubfield('a').getData());
+				try
+				{
+					DataField urn = (DataField) record.getVariableField("856");
+					view.addUrn(urn.getSubfield('u').getData());
+				}
+				catch (Exception e)
+				{
 
-				List stypes = ((DataField) (types.get(0)))
+				}
 
-				.getSubfields();
+				try
+				{
+					List creators = record.getVariableFields(new String[] {
+							"100", "110", "111", "700", "710", "711", "720" });
+					for (Object c : creators)
+					{
+						view.addCreator(((DataField) (c)).getSubfield('a')
+								.getData());
+					}
+				}
+				catch (Exception e)
+				{
 
-				view.addType(((Subfield) stypes.get(0)).getData());
+				}
 
-				view.addDdc(ddc.getSubfield('a').getData());
+				try
+				{
+					List types = record.getVariableFields(new String[] { "655",
+							"501" });
+					List stypes = ((DataField) (types.get(0))).getSubfields();
 
-				DataField date = (DataField) record.getVariableField("260");
-				view.addYear(date.getSubfield('c').getData());
-				date = (DataField) record.getVariableField("005");
-				view.addYear(date.getSubfield('a').getData());
+					view.addType(((Subfield) stypes.get(0)).getData());
+				}
+				catch (Exception e)
+				{
+
+				}
+				try
+				{
+					DataField ddc = (DataField) record.getVariableField("082");
+					view.addDdc(ddc.getSubfield('a').getData());
+				}
+				catch (Exception e)
+				{
+
+				}
+				try
+				{
+					DataField date = (DataField) record.getVariableField("260");
+					view.addYear(date.getSubfield('c').getData());
+				}
+				catch (Exception e)
+				{
+
+				}
+				try
+				{
+					DataField date = (DataField) record.getVariableField("005");
+					view.addYear(date.getSubfield('a').getData());
+				}
+				catch (Exception e)
+				{
+
+				}
 
 			}
 
 		}
 		catch (FileNotFoundException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info("FileNotFoundException");
 		}
 		catch (Exception e)
 		{
+			logger.info("Exception: " + pid);
 
 		}
 		return view;
