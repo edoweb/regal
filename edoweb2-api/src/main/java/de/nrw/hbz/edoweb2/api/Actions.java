@@ -36,6 +36,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -742,16 +743,28 @@ public class Actions
 
 	void linkObjectToOaiSet(Node node, String spec, String pid)
 	{
+		Vector<Link> relations = node.getRelsExt();
 
+		Iterator<Link> iter = relations.iterator();
+		while (iter.hasNext())
+		{
+			String pred = iter.next().getPredicate();
+			if (pred.compareTo(IS_MEMBER_OF) == 0)
+				iter.remove();
+			else if (pred.compareTo(ITEM_ID) == 0)
+				iter.remove();
+		}
 		Link link = new Link();
 		link.setPredicate(IS_MEMBER_OF);
 		link.setObject("info:fedora/" + pid, false);
-		node.addRelation(link);
+		relations.add(link);
 
-		link = new Link();
+		link = new Link(); 
 		link.setPredicate(ITEM_ID);
 		link.setObject(getURI(node), true);
-		node.addRelation(link);
+		relations.add(link);
+
+		node.setRelsExt(relations);
 		try
 		{
 			archive.updateNode(node.getPID(), node);
@@ -763,6 +776,8 @@ public class Actions
 		}
 
 	}
+
+	
 
 	private String docmap(String type)
 	{
