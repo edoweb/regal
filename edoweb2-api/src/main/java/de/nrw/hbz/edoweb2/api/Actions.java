@@ -748,7 +748,10 @@ public class Actions
 		Iterator<Link> iter = relations.iterator();
 		while (iter.hasNext())
 		{
+
 			String pred = iter.next().getPredicate();
+			// System.out.println(pred);
+			// logger.info(pred);
 			if (pred.compareTo(IS_MEMBER_OF) == 0)
 				iter.remove();
 			else if (pred.compareTo(ITEM_ID) == 0)
@@ -761,7 +764,7 @@ public class Actions
 
 		link = new Link();
 		link.setPredicate(ITEM_ID);
-		link.setObject(getURI(node), true);
+		link.setObject(getURI(node), false);
 		relations.add(link);
 
 		node.setRelsExt(relations);

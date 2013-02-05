@@ -102,7 +102,7 @@ class Archive implements ArchiveInterface
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, true);
+			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
 
 			fedoraInterface.createNode(rootObject);

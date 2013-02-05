@@ -156,7 +156,7 @@ public class EJournalResource
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, true);
+			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(namespace + ":" + pid)
 					.addCreator("EjournalRessource")
@@ -248,7 +248,7 @@ public class EJournalResource
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, true);
+			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
 
 			link = new Link();
