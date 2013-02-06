@@ -153,7 +153,7 @@ public class FedoraIngester implements IngestInterface
 				+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/" + edowebNamespace
 				+ ":" + dtlBean.getPid());
 		oaiSet.post();
-		logger.info(pid + ": got set! Thanx and goodbye!");
+		logger.info(pid + ": got set! Thanx and goodbye!\n");
 
 	}
 
@@ -303,7 +303,7 @@ public class FedoraIngester implements IngestInterface
 					new StreamResult(str));
 
 			String xmlStr = str.getBuffer().toString();
-			// logger.debug(xmlStr);
+			logger.info(xmlStr);
 			DCBeanAnnotated dc = new DCBeanAnnotated(new DCBean(xmlStr));
 			return dc;
 
@@ -387,7 +387,7 @@ public class FedoraIngester implements IngestInterface
 				+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/" + edowebNamespace
 				+ ":" + dtlBean.getPid());
 		oaiSet.post();
-		logger.info(pid + ": got set! Thanx and goodbye!");
+		logger.info(pid + ": got set! Thanx and goodbye!\n");
 
 	}
 
@@ -561,7 +561,14 @@ public class FedoraIngester implements IngestInterface
 						+ (num++) + "/" + numOfVols);
 				WebResource ejournalVolume = c.resource(ejournal.toString()
 						+ "/volume/" + volName);
-				// ejournalVolume.put();
+				try
+				{
+					ejournalVolume.put();
+				}
+				catch (Exception e)
+				{
+					logger.info(e.getMessage());
+				}
 				WebResource ejournalVolumeDC = c.resource(ejournalVolume
 						.toString() + "/dc");
 				WebResource ejournalVolumeData = c.resource(ejournalVolume
@@ -661,8 +668,15 @@ public class FedoraIngester implements IngestInterface
 						+ (num++) + "/" + numOfVersions);
 				WebResource webpageVersion = c.resource(webpage.toString()
 						+ "/version/" + version);
-				// response = webpageVersion.put(String.class);
-				logger.info(response);
+				try
+				{
+					response = webpageVersion.put(String.class);
+					logger.info(response);
+				}
+				catch (Exception e)
+				{
+					logger.info(e.getMessage());
+				}
 				WebResource webpageVersionDC = c.resource(webpageVersion
 						.toString() + "/dc");
 				WebResource webpageVersionData = c.resource(webpageVersion
@@ -737,6 +751,7 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
+
 				dc.addType("doc-type:" + ObjectType.webpage.toString());
 				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
@@ -757,7 +772,14 @@ public class FedoraIngester implements IngestInterface
 				logger.info("Create webpage version: " + version);
 				WebResource webpageVersion = c.resource(webpage.toString()
 						+ "/version/" + version);
-				// String response = webpageVersion.put(String.class);
+				try
+				{
+					String response = webpageVersion.put(String.class);
+				}
+				catch (Exception e)
+				{
+					logger.info(e.getMessage());
+				}
 				// logger.info(response);
 				WebResource webpageVersionDC = c.resource(webpageVersion
 						.toString() + "/dc");
