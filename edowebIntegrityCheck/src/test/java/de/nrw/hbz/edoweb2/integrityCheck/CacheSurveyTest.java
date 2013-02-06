@@ -49,6 +49,12 @@ public class CacheSurveyTest
 		System.out.println("NoYear Objects: " + chara.noYear.size());
 		System.out.println("NoDDC Objects: " + chara.noDDC.size());
 		System.out.println("NoURN Objects: " + chara.noUrn.size());
+		System.out.println("NoType Objects: " + chara.noType.size());
+		System.out.println("Num of Types: " + chara.map.size());
+		for (String type : chara.map.keySet())
+		{
+			System.out.println(type + ", " + chara.map.get(type).intValue());
+		}
 
 	}
 }

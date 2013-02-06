@@ -182,11 +182,11 @@ public class CacheSurvey
 		}
 		catch (FileNotFoundException e)
 		{
-			logger.info("FileNotFoundException");
+			logger.error("FileNotFoundException: " + e.getMessage());
 		}
 		catch (Exception e)
 		{
-			logger.info("Exception: " + pid);
+			logger.error("Exception: " + pid + e.getMessage());
 
 		}
 		return view;
