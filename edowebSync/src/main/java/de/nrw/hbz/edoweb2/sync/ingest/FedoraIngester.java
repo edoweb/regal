@@ -303,7 +303,7 @@ public class FedoraIngester implements IngestInterface
 					new StreamResult(str));
 
 			String xmlStr = str.getBuffer().toString();
-			logger.info(xmlStr);
+			// logger.info(xmlStr);
 			DCBeanAnnotated dc = new DCBeanAnnotated(new DCBean(xmlStr));
 			return dc;
 
