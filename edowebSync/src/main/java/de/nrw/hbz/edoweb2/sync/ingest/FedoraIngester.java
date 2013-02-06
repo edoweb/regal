@@ -104,32 +104,32 @@ public class FedoraIngester implements IngestInterface
 			if (partitionC.compareTo("EJO01") == 0)
 			{
 				logger.info(pid + ": start ingesting eJournal");
-				ingestEJournal(dtlBean);
+				updateEJournal(dtlBean);
 				logger.info(pid + ": end ingesting eJournal");
 			}
 			else if (partitionC.compareTo("WPD01") == 0)
 			{
 				logger.info(pid + ": start ingesting report (wpd01)");
-				ingestReports(dtlBean);
+				updateReports(dtlBean);
 				logger.info(pid + ": end ingesting report (wpd01)");
 			}
 			else if (partitionC.compareTo("WPD02") == 0)
 			{
 
 				logger.info(pid + ": start ingesting report (wpd02)");
-				ingestReportsNewStyle(dtlBean);
+				updateReportsNewStyle(dtlBean);
 				logger.info(pid + ": end ingesting report (wpd02)");
 			}
 			else if (partitionC.compareTo("WSC01") == 0)
 			{
 				logger.info(pid + ": start ingesting webpage (wsc01)");
-				ingestWebpage(dtlBean);
+				updateWebpage(dtlBean);
 				logger.info(pid + ": end ingesting webpage (wsc01)");
 			}
 			else if (partitionC.compareTo("WSI01") == 0)
 			{
 				logger.info(pid + ": start ingesting webpage (wsi01)");
-				ingestSingleWebpage(dtlBean);
+				updateSingleWebpage(dtlBean);
 				logger.info(pid + ": end ingesting webpage (wsi01)");
 			}
 		}
@@ -155,134 +155,6 @@ public class FedoraIngester implements IngestInterface
 		oaiSet.post();
 		logger.info(pid + ": got set! Thanx and goodbye!\n");
 
-	}
-
-	private void ingestReports(DigitalEntity dtlBean)
-	{
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter(user, password));
-
-		WebResource report = c.resource(host + ":8080/edoweb2-api/report/"
-				+ edowebNamespace + ":" + dtlBean.getPid());
-		try
-		{
-			String request = "content";
-			String response = report.put(String.class, request);
-			logger.info(response);
-
-			updateReports(dtlBean);
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.error(e.getMessage());
-		}
-	}
-
-	private void ingestReportsNewStyle(DigitalEntity dtlBean)
-	{
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter(user, password));
-
-		WebResource report = c.resource(host + ":8080/edoweb2-api/report/"
-				+ edowebNamespace + ":" + dtlBean.getPid());
-
-		try
-		{
-			String request = "content";
-			String response = report.put(String.class, request);
-			logger.info(response);
-
-			updateReportsNewStyle(dtlBean);
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.error(e.getMessage());
-		}
-	}
-
-	private void ingestWebpage(DigitalEntity dtlBean)
-	{
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter(user, password));
-
-		WebResource webpage = c.resource(host + ":8080/edoweb2-api/webpage/"
-				+ edowebNamespace + ":" + dtlBean.getPid());
-
-		try
-		{
-			String request = "content";
-			String response = webpage.put(String.class, request);
-			logger.info(response);
-
-			updateWebpage(dtlBean);
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.info(e.getMessage());
-		}
-		// WebResource webpageCurrent = c.resource(webpage.toString() +
-		// "/current/");
-	}
-
-	private void ingestSingleWebpage(DigitalEntity dtlBean)
-	{
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter(user, password));
-
-		WebResource webpage = c.resource(host + ":8080/edoweb2-api/webpage/"
-				+ edowebNamespace + ":" + dtlBean.getPid());
-
-		String request = "content";
-		try
-		{
-			String response = webpage.put(String.class, request);
-			logger.info(response);
-
-			updateSingleWebpage(dtlBean);
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.error(e.getMessage());
-		}
-		// WebResource webpageCurrent = c.resource(webpage.toString() +
-		// "/current/");
-	}
-
-	private void ingestEJournal(DigitalEntity dtlBean)
-	{
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter(user, password));
-
-		WebResource ejournal = c.resource(host + ":8080/edoweb2-api/ejournal/"
-				+ edowebNamespace + ":" + dtlBean.getPid());
-
-		try
-		{
-			String request = "content";
-			String response = ejournal.put(String.class, request);
-			logger.info(response);
-
-			updateEJournal(dtlBean);
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.error(e.getMessage());
-		}
 	}
 
 	private DCBeanAnnotated marc2dc(DigitalEntity dtlBean)
@@ -403,9 +275,16 @@ public class FedoraIngester implements IngestInterface
 				+ edowebNamespace + ":" + dtlBean.getPid());
 		try
 		{
-			// String request = "content";
-			// String response = report.put(String.class, request);
-			// logger.info(response);
+			String request = "content";
+			String response = report.put(String.class, request);
+		}
+		catch (Exception e)
+		{
+			logger.info(e.getMessage());
+		}
+
+		try
+		{
 
 			WebResource reportDC = c.resource(report.toString() + "/dc");
 			WebResource reportData = c.resource(report.toString() + "/data");
@@ -457,12 +336,17 @@ public class FedoraIngester implements IngestInterface
 
 		WebResource report = c.resource(host + ":8080/edoweb2-api/report/"
 				+ edowebNamespace + ":" + dtlBean.getPid());
-
 		try
 		{
-			// String request = "content";
-			// String response = report.put(String.class, request);
-			// logger.info(response);
+			String request = "content";
+			String response = report.put(String.class, request);
+		}
+		catch (Exception e)
+		{
+			logger.info(e.getMessage());
+		}
+		try
+		{
 
 			WebResource reportDC = c.resource(report.toString() + "/dc");
 			WebResource reportData = c.resource(report.toString() + "/data");
@@ -529,9 +413,15 @@ public class FedoraIngester implements IngestInterface
 
 		try
 		{
-			// String request = "content";
-			// String response = ejournal.put(String.class, request);
-			// logger.info(response);
+			String request = "content";
+			String response = ejournal.put(String.class, request);
+		}
+		catch (Exception e)
+		{
+			logger.info(e.getMessage());
+		}
+		try
+		{
 
 			WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
 			// WebResource ejournalMetadata = c.resource(ejournal.toString()
@@ -629,10 +519,16 @@ public class FedoraIngester implements IngestInterface
 
 		try
 		{
-			// String request = "content";
-			// String response = webpage.put(String.class, request);
-			// logger.info(response);
 			String response = "";
+			try
+			{
+				String request = "content";
+				response = webpage.put(String.class, request);
+			}
+			catch (Exception e)
+			{
+				logger.info(e.getMessage());
+			}
 			WebResource webpageDC = c.resource(webpage.toString() + "/dc");
 			// WebResource webpageMetadata = c.resource(webpage.toString()
 			// + "/metadata");
@@ -739,8 +635,14 @@ public class FedoraIngester implements IngestInterface
 		String request = "content";
 		try
 		{
-			// String response = webpage.put(String.class, request);
-			// logger.info(response);
+			String response = webpage.put(String.class, request);
+		}
+		catch (Exception e)
+		{
+			logger.info(e.getMessage());
+		}
+		try
+		{
 
 			WebResource webpageDC = c.resource(webpage.toString() + "/dc");
 			// WebResource webpageMetadata = c.resource(webpage.toString()
