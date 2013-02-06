@@ -169,7 +169,6 @@ public class Main
 		String server = dtl;
 		String downloadLocation = cache;
 		String sets = set;
-		System.out.println("---" + sets + "-----");
 		String oaiServer = oai;
 		String timestampFile = timestamp;
 
@@ -266,11 +265,12 @@ public class Main
 		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 		DigitalEntityBuilder builder = new DigitalEntityBuilder();
 
-		for (int i = 0; i < pids.size(); i++)
+		int size = pids.size();
+		for (int i = 0; i < size; i++)
 		{
 			try
 			{
-				logger.info("Object number " + i + "\n");
+				logger.info((i + 1) + " / " + size + "\n");
 				String pid = pids.get(i);
 				String baseDir = downloader.download(pid, forceDownload);
 				logger.info("\tBuild Bean \t" + pid);
@@ -322,11 +322,12 @@ public class Main
 		// IngestInterface ingester = new FedoraIngester("ellinet",
 		// fedoraBase, user, password, axisHome);
 
-		for (int i = 0; i < pids.size(); i++)
+		int size = pids.size();
+		for (int i = 0; i < size; i++)
 		{
 			try
 			{
-				logger.info((i + 1) + "\n");
+				logger.info((i + 1) + " / " + size + "\n");
 				String pid = pids.get(i);
 				String baseDir = downloader.download(pid, forceDownload);
 				logger.info("\tBuild Bean \t" + pid);
@@ -377,11 +378,12 @@ public class Main
 		// IngestInterface ingester = new FedoraIngester("ellinet",
 		// fedoraBase, user, password, axisHome);
 
-		for (int i = 0; i < pids.size(); i++)
+		int size = pids.size();
+		for (int i = 0; i < size; i++)
 		{
 			try
 			{
-				logger.info(i + "\n");
+				logger.info((i + 1) + " / " + size + "\n");
 				String pid = pids.get(i);
 				String baseDir = downloader.download(pid, forceDownload);
 				logger.info("\tBuild Bean \t" + pid);
@@ -425,12 +427,12 @@ public class Main
 		DigitalEntityBuilder builder = new DigitalEntityBuilder();
 		// IngestInterface ingester = new FedoraIngester("ellinet",
 		// fedoraBase, user, password, axisHome);
-
-		for (int i = 0; i < pids.size(); i++)
+		int size = pids.size();
+		for (int i = 0; i < size; i++)
 		{
 			try
 			{
-				logger.info(i + "\n");
+				logger.info((i + 1) + " / " + size + "\n");
 				String pid = pids.get(i);
 				String baseDir = downloader.download(pid, forceDownload);
 				logger.info("\tBuild Bean \t" + pid);
@@ -479,7 +481,7 @@ public class Main
 			{
 				try
 				{
-					// logger.info(i + "\n");
+					logger.info((i + 1) + " / " + size + "\n");
 					String pid = pids.get(i);
 					// TODO Remove false parameter?
 					String baseDir = downloader.download(pid, false);
