@@ -270,7 +270,7 @@ public class Main
 		{
 			try
 			{
-				logger.info((i + 1) + " / " + size + "\n");
+				logger.info("\n" + (i + 1) + " / " + size);
 				String pid = pids.get(i);
 				String baseDir = downloader.download(pid, forceDownload);
 				logger.info("\tBuild Bean \t" + pid);
@@ -327,7 +327,7 @@ public class Main
 		{
 			try
 			{
-				logger.info((i + 1) + " / " + size + "\n");
+				logger.info("\n" + (i + 1) + " / " + size);
 				String pid = pids.get(i);
 				String baseDir = downloader.download(pid, forceDownload);
 				logger.info("\tBuild Bean \t" + pid);
@@ -383,7 +383,7 @@ public class Main
 		{
 			try
 			{
-				logger.info((i + 1) + " / " + size + "\n");
+				logger.info("\n" + (i + 1) + " / " + size);
 				String pid = pids.get(i);
 				String baseDir = downloader.download(pid, forceDownload);
 				logger.info("\tBuild Bean \t" + pid);
@@ -432,7 +432,7 @@ public class Main
 		{
 			try
 			{
-				logger.info((i + 1) + " / " + size + "\n");
+				logger.info("\n" + (i + 1) + " / " + size);
 				String pid = pids.get(i);
 				String baseDir = downloader.download(pid, forceDownload);
 				logger.info("\tBuild Bean \t" + pid);
@@ -481,7 +481,7 @@ public class Main
 			{
 				try
 				{
-					logger.info((i + 1) + " / " + size + "\n");
+					logger.info("\n" + (i + 1) + " / " + size);
 					String pid = pids.get(i);
 					// TODO Remove false parameter?
 					String baseDir = downloader.download(pid, false);
@@ -541,7 +541,7 @@ public class Main
 			int size = pids.size();
 			for (int i = 0; i < size; i++)
 			{
-
+				logger.info("\n" + (i + 1) + " / " + size);
 				String pid = pids.get(i);
 
 				ingester.delete(pid);
