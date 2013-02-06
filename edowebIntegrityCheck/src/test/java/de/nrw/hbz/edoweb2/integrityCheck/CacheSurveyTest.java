@@ -14,7 +14,6 @@ public class CacheSurveyTest
 
 	}
 
-	@Test
 	public void testSurvey()
 	{
 		CacheSurvey survey = new CacheSurvey();
@@ -34,4 +33,22 @@ public class CacheSurveyTest
 		}
 	}
 
+	@Test
+	public void testCharacteristics()
+	{
+		CacheSurvey survey = new CacheSurvey();
+		List<View> rows = survey.survey();
+		CacheCharacteristics chara = new CacheCharacteristics(rows);
+		System.out.println("Number Of Elements: " + chara.all.size());
+		System.out.println("Restricted Objects: " + chara.restricted.size());
+		System.out
+				.println("Unrestricted Objects: " + chara.unrestricted.size());
+		System.out.println("NoRights Objects: " + chara.noRight.size());
+		System.out.println("NoCreator Objects: " + chara.noCreator.size());
+		System.out.println("NoTitle Objects: " + chara.noTitle.size());
+		System.out.println("NoYear Objects: " + chara.noYear.size());
+		System.out.println("NoDDC Objects: " + chara.noDDC.size());
+		System.out.println("NoURN Objects: " + chara.noUrn.size());
+
+	}
 }
