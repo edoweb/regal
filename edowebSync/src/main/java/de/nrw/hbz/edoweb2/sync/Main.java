@@ -298,6 +298,10 @@ public class Main
 			{
 				e.printStackTrace();
 			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -350,6 +354,10 @@ public class Main
 			{
 				e.printStackTrace();
 			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -390,6 +398,10 @@ public class Main
 
 			}
 			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
@@ -446,6 +458,10 @@ public class Main
 			{
 				e.printStackTrace();
 			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -493,6 +509,10 @@ public class Main
 
 				}
 				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+				catch (Exception e)
 				{
 					e.printStackTrace();
 				}
