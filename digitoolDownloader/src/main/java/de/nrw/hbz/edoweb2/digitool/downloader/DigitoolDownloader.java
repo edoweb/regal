@@ -170,6 +170,12 @@ public class DigitoolDownloader
 			throws IOException
 	{
 		Element root = getDocument(digitalEntityFile);
+		if (root == null)
+		{
+			logger.error("Not able to download related files. XML parsing error: "
+					+ pid);
+			return;
+		}
 		Node streamRef = root.getElementsByTagName("stream_ref").item(0);
 
 		String filename = ((Element) streamRef)
@@ -247,6 +253,12 @@ public class DigitoolDownloader
 	{
 		// File indexFile = null;
 		Element root = getDocument(digitalEntityFile);
+		if (root == null)
+		{
+			logger.error("Not able to download related files. XML parsing error: "
+					+ pid);
+			return;
+		}
 		NodeList list = root.getElementsByTagName("relation");
 		for (int i = 0; i < list.getLength(); i++)
 		{
@@ -423,6 +435,10 @@ public class DigitoolDownloader
 		catch (ParserConfigurationException e)
 		{
 
+			e.printStackTrace();
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 		return null;
