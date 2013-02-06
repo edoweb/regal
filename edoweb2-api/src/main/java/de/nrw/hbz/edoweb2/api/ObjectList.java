@@ -15,7 +15,7 @@ public class ObjectList
 		list = new Vector<String>();
 	}
 
-	public ObjectList(Vector<String> v)
+	public ObjectList(List<String> v)
 	{
 		list = v;
 	}

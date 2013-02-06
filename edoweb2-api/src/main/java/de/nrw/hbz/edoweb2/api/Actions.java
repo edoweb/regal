@@ -882,6 +882,42 @@ public class Actions
 		return result.toString();
 	}
 
+	public View getView(String pid)
+	{
+		try
+		{
+			Node node = archive.readNode(pid);
+			if (node == null)
+				return null;
+
+			Vector<String> types = node.getType();
+
+			for (String t : types)
+			{
+				if (t.compareTo("doc-type:" + ObjectType.ejournal.toString()) == 0)
+				{
+					return getView(node, ObjectType.ejournal);
+				}
+				else if (t.compareTo("doc-type:"
+						+ ObjectType.webpage.toString()) == 0)
+				{
+					return getView(node, ObjectType.webpage);
+				}
+				else if (t
+						.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
+				{
+					return getView(node, ObjectType.report);
+				}
+			}
+
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public View getView(String pid, ObjectType type)
 	{
 
@@ -1006,15 +1042,15 @@ public class Actions
 		{
 			String relUrl = serverName + "/objects/" + relPid;
 
-			if (type == ObjectType.ejournalVolume)
-			{
-				relUrl = serverName + "/ejournal/" + relPid;
-			}
-
-			if (type == ObjectType.webpageVersion)
-			{
-				relUrl = serverName + "/webpage/" + relPid;
-			}
+			// if (type == ObjectType.ejournalVolume)
+			// {
+			// relUrl = serverName + "/ejournal/" + relPid;
+			// }
+			//
+			// if (type == ObjectType.webpageVersion)
+			// {
+			// relUrl = serverName + "/webpage/" + relPid;
+			// }
 
 			view.addIsPartOf(relUrl);
 		}
@@ -1139,28 +1175,28 @@ public class Actions
 		{
 			if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
 			{
-				typePath = "report";
+				typePath = "objects";
 				break;
 			}
 			else if (t.compareTo("doc-type:" + ObjectType.ejournal.toString()) == 0)
 			{
-				typePath = "ejournal";
+				typePath = "objects";
 				break;
 			}
 			else if (t.compareTo("doc-type:" + ObjectType.webpage.toString()) == 0)
 			{
-				typePath = "webpage";
+				typePath = "objects";
 				break;
 			}
 			else if (t.compareTo(ObjectType.webpageVersion.toString()) == 0)
 			{
-				typePath = "webpage";
+				typePath = "objects";
 				return serverName + "/" + typePath + "/" + getWebpagePid(node)
 						+ "/version/" + getVersionName(node);
 			}
 			else if (t.compareTo(ObjectType.ejournalVolume.toString()) == 0)
 			{
-				typePath = "ejournal";
+				typePath = "objects";
 				return serverName + "/" + typePath + "/" + getJournalPid(node)
 						+ "/volume/" + getVolumeName(node);
 			}
@@ -1190,6 +1226,11 @@ public class Actions
 	private String getWebpagePid(Node node)
 	{
 		return findObject(node.getPID(), IS_VERSION).firstElement();
+	}
+
+	public List<String> getAll()
+	{
+		return archive.findNodes("edoweb:*");
 	}
 
 }

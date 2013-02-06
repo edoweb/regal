@@ -67,14 +67,6 @@ public class WebpageResource
 
 	}
 
-	@GET
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAll()
-	{
-		return new ObjectList(actions.findByType("doc-type:"
-				+ webpageType.toString()));
-	}
-
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
 	public MessageBean deleteAll()
@@ -133,22 +125,6 @@ public class WebpageResource
 				.entity(msg).build();
 	}
 
-	@GET
-	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public StatusBean readWebpage(@PathParam("pid") String pid)
-	{
-		return actions.read(pid);
-	}
-
-	@GET
-	@Path("/{pid}/about")
-	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getView(@PathParam("pid") String pid)
-	{
-		return actions.getView(pid, ObjectType.webpage);
-	}
-
 	@POST
 	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml" })
@@ -167,14 +143,6 @@ public class WebpageResource
 		return new MessageBean(pid + " DELETED!");
 	}
 
-	@GET
-	@Path("/{pid}/dc")
-	@Produces({ "application/xml", "application/json" })
-	public DCBeanAnnotated readWebpageDC(@PathParam("pid") String pid)
-	{
-		return actions.readDC(pid);
-	}
-
 	@POST
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
@@ -183,13 +151,6 @@ public class WebpageResource
 			DCBeanAnnotated content)
 	{
 		return new MessageBean(actions.updateDC(pid, content));
-	}
-
-	@GET
-	@Path("/{pid}/metadata")
-	public Response readWebpageMetadata(@PathParam("pid") String pid)
-	{
-		return actions.readMetadata(pid);
 	}
 
 	@POST
@@ -299,6 +260,20 @@ public class WebpageResource
 		return new MessageBean(actions.updateMetadata(versionPid, content));
 	}
 
+	@POST
+	@Path("/{pid}/current/{versionName}")
+	public MessageBean setCurrentVersion(@PathParam("pid") String pid,
+			@PathParam("versionName") String versionName)
+	{
+		String versionPid = null;
+		String query = getVersionQuery(versionName, pid);
+		versionPid = actions.findSubject(query);
+		Link link = new Link();
+		link.setPredicate(IS_CURRENT_VERSION);
+		link.setObject(versionPid);
+		return new MessageBean(actions.updateLink(pid, link));
+	}
+
 	@GET
 	@Path("/{pid}/version/{versionName}/metadata")
 	@Produces({ "application/*" })
@@ -376,21 +351,46 @@ public class WebpageResource
 		return new ObjectList(v);
 	}
 
-	@POST
-	@Path("/{pid}/current/{versionName}")
-	public MessageBean setCurrentVersion(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+	@GET
+	@Path("/{pid}/metadata")
+	public Response readWebpageMetadata(@PathParam("pid") String pid)
 	{
-		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
-		Link link = new Link();
-		link.setPredicate(IS_CURRENT_VERSION);
-		link.setObject(versionPid);
-		return new MessageBean(actions.updateLink(pid, link));
+		return actions.readMetadata(pid);
 	}
 
-	String getVersionQuery(String versionName, String pid)
+	@GET
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAll()
+	{
+		return new ObjectList(actions.findByType("doc-type:"
+				+ webpageType.toString()));
+	}
+
+	@GET
+	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml" })
+	public StatusBean readWebpage(@PathParam("pid") String pid)
+	{
+		return actions.read(pid);
+	}
+
+	@GET
+	@Path("/{pid}/about")
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
+	public View getView(@PathParam("pid") String pid)
+	{
+		return actions.getView(pid, ObjectType.webpage);
+	}
+
+	@GET
+	@Path("/{pid}/dc")
+	@Produces({ "application/xml", "application/json" })
+	public DCBeanAnnotated readWebpageDC(@PathParam("pid") String pid)
+	{
+		return actions.readDC(pid);
+	}
+
+	public static String getVersionQuery(String versionName, String pid)
 	{
 		return "SELECT ?volPid ?p ?o WHERE "
 				+ "	{"

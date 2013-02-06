@@ -25,11 +25,9 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 import java.rmi.RemoteException;
-import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -65,14 +63,6 @@ public class EJournalResource
 
 	}
 
-	@GET
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAll()
-	{
-		return new ObjectList(actions.findByType("doc-type:"
-				+ ejournalType.toString()));
-	}
-
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
 	public MessageBean deleteAll()
@@ -83,24 +73,6 @@ public class EJournalResource
 		String eJournalVolume = actions.deleteAll(
 				actions.findByType(volumeType.toString()), false);
 		return new MessageBean(eJournal + "\n" + eJournalVolume);
-	}
-
-	@GET
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public StatusBean readEJournal(@PathParam("pid") String pid,
-			@PathParam("namespace") String userNamespace)
-	{
-
-		return actions.read(namespace + ":" + pid);
-	}
-
-	@GET
-	@Path("/{namespace}:{pid}/about")
-	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getView(@PathParam("pid") String pid)
-	{
-		return actions.getView(namespace + ":" + pid, ObjectType.ejournal);
 	}
 
 	@POST
@@ -181,14 +153,6 @@ public class EJournalResource
 				.entity(msg).build();
 	}
 
-	@GET
-	@Path("/{pid}/dc")
-	@Produces({ "application/xml", "application/json" })
-	public DCBeanAnnotated readEJournalDC(@PathParam("pid") String pid)
-	{
-		return actions.readDC(pid);
-	}
-
 	@POST
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
@@ -199,35 +163,12 @@ public class EJournalResource
 		return new MessageBean(actions.updateDC(pid, content));
 	}
 
-	@GET
-	@Path("/{pid}/metadata")
-	public Response readEJournalMetadata(@PathParam("pid") String pid)
-	{
-		return actions.readMetadata(pid);
-	}
-
 	@POST
 	@Path("/{pid}/metadata")
 	public MessageBean updateEJournalMetadata(@PathParam("pid") String pid,
 			UploadDataBean content)
 	{
 		return new MessageBean(actions.updateMetadata(pid, content));
-	}
-
-	@GET
-	@Path("/{pid}/volume/")
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVolumes(@PathParam("pid") String pid)
-	{
-		Vector<String> v = new Vector<String>();
-
-		for (String volPid : actions.findObject(pid, HAS_VOLUME))
-		{
-
-			v.add(actions.findObject(volPid, HAS_VOLUME_NAME).get(0));
-
-		}
-		return new ObjectList(v);
 	}
 
 	@PUT
@@ -295,44 +236,6 @@ public class EJournalResource
 		return new MessageBean("create eJournal Volume Failed");
 	}
 
-	@GET
-	@Path("/{pid}/volume/{volName}")
-	@Produces({ "application/*" })
-	public StatusBean readVolume(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
-	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
-
-		return actions.read(volumePid);
-	}
-
-	@GET
-	@Path("/{pid}/volume/{volName}/about")
-	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getVolumeView(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
-	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
-		return actions.getView(volumePid, ObjectType.ejournalVolume);
-	}
-
-	@GET
-	@Path("/{pid}/volume/{volName}/data")
-	@Produces({ "application/*" })
-	public Response readVolumeData(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
-	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
-
-		return actions.readData(volumePid);
-	}
-
 	@POST
 	@Path("/{pid}/volume/{volName}/data")
 	@Produces({ "application/json", "application/xml" })
@@ -344,18 +247,6 @@ public class EJournalResource
 		String query = getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
 		return new MessageBean(actions.updateData(volumePid, content));
-	}
-
-	@GET
-	@Path("/{pid}/volume/{volName}/dc")
-	@Produces({ "application/xml", "application/json" })
-	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
-	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
-		return actions.readDC(volumePid);
 	}
 
 	@POST
@@ -371,18 +262,6 @@ public class EJournalResource
 		return new MessageBean(actions.updateDC(volumePid, content));
 	}
 
-	@GET
-	@Path("/{pid}/volume/{volName}/metadata")
-	@Produces({ "application/*" })
-	public Response readVolumeMetadata(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
-	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
-		return actions.readMetadata(volumePid);
-	}
-
 	@POST
 	@Path("/{pid}/volume/{volName}/metadata")
 	@Produces({ "application/json", "application/xml" })
@@ -396,7 +275,7 @@ public class EJournalResource
 		return new MessageBean(actions.updateMetadata(volumePid, content));
 	}
 
-	private String getVolumeQuery(String volName, String pid)
+	public static String getVolumeQuery(String volName, String pid)
 	{
 		return "SELECT ?volPid ?p ?o WHERE "
 				+ "	{"
