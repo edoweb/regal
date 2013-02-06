@@ -1004,7 +1004,7 @@ public class Actions
 
 		for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
 		{
-			String relUrl = fedoraExtern + "objects/" + relPid;
+			String relUrl = serverName + "/objects/" + relPid;
 
 			if (type == ObjectType.ejournalVolume)
 			{
@@ -1021,7 +1021,7 @@ public class Actions
 
 		for (String relPid : findObject(pid, REL_IS_RELATED))
 		{
-			String relUrl = fedoraExtern + "objects/" + relPid;
+			String relUrl = serverName + "/objects/" + relPid;
 
 			if (type == ObjectType.ejournal)
 			{
@@ -1139,33 +1139,27 @@ public class Actions
 		{
 			if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
 			{
-
 				typePath = "report";
 				break;
 			}
 			else if (t.compareTo("doc-type:" + ObjectType.ejournal.toString()) == 0)
 			{
-
 				typePath = "ejournal";
 				break;
 			}
 			else if (t.compareTo("doc-type:" + ObjectType.webpage.toString()) == 0)
 			{
-
 				typePath = "webpage";
 				break;
 			}
 			else if (t.compareTo(ObjectType.webpageVersion.toString()) == 0)
 			{
-
 				typePath = "webpage";
 				return serverName + "/" + typePath + "/" + getWebpagePid(node)
 						+ "/version/" + getVersionName(node);
-
 			}
 			else if (t.compareTo(ObjectType.ejournalVolume.toString()) == 0)
 			{
-
 				typePath = "ejournal";
 				return serverName + "/" + typePath + "/" + getJournalPid(node)
 						+ "/volume/" + getVolumeName(node);

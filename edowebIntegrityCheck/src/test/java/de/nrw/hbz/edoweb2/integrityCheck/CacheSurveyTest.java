@@ -14,6 +14,7 @@ public class CacheSurveyTest
 
 	}
 
+	@Test
 	public void testSurvey()
 	{
 		CacheSurvey survey = new CacheSurvey();
@@ -23,13 +24,12 @@ public class CacheSurveyTest
 		int count = 1;
 		for (View row : rows)
 		{
-			System.out
-					.println("\"" + count++ + "\", \"" + row.getPid() + "\",\""
-							+ row.getAlephid() + "\",\"" + row.getCreator()
-							+ "\",\"" + row.getTitle() + "\",\""
-							+ row.getYear() + "\",\"" + row.getType() + "\",\""
-							+ row.getDdc() + "\",\"" + row.getUrn() + "\",\""
-							+ row.getRights() + "\"");
+			System.out.println("\"" + count++ + "\", \"" + row.getPid()
+					+ "\",\"" + row.getAlephid() + "\",\"" + row.getCreator()
+					+ "\",\"" + row.getTitle() + "\",\"" + row.getYear()
+					+ "\",\"" + row.getType() + "\",\"" + row.getDdc()
+					+ "\",\"" + row.getUrn() + "\",\"" + row.getRights()
+					+ "\",\"" + row.getMessage() + "\"");
 		}
 	}
 

@@ -45,6 +45,7 @@ public class View
 	Vector<String> cacheUrl = null;
 	Vector<String> fedoraUrl = null;
 	Vector<String> risearchUrl = null;
+	Vector<String> message = null;
 
 	// Vector<String> htmlUrl = null;
 	// Vector<String> metsUrl = null;
@@ -94,6 +95,7 @@ public class View
 		fedoraUrl = new Vector<String>();
 		risearchUrl = new Vector<String>();
 		rights = new Vector<String>();
+		message = new Vector<String>();
 		// Not Implemented yet: First make Cool URIs!
 		// metsUrl = new Vector<String>();
 		// oaioreUrl = new Vector<String>();
@@ -212,7 +214,7 @@ public class View
 	{
 		this.description = description;
 	}
-	
+
 	public Vector<String> getRights()
 	{
 		return rights;
@@ -667,7 +669,7 @@ public class View
 	{
 		return description.add(e);
 	}
-	
+
 	public boolean addRights(String e)
 	{
 		return rights.add(e);
@@ -781,6 +783,21 @@ public class View
 	public void setUri(String uri)
 	{
 		this.uri = uri;
+	}
+
+	public Vector<String> getMessage()
+	{
+		return message;
+	}
+
+	public void setMessage(Vector<String> message)
+	{
+		this.message = message;
+	}
+
+	public boolean addMessage(String e)
+	{
+		return message.add(e);
 	}
 
 	public Vector<String> getVerbundUrl()

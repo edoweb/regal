@@ -24,6 +24,7 @@ public class CacheSurvey
 {
 	final static Logger logger = LoggerFactory.getLogger(CacheSurvey.class);
 	String cacheDir = "/opt/edoweb/edobase/";
+	String uriBase = "http://orthos.hbz-nrw.de/";
 
 	public CacheSurvey()
 	{
@@ -183,10 +184,12 @@ public class CacheSurvey
 		catch (FileNotFoundException e)
 		{
 			logger.error("FileNotFoundException: " + e.getMessage());
+			view.addMessage("FileNotFoundException: " + e.getMessage());
 		}
 		catch (Exception e)
 		{
 			logger.error("Exception: " + pid + e.getMessage());
+			view.addMessage("Exception: " + pid + e.getMessage());
 
 		}
 		return view;

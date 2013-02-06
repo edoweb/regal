@@ -85,106 +85,8 @@ public class FedoraIngester implements IngestInterface
 	public void ingest(DigitalEntity dtlBean)
 	{
 		logger.info("Start ingest: " + edowebNamespace + ":" + dtlBean.getPid());
+		update(dtlBean);
 
-		String partitionC = null;
-		String pid = null;
-		pid = dtlBean.getPid();
-		try
-		{
-			ControlBean control = new ControlBean(dtlBean);
-			partitionC = control.getPartitionC().firstElement();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		try
-		{
-
-			if (partitionC.compareTo("EJO01") == 0)
-			{
-				logger.info(pid + ": start ingesting eJournal");
-				updateEJournal(dtlBean);
-				logger.info(pid + ": end ingesting eJournal");
-			}
-			else if (partitionC.compareTo("WPD01") == 0)
-			{
-				logger.info(pid + ": start ingesting report (wpd01)");
-				updateReports(dtlBean);
-				logger.info(pid + ": end ingesting report (wpd01)");
-			}
-			else if (partitionC.compareTo("WPD02") == 0)
-			{
-
-				logger.info(pid + ": start ingesting report (wpd02)");
-				updateReportsNewStyle(dtlBean);
-				logger.info(pid + ": end ingesting report (wpd02)");
-			}
-			else if (partitionC.compareTo("WSC01") == 0)
-			{
-				logger.info(pid + ": start ingesting webpage (wsc01)");
-				updateWebpage(dtlBean);
-				logger.info(pid + ": end ingesting webpage (wsc01)");
-			}
-			else if (partitionC.compareTo("WSI01") == 0)
-			{
-				logger.info(pid + ": start ingesting webpage (wsi01)");
-				updateSingleWebpage(dtlBean);
-				logger.info(pid + ": end ingesting webpage (wsi01)");
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			logger.info(e.getMessage());
-		}
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter(user, password));
-
-		WebResource index = c.resource(host
-				+ ":8080/edoweb2-api/edowebAdmin/index/" + edowebNamespace
-				+ ":" + dtlBean.getPid());
-		index.post();
-		logger.info(pid + ": got indexed!");
-		WebResource oaiSet = c.resource(host
-				+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/" + edowebNamespace
-				+ ":" + dtlBean.getPid());
-		oaiSet.post();
-		logger.info(pid + ": got set! Thanx and goodbye!\n");
-
-	}
-
-	private DCBeanAnnotated marc2dc(DigitalEntity dtlBean)
-	{
-		try
-		{
-			StringWriter str = new StringWriter();
-			TransformerFactory tFactory = TransformerFactory.newInstance();
-
-			// String xslFile = ClassLoader.getSystemResource(
-			// "MARC21slim2OAIDC.xsl").getPath();
-
-			// TODO jar path
-			Transformer transformer = tFactory
-					.newTransformer(new StreamSource(ClassLoader
-							.getSystemResourceAsStream("MARC21slim2OAIDC.xsl")));
-			transformer.transform(new StreamSource(dtlBean.getMarcFile()),
-					new StreamResult(str));
-
-			String xmlStr = str.getBuffer().toString();
-			// logger.info(xmlStr);
-			DCBeanAnnotated dc = new DCBeanAnnotated(new DCBean(xmlStr));
-			return dc;
-
-		}
-		catch (Throwable t)
-		{
-			t.printStackTrace();
-		}
-		return null;
 	}
 
 	@Override
@@ -244,23 +146,62 @@ public class FedoraIngester implements IngestInterface
 			e.printStackTrace();
 			logger.info(e.getMessage());
 		}
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter(user, password));
+		try
+		{
+			ClientConfig cc = new DefaultClientConfig();
+			cc.getProperties()
+					.put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+			cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
+					true);
+			Client c = Client.create(cc);
+			c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource index = c.resource(host
-				+ ":8080/edoweb2-api/edowebAdmin/index/" + edowebNamespace
-				+ ":" + dtlBean.getPid());
-		index.post();
-		logger.info(pid + ": got indexed!");
-		WebResource oaiSet = c.resource(host
-				+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/" + edowebNamespace
-				+ ":" + dtlBean.getPid());
-		oaiSet.post();
-		logger.info(pid + ": got set! Thanx and goodbye!\n");
+			WebResource index = c.resource(host
+					+ ":8080/edoweb2-api/edowebAdmin/index/" + edowebNamespace
+					+ ":" + dtlBean.getPid());
+			index.post();
+			logger.info(pid + ": got indexed!");
+			WebResource oaiSet = c.resource(host
+					+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/"
+					+ edowebNamespace + ":" + dtlBean.getPid());
+			oaiSet.post();
+			logger.info(pid + ": got set! Thanx and goodbye!\n");
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getMessage());
+		}
 
+	}
+
+	private DCBeanAnnotated marc2dc(DigitalEntity dtlBean)
+	{
+		try
+		{
+			StringWriter str = new StringWriter();
+			TransformerFactory tFactory = TransformerFactory.newInstance();
+
+			// String xslFile = ClassLoader.getSystemResource(
+			// "MARC21slim2OAIDC.xsl").getPath();
+
+			// TODO jar path
+			Transformer transformer = tFactory
+					.newTransformer(new StreamSource(ClassLoader
+							.getSystemResourceAsStream("MARC21slim2OAIDC.xsl")));
+			transformer.transform(new StreamSource(dtlBean.getMarcFile()),
+					new StreamResult(str));
+
+			String xmlStr = str.getBuffer().toString();
+			// logger.info(xmlStr);
+			DCBeanAnnotated dc = new DCBeanAnnotated(new DCBean(xmlStr));
+			return dc;
+
+		}
+		catch (Throwable t)
+		{
+			t.printStackTrace();
+		}
+		return null;
 	}
 
 	private void updateReports(DigitalEntity dtlBean)
