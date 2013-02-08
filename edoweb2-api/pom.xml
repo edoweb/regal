@@ -14,10 +14,27 @@
 
 	<name>edoweb2-api</name>
 
-
+	<repositories>
+		<repository>
+			<id>private</id>
+			<name>myprivaterepo</name>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>ignore</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<url>file://${project.basedir}/src/main/resources/repo</url>
+		</repository>
+	</repositories>
 	<dependencies>
 
-
+		<dependency>
+	<groupId>org.marc4j</groupId>
+	<artifactId>marc4j</artifactId>
+	<version>2.4</version>
+</dependency>
 
 		<dependency>
 			<groupId>de.nrw.hbz.edoweb2</groupId>

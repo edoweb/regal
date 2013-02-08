@@ -34,7 +34,7 @@ public class ObjectResource
 			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
-		String query = EJournalResource.getVolumeQuery(volName, pid);
+		String query = EJournal.getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
 
 		return actions.read(volumePid);
@@ -47,7 +47,7 @@ public class ObjectResource
 			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
-		String query = EJournalResource.getVolumeQuery(volName, pid);
+		String query = EJournal.getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
 		return actions.getView(volumePid, ObjectType.ejournalVolume);
 	}
@@ -59,7 +59,7 @@ public class ObjectResource
 			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
-		String query = EJournalResource.getVolumeQuery(volName, pid);
+		String query = EJournal.getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
 
 		return actions.readData(volumePid);
@@ -103,7 +103,7 @@ public class ObjectResource
 			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
-		String query = EJournalResource.getVolumeQuery(volName, pid);
+		String query = EJournal.getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
 		return actions.readDC(volumePid);
 	}
@@ -115,7 +115,7 @@ public class ObjectResource
 			@PathParam("volName") String volName)
 	{
 		String volumePid = null;
-		String query = EJournalResource.getVolumeQuery(volName, pid);
+		String query = EJournal.getVolumeQuery(volName, pid);
 		volumePid = actions.findSubject(query);
 		return actions.readMetadata(volumePid);
 	}
@@ -152,7 +152,7 @@ public class ObjectResource
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = WebpageResource.getVersionQuery(versionName, pid);
+		String query = Webpage.getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
 		return actions.readMetadata(versionPid);
 	}
@@ -164,7 +164,7 @@ public class ObjectResource
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = WebpageResource.getVersionQuery(versionName, pid);
+		String query = Webpage.getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
 		return actions.readDC(versionPid);
 	}
@@ -176,7 +176,7 @@ public class ObjectResource
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = WebpageResource.getVersionQuery(versionName, pid);
+		String query = Webpage.getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
 		return actions.readData(versionPid);
 	}
@@ -188,7 +188,7 @@ public class ObjectResource
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = WebpageResource.getVersionQuery(versionName, pid);
+		String query = Webpage.getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
 
 		return actions.read(versionPid);
@@ -201,7 +201,7 @@ public class ObjectResource
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = WebpageResource.getVersionQuery(versionName, pid);
+		String query = Webpage.getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
 		return actions.getView(versionPid, ObjectType.webpageVersion);
 	}
