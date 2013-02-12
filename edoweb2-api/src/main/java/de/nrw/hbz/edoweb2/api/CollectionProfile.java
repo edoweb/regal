@@ -1,5 +1,7 @@
 package de.nrw.hbz.edoweb2.api;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -9,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class CollectionProfile
 {
+	public String message = "";
 	public List<View> all;
 	public List<String> restricted = new Vector<String>();
 	public List<String> unrestricted = new Vector<String>();
@@ -20,7 +23,6 @@ public class CollectionProfile
 	public List<String> noCreator = new Vector<String>();
 	public List<String> noType = new Vector<String>();
 	public List<TypeObjectDictionary> types = new Vector<TypeObjectDictionary>();
-
 	private HashMap<String, List<String>> map = new HashMap<String, List<String>>();
 
 	public CollectionProfile()
@@ -34,7 +36,11 @@ public class CollectionProfile
 
 		for (View view : all)
 		{
-			Vector<String> rights = view.getRights();
+			if (view == null)
+			{
+				continue;
+			}
+
 			Vector<String> ddcs = view.getDdc();
 			Vector<String> urns = view.getUrn();
 			Vector<String> years = view.getYear();
@@ -42,38 +48,44 @@ public class CollectionProfile
 			Vector<String> creators = view.getCreator();
 			Vector<String> types = view.getType();
 
-			for (String right : rights)
-			{
-				if (right.compareTo("everyone") == 0)
+			Vector<String> rights = view.getRights();
+			if (rights != null)
+				for (String right : rights)
 				{
-					unrestricted.add(view.getUri());
+					if (right == null)
+						continue;
+					if (right.compareTo("everyone") == 0)
+					{
+						unrestricted.add(view.getUri());
+					}
+					else if (right.compareTo("restricted") == 0)
+					{
+						restricted.add(view.getUri());
+					}
+					else
+					{
+						noRight.add(view.getUri());
+					}
 				}
-				else if (right.compareTo("restricted") == 0)
-				{
-					restricted.add(view.getUri());
-				}
-				else
-				{
-					noRight.add(view.getUri());
-				}
-			}
 
-			if (ddcs.isEmpty())
+			if (ddcs == null || ddcs.isEmpty())
 				noDDC.add(view.getUri());
-			if (urns.isEmpty())
+			if (urns == null || urns.isEmpty())
 				noUrn.add(view.getUri());
-			if (years.isEmpty())
+			if (years == null || years.isEmpty())
 				noYear.add(view.getUri());
-			if (titles.isEmpty())
+			if (titles == null || titles.isEmpty())
 				noTitle.add(view.getUri());
-			if (creators.isEmpty())
+			if (creators == null || creators.isEmpty())
 				noCreator.add(view.getUri());
-			if (types.isEmpty())
+			if (types == null || types.isEmpty())
 				noType.add(view.getUri());
 			else
 			{
 				for (String type : types)
 				{
+					if (type == null)
+						continue;
 					List<String> uris = null;
 					if (map.containsKey(type))
 					{
@@ -92,9 +104,31 @@ public class CollectionProfile
 		}
 		for (String type : map.keySet())
 		{
+			if (type == null)
+				continue;
 			types.add(new TypeObjectDictionary(type, map.get(type)));
 		}
 
+		StringWriter strwrt = new StringWriter();
+		PrintWriter out = new PrintWriter(strwrt);
+
+		out.append("Number Of Elements: " + all.size() + " - ");
+		out.println("Restricted Objects: " + restricted.size() + " - ");
+		out.println("Unrestricted Objects: " + unrestricted.size() + " - ");
+		out.println("NoRights Objects: " + noRight.size() + " - ");
+		out.println("NoCreator Objects: " + noCreator.size() + " - ");
+		out.println("NoTitle Objects: " + noTitle.size() + " - ");
+		out.println("NoYear Objects: " + noYear.size() + " - ");
+		out.println("NoDDC Objects: " + noDDC.size() + " - ");
+		out.println("NoURN Objects: " + noUrn.size() + " - ");
+		out.println("NoType Objects: " + noType.size() + " - ");
+		out.println("Num of Types: " + types.size() + " - ");
+		for (TypeObjectDictionary type : types)
+		{
+			out.println(type.type + ": " + type.uris.size() + " - ");
+		}
+		out.close();
+		message = strwrt.getBuffer().toString();
 	}
 
 }

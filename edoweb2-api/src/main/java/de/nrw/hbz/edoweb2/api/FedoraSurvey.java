@@ -21,15 +21,20 @@ public class FedoraSurvey
 
 	public List<View> survey()
 	{
+		System.out.println("Hole alle pids");
 		List<String> pids = actions.getAll();
 		Vector<View> rows = new Vector<View>();
 
+		System.out.println("Hole infos für: " + pids.size() + " pids.");
+		int count = 0;
 		for (String pid : pids)
 		{
-			rows.add(actions.getView(pid));
+			System.out.println("Pid: " + (++count));
+			View view = actions.getView(pid);
+			if (view != null)
+				rows.add(view);
 		}
 
 		return rows;
 	}
-
 }
