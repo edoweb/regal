@@ -28,6 +28,14 @@ public class ObjectResource
 	Actions actions = new Actions();
 
 	@GET
+	@Path("/{pid}/data")
+	@Produces({ "application/*" })
+	public Response readData(@PathParam("pid") String pid)
+	{
+		return actions.readData(pid);
+	}
+
+	@GET
 	@Path("/{pid}/volume/{volName}")
 	@Produces({ "application/*" })
 	public StatusBean readVolume(@PathParam("pid") String pid,
