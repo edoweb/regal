@@ -45,11 +45,11 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-@Path("/report")
+@Path("/monograph")
 public class Monograph
 {
 	final static Logger logger = LoggerFactory.getLogger(Monograph.class);
-	ObjectType objectType = ObjectType.report;
+	ObjectType objectType = ObjectType.monograph;
 	String namespace = "edoweb";
 
 	Actions actions = new Actions();

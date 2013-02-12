@@ -903,10 +903,10 @@ public class Actions
 				{
 					return getView(node, ObjectType.webpage);
 				}
-				else if (t
-						.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
+				else if (t.compareTo("doc-type:"
+						+ ObjectType.monograph.toString()) == 0)
 				{
-					return getView(node, ObjectType.report);
+					return getView(node, ObjectType.monograph);
 				}
 			}
 
@@ -1136,9 +1136,9 @@ public class Actions
 			ObjectType type = null;
 			for (String t : node.getType())
 			{
-				if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
+				if (t.compareTo("doc-type:" + ObjectType.monograph.toString()) == 0)
 				{
-					type = ObjectType.report;
+					type = ObjectType.monograph;
 					break;
 				}
 				else if (t.compareTo("doc-type:"
@@ -1173,7 +1173,7 @@ public class Actions
 		String typePath = null;
 		for (String t : node.getType())
 		{
-			if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
+			if (t.compareTo("doc-type:" + ObjectType.monograph.toString()) == 0)
 			{
 				typePath = "objects";
 				break;
