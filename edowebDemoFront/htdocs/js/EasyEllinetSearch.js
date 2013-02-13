@@ -107,7 +107,7 @@ EasyEllinetSearch.prototype.request = function(myQuery,searchterm) {
 				var hasPart = source.hasPart;
 
 				if(title) {
-					$("#resultList").append("<li id=\"" + id + "\"><a href=\"" + objectUrl + "/about\">" + this.htmlEncode(title) + "</a><p class=\"metadata\" id=\""+index+"\"></p></li>");
+					$("#resultList").append("<li id=\"" + id + "\"><a href=\"" + objectUrl + "\">" + this.htmlEncode(title) + "</a><p class=\"metadata\" id=\""+index+"\"></p></li>");
 
 				} else {
 					$("#resultList").append("<li id=\"" + id + "\"><a href=\"" + objectUrl + "\">" + id + "</a><p class=\"metadata\" id=\""+index+"\"></p></li>");
