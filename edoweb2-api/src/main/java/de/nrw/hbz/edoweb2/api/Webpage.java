@@ -106,7 +106,7 @@ public class Webpage
 					.addCreator("WebpageRessource")
 					.addType(webpageType.toString()).addRights("me");
 
-			rootObject.addContentModel(ContentModelFactory.createReportCM(
+			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, webpageType));
 
 			ComplexObject object = new ComplexObject(rootObject);
@@ -199,7 +199,7 @@ public class Webpage
 					.addType(ObjectType.webpageVersion.toString())
 					.addRights("me");
 
-			rootObject.addContentModel(ContentModelFactory.createReportCM(
+			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, webpageType));
 
 			ComplexObject object = new ComplexObject(rootObject);

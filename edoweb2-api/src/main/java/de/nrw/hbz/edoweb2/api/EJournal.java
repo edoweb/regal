@@ -161,7 +161,7 @@ public class EJournal
 					.addCreator("EjournalRessource")
 					.addType(ejournalType.toString()).addRights("me");
 
-			rootObject.addContentModel(ContentModelFactory.createReportCM(
+			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, ejournalType));
 
 			ComplexObject object = new ComplexObject(rootObject);
@@ -269,7 +269,7 @@ public class EJournal
 					.addCreator("EjournalVolumeRessource")
 					.addType(volumeType.toString()).addRights("me");
 
-			rootObject.addContentModel(ContentModelFactory.createReportCM(
+			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, volumeType));
 
 			ComplexObject object = new ComplexObject(rootObject);

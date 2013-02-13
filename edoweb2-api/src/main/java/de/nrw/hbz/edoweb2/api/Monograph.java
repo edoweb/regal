@@ -40,7 +40,7 @@ import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 
 /**
- * /report/{pid}/[dc|metadata|data]
+ * /monograph/{pid}/[dc|metadata|data]
  * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
@@ -71,9 +71,9 @@ public class Monograph
 	@PUT
 	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public Response createReport(@PathParam("pid") String pid)
+	public Response createMonograph(@PathParam("pid") String pid)
 	{
-		logger.info("create Report");
+		logger.info("create Monograph");
 		try
 		{
 			if (actions.nodeExists(pid))
@@ -94,10 +94,10 @@ public class Monograph
 			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid)
-					.addCreator("ReportRessource")
+					.addCreator("MonographRessource")
 					.addType(objectType.toString()).addRights("me");
 
-			rootObject.addContentModel(ContentModelFactory.createReportCM(
+			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, objectType));
 
 			ComplexObject object = new ComplexObject(rootObject);
@@ -119,7 +119,7 @@ public class Monograph
 	// @Path("/{pid}")
 	// @Produces({ "application/json", "application/xml" })
 	// @Consumes({ "application/json", "application/xml" })
-	// public MessageBean updateReport(@PathParam("pid") String pid,
+	// public MessageBean updateMonograph(@PathParam("pid") String pid,
 	// StatusBean status)
 	// {
 	// return new MessageBean(actions.update(pid, status, false));
@@ -127,7 +127,7 @@ public class Monograph
 
 	@DELETE
 	@Path("/{pid}")
-	public MessageBean deleteReport(@PathParam("pid") String pid)
+	public MessageBean deleteMonograph(@PathParam("pid") String pid)
 	{
 		logger.info("DELETE");
 		actions.delete(pid, false);
@@ -138,7 +138,7 @@ public class Monograph
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public MessageBean updateReportDC(@PathParam("pid") String pid,
+	public MessageBean updateMonographDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
 		return new MessageBean(actions.updateDC(pid, content));
@@ -147,7 +147,7 @@ public class Monograph
 	@GET
 	@Path("/{pid}/data")
 	@Produces({ "application/*" })
-	public Response readReportData(@PathParam("pid") String pid)
+	public Response readMonographData(@PathParam("pid") String pid)
 	{
 		return actions.readData(pid);
 	}
@@ -156,7 +156,7 @@ public class Monograph
 	@Path("/{pid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public MessageBean updateReportData(@PathParam("pid") String pid,
+	public MessageBean updateMonographData(@PathParam("pid") String pid,
 			UploadDataBean content)
 	{
 		return new MessageBean(actions.updateData(pid, content));
@@ -164,7 +164,7 @@ public class Monograph
 
 	@GET
 	@Path("/{pid}/metadata")
-	public Response readReportMetadata(@PathParam("pid") String pid)
+	public Response readMonographMetadata(@PathParam("pid") String pid)
 	{
 		return actions.readMetadata(pid);
 	}
@@ -180,7 +180,7 @@ public class Monograph
 	// @GET
 	// @Path("/{pid}")
 	// @Produces({ "application/json", "application/xml" })
-	// public StatusBean readReport(@PathParam("pid") String pid)
+	// public StatusBean readMonograph(@PathParam("pid") String pid)
 	// {
 	// return actions.read(pid);
 	// }
@@ -196,14 +196,14 @@ public class Monograph
 	@GET
 	@Path("/{pid}/dc")
 	@Produces({ "application/xml", "application/json" })
-	public DCBeanAnnotated readReportDC(@PathParam("pid") String pid)
+	public DCBeanAnnotated readMonographDC(@PathParam("pid") String pid)
 	{
 		return actions.readDC(pid);
 	}
 
 	@POST
 	@Path("/{pid}/metadata")
-	public MessageBean updateReportMetadata(@PathParam("pid") String pid,
+	public MessageBean updateMonographMetadata(@PathParam("pid") String pid,
 			UploadDataBean content)
 	{
 		return new MessageBean(actions.updateMetadata(pid, content));

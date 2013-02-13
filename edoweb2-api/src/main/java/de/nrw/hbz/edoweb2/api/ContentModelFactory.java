@@ -24,7 +24,8 @@ import de.nrw.hbz.edoweb2.datatypes.ContentModel;
  */
 public class ContentModelFactory
 {
-	public static ContentModel createReportCM(String namespace, ObjectType type)
+	public static ContentModel createMonographCM(String namespace,
+			ObjectType type)
 	{
 		ContentModel cm = new ContentModel();
 		cm.setContentModelPID(namespace + ":" + type.toString() + "ObjectModel");

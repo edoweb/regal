@@ -785,7 +785,7 @@ public class Actions
 	{
 		if (type.compareTo("report") == 0)
 		{
-			return "Report";
+			return "Monograph";
 		}
 		if (type.compareTo("webpage") == 0)
 		{

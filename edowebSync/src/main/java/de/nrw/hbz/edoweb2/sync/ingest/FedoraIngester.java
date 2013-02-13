@@ -118,16 +118,16 @@ public class FedoraIngester implements IngestInterface
 			}
 			else if (partitionC.compareTo("WPD01") == 0)
 			{
-				logger.info(pid + ": start updating report (wpd01)");
-				updateReports(dtlBean);
-				logger.info(pid + ": end updating report (wpd01)");
+				logger.info(pid + ": start updating monograph (wpd01)");
+				updateMonographs(dtlBean);
+				logger.info(pid + ": end updating monograph (wpd01)");
 			}
 			else if (partitionC.compareTo("WPD02") == 0)
 			{
 
-				logger.info(pid + ": start updating report (wpd02)");
-				updateReportsNewStyle(dtlBean);
-				logger.info(pid + ": end updating report (wpd02)");
+				logger.info(pid + ": start updating monograph (wpd02)");
+				updateMonographsNewStyle(dtlBean);
+				logger.info(pid + ": end updating monograph (wpd02)");
 			}
 			else if (partitionC.compareTo("WSC01") == 0)
 			{
@@ -205,7 +205,7 @@ public class FedoraIngester implements IngestInterface
 		return null;
 	}
 
-	private void updateReports(DigitalEntity dtlBean)
+	private void updateMonographs(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -213,12 +213,13 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource report = c.resource(host + ":8080/edoweb2-api/report/"
-				+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource monograph = c.resource(host
+				+ ":8080/edoweb2-api/monograph/" + edowebNamespace + ":"
+				+ dtlBean.getPid());
 		try
 		{
 			String request = "content";
-			String response = report.put(String.class, request);
+			String response = monograph.put(String.class, request);
 		}
 		catch (Exception e)
 		{
@@ -228,10 +229,11 @@ public class FedoraIngester implements IngestInterface
 		try
 		{
 
-			WebResource reportDC = c.resource(report.toString() + "/dc");
-			WebResource reportData = c.resource(report.toString() + "/data");
-			// WebResource reportMetadata = c
-			// .resource(report.toString() + "/metadata");
+			WebResource monographDC = c.resource(monograph.toString() + "/dc");
+			WebResource monographData = c.resource(monograph.toString()
+					+ "/data");
+			// WebResource monographMetadata = c
+			// .resource(monograph.toString() + "/metadata");
 
 			UploadDataBean data = new UploadDataBean();
 			try
@@ -242,7 +244,7 @@ public class FedoraIngester implements IngestInterface
 				String fragment = "";
 				data.path = new URI(protocol, host, path, fragment);
 				data.mime = "application/pdf";
-				reportData.post(data);
+				monographData.post(data);
 			}
 			catch (URISyntaxException e)
 			{
@@ -256,7 +258,7 @@ public class FedoraIngester implements IngestInterface
 				dc.addType(TypeType.contentType.toString() + ":"
 						+ ObjectType.monograph.toString());
 				dc.addDescription(dtlBean.getLabel());
-				reportDC.post(dc);
+				monographDC.post(dc);
 			}
 			catch (Exception e)
 			{
@@ -269,7 +271,7 @@ public class FedoraIngester implements IngestInterface
 		}
 	}
 
-	private void updateReportsNewStyle(DigitalEntity dtlBean)
+	private void updateMonographsNewStyle(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -277,12 +279,13 @@ public class FedoraIngester implements IngestInterface
 		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
-		WebResource report = c.resource(host + ":8080/edoweb2-api/report/"
-				+ edowebNamespace + ":" + dtlBean.getPid());
+		WebResource monograph = c.resource(host
+				+ ":8080/edoweb2-api/monograph/" + edowebNamespace + ":"
+				+ dtlBean.getPid());
 		try
 		{
 			String request = "content";
-			String response = report.put(String.class, request);
+			String response = monograph.put(String.class, request);
 		}
 		catch (Exception e)
 		{
@@ -291,10 +294,11 @@ public class FedoraIngester implements IngestInterface
 		try
 		{
 
-			WebResource reportDC = c.resource(report.toString() + "/dc");
-			WebResource reportData = c.resource(report.toString() + "/data");
-			// WebResource reportMetadata = c
-			// .resource(report.toString() + "/metadata");
+			WebResource monographDC = c.resource(monograph.toString() + "/dc");
+			WebResource monographData = c.resource(monograph.toString()
+					+ "/data");
+			// WebResource monographMetadata = c
+			// .resource(monograph.toString() + "/metadata");
 			DigitalEntity fulltextObject = null;
 			for (DigitalEntity view : dtlBean.getViewLinks())
 			{
@@ -316,7 +320,7 @@ public class FedoraIngester implements IngestInterface
 					String fragment = "";
 					data.path = new URI(protocol, host, path, fragment);
 					data.mime = "application/pdf";
-					reportData.post(data);
+					monographData.post(data);
 				}
 				catch (URISyntaxException e)
 				{
@@ -331,7 +335,7 @@ public class FedoraIngester implements IngestInterface
 				dc.addType(TypeType.contentType.toString() + ":"
 						+ ObjectType.monograph.toString());
 				dc.addDescription(dtlBean.getLabel());
-				reportDC.post(dc);
+				monographDC.post(dc);
 			}
 			catch (Exception e)
 			{
@@ -696,7 +700,7 @@ public class FedoraIngester implements IngestInterface
 		delete.delete();
 
 		// delete = c
-		// .resource(host+":8080/edoweb2-api/edowebAdmin/delete/oai:report");
+		// .resource(host+":8080/edoweb2-api/edowebAdmin/delete/oai:monograph");
 		//
 		// delete.delete();
 		//
