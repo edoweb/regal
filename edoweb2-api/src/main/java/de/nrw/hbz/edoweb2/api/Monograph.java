@@ -64,7 +64,8 @@ public class Monograph
 	public MessageBean deleteAll()
 	{
 		return new MessageBean(actions.deleteAll(
-				actions.findByType("doc-type:" + objectType.toString()), false));
+				actions.findByType(TypeType.contentType.toString() + ":"
+						+ objectType.toString()), false));
 	}
 
 	@PUT
@@ -172,8 +173,8 @@ public class Monograph
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return new ObjectList(actions.findByType("doc-type:"
-				+ objectType.toString()));
+		return new ObjectList(actions.findByType(TypeType.contentType
+				.toString() + ":" + objectType.toString()));
 	}
 
 	@GET

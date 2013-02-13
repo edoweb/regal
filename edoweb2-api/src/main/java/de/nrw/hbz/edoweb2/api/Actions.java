@@ -672,13 +672,14 @@ public class Actions
 			if (node.getType() != null)
 				for (String type : node.getType())
 				{
-					if (type.startsWith("doc-type"))
+					if (type.startsWith("content-type"))
 					{
 						String docType = type.substring(9);
 						logger.info("Found docType: " + docType);
 
 						String name = docmap(docType);
-						String spec = "doc-type:" + docType;
+						String spec = TypeType.contentType.toString() + ":"
+								+ docType;
 						String namespace = "oai";
 						String oaipid = namespace + ":" + docType;
 						if (!this.nodeExists(oaipid))
@@ -894,16 +895,17 @@ public class Actions
 
 			for (String t : types)
 			{
-				if (t.compareTo("doc-type:" + ObjectType.ejournal.toString()) == 0)
+				if (t.compareTo(TypeType.contentType.toString() + ":"
+						+ ObjectType.ejournal.toString()) == 0)
 				{
 					return getView(node, ObjectType.ejournal);
 				}
-				else if (t.compareTo("doc-type:"
+				else if (t.compareTo(TypeType.contentType.toString() + ":"
 						+ ObjectType.webpage.toString()) == 0)
 				{
 					return getView(node, ObjectType.webpage);
 				}
-				else if (t.compareTo("doc-type:"
+				else if (t.compareTo(TypeType.contentType.toString() + ":"
 						+ ObjectType.monograph.toString()) == 0)
 				{
 					return getView(node, ObjectType.monograph);
@@ -1136,18 +1138,19 @@ public class Actions
 			ObjectType type = null;
 			for (String t : node.getType())
 			{
-				if (t.compareTo("doc-type:" + ObjectType.monograph.toString()) == 0)
+				if (t.compareTo(TypeType.contentType.toString() + ":"
+						+ ObjectType.monograph.toString()) == 0)
 				{
 					type = ObjectType.monograph;
 					break;
 				}
-				else if (t.compareTo("doc-type:"
+				else if (t.compareTo(TypeType.contentType.toString() + ":"
 						+ ObjectType.ejournal.toString()) == 0)
 				{
 					type = ObjectType.ejournal;
 					break;
 				}
-				else if (t.compareTo("doc-type:"
+				else if (t.compareTo(TypeType.contentType.toString() + ":"
 						+ ObjectType.webpage.toString()) == 0)
 				{
 					type = ObjectType.webpage;
@@ -1173,17 +1176,20 @@ public class Actions
 		String typePath = null;
 		for (String t : node.getType())
 		{
-			if (t.compareTo("doc-type:" + ObjectType.monograph.toString()) == 0)
+			if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.monograph.toString()) == 0)
 			{
 				typePath = "objects";
 				break;
 			}
-			else if (t.compareTo("doc-type:" + ObjectType.ejournal.toString()) == 0)
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.ejournal.toString()) == 0)
 			{
 				typePath = "objects";
 				break;
 			}
-			else if (t.compareTo("doc-type:" + ObjectType.webpage.toString()) == 0)
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.webpage.toString()) == 0)
 			{
 				typePath = "objects";
 				break;

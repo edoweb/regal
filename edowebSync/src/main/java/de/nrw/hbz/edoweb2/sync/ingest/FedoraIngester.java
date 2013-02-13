@@ -39,6 +39,7 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 
 import de.nrw.hbz.edoweb2.api.DCBeanAnnotated;
 import de.nrw.hbz.edoweb2.api.ObjectType;
+import de.nrw.hbz.edoweb2.api.TypeType;
 import de.nrw.hbz.edoweb2.api.UploadDataBean;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
@@ -252,7 +253,8 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType("doc-type:" + ObjectType.report.toString());
+				dc.addType(TypeType.contentType.toString() + ":"
+						+ ObjectType.monograph.toString());
 				dc.addDescription(dtlBean.getLabel());
 				reportDC.post(dc);
 			}
@@ -326,7 +328,8 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType("doc-type:" + ObjectType.report.toString());
+				dc.addType(TypeType.contentType.toString() + ":"
+						+ ObjectType.monograph.toString());
 				dc.addDescription(dtlBean.getLabel());
 				reportDC.post(dc);
 			}
@@ -370,7 +373,8 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType("doc-type:" + ObjectType.ejournal.toString());
+				dc.addType(TypeType.contentType.toString() + ":"
+						+ ObjectType.ejournal.toString());
 				ejournalDC.post(dc);
 			}
 			catch (Exception e)
@@ -479,7 +483,8 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
-				dc.addType("doc-type:" + ObjectType.webpage.toString());
+				dc.addType(TypeType.contentType.toString() + ":"
+						+ ObjectType.webpage.toString());
 
 				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
@@ -595,7 +600,8 @@ public class FedoraIngester implements IngestInterface
 			{
 				DCBeanAnnotated dc = marc2dc(dtlBean);
 
-				dc.addType("doc-type:" + ObjectType.webpage.toString());
+				dc.addType(TypeType.contentType.toString() + ":"
+						+ ObjectType.webpage.toString());
 				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
 				title = dc.getFirstTitle();

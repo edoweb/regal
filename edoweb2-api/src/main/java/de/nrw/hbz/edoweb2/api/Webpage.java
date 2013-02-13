@@ -71,8 +71,8 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public MessageBean deleteAll()
 	{
-		String eJournal = actions
-				.deleteAll(actions.findByType("doc-type:"
+		String eJournal = actions.deleteAll(
+				actions.findByType(TypeType.contentType.toString() + ":"
 						+ webpageType.toString()), false);
 		String eJournalVolume = actions.deleteAll(
 				actions.findByType(webpageVersionType.toString()), false);
@@ -362,8 +362,8 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return new ObjectList(actions.findByType("doc-type:"
-				+ webpageType.toString()));
+		return new ObjectList(actions.findByType(TypeType.contentType
+				.toString() + ":" + webpageType.toString()));
 	}
 
 	@GET
