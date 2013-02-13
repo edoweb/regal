@@ -68,8 +68,8 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return new ObjectList(actions.findByType("-type:"
-				+ ejournalType.toString()));
+		return new ObjectList(actions.findByType(TypeType.contentType
+				.toString() + ":" + ejournalType.toString()));
 	}
 
 	@DELETE
