@@ -135,15 +135,15 @@ public class ObjectResource
 		return actions.readMetadata(pid);
 	}
 
-	@GET
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public StatusBean read(@PathParam("pid") String pid,
-			@PathParam("namespace") String userNamespace)
-	{
-
-		return actions.read(namespace + ":" + pid);
-	}
+	// @GET
+	// @Path("/{namespace}:{pid}")
+	// @Produces({ "application/json", "application/xml" })
+	// public StatusBean read(@PathParam("pid") String pid,
+	// @PathParam("namespace") String userNamespace)
+	// {
+	//
+	// return actions.read(namespace + ":" + pid);
+	// }
 
 	@GET
 	@Path("/{pid}/dc")

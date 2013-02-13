@@ -125,15 +125,15 @@ public class Webpage
 				.entity(msg).build();
 	}
 
-	@POST
-	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
-	public MessageBean updateWebpage(@PathParam("pid") String pid,
-			StatusBean status)
-	{
-		return new MessageBean(actions.update(pid, status, false));
-	}
+	// @POST
+	// @Path("/{pid}")
+	// @Produces({ "application/json", "application/xml" })
+	// @Consumes({ "application/json", "application/xml" })
+	// public MessageBean updateWebpage(@PathParam("pid") String pid,
+	// StatusBean status)
+	// {
+	// return new MessageBean(actions.update(pid, status, false));
+	// }
 
 	@DELETE
 	@Path("/{pid}")

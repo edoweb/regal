@@ -161,27 +161,27 @@ public class Actions
 		return object.getRoot().getPID() + " CREATED!";
 	}
 
-	public String update(String pid, StatusBean status, boolean wait)
-	{
-		try
-		{
-			Node node = archive.readNode(pid);
-			if (node != null)
-			{
-				Vector<String> v = new Vector<String>();
-				v.add(status.visibleFor.toString());
-				node.setRights(v);
-				archive.updateNode(pid, node);
-				if (wait)
-					waitWorkaround();
-			}
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return "update";
-	}
+	// public String update(String pid, StatusBean status, boolean wait)
+	// {
+	// try
+	// {
+	// Node node = archive.readNode(pid);
+	// if (node != null)
+	// {
+	// Vector<String> v = new Vector<String>();
+	// v.add(status.visibleFor.toString());
+	// node.setRights(v);
+	// archive.updateNode(pid, node);
+	// if (wait)
+	// waitWorkaround();
+	// }
+	// }
+	// catch (RemoteException e)
+	// {
+	// e.printStackTrace();
+	// }
+	// return "update";
+	// }
 
 	public String delete(String pid, boolean wait)
 	{
@@ -283,19 +283,19 @@ public class Actions
 		return pids;
 	}
 
-	public StatusBean read(String pid)
-	{
-		try
-		{
-			Node object = archive.readObject(pid);
-			return new StatusBean(object);
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
-	}
+	// public StatusBean read(String pid)
+	// {
+	// try
+	// {
+	// Node object = archive.readObject(pid);
+	// return new StatusBean(object);
+	// }
+	// catch (RemoteException e)
+	// {
+	// e.printStackTrace();
+	// }
+	// return null;
+	// }
 
 	public Response readData(String pid)
 	{

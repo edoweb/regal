@@ -102,16 +102,16 @@ public class EJournal
 		return actions.getView(namespace + ":" + pid, ObjectType.ejournal);
 	}
 
-	@POST
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
-	public MessageBean updateEJournal(@PathParam("pid") String pid,
-			StatusBean status, @PathParam("namespace") String userNamespace)
-	{
-		return new MessageBean(actions.update(namespace + ":" + pid, status,
-				false));
-	}
+	// @POST
+	// @Path("/{namespace}:{pid}")
+	// @Produces({ "application/json", "application/xml" })
+	// @Consumes({ "application/json", "application/xml" })
+	// public MessageBean updateEJournal(@PathParam("pid") String pid,
+	// StatusBean status, @PathParam("namespace") String userNamespace)
+	// {
+	// return new MessageBean(actions.update(namespace + ":" + pid, status,
+	// false));
+	// }
 
 	@DELETE
 	@Path("/{namespace}:{pid}")
