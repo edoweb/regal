@@ -33,7 +33,7 @@ public class ComplexObject
 		root.getMe().setNodeType(TYPE_OBJECT);
 		Link link = new Link();
 		link.setPredicate(REL_IS_NODE_TYPE);
-		link.setObject(TYPE_OBJECT, true);
+		link.setObject(TYPE_OBJECT, false);
 		root.getMe().addRelation(link);
 	}
 
@@ -50,7 +50,7 @@ public class ComplexObject
 		root.getMe().setNodeType(TYPE_OBJECT);
 		Link link = new Link();
 		link.setPredicate(REL_IS_NODE_TYPE);
-		link.setObject(TYPE_OBJECT, true);
+		link.setObject(TYPE_OBJECT, false);
 		root.getMe().addRelation(link);
 
 	}

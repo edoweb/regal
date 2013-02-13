@@ -36,6 +36,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -160,27 +161,27 @@ public class Actions
 		return object.getRoot().getPID() + " CREATED!";
 	}
 
-	public String update(String pid, StatusBean status, boolean wait)
-	{
-		try
-		{
-			Node node = archive.readNode(pid);
-			if (node != null)
-			{
-				Vector<String> v = new Vector<String>();
-				v.add(status.visibleFor.toString());
-				node.setRights(v);
-				archive.updateNode(pid, node);
-				if (wait)
-					waitWorkaround();
-			}
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return "update";
-	}
+	// public String update(String pid, StatusBean status, boolean wait)
+	// {
+	// try
+	// {
+	// Node node = archive.readNode(pid);
+	// if (node != null)
+	// {
+	// Vector<String> v = new Vector<String>();
+	// v.add(status.visibleFor.toString());
+	// node.setRights(v);
+	// archive.updateNode(pid, node);
+	// if (wait)
+	// waitWorkaround();
+	// }
+	// }
+	// catch (RemoteException e)
+	// {
+	// e.printStackTrace();
+	// }
+	// return "update";
+	// }
 
 	public String delete(String pid, boolean wait)
 	{
@@ -282,19 +283,19 @@ public class Actions
 		return pids;
 	}
 
-	public StatusBean read(String pid)
-	{
-		try
-		{
-			Node object = archive.readObject(pid);
-			return new StatusBean(object);
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
-	}
+	// public StatusBean read(String pid)
+	// {
+	// try
+	// {
+	// Node object = archive.readObject(pid);
+	// return new StatusBean(object);
+	// }
+	// catch (RemoteException e)
+	// {
+	// e.printStackTrace();
+	// }
+	// return null;
+	// }
 
 	public Response readData(String pid)
 	{
@@ -671,13 +672,14 @@ public class Actions
 			if (node.getType() != null)
 				for (String type : node.getType())
 				{
-					if (type.startsWith("doc-type"))
+					if (type.startsWith("content-type"))
 					{
 						String docType = type.substring(9);
 						logger.info("Found docType: " + docType);
 
 						String name = docmap(docType);
-						String spec = "doc-type:" + docType;
+						String spec = TypeType.contentType.toString() + ":"
+								+ docType;
 						String namespace = "oai";
 						String oaipid = namespace + ":" + docType;
 						if (!this.nodeExists(oaipid))
@@ -742,16 +744,31 @@ public class Actions
 
 	void linkObjectToOaiSet(Node node, String spec, String pid)
 	{
+		Vector<Link> relations = node.getRelsExt();
 
+		Iterator<Link> iter = relations.iterator();
+		while (iter.hasNext())
+		{
+
+			String pred = iter.next().getPredicate();
+			// System.out.println(pred);
+			// logger.info(pred);
+			if (pred.compareTo(IS_MEMBER_OF) == 0)
+				iter.remove();
+			else if (pred.compareTo(ITEM_ID) == 0)
+				iter.remove();
+		}
 		Link link = new Link();
 		link.setPredicate(IS_MEMBER_OF);
 		link.setObject("info:fedora/" + pid, false);
-		node.addRelation(link);
+		relations.add(link);
 
 		link = new Link();
 		link.setPredicate(ITEM_ID);
-		link.setObject(getURI(node), true);
-		node.addRelation(link);
+		link.setObject(getURI(node), false);
+		relations.add(link);
+
+		node.setRelsExt(relations);
 		try
 		{
 			archive.updateNode(node.getPID(), node);
@@ -768,7 +785,7 @@ public class Actions
 	{
 		if (type.compareTo("report") == 0)
 		{
-			return "Report";
+			return "Monograph";
 		}
 		if (type.compareTo("webpage") == 0)
 		{
@@ -820,27 +837,22 @@ public class Actions
 		}
 		catch (MalformedURLException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (HttpException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (ParserConfigurationException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (SAXException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -855,7 +867,6 @@ public class Actions
 		{
 			result.append(pid + "\n");
 			archive.deleteNode(pid);
-
 		}
 		objects = archive.findNodes("edoweb:*");
 		for (String pid : objects)
@@ -870,6 +881,43 @@ public class Actions
 			archive.deleteNode(pid);
 		}
 		return result.toString();
+	}
+
+	public View getView(String pid)
+	{
+		try
+		{
+			Node node = archive.readNode(pid);
+			if (node == null)
+				return null;
+
+			Vector<String> types = node.getType();
+
+			for (String t : types)
+			{
+				if (t.compareTo(TypeType.contentType.toString() + ":"
+						+ ObjectType.ejournal.toString()) == 0)
+				{
+					return getView(node, ObjectType.ejournal);
+				}
+				else if (t.compareTo(TypeType.contentType.toString() + ":"
+						+ ObjectType.webpage.toString()) == 0)
+				{
+					return getView(node, ObjectType.webpage);
+				}
+				else if (t.compareTo(TypeType.contentType.toString() + ":"
+						+ ObjectType.monograph.toString()) == 0)
+				{
+					return getView(node, ObjectType.monograph);
+				}
+			}
+
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public View getView(String pid, ObjectType type)
@@ -888,7 +936,6 @@ public class Actions
 		}
 		catch (RemoteException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -995,24 +1042,24 @@ public class Actions
 
 		for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
 		{
-			String relUrl = fedoraExtern + "objects/" + relPid;
+			String relUrl = serverName + "/objects/" + relPid;
 
-			if (type == ObjectType.ejournalVolume)
-			{
-				relUrl = serverName + "/ejournal/" + relPid;
-			}
-
-			if (type == ObjectType.webpageVersion)
-			{
-				relUrl = serverName + "/webpage/" + relPid;
-			}
+			// if (type == ObjectType.ejournalVolume)
+			// {
+			// relUrl = serverName + "/ejournal/" + relPid;
+			// }
+			//
+			// if (type == ObjectType.webpageVersion)
+			// {
+			// relUrl = serverName + "/webpage/" + relPid;
+			// }
 
 			view.addIsPartOf(relUrl);
 		}
 
 		for (String relPid : findObject(pid, REL_IS_RELATED))
 		{
-			String relUrl = fedoraExtern + "objects/" + relPid;
+			String relUrl = serverName + "/objects/" + relPid;
 
 			if (type == ObjectType.ejournal)
 			{
@@ -1091,18 +1138,19 @@ public class Actions
 			ObjectType type = null;
 			for (String t : node.getType())
 			{
-				if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
+				if (t.compareTo(TypeType.contentType.toString() + ":"
+						+ ObjectType.monograph.toString()) == 0)
 				{
-					type = ObjectType.report;
+					type = ObjectType.monograph;
 					break;
 				}
-				else if (t.compareTo("doc-type:"
+				else if (t.compareTo(TypeType.contentType.toString() + ":"
 						+ ObjectType.ejournal.toString()) == 0)
 				{
 					type = ObjectType.ejournal;
 					break;
 				}
-				else if (t.compareTo("doc-type:"
+				else if (t.compareTo(TypeType.contentType.toString() + ":"
 						+ ObjectType.webpage.toString()) == 0)
 				{
 					type = ObjectType.webpage;
@@ -1128,36 +1176,33 @@ public class Actions
 		String typePath = null;
 		for (String t : node.getType())
 		{
-			if (t.compareTo("doc-type:" + ObjectType.report.toString()) == 0)
+			if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.monograph.toString()) == 0)
 			{
-
-				typePath = "report";
+				typePath = "objects";
 				break;
 			}
-			else if (t.compareTo("doc-type:" + ObjectType.ejournal.toString()) == 0)
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.ejournal.toString()) == 0)
 			{
-
-				typePath = "ejournal";
+				typePath = "objects";
 				break;
 			}
-			else if (t.compareTo("doc-type:" + ObjectType.webpage.toString()) == 0)
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.webpage.toString()) == 0)
 			{
-
-				typePath = "webpage";
+				typePath = "objects";
 				break;
 			}
 			else if (t.compareTo(ObjectType.webpageVersion.toString()) == 0)
 			{
-
-				typePath = "webpage";
+				typePath = "objects";
 				return serverName + "/" + typePath + "/" + getWebpagePid(node)
 						+ "/version/" + getVersionName(node);
-
 			}
 			else if (t.compareTo(ObjectType.ejournalVolume.toString()) == 0)
 			{
-
-				typePath = "ejournal";
+				typePath = "objects";
 				return serverName + "/" + typePath + "/" + getJournalPid(node)
 						+ "/volume/" + getVolumeName(node);
 			}
@@ -1187,6 +1232,11 @@ public class Actions
 	private String getWebpagePid(Node node)
 	{
 		return findObject(node.getPID(), IS_VERSION).firstElement();
+	}
+
+	public List<String> getAll()
+	{
+		return archive.findNodes("edoweb:*");
 	}
 
 }

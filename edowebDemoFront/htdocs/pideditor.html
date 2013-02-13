@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>Ellinet Editor</title>
+		<script type="text/javascript" src="js/jquery-1.7.2.js"></script>
+		<script type="text/javascript" src="js/EasyEllinetEditor.js"></script>
+		<link href="http://ares.hbz-nrw.de/ellinet/style.css" rel="stylesheet" type="text/css">
+		<style>
+			.searchform {
+
+			}
+			#outputDiv {
+				white-space: pre;
+				font-family: monospace;//
+				font-size: 0.8em;
+			}
+			#queryDiv {
+				white-space: pre;
+				font-family: monospace;
+				font-size: 0.8em;
+			}
+			#debugDiv {
+				white-space: pre;
+				font-family: monospace;
+				font-size: 0.8em;
+				visibility: hidden;
+			}
+			#queryForm {
+				visibility: hidden;
+			}
+			.keyInput {
+				width: 400px;
+			}
+			.valInput {
+				width: 400px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<p>
+			<img src="http://10.8.1.10/ELLINET/img/logo.gif"></img>
+		<p>
+			<div class="selectPid">
+				Edit Pid:
+				<input type="text" id="pid" />
+				<input value="find" id="go" type="button">
+			</div>
+		</p>
+		<p>
+			<div class="formContainer"></div>
+		</p>
+		<p>
+			<div class="buttonsContainer"></div>
+		</p>
+		</p>
+		<script type="text/javascript">
+			function getUrlVars() {
+				var vars = [], hash;
+				var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+				for(var i = 0; i < hashes.length; i++) {
+					hash = hashes[i].split('=');
+					vars.push(hash[0]);
+					vars[hash[0]] = hash[1];
+				}
+				return vars;
+			}
+
+			elli = new EasyEllinetEditor();
+			pid=getUrlVars()["pid"];
+			//elli.insertPropertyPanel(1, "Hello", "World");
+			elli.read(pid);
+			$("#pid").val(pid);
+			elli.catchEvents();
+		</script>
+	</body>
+</html>

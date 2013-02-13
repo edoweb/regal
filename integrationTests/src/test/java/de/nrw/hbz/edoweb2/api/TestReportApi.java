@@ -74,9 +74,9 @@ public class TestReportApi
 		c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
 				properties.getProperty("password")));
 
-		WebResource reports = c.resource(properties.getProperty("apiUrl")
-				+ "/report/");
-		WebResource myReport = c.resource(reports.toString() + "test:123");
+		WebResource monographs = c.resource(properties.getProperty("apiUrl")
+				+ "/monograph/");
+		WebResource myReport = c.resource(monographs.toString() + "test:123");
 		WebResource myReportData = c.resource(myReport.toString() + "/data");
 		WebResource myReportMetadata = c.resource(myReport.toString()
 				+ "/metadata");
@@ -84,10 +84,10 @@ public class TestReportApi
 
 		// --------------Clean up--------------------
 		{
-			String response = reports.delete(String.class);
+			String response = monographs.delete(String.class);
 			waitWorkaround();
 			System.out.println(response);
-			ObjectList list = reports.get(ObjectList.class);
+			ObjectList list = monographs.get(ObjectList.class);
 			Assert.assertTrue(list.getList().isEmpty());
 		}
 
@@ -95,7 +95,7 @@ public class TestReportApi
 		String response = myReport.put(String.class, request);
 
 		System.out.println(response);
-		ObjectList list = reports.get(ObjectList.class);
+		ObjectList list = monographs.get(ObjectList.class);
 		Assert.assertEquals("test:123", list.getList().get(0));
 
 		try
@@ -140,10 +140,10 @@ public class TestReportApi
 
 		}
 
-		response = reports.delete(String.class);
+		response = monographs.delete(String.class);
 		waitWorkaround();
 		System.out.println(response);
-		list = reports.get(ObjectList.class);
+		list = monographs.get(ObjectList.class);
 		Assert.assertTrue(list.getList().isEmpty());
 	}
 

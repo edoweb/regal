@@ -90,7 +90,7 @@ public class DCBeanAnnotated
 		identifier = node.getIdentifier();
 		language = node.getLanguage();
 		publisher = node.getPublisher();
-		relation = node.getRelation();
+		relation = node.getDCRelation();
 		rights = node.getRights();
 		source = node.getSource();
 		subject = node.getSubject();

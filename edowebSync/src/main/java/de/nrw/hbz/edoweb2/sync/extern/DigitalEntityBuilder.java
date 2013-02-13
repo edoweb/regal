@@ -32,6 +32,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -52,6 +54,9 @@ import org.xml.sax.SAXException;
  */
 public class DigitalEntityBuilder
 {
+
+	final static Logger logger = LoggerFactory
+			.getLogger(DigitalEntityBuilder.class);
 	String baseDir = null;
 
 	public DigitalEntityBuilder()
@@ -60,19 +65,29 @@ public class DigitalEntityBuilder
 	}
 
 	public DigitalEntity buildComplexBean(String baseDir, String pid)
+			throws Exception
 	{
 		this.baseDir = baseDir;
 		Element root = getDocument(pid);
+		if (root == null)
+		{
+			logger.error("Not able to download related files. XML parsing error: "
+					+ pid);
+			throw new Exception(
+					"Not able to download related files. XML parsing error: "
+							+ pid);
+		}
 		return buildComplexBean(root);
 	}
 
 	public DigitalEntity buildComplexBean(String baseDir, Element root)
+			throws Exception
 	{
 		this.baseDir = baseDir;
 		return buildComplexBean(root);
 	}
 
-	private DigitalEntity buildComplexBean(Element root)
+	private DigitalEntity buildComplexBean(Element root) throws Exception
 	{
 		DigitalEntity dtlDe = null;
 
@@ -93,7 +108,12 @@ public class DigitalEntityBuilder
 					.getTextContent();
 
 			Element relRoot = getDocument(relPid);
-
+			if (relRoot == null)
+			{
+				logger.error("Not able to download related files. XML parsing error: "
+						+ pid);
+				return null;
+			}
 			if (type.compareTo(DigitalEntity.MANIFESTATION) == 0)
 			{
 				DigitalEntity b = buildSimpleBean(relPid, usageType, relRoot);
@@ -183,6 +203,10 @@ public class DigitalEntityBuilder
 		catch (ParserConfigurationException e)
 		{
 
+			e.printStackTrace();
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 		return null;

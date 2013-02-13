@@ -21,5 +21,5 @@ package de.nrw.hbz.edoweb2.api;
  * 
  */
 public enum ObjectType {
-	report, wpd, ejournal, ejournalVolume, ejo, webpage, wsc, webpageVersion
+	monograph, wpd, ejournal, ejournalVolume, ejo, webpage, wsc, webpageVersion
 }

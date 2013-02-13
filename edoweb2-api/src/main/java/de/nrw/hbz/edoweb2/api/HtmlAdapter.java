@@ -1,10 +1,19 @@
 package de.nrw.hbz.edoweb2.api;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -15,6 +24,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
 
 public class HtmlAdapter
 {
@@ -305,11 +315,12 @@ public class HtmlAdapter
 
 				td1.appendChild(doc.createTextNode(fieldName));
 
+				String description = getDescription(str);
 				Element link = doc.createElement("a");
-				link.setAttribute("href", str + "/about");
+				link.setAttribute("href", str);
 				link.setAttribute("class", "relationLink");
-				link.appendChild(doc.createTextNode(str.substring(str
-						.lastIndexOf('/') + 1)));
+				link.appendChild(doc.createTextNode(description + " ("
+						+ str.substring(str.lastIndexOf('/') + 1) + ")"));
 				td2.appendChild(link);
 				td2.setAttribute("class", "relation");
 				tr.appendChild(td1);
@@ -393,5 +404,122 @@ public class HtmlAdapter
 				table.appendChild(tr);
 			}
 		}
+	}
+
+	private static String getDescription(String str)
+	{
+		BufferedInputStream in = null;
+		ByteArrayOutputStream out = null;
+		try
+		{
+			URL url = new URL(str + "/dc");
+
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setInstanceFollowRedirects(true);
+
+			in = new BufferedInputStream(con.getInputStream());
+			out = new ByteArrayOutputStream();
+			byte[] buf = new byte[1024];
+			int n;
+			while ((n = in.read(buf)) != -1)
+			{
+				out.write(buf, 0, n);
+			}
+			Element dc = getDocument(out.toString("utf-8"));
+			String description = null;
+			try
+			{
+				description = dc.getElementsByTagName("description").item(0)
+						.getTextContent();
+				return description;
+			}
+			catch (Exception e)
+			{
+
+			}
+			return description;
+
+		}
+		catch (FileNotFoundException e)
+		{
+
+		}
+		catch (MalformedURLException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (out != null)
+					out.close();
+				if (in != null)
+					in.close();
+			}
+			catch (IOException e)
+			{
+
+			}
+		}
+		return null;
+	}
+
+	private static Element getDocument(String xmlString)
+			throws NullPointerException
+	{
+		if (xmlString.isEmpty() || xmlString == null)
+			throw new NullPointerException("HTMLAdapter: XMLString is null!");
+		try
+		{
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder docBuilder;
+			factory.setNamespaceAware(true);
+			factory.setExpandEntityReferences(false);
+			docBuilder = factory.newDocumentBuilder();
+
+			Document doc;
+
+			doc = docBuilder.parse(new BufferedInputStream(
+					new ByteArrayInputStream(xmlString.getBytes())));
+			Element root = doc.getDocumentElement();
+			root.normalize();
+			return root;
+
+		}
+		catch (FileNotFoundException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (SAXException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (ParserConfigurationException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (Exception e)
+		{
+
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 }
