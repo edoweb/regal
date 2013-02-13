@@ -319,8 +319,8 @@ public class HtmlAdapter
 				Element link = doc.createElement("a");
 				link.setAttribute("href", str + "/about");
 				link.setAttribute("class", "relationLink");
-				link.appendChild(doc.createTextNode(str.substring(str
-						.lastIndexOf('/') + 1) + "(" + description + ")"));
+				link.appendChild(doc.createTextNode(description + " ("
+						+ str.substring(str.lastIndexOf('/') + 1) + ")"));
 				td2.appendChild(link);
 				td2.setAttribute("class", "relation");
 				tr.appendChild(td1);
