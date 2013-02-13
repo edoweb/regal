@@ -317,7 +317,7 @@ public class HtmlAdapter
 
 				String description = getDescription(str);
 				Element link = doc.createElement("a");
-				link.setAttribute("href", str + "/about");
+				link.setAttribute("href", str);
 				link.setAttribute("class", "relationLink");
 				link.appendChild(doc.createTextNode(description + " ("
 						+ str.substring(str.lastIndexOf('/') + 1) + ")"));

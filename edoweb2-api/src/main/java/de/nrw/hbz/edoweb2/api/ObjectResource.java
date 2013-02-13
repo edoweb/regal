@@ -35,21 +35,21 @@ public class ObjectResource
 		return actions.readData(pid);
 	}
 
+	// @GET
+	// @Path("/{pid}/volume/{volName}")
+	// @Produces({ "application/*" })
+	// public StatusBean readVolume(@PathParam("pid") String pid,
+	// @PathParam("volName") String volName)
+	// {
+	// String volumePid = null;
+	// String query = EJournal.getVolumeQuery(volName, pid);
+	// volumePid = actions.findSubject(query);
+	//
+	// return actions.read(volumePid);
+	// }
+
 	@GET
 	@Path("/{pid}/volume/{volName}")
-	@Produces({ "application/*" })
-	public StatusBean readVolume(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
-	{
-		String volumePid = null;
-		String query = EJournal.getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
-
-		return actions.read(volumePid);
-	}
-
-	@GET
-	@Path("/{pid}/volume/{volName}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVolumeView(@PathParam("pid") String pid,
 			@PathParam("volName") String volName)
@@ -81,7 +81,7 @@ public class ObjectResource
 	}
 
 	@GET
-	@Path("/{pid}/about")
+	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid)
 	{
@@ -189,21 +189,21 @@ public class ObjectResource
 		return actions.readData(versionPid);
 	}
 
+	// @GET
+	// @Path("/{pid}/version/{versionName}")
+	// @Produces({ "application/json", "application/xml" })
+	// public StatusBean readWebpageVersion(@PathParam("pid") String pid,
+	// @PathParam("versionName") String versionName)
+	// {
+	// String versionPid = null;
+	// String query = Webpage.getVersionQuery(versionName, pid);
+	// versionPid = actions.findSubject(query);
+	//
+	// return actions.read(versionPid);
+	// }
+
 	@GET
 	@Path("/{pid}/version/{versionName}")
-	@Produces({ "application/json", "application/xml" })
-	public StatusBean readWebpageVersion(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
-	{
-		String versionPid = null;
-		String query = Webpage.getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
-
-		return actions.read(versionPid);
-	}
-
-	@GET
-	@Path("/{pid}/version/{versionName}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVersionView(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionName)

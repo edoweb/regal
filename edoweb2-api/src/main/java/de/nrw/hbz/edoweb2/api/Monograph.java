@@ -177,16 +177,16 @@ public class Monograph
 				.toString() + ":" + objectType.toString()));
 	}
 
-	@GET
-	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public StatusBean readReport(@PathParam("pid") String pid)
-	{
-		return actions.read(pid);
-	}
+	// @GET
+	// @Path("/{pid}")
+	// @Produces({ "application/json", "application/xml" })
+	// public StatusBean readReport(@PathParam("pid") String pid)
+	// {
+	// return actions.read(pid);
+	// }
 
 	@GET
-	@Path("/{pid}/about")
+	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid)
 	{

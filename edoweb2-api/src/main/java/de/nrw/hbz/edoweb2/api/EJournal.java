@@ -84,18 +84,18 @@ public class EJournal
 		return new MessageBean(eJournal + "\n" + eJournalVolume);
 	}
 
+	// @GET
+	// @Path("/{namespace}:{pid}")
+	// @Produces({ "application/json", "application/xml" })
+	// public StatusBean readEJournal(@PathParam("pid") String pid,
+	// @PathParam("namespace") String userNamespace)
+	// {
+	//
+	// return actions.read(namespace + ":" + pid);
+	// }
+
 	@GET
 	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public StatusBean readEJournal(@PathParam("pid") String pid,
-			@PathParam("namespace") String userNamespace)
-	{
-
-		return actions.read(namespace + ":" + pid);
-	}
-
-	@GET
-	@Path("/{namespace}:{pid}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid)
 	{
@@ -294,21 +294,21 @@ public class EJournal
 		return new MessageBean("create eJournal Volume Failed");
 	}
 
+	// @GET
+	// @Path("/{pid}/volume/{volName}")
+	// @Produces({ "application/*" })
+	// public StatusBean readVolume(@PathParam("pid") String pid,
+	// @PathParam("volName") String volName)
+	// {
+	// String volumePid = null;
+	// String query = getVolumeQuery(volName, pid);
+	// volumePid = actions.findSubject(query);
+	//
+	// return actions.read(volumePid);
+	// }
+
 	@GET
 	@Path("/{pid}/volume/{volName}")
-	@Produces({ "application/*" })
-	public StatusBean readVolume(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
-	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
-
-		return actions.read(volumePid);
-	}
-
-	@GET
-	@Path("/{pid}/volume/{volName}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVolumeView(@PathParam("pid") String pid,
 			@PathParam("volName") String volName)
