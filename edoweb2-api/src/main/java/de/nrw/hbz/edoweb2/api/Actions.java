@@ -583,7 +583,11 @@ public class Actions
 			{
 				node.addRelation(link);
 			}
+			// long start = System.nanoTime();
 			archive.updateNode(node.getPID(), node);
+			// long elapsed = System.nanoTime() - start;
+			// System.out.println("update node duration: " + elapsed);
+
 			return "Links succesfuly added";
 		}
 		catch (RemoteException e)
@@ -606,13 +610,17 @@ public class Actions
 		{
 			Node node = archive.readNode(pid);
 			Vector<Link> links = node.getRelsExt();
-			for (Link l : links)
+			Iterator<Link> iterator = links.iterator();
+
+			while (iterator.hasNext())
 			{
+				Link l = iterator.next();
 				if (l.getPredicate().compareTo(link.getPredicate()) == 0)
 				{
 					links.remove(l);
 				}
 			}
+
 			links.add(link);
 			node.setRelsExt(links);
 			archive.updateNode(node.getPID(), node);

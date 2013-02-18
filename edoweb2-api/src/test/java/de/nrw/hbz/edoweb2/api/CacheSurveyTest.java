@@ -2,8 +2,6 @@ package de.nrw.hbz.edoweb2.api;
 
 import java.util.List;
 
-import org.junit.Test;
-
 public class CacheSurveyTest
 {
 
@@ -31,7 +29,6 @@ public class CacheSurveyTest
 		}
 	}
 
-	@Test
 	public void testCharacteristics()
 	{
 		CacheSurvey survey = new CacheSurvey();
