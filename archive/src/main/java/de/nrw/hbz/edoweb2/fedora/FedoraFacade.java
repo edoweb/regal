@@ -1513,8 +1513,16 @@ public class FedoraFacade implements FedoraInterface, Constants
 		{
 			createFedoraXmlForRelsExt(pid);
 		}
-
 		Vector<Link> links = node.getRelsExt();
+		try
+		{
+			Node old = readNode(pid);
+			links.removeAll(old.getRelsExt());
+		}
+		catch (RemoteException e)
+		{
+
+		}
 		updateRelsExt(pid, links);
 
 	}

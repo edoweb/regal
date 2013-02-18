@@ -207,12 +207,23 @@ public class Webpage
 			link = new Link();
 			link.setPredicate(HAS_VERSION);
 			link.setObject(volumeId, false);
+
+			// long addLinkStart = System.nanoTime();
 			actions.addLink(pid, link);
+			// long addLinkElapsed = System.nanoTime() - addLinkStart;
+			// System.out.println("Create new link duration1: " +
+			// addLinkElapsed);
 
 			link = new Link();
 			link.setPredicate(REL_IS_RELATED);
 			link.setObject(volumeId, false);
+
+			// addLinkStart = System.nanoTime();
 			actions.addLink(pid, link);
+			// addLinkElapsed = System.nanoTime() - addLinkStart;
+			// System.out.println("Create new link duration2: " +
+			// addLinkElapsed);
+			// ;
 
 			return new MessageBean(actions.create(object, true));
 		}

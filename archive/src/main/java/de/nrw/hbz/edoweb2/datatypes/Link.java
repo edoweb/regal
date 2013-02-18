@@ -84,4 +84,41 @@ public class Link
 		this.object = object;
 
 	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Link other = (Link) obj;
+		boolean sameA = (this.predicate == other.predicate)
+				|| (this.predicate != null && this.predicate
+						.equalsIgnoreCase(other.predicate));
+		if (!sameA)
+			return false;
+		boolean sameB = (this.object == other.object)
+				|| (this.object != null && this.object
+						.equalsIgnoreCase(other.object));
+		if (!sameB)
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 3;
+		hash = 89
+				* hash
+				+ (this.predicate == null ? 0 : this.predicate.toUpperCase()
+						.hashCode());
+		hash = 89
+				* hash
+				+ (this.object == null ? 0 : this.object.toUpperCase()
+						.hashCode());
+		return hash;
+	}
+
 }

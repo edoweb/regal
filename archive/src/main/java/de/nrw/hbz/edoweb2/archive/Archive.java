@@ -355,7 +355,7 @@ class Archive implements ArchiveInterface
 		{
 			node.setPID(nodePid);
 			fedoraInterface.updateNode(node);
-			sesame.updateNode(node);
+			// sesame.updateNode(node);
 		}
 		catch (RemoteException e)
 		{
