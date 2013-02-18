@@ -649,8 +649,7 @@ public class FedoraIngester implements IngestInterface
 				if (mimeType.compareTo("application/zip") != 0)
 					continue;
 				String version = b.getPid();
-				if (b.getLabel() != null && !b.getLabel().isEmpty())
-					version = urlEncode(b.getLabel());
+
 				logger.info("Create webpage version: " + version);
 				WebResource webpageVersion = c.resource(webpage.toString()
 						+ "/version/" + version);
