@@ -37,7 +37,7 @@ public class TestDigitoolDownloader
 	/*
 	 * 1637992 4676380 2258539 1638892 4628526
 	 */
-	String pid = "4676380";
+	String pid = "3237400";// "3237397";//
 	private final String piddownloaderServer;
 	private final String piddownloaderDownloadLocation;
 

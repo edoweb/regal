@@ -319,8 +319,6 @@ public class Main
 		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
 		DigitalEntityBuilder builder = new DigitalEntityBuilder();
-		// IngestInterface ingester = new FedoraIngester("ellinet",
-		// fedoraBase, user, password, axisHome);
 
 		int size = pids.size();
 		for (int i = 0; i < size; i++)

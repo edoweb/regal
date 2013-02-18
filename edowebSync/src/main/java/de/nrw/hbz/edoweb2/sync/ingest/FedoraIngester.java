@@ -751,4 +751,5 @@ public class FedoraIngester implements IngestInterface
 			url = url.substring(0, 10);
 		return URLEncoder.encode(url);
 	}
+
 }
