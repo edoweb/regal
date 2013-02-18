@@ -19,6 +19,7 @@ package de.nrw.hbz.edoweb2.sync.ingest;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.Vector;
 
 import javax.ws.rs.core.MediaType;
@@ -396,6 +397,9 @@ public class FedoraIngester implements IngestInterface
 				if (mimeType.compareTo("application/pdf") != 0)
 					continue;
 				String volName = b.getPid();
+				if (b.getLabel() != null && !b.getLabel().isEmpty())
+					volName = urlEncode(b.getLabel());
+
 				logger.info("Create eJournal volume: " + volName + " "
 						+ (num++) + "/" + numOfVols);
 				WebResource ejournalVolume = c.resource(ejournal.toString()
@@ -510,6 +514,8 @@ public class FedoraIngester implements IngestInterface
 					continue;
 				String version = b.getPid();
 
+				if (b.getLabel() != null && !b.getLabel().isEmpty())
+					version = urlEncode(b.getLabel());
 				logger.info("Create WebpageVersion volume: " + version + " "
 						+ (num++) + "/" + numOfVersions);
 				WebResource webpageVersion = c.resource(webpage.toString()
@@ -622,6 +628,8 @@ public class FedoraIngester implements IngestInterface
 				if (mimeType.compareTo("application/zip") != 0)
 					continue;
 				String version = b.getPid();
+				if (b.getLabel() != null && !b.getLabel().isEmpty())
+					version = urlEncode(b.getLabel());
 				logger.info("Create webpage version: " + version);
 				WebResource webpageVersion = c.resource(webpage.toString()
 						+ "/version/" + version);
@@ -716,4 +724,11 @@ public class FedoraIngester implements IngestInterface
 
 	}
 
+	private String urlEncode(String str)
+	{
+		String url = str.replace('.', '-');
+		if (url.length() >= 11)
+			url = url.substring(0, 10);
+		return URLEncoder.encode(url);
+	}
 }
