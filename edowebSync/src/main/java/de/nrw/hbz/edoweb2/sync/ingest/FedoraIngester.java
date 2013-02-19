@@ -398,7 +398,7 @@ public class FedoraIngester implements IngestInterface
 					continue;
 				String volName = b.getPid();
 				if (b.getLabel() != null && !b.getLabel().isEmpty())
-					volName = urlEncode(b.getLabel());
+					volName = urlEncode(num + "-" + b.getLabel());
 
 				logger.info("Create eJournal volume: " + volName + " "
 						+ (num++) + "/" + numOfVols);
@@ -747,8 +747,8 @@ public class FedoraIngester implements IngestInterface
 	private String urlEncode(String str)
 	{
 		String url = str.replace('.', '-');
-		if (url.length() >= 11)
-			url = url.substring(0, 10);
+		// if (url.length() >= 11)
+		// url = url.substring(0, 10);
 		return URLEncoder.encode(url);
 	}
 
