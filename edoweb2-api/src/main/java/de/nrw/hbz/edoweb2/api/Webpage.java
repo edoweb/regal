@@ -102,9 +102,13 @@ public class Webpage
 			link.setPredicate(REL_IS_NODE_TYPE);
 			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
-			rootObject.setNamespace(namespace).setPID(pid)
+			rootObject
+					.setNamespace(namespace)
+					.setPID(pid)
 					.addCreator("WebpageRessource")
-					.addType(webpageType.toString()).addRights("me");
+					.addType(
+							TypeType.contentType + ":" + webpageType.toString())
+					.addRights("me");
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, webpageType));
@@ -195,8 +199,12 @@ public class Webpage
 			link.setObject(pid, false);
 			rootObject.addRelation(link);
 
-			rootObject.setNamespace(namespace).setPID(volumeId)
-					.addType(ObjectType.webpageVersion.toString())
+			rootObject
+					.setNamespace(namespace)
+					.setPID(volumeId)
+					.addType(
+							TypeType.contentType + ":"
+									+ ObjectType.webpageVersion.toString())
 					.addRights("me");
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(

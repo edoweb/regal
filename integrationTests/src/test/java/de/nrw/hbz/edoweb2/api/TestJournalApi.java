@@ -94,6 +94,8 @@ public class TestJournalApi
 		try
 		{
 			DCBeanAnnotated dc = aJournalDc.get(DCBeanAnnotated.class);
+			System.out.println("CHECKIT " + dc.getFirstType());
+
 			Vector<String> v = new Vector<String>();
 			v.add("Test");
 			dc.setCreator(v);
@@ -101,6 +103,8 @@ public class TestJournalApi
 			waitWorkaround();
 			dc = aJournalDc.get(DCBeanAnnotated.class);
 			Assert.assertEquals("Test", dc.getCreator().get(0));
+			dc = aJournalDc.get(DCBeanAnnotated.class);
+			System.out.println("CHECKIT " + dc.getFirstType());
 		}
 		catch (Exception e)
 		{

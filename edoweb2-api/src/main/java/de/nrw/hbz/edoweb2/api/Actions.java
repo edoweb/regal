@@ -1212,7 +1212,8 @@ public class Actions
 				typePath = "objects";
 				break;
 			}
-			else if (t.compareTo(ObjectType.webpageVersion.toString()) == 0)
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.webpageVersion.toString()) == 0)
 			{
 				typePath = "objects";
 				// return serverName + "/" + typePath + "/" +
@@ -1220,7 +1221,8 @@ public class Actions
 				// + "/version/" + getVersionName(node);
 				break;
 			}
-			else if (t.compareTo(ObjectType.ejournalVolume.toString()) == 0)
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.ejournalVolume.toString()) == 0)
 			{
 				typePath = "objects";
 				// return serverName + "/" + typePath + "/" +
