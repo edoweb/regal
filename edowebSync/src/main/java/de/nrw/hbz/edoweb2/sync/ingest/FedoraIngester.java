@@ -444,6 +444,8 @@ public class FedoraIngester implements IngestInterface
 							.get(DCBeanAnnotated.class); // Auth
 					dc.addDescription(b.getLabel());
 					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
+					dc.addType(TypeType.contentType.toString() + ":"
+							+ ObjectType.ejournalVolume.toString());
 					ejournalVolumeDC.post(dc);
 				}
 				catch (Exception e)
@@ -575,6 +577,8 @@ public class FedoraIngester implements IngestInterface
 					DCBeanAnnotated dc = webpageVersionDC
 							.get(DCBeanAnnotated.class); // Auth?
 					dc.addTitle("Version of: " + dtlBean.getPid());
+					dc.addType(TypeType.contentType.toString() + ":"
+							+ ObjectType.webpageVersion.toString());
 					dc.addDescription(b.getLabel());
 					webpageVersionDC.post(dc);
 				}
@@ -694,6 +698,8 @@ public class FedoraIngester implements IngestInterface
 					DCBeanAnnotated dc = webpageVersionDC
 							.get(DCBeanAnnotated.class);// Auth
 					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
+					dc.addType(TypeType.contentType.toString() + ":"
+							+ ObjectType.webpageVersion.toString());
 					dc.addDescription(b.getLabel());
 					webpageVersionDC.post(dc);
 				}
