@@ -105,10 +105,8 @@ public class Webpage
 			rootObject
 					.setNamespace(namespace)
 					.setPID(pid)
-					.addCreator("WebpageRessource")
 					.addType(
-							TypeType.contentType + ":" + webpageType.toString())
-					.addRights("me");
+							TypeType.contentType + ":" + webpageType.toString());
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, webpageType));
@@ -204,8 +202,7 @@ public class Webpage
 					.setPID(volumeId)
 					.addType(
 							TypeType.contentType + ":"
-									+ ObjectType.webpageVersion.toString())
-					.addRights("me");
+									+ ObjectType.webpageVersion.toString());
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, webpageType));

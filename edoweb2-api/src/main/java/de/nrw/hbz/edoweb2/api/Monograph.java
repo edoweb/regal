@@ -96,9 +96,7 @@ public class Monograph
 			rootObject
 					.setNamespace(namespace)
 					.setPID(pid)
-					.addCreator("MonographRessource")
-					.addType(TypeType.contentType + ":" + objectType.toString())
-					.addRights("me");
+					.addType(TypeType.contentType + ":" + objectType.toString());
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, objectType));

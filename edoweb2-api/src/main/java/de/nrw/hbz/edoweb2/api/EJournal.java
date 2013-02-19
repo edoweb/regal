@@ -160,10 +160,9 @@ public class EJournal
 			rootObject
 					.setNamespace(namespace)
 					.setPID(namespace + ":" + pid)
-					.addCreator("EjournalRessource")
 					.addType(
 							TypeType.contentType + ":"
-									+ ejournalType.toString()).addRights("me");
+									+ ejournalType.toString());
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, ejournalType));
@@ -272,9 +271,7 @@ public class EJournal
 			rootObject
 					.setNamespace(namespace)
 					.setPID(volumeId)
-					.addCreator("EjournalVolumeRessource")
-					.addType(TypeType.contentType + ":" + volumeType.toString())
-					.addRights("me");
+					.addType(TypeType.contentType + ":" + volumeType.toString());
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, volumeType));
