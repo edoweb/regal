@@ -682,8 +682,8 @@ public class Actions
 				{
 					if (type.startsWith(TypeType.contentType.toString()))
 					{
-						String docType = type.substring(9);
-						logger.info("Found docType: " + docType);
+						String docType = type.substring(type.indexOf(':') + 1);
+						logger.info("Found contentType: " + docType);
 
 						String name = docmap(docType);
 						String spec = TypeType.contentType.toString() + ":"
