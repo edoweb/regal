@@ -25,7 +25,7 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-			<url>file://${project.basedir}/src/main/resources/repo</url>
+			<url>file://${basedir}/src/main/resources/repo</url>
 		</repository>
 	</repositories>
 	<dependencies>
