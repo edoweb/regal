@@ -98,6 +98,70 @@ public class DCBeanAnnotated
 		type = node.getType();
 	}
 
+	public void merge(DCBeanAnnotated other)
+	{
+		for (String str : other.getContributer())
+		{
+			contributer.add(str);
+		}
+		for (String str : other.getCoverage())
+		{
+			coverage.add(str);
+		}
+		for (String str : other.getCreator())
+		{
+			creator.add(str);
+		}
+		for (String str : other.getDate())
+		{
+			date.add(str);
+		}
+		for (String str : other.getDescription())
+		{
+			description.add(str);
+		}
+		for (String str : other.getFormat())
+		{
+			format.add(str);
+		}
+		for (String str : other.getIdentifier())
+		{
+			identifier.add(str);
+		}
+		for (String str : other.getLanguage())
+		{
+			language.add(str);
+		}
+		for (String str : other.getPublisher())
+		{
+			publisher.add(str);
+		}
+		for (String str : other.getRelation())
+		{
+			relation.add(str);
+		}
+		for (String str : other.getRights())
+		{
+			rights.add(str);
+		}
+		for (String str : other.getSource())
+		{
+			source.add(str);
+		}
+		for (String str : other.getSubject())
+		{
+			subject.add(str);
+		}
+		for (String str : other.getTitle())
+		{
+			title.add(str);
+		}
+		for (String str : other.getType())
+		{
+			type.add(str);
+		}
+	}
+
 	public Vector<String> getContributer()
 	{
 		return contributer;

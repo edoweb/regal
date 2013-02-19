@@ -41,6 +41,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -118,13 +119,13 @@ public class DigitoolDownloader
 		objectDirectory = downloadLoaction + File.separator + pid;
 
 		File dir = new File(objectDirectory);
-
+		File digitalEntityFile = null;
 		if (!dir.exists())
 		{
 			logger.info("Create Directory " + dir.getAbsoluteFile()
 					+ " and start to Download files");
 			dir.mkdir();
-			File digitalEntityFile = getView(pid);
+			digitalEntityFile = getView(pid);
 			getRelated(digitalEntityFile, pid);
 			getStream(digitalEntityFile, pid);
 			// beanBuilder.buildComplexBean(objectDirectory, pid);
@@ -135,9 +136,9 @@ public class DigitoolDownloader
 		{
 			logger.info("Directory " + dir.getAbsoluteFile()
 					+ " exists. Force override.");
-			dir.delete();
+			FileUtils.deleteDirectory(dir);
 			dir.mkdir();
-			File digitalEntityFile = getView(pid);
+			digitalEntityFile = getView(pid);
 			getRelated(digitalEntityFile, pid);
 			getStream(digitalEntityFile, pid);
 			// beanBuilder.buildComplexBean(objectDirectory, pid);
@@ -149,6 +150,86 @@ public class DigitoolDownloader
 			logger.info("Directory " + dir.getAbsoluteFile()
 					+ " exists. Step over.");
 			setDownloaded(false);
+		}
+
+		String ppid = getParent(digitalEntityFile, pid);
+
+		if (ppid != null)
+		{
+
+			String path = downloadLoaction + File.separator + ppid;
+			File parent = new File(path);
+			if (!parent.exists())
+			{
+				FileUtils.deleteDirectory(dir);
+				throw new IOException(
+						"Can't download part without downloading parent. Parent pid is "
+								+ ppid);
+			}
+			else
+			{
+				File tdir = new File(parent.getAbsolutePath());
+				if (!tdir.exists())
+				{
+					for (String file : dir.list())
+					{
+						File f = new File(dir.getAbsoluteFile()
+								+ File.separator + file);
+						if (f.isDirectory())
+						{
+							FileUtils.moveDirectoryToDirectory(f, tdir, true);
+						}
+						else
+						{
+							File test = new File(tdir + File.separator
+									+ f.getName());
+							if (test.exists())
+								test.delete();
+							FileUtils.moveFileToDirectory(f, tdir, true);
+
+						}
+					}
+
+					setUpdated(false);
+					setDownloaded(true);
+				}
+				else if (forceDownload)
+				{
+
+					for (String file : dir.list())
+					{
+						File f = new File(dir.getAbsoluteFile()
+								+ File.separator + file);
+						if (f.isDirectory())
+						{
+							File test = new File(tdir + File.separator
+									+ f.getName());
+							if (test.exists())
+								FileUtils.deleteDirectory(test);
+							FileUtils.moveDirectoryToDirectory(f, tdir, true);
+						}
+						else
+						{
+							File test = new File(tdir + File.separator
+									+ f.getName());
+							if (test.exists())
+								test.delete();
+							FileUtils.moveFileToDirectory(f, tdir, true);
+						}
+					}
+					setUpdated(true);
+					setDownloaded(true);
+				}
+				else
+				{
+					logger.info("Directory " + tdir.getAbsoluteFile()
+							+ " exists. Step over.");
+					setDownloaded(false);
+				}
+
+			}
+			FileUtils.deleteDirectory(dir);
+			return parent.getAbsolutePath();
 		}
 
 		return dir.getAbsolutePath();
@@ -273,6 +354,35 @@ public class DigitoolDownloader
 			getXml(file, relPid);
 			getStream(file, relPid);
 		}
+
+	}
+
+	private String getParent(File digitalEntityFile, String pid)
+			throws IOException
+	{
+		// File indexFile = null;
+		Element root = getDocument(digitalEntityFile);
+		if (root == null)
+		{
+			logger.error("Not able to download related files. XML parsing error: "
+					+ pid);
+			return null;
+		}
+		NodeList list = root.getElementsByTagName("relation");
+		for (int i = 0; i < list.getLength(); i++)
+		{
+			Node item = list.item(i);
+			String relPid = ((Element) item).getElementsByTagName("pid")
+					.item(0).getTextContent();
+			String type = ((Element) item).getElementsByTagName("type").item(0)
+					.getTextContent();
+
+			if (type.compareTo("part_of") == 0)
+			{
+				return relPid;
+			}
+		}
+		return null;
 
 	}
 

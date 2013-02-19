@@ -680,10 +680,10 @@ public class Actions
 			if (node.getType() != null)
 				for (String type : node.getType())
 				{
-					if (type.startsWith("content-type"))
+					if (type.startsWith(TypeType.contentType.toString()))
 					{
-						String docType = type.substring(9);
-						logger.info("Found docType: " + docType);
+						String docType = type.substring(type.indexOf(':') + 1);
+						logger.info("Found contentType: " + docType);
 
 						String name = docmap(docType);
 						String spec = TypeType.contentType.toString() + ":"
@@ -917,6 +917,16 @@ public class Actions
 						+ ObjectType.monograph.toString()) == 0)
 				{
 					return getView(node, ObjectType.monograph);
+				}
+				else if (t.compareTo(TypeType.contentType.toString() + ":"
+						+ ObjectType.ejournalVolume.toString()) == 0)
+				{
+					return getView(node, ObjectType.ejournalVolume);
+				}
+				else if (t.compareTo(TypeType.contentType.toString() + ":"
+						+ ObjectType.webpageVersion.toString()) == 0)
+				{
+					return getView(node, ObjectType.webpageVersion);
 				}
 			}
 
@@ -1202,17 +1212,23 @@ public class Actions
 				typePath = "objects";
 				break;
 			}
-			else if (t.compareTo(ObjectType.webpageVersion.toString()) == 0)
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.webpageVersion.toString()) == 0)
 			{
 				typePath = "objects";
-				return serverName + "/" + typePath + "/" + getWebpagePid(node)
-						+ "/version/" + getVersionName(node);
+				// return serverName + "/" + typePath + "/" +
+				// getWebpagePid(node)
+				// + "/version/" + getVersionName(node);
+				break;
 			}
-			else if (t.compareTo(ObjectType.ejournalVolume.toString()) == 0)
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.ejournalVolume.toString()) == 0)
 			{
 				typePath = "objects";
-				return serverName + "/" + typePath + "/" + getJournalPid(node)
-						+ "/volume/" + getVolumeName(node);
+				// return serverName + "/" + typePath + "/" +
+				// getJournalPid(node)
+				// + "/volume/" + getVolumeName(node);
+				break;
 			}
 
 		}

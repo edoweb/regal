@@ -1,6 +1,7 @@
 package de.nrw.hbz.edoweb2.api;
 
 import java.io.StringWriter;
+import java.net.URLDecoder;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -312,8 +313,8 @@ public class HtmlAdapter
 				// link.appendChild(doc.createTextNode(description + " ("
 				// + str.substring(str.lastIndexOf('/') + 1) + ")"));
 
-				link.appendChild(doc.createTextNode(str.substring(str
-						.lastIndexOf('/') + 1)));
+				link.appendChild(doc.createTextNode(URLDecoder.decode(str
+						.substring(str.lastIndexOf('/') + 1))));
 				td2.appendChild(link);
 				td2.setAttribute("class", "relation");
 				tr.appendChild(td1);
