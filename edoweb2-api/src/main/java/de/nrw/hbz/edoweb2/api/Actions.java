@@ -136,16 +136,7 @@ public class Actions
 		logger.info("Delete All");
 		for (String pid : pids)
 		{
-			try
-			{
-				archive.deleteComplexObject(pid);
-				if (wait)
-					waitWorkaround();
-			}
-			catch (RemoteException e)
-			{
-				e.printStackTrace();
-			}
+			delete(pid, wait);
 		}
 
 		return "deleteAll";
@@ -189,6 +180,7 @@ public class Actions
 		try
 		{
 			archive.deleteComplexObject(pid);
+			outdex(pid);
 			if (wait)
 				waitWorkaround();
 		}
@@ -391,6 +383,7 @@ public class Actions
 		logger.info("Update DC");
 		try
 		{
+			content.trim();
 			Node node = archive.readNode(pid);
 			node.setContributer(content.getContributer());
 			node.setCoverage(content.getCoverage());
@@ -1062,36 +1055,21 @@ public class Actions
 		{
 			String relUrl = serverName + "/objects/" + relPid;
 
-			// if (type == ObjectType.ejournalVolume)
-			// {
-			// relUrl = serverName + "/ejournal/" + relPid;
-			// }
-			//
-			// if (type == ObjectType.webpageVersion)
-			// {
-			// relUrl = serverName + "/webpage/" + relPid;
-			// }
-
-			view.addIsPartOf(relUrl);
+			view.addIsPartOf(relUrl, relPid);
 		}
 
 		for (String relPid : findObject(pid, REL_IS_RELATED))
 		{
 			String relUrl = serverName + "/objects/" + relPid;
 
-			if (type == ObjectType.ejournal)
-			{
-				String name = findObject(relPid, HAS_VOLUME_NAME).get(0);
-				relUrl = uri.concat("/volume/" + name);
-			}
+			List<String> desc = findObject(relPid,
+					"http://purl.org/dc/elements/1.1/description");
 
-			if (type == ObjectType.webpage)
-			{
-				String name = findObject(relPid, HAS_VERSION_NAME).get(0);
-				relUrl = uri.concat("/version/" + name);
-			}
+			if (desc == null || desc.isEmpty())
+				view.addHasPart(relUrl, relPid);
+			else
+				view.addHasPart(relUrl, desc.get(0));
 
-			view.addHasPart(relUrl);
 		}
 
 		return view;
@@ -1134,9 +1112,11 @@ public class Actions
 			Marshaller marshaller = jc.createMarshaller();
 			marshaller.marshal(view, xmlStreamWriter);
 			String viewAsString = baos.toString("utf-8");
-			logger.debug("JSON-------------------");
-			logger.debug(viewAsString);
-			logger.debug("-----------------------");
+
+			// System.out.println(view.getType());
+			// System.out.println("JSON-------------------");
+			// System.out.println(viewAsString);
+			// System.out.println("-----------------------");
 			message = index.put(String.class, viewAsString);
 		}
 		catch (Exception e)
@@ -1144,6 +1124,28 @@ public class Actions
 			return "Error! " + message + e.getMessage();
 		}
 		return "Success! " + message;
+	}
+
+	public String outdex(String pid)
+	{
+
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		try
+		{
+			WebResource index = c
+					.resource("http://localhost:9200/edoweb/titel/" + pid);
+			index.accept(MediaType.APPLICATION_JSON);
+
+			index.delete();
+		}
+		catch (Exception e)
+		{
+			return "Error! Cannot delete " + pid + "from index";
+		}
+		return "Remove " + pid + " from index!";
 	}
 
 	public String index(UriInfo urlInfo, String pid)

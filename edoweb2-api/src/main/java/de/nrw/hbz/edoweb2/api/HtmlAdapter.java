@@ -2,6 +2,7 @@ package de.nrw.hbz.edoweb2.api;
 
 import java.io.StringWriter;
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -139,9 +140,9 @@ public class HtmlAdapter
 
 		addToTable(doc, table, "Related Url", view.getUrl());
 
-		addToTable(doc, table, "hasPart", view.getHasPart());
+		addHasPart(doc, table, "hasPart", view);
 
-		addToTable(doc, table, "isPartOf", view.getIsPartOf());
+		addIsPartOf(doc, table, "isPartOf", view);
 
 		tr = doc.createElement("tr");
 		td1 = doc.createElement("td");
@@ -400,6 +401,81 @@ public class HtmlAdapter
 		}
 	}
 
+	static void addIsPartOf(Document doc, Element table, String fieldName,
+			View view)
+	{
+		String urnResolver = "http://nbn-resolving.de/";
+		String doiResolver = "http://dx.doi.org/";
+		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
+		String zipLogo = "http://orthos.hbz-nrw.de/zip.png";
+
+		List<String> isPartOf = view.getIsPartOf();
+		List<String> isPartOfName = view.getIsPartOfName();
+		for (int i = 0; i < isPartOf.size(); i++)
+		{
+			String url = isPartOf.get(i);
+			String name = isPartOfName.get(i);
+			Element tr = doc.createElement("tr");
+			Element td1 = doc.createElement("td");
+			td1.setAttribute("class", "plabel");
+			Element td2 = doc.createElement("td");
+
+			td1.appendChild(doc.createTextNode(fieldName));
+
+			// String description = getDescription(str);
+			Element link = doc.createElement("a");
+			link.setAttribute("href", url);
+			link.setAttribute("class", "relationLink");
+			// link.appendChild(doc.createTextNode(description + " ("
+			// + str.substring(str.lastIndexOf('/') + 1) + ")"));
+
+			link.appendChild(doc.createTextNode(name));
+			td2.appendChild(link);
+			td2.setAttribute("class", "relation");
+			tr.appendChild(td1);
+			tr.appendChild(td2);
+			table.appendChild(tr);
+		}
+
+	}
+
+	static void addHasPart(Document doc, Element table, String fieldName,
+			View view)
+	{
+		String urnResolver = "http://nbn-resolving.de/";
+		String doiResolver = "http://dx.doi.org/";
+		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
+		String zipLogo = "http://orthos.hbz-nrw.de/zip.png";
+
+		List<String> hasPart = view.getHasPart();
+		List<String> hasPartName = view.getHasPartName();
+		for (int i = 0; i < hasPart.size(); i++)
+		{
+			String url = hasPart.get(i);
+			String name = hasPartName.get(i);
+			Element tr = doc.createElement("tr");
+			Element td1 = doc.createElement("td");
+			td1.setAttribute("class", "plabel");
+			Element td2 = doc.createElement("td");
+
+			td1.appendChild(doc.createTextNode(fieldName));
+
+			// String description = getDescription(str);
+			Element link = doc.createElement("a");
+			link.setAttribute("href", url);
+			link.setAttribute("class", "relationLink");
+			// link.appendChild(doc.createTextNode(description + " ("
+			// + str.substring(str.lastIndexOf('/') + 1) + ")"));
+
+			link.appendChild(doc.createTextNode(name));
+			td2.appendChild(link);
+			td2.setAttribute("class", "relation");
+			tr.appendChild(td1);
+			tr.appendChild(td2);
+			table.appendChild(tr);
+		}
+
+	}
 	// public static String getDescription(String str)
 	// {
 	// String pid = str.substring(str.lastIndexOf('/') + 1);
