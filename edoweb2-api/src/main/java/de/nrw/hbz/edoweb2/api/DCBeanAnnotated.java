@@ -582,4 +582,39 @@ public class DCBeanAnnotated
 		return elements.elementAt(0);
 	}
 
+	public void trim()
+	{
+
+		while (contributer.remove(""))
+			;
+		while (coverage.remove(""))
+			;
+		while (creator.remove(""))
+			;
+		while (date.remove(""))
+			;
+		while (description.remove(""))
+			;
+		while (format.remove(""))
+			;
+		while (identifier.remove(""))
+			;
+		while (language.remove(""))
+			;
+		while (publisher.remove(""))
+			;
+		while (relation.remove(""))
+			;
+		while (rights.remove(""))
+			;
+		while (source.remove(""))
+			;
+		while (subject.remove(""))
+			;
+		while (title.remove(""))
+			;
+		while (type.remove(""))
+			;
+	}
+
 }

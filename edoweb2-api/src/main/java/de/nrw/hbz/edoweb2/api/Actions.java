@@ -391,6 +391,7 @@ public class Actions
 		logger.info("Update DC");
 		try
 		{
+			content.trim();
 			Node node = archive.readNode(pid);
 			node.setContributer(content.getContributer());
 			node.setCoverage(content.getCoverage());
@@ -1061,36 +1062,12 @@ public class Actions
 		for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
 		{
 			String relUrl = serverName + "/objects/" + relPid;
-
-			// if (type == ObjectType.ejournalVolume)
-			// {
-			// relUrl = serverName + "/ejournal/" + relPid;
-			// }
-			//
-			// if (type == ObjectType.webpageVersion)
-			// {
-			// relUrl = serverName + "/webpage/" + relPid;
-			// }
-
 			view.addIsPartOf(relUrl);
 		}
 
 		for (String relPid : findObject(pid, REL_IS_RELATED))
 		{
 			String relUrl = serverName + "/objects/" + relPid;
-
-			if (type == ObjectType.ejournal)
-			{
-				String name = findObject(relPid, HAS_VOLUME_NAME).get(0);
-				relUrl = uri.concat("/volume/" + name);
-			}
-
-			if (type == ObjectType.webpage)
-			{
-				String name = findObject(relPid, HAS_VERSION_NAME).get(0);
-				relUrl = uri.concat("/version/" + name);
-			}
-
 			view.addHasPart(relUrl);
 		}
 
@@ -1134,9 +1111,11 @@ public class Actions
 			Marshaller marshaller = jc.createMarshaller();
 			marshaller.marshal(view, xmlStreamWriter);
 			String viewAsString = baos.toString("utf-8");
-			logger.debug("JSON-------------------");
-			logger.debug(viewAsString);
-			logger.debug("-----------------------");
+
+			// System.out.println(view.getType());
+			// System.out.println("JSON-------------------");
+			// System.out.println(viewAsString);
+			// System.out.println("-----------------------");
 			message = index.put(String.class, viewAsString);
 		}
 		catch (Exception e)
