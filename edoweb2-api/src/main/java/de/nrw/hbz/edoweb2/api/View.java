@@ -20,7 +20,9 @@ public class View
 	Vector<String> location = null;
 	Vector<String> publisher = null;
 	Vector<String> isPartOf = null;
+	Vector<String> isPartOfName = null;
 	Vector<String> hasPart = null;
+	Vector<String> hasPartName = null;
 	Vector<String> medium = null;
 	Vector<String> pid = null;
 	Vector<String> doi = null;
@@ -96,6 +98,8 @@ public class View
 		risearchUrl = new Vector<String>();
 		rights = new Vector<String>();
 		message = new Vector<String>();
+		isPartOfName = new Vector<String>();
+		hasPartName = new Vector<String>();
 		// Not Implemented yet: First make Cool URIs!
 		// metsUrl = new Vector<String>();
 		// oaioreUrl = new Vector<String>();
@@ -204,6 +208,26 @@ public class View
 	// {
 	// return verbundUrl;
 	// }
+
+	public Vector<String> getIsPartOfName()
+	{
+		return isPartOfName;
+	}
+
+	public void setIsPartOfName(Vector<String> isPartOfName)
+	{
+		this.isPartOfName = isPartOfName;
+	}
+
+	public Vector<String> getHasPartName()
+	{
+		return hasPartName;
+	}
+
+	public void setHasPartName(Vector<String> hasPart)
+	{
+		this.hasPartName = hasPartName;
+	}
 
 	public Vector<String> getDescription()
 	{
@@ -565,8 +589,9 @@ public class View
 		return location.add(e);
 	}
 
-	public boolean addIsPartOf(String e)
+	public boolean addIsPartOf(String e, String name)
 	{
+		isPartOfName.add(name);
 		return isPartOf.add(e);
 	}
 
@@ -635,8 +660,9 @@ public class View
 		return baseUrl.add(e);
 	}
 
-	public boolean addHasPart(String e)
+	public boolean addHasPart(String e, String name)
 	{
+		hasPartName.add(name);
 		return hasPart.add(e);
 	}
 

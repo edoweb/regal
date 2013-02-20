@@ -136,16 +136,7 @@ public class Actions
 		logger.info("Delete All");
 		for (String pid : pids)
 		{
-			try
-			{
-				archive.deleteComplexObject(pid);
-				if (wait)
-					waitWorkaround();
-			}
-			catch (RemoteException e)
-			{
-				e.printStackTrace();
-			}
+			delete(pid, wait);
 		}
 
 		return "deleteAll";
@@ -189,6 +180,7 @@ public class Actions
 		try
 		{
 			archive.deleteComplexObject(pid);
+			outdex(pid);
 			if (wait)
 				waitWorkaround();
 		}
@@ -1062,13 +1054,22 @@ public class Actions
 		for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
 		{
 			String relUrl = serverName + "/objects/" + relPid;
-			view.addIsPartOf(relUrl);
+
+			view.addIsPartOf(relUrl, relPid);
 		}
 
 		for (String relPid : findObject(pid, REL_IS_RELATED))
 		{
 			String relUrl = serverName + "/objects/" + relPid;
-			view.addHasPart(relUrl);
+
+			List<String> desc = findObject(relPid,
+					"http://purl.org/dc/elements/1.1/description");
+
+			if (desc == null || desc.isEmpty())
+				view.addHasPart(relUrl, relPid);
+			else
+				view.addHasPart(relUrl, desc.get(0));
+
 		}
 
 		return view;
@@ -1123,6 +1124,28 @@ public class Actions
 			return "Error! " + message + e.getMessage();
 		}
 		return "Success! " + message;
+	}
+
+	public String outdex(String pid)
+	{
+
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		try
+		{
+			WebResource index = c
+					.resource("http://localhost:9200/edoweb/titel/" + pid);
+			index.accept(MediaType.APPLICATION_JSON);
+
+			index.delete();
+		}
+		catch (Exception e)
+		{
+			return "Error! Cannot delete " + pid + "from index";
+		}
+		return "Remove " + pid + " from index!";
 	}
 
 	public String index(UriInfo urlInfo, String pid)

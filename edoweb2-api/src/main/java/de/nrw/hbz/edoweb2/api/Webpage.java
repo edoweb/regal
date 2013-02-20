@@ -25,6 +25,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
+import java.net.URLDecoder;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
@@ -189,7 +190,7 @@ public class Webpage
 
 			link = new Link();
 			link.setPredicate(HAS_VERSION_NAME);
-			link.setObject(versionName, true);
+			link.setObject(URLDecoder.decode(versionName), true);
 			rootObject.addRelation(link);
 
 			link = new Link();
@@ -248,7 +249,7 @@ public class Webpage
 			DCBeanAnnotated content)
 	{
 		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
+		String query = getVersionQuery(URLDecoder.decode(versionName), pid);
 		versionPid = actions.findSubject(query);
 		return new MessageBean(actions.updateDC(versionPid, content));
 	}
@@ -309,7 +310,7 @@ public class Webpage
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
+		String query = getVersionQuery(URLDecoder.decode(versionName), pid);
 		versionPid = actions.findSubject(query);
 		return actions.readDC(versionPid);
 	}
