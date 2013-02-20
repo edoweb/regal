@@ -84,7 +84,84 @@ public class FedoraIngester implements IngestInterface
 	public void ingest(DigitalEntity dtlBean)
 	{
 		logger.info("Start ingest: " + edowebNamespace + ":" + dtlBean.getPid());
-		update(dtlBean);
+
+		String partitionC = null;
+		String pid = null;
+		pid = dtlBean.getPid();
+		try
+		{
+			ControlBean control = new ControlBean(dtlBean);
+			partitionC = control.getPartitionC().firstElement();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		try
+		{
+
+			if (partitionC.compareTo("EJO01") == 0)
+			{
+				logger.info(pid + ": start ingesting eJournal");
+				ingestEJournal(dtlBean);
+				logger.info(pid + ": end ingesting eJournal");
+			}
+			else if (partitionC.compareTo("WPD01") == 0)
+			{
+				logger.info(pid + ": start updating monograph (wpd01)");
+				updateMonographs(dtlBean);
+				logger.info(pid + ": end updating monograph (wpd01)");
+			}
+			else if (partitionC.compareTo("WPD02") == 0)
+			{
+
+				logger.info(pid + ": start updating monograph (wpd02)");
+				updateMonographsNewStyle(dtlBean);
+				logger.info(pid + ": end updating monograph (wpd02)");
+			}
+			else if (partitionC.compareTo("WSC01") == 0)
+			{
+				logger.info(pid + ": start ingesting webpage (wsc01)");
+				ingestWebpage(dtlBean);
+				logger.info(pid + ": end ingesting webpage (wsc01)");
+			}
+			else if (partitionC.compareTo("WSI01") == 0)
+			{
+				logger.info(pid + ": start updating webpage (wsi01)");
+				updateSingleWebpage(dtlBean);
+				logger.info(pid + ": end updating webpage (wsi01)");
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			logger.info(e.getMessage());
+		}
+		try
+		{
+			ClientConfig cc = new DefaultClientConfig();
+			cc.getProperties()
+					.put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+			cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
+					true);
+			Client c = Client.create(cc);
+			c.addFilter(new HTTPBasicAuthFilter(user, password));
+
+			WebResource index = c.resource(host
+					+ ":8080/edoweb2-api/edowebAdmin/index/" + edowebNamespace
+					+ ":" + dtlBean.getPid());
+			index.post();
+			logger.info(pid + ": got indexed!");
+			WebResource oaiSet = c.resource(host
+					+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/"
+					+ edowebNamespace + ":" + dtlBean.getPid());
+			oaiSet.post();
+			logger.info(pid + ": got set! Thanx and goodbye!\n");
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getMessage());
+		}
 
 	}
 
@@ -362,7 +439,7 @@ public class FedoraIngester implements IngestInterface
 		}
 	}
 
-	private void updateEJournal(DigitalEntity dtlBean)
+	private void ingestEJournal(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -486,7 +563,62 @@ public class FedoraIngester implements IngestInterface
 		}
 	}
 
-	private void updateWebpage(DigitalEntity dtlBean)
+	private void updateEJournal(DigitalEntity dtlBean)
+	{
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
+
+		WebResource ejournal = c.resource(host + ":8080/edoweb2-api/ejournal/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
+
+		try
+		{
+			String request = "content";
+			String response = ejournal.put(String.class, request);
+		}
+		catch (Exception e)
+		{
+			logger.info(e.getMessage());
+		}
+		try
+		{
+
+			WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
+			DCBeanAnnotated dc = null;
+			try
+			{
+				dc = ejournalDC.get(DCBeanAnnotated.class);
+			}
+			catch (Exception e)
+			{
+				dc = new DCBeanAnnotated();
+			}
+
+			try
+			{
+				dc.merge(marc2dc(dtlBean));
+				ejournalDC.post(dc);
+			}
+			catch (Exception e)
+			{
+				// logger.debug(e.getMessage());
+			}
+			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
+			int numOfVols = viewMainLinks.size();
+			logger.info("Found " + numOfVols + " volumes.");
+			logger.info("Will not update volumes.");
+
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.error(e.getMessage());
+		}
+	}
+
+	private void ingestWebpage(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -630,6 +762,71 @@ public class FedoraIngester implements IngestInterface
 				// long elapsedTime = System.nanoTime() - start;
 				// logger.info("Time: " + elapsedTime);
 			}
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getMessage());
+		}
+		// WebResource webpageCurrent = c.resource(webpage.toString() +
+		// "/current/");
+	}
+
+	private void updateWebpage(DigitalEntity dtlBean)
+	{
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
+
+		WebResource webpage = c.resource(host + ":8080/edoweb2-api/webpage/"
+				+ edowebNamespace + ":" + dtlBean.getPid());
+
+		try
+		{
+			String response = "";
+			try
+			{
+				String request = "content";
+				response = webpage.put(String.class, request);
+			}
+			catch (Exception e)
+			{
+				logger.info(e.getMessage());
+			}
+			WebResource webpageDC = c.resource(webpage.toString() + "/dc");
+			// WebResource webpageMetadata = c.resource(webpage.toString()
+			// + "/metadata");
+
+			String title = "";
+
+			DCBeanAnnotated dc = null;
+			try
+			{
+				dc = webpageDC.get(DCBeanAnnotated.class);
+			}
+			catch (Exception e)
+			{
+				dc = new DCBeanAnnotated();
+			}
+
+			try
+			{
+				dc.merge(marc2dc(dtlBean));
+				dc.addDescription(dtlBean.getLabel());
+				webpageDC.post(dc);
+				title = dc.getFirstTitle();
+			}
+			catch (Exception e)
+			{
+				logger.debug(e.getMessage());
+			}
+			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
+			int numOfVersions = viewLinks.size();
+			int num = 1;
+			logger.info("Found " + numOfVersions + " versions.");
+			logger.info("Will not update versions.");
+
 		}
 		catch (UniformInterfaceException e)
 		{
