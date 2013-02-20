@@ -24,6 +24,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
+import java.net.URLDecoder;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
@@ -265,7 +266,7 @@ public class EJournal
 
 			link = new Link();
 			link.setPredicate(HAS_VOLUME_NAME);
-			link.setObject(volName, true);
+			link.setObject(URLDecoder.decode(volName), true);
 			rootObject.addRelation(link);
 
 			rootObject
@@ -406,6 +407,6 @@ public class EJournal
 				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVolumeOf> <info:fedora/"
 				+ pid
 				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVolumeName> \""
-				+ volName + "\". ?volPid ?p ?o .	} ";
+				+ URLDecoder.decode(volName) + "\". ?volPid ?p ?o .	} ";
 	}
 }

@@ -249,7 +249,7 @@ public class Webpage
 			DCBeanAnnotated content)
 	{
 		String versionPid = null;
-		String query = getVersionQuery(URLDecoder.decode(versionName), pid);
+		String query = getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
 		return new MessageBean(actions.updateDC(versionPid, content));
 	}
@@ -310,7 +310,7 @@ public class Webpage
 			@PathParam("versionName") String versionName)
 	{
 		String versionPid = null;
-		String query = getVersionQuery(URLDecoder.decode(versionName), pid);
+		String query = getVersionQuery(versionName, pid);
 		versionPid = actions.findSubject(query);
 		return actions.readDC(versionPid);
 	}
@@ -414,6 +414,6 @@ public class Webpage
 				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVersionOf> <info:fedora/"
 				+ pid
 				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVersionName> \""
-				+ versionName + "\". ?volPid ?p ?o .	} ";
+				+ URLDecoder.decode(versionName) + "\". ?volPid ?p ?o .	} ";
 	}
 }
