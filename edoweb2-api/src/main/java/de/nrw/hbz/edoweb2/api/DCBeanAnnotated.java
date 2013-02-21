@@ -98,7 +98,7 @@ public class DCBeanAnnotated
 		type = node.getType();
 	}
 
-	public void merge(DCBeanAnnotated other)
+	public void add(DCBeanAnnotated other)
 	{
 		for (String str : other.getContributer())
 		{

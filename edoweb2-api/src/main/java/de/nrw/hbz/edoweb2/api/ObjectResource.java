@@ -1,11 +1,7 @@
 package de.nrw.hbz.edoweb2.api;
 
 import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION;
-import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION_NAME;
 import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME;
-import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME_NAME;
-
-import java.util.Vector;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -36,39 +32,39 @@ public class ObjectResource
 	}
 
 	// @GET
-	// @Path("/{pid}/volume/{volName}")
+	// @Path("/{pid}/volume/{volumePid}")
 	// @Produces({ "application/*" })
 	// public StatusBean readVolume(@PathParam("pid") String pid,
-	// @PathParam("volName") String volName)
+	// @PathParam("volumePid") String volumePid)
 	// {
 	// String volumePid = null;
-	// String query = EJournal.getVolumeQuery(volName, pid);
+	// String query = EJournal.getVolumeQuery(volumePid, pid);
 	// volumePid = actions.findSubject(query);
 	//
 	// return actions.read(volumePid);
 	// }
 
 	@GET
-	@Path("/{pid}/volume/{volName}")
+	@Path("/{pid}/volume/{volumePid}")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVolumeView(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
+			@PathParam("volumePid") String volumePid)
 	{
-		String volumePid = null;
-		String query = EJournal.getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
+		// String volumePid = null;
+		// String query = EJournal.getVolumeQuery(volumePid, pid);
+		// volumePid = actions.findSubject(query);
 		return actions.getView(volumePid, ObjectType.ejournalVolume);
 	}
 
 	@GET
-	@Path("/{pid}/volume/{volName}/data")
+	@Path("/{pid}/volume/{volumePid}/data")
 	@Produces({ "application/*" })
 	public Response readVolumeData(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
+			@PathParam("volumePid") String volumePid)
 	{
-		String volumePid = null;
-		String query = EJournal.getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
+		// String volumePid = null;
+		// String query = EJournal.getVolumeQuery(volumePid, pid);
+		// volumePid = actions.findSubject(query);
 
 		return actions.readData(volumePid);
 	}
@@ -93,38 +89,38 @@ public class ObjectResource
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVolumes(@PathParam("pid") String pid)
 	{
-		Vector<String> v = new Vector<String>();
-
-		for (String volPid : actions.findObject(pid, HAS_VOLUME))
-		{
-
-			v.add(actions.findObject(volPid, HAS_VOLUME_NAME).get(0));
-
-		}
-		return new ObjectList(v);
+		// Vector<String> v = new Vector<String>();
+		//
+		// for (String volPid : )
+		// {
+		//
+		// v.add(actions.findObject(volPid, HAS_VOLUME_NAME).get(0));
+		//
+		// }
+		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
 	}
 
 	@GET
-	@Path("/{pid}/volume/{volName}/dc")
+	@Path("/{pid}/volume/{volumePid}/dc")
 	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
+			@PathParam("volumePid") String volumePid)
 	{
-		String volumePid = null;
-		String query = EJournal.getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
+		// String volumePid = null;
+		// String query = EJournal.getVolumeQuery(volumePid, pid);
+		// volumePid = actions.findSubject(query);
 		return actions.readDC(volumePid);
 	}
 
 	@GET
-	@Path("/{pid}/volume/{volName}/metadata")
+	@Path("/{pid}/volume/{volumePid}/metadata")
 	@Produces({ "application/*" })
 	public Response readVolumeMetadata(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
+			@PathParam("volumePid") String volumePid)
 	{
-		String volumePid = null;
-		String query = EJournal.getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
+		// String volumePid = null;
+		// String query = EJournal.getVolumeQuery(volumePid, pid);
+		// volumePid = actions.findSubject(query);
 		return actions.readMetadata(volumePid);
 	}
 
@@ -154,38 +150,38 @@ public class ObjectResource
 	}
 
 	@GET
-	@Path("/{pid}/version/{versionName}/metadata")
+	@Path("/{pid}/version/{versionPid}/metadata")
 	@Produces({ "application/*" })
 	public Response readWebpageVersionMetadata(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+			@PathParam("versionPid") String versionPid)
 	{
-		String versionPid = null;
-		String query = Webpage.getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
+		// String versionPid = null;
+		// String query = Webpage.getVersionQuery(versionPid, pid);
+		// versionPid = actions.findSubject(query);
 		return actions.readMetadata(versionPid);
 	}
 
 	@GET
-	@Path("/{pid}/version/{versionName}/dc")
+	@Path("/{pid}/version/{versionPid}/dc")
 	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+			@PathParam("versionPid") String versionPid)
 	{
-		String versionPid = null;
-		String query = Webpage.getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
+		// String versionPid = null;
+		// String query = Webpage.getVersionQuery(versionName, pid);
+		// versionPid = actions.findSubject(query);
 		return actions.readDC(versionPid);
 	}
 
 	@GET
-	@Path("/{pid}/version/{versionName}/data")
+	@Path("/{pid}/version/{versionPid}/data")
 	@Produces({ "application/*" })
 	public Response readWebpageVersionData(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+			@PathParam("versionName") String versionPid)
 	{
-		String versionPid = null;
-		String query = Webpage.getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
+		// String versionPid = null;
+		// String query = Webpage.getVersionQuery(versionName, pid);
+		// versionPid = actions.findSubject(query);
 		return actions.readData(versionPid);
 	}
 
@@ -203,14 +199,14 @@ public class ObjectResource
 	// }
 
 	@GET
-	@Path("/{pid}/version/{versionName}")
+	@Path("/{pid}/version/{versionPid}")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVersionView(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+			@PathParam("versionName") String versionPid)
 	{
-		String versionPid = null;
-		String query = Webpage.getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
+		// String versionPid = null;
+		// String query = Webpage.getVersionQuery(versionName, pid);
+		// versionPid = actions.findSubject(query);
 		return actions.getView(versionPid, ObjectType.webpageVersion);
 	}
 
@@ -219,15 +215,15 @@ public class ObjectResource
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVersions(@PathParam("pid") String pid)
 	{
-		Vector<String> v = new Vector<String>();
-
-		for (String volPid : actions.findObject(pid, HAS_VERSION))
-		{
-
-			v.add(actions.findObject(volPid, HAS_VERSION_NAME).get(0));
-
-		}
-		return new ObjectList(v);
+		// Vector<String> v = new Vector<String>();
+		//
+		// for (String volPid : actions.findObject(pid, HAS_VERSION))
+		// {
+		//
+		// v.add(actions.findObject(volPid, HAS_VERSION_NAME).get(0));
+		//
+		// }
+		return new ObjectList(actions.findObject(pid, HAS_VERSION));
 	}
 
 }

@@ -19,7 +19,6 @@ package de.nrw.hbz.edoweb2.sync.ingest;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.Vector;
 
 import javax.xml.transform.Transformer;
@@ -339,7 +338,7 @@ public class FedoraIngester implements IngestInterface
 
 			try
 			{
-				dc.merge(marc2dc(dtlBean));
+				dc.add(marc2dc(dtlBean));
 				dc.addDescription(dtlBean.getLabel());
 				monographDC.post(dc);
 			}
@@ -424,7 +423,7 @@ public class FedoraIngester implements IngestInterface
 
 			try
 			{
-				dc.merge(marc2dc(dtlBean));
+				dc.add(marc2dc(dtlBean));
 				dc.addDescription(dtlBean.getLabel());
 				monographDC.post(dc);
 			}
@@ -475,7 +474,7 @@ public class FedoraIngester implements IngestInterface
 
 			try
 			{
-				dc.merge(marc2dc(dtlBean));
+				dc.add(marc2dc(dtlBean));
 				ejournalDC.post(dc);
 			}
 			catch (Exception e)
@@ -492,9 +491,9 @@ public class FedoraIngester implements IngestInterface
 				String mimeType = b.getStreamMime();
 				if (mimeType.compareTo("application/pdf") != 0)
 					continue;
-				String volName = b.getPid();
-				if (b.getLabel() != null && !b.getLabel().isEmpty())
-					volName = urlEncode(num + "-" + b.getLabel());
+				String volName = edowebNamespace + ":" + b.getPid();
+				// if (b.getLabel() != null && !b.getLabel().isEmpty())
+				// volName = urlEncode(num + "-" + b.getLabel());
 
 				logger.info("Create eJournal volume: " + volName + " "
 						+ (num++) + "/" + numOfVols);
@@ -599,7 +598,7 @@ public class FedoraIngester implements IngestInterface
 
 			try
 			{
-				dc.merge(marc2dc(dtlBean));
+				dc.add(marc2dc(dtlBean));
 				ejournalDC.post(dc);
 			}
 			catch (Exception e)
@@ -659,7 +658,7 @@ public class FedoraIngester implements IngestInterface
 
 			try
 			{
-				dc.merge(marc2dc(dtlBean));
+				dc.add(marc2dc(dtlBean));
 				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
 				title = dc.getFirstTitle();
@@ -679,10 +678,10 @@ public class FedoraIngester implements IngestInterface
 				String mimeType = b.getStreamMime();
 				if (mimeType.compareTo("application/zip") != 0)
 					continue;
-				String version = b.getPid();
+				String version = edowebNamespace + ":" + b.getPid();
 
-				if (b.getLabel() != null && !b.getLabel().isEmpty())
-					version = urlEncode(b.getLabel());
+				// if (b.getLabel() != null && !b.getLabel().isEmpty())
+				// version = urlEncode(b.getLabel());
 				logger.info("Create WebpageVersion volume: " + version + " "
 						+ (num++) + "/" + numOfVersions);
 				WebResource webpageVersion = c.resource(webpage.toString()
@@ -812,7 +811,7 @@ public class FedoraIngester implements IngestInterface
 
 			try
 			{
-				dc.merge(marc2dc(dtlBean));
+				dc.add(marc2dc(dtlBean));
 				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
 				title = dc.getFirstTitle();
@@ -877,7 +876,7 @@ public class FedoraIngester implements IngestInterface
 
 			try
 			{
-				dc.merge(marc2dc(dtlBean));
+				dc.add(marc2dc(dtlBean));
 				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
 				title = dc.getFirstTitle();
@@ -893,7 +892,7 @@ public class FedoraIngester implements IngestInterface
 				logger.debug(mimeType);
 				if (mimeType.compareTo("application/zip") != 0)
 					continue;
-				String version = b.getPid();
+				String version = edowebNamespace + ":" + b.getPid();
 
 				logger.info("Create webpage version: " + version);
 				WebResource webpageVersion = c.resource(webpage.toString()
@@ -994,12 +993,12 @@ public class FedoraIngester implements IngestInterface
 
 	}
 
-	private String urlEncode(String str)
-	{
-		String url = str.replace('.', '-');
-		// if (url.length() >= 11)
-		// url = url.substring(0, 10);
-		return URLEncoder.encode(url);
-	}
+	// private String urlEncode(String str)
+	// {
+	// String url = str.replace('.', '-');
+	// // if (url.length() >= 11)
+	// // url = url.substring(0, 10);
+	// return URLEncoder.encode(url);
+	// }
 
 }
