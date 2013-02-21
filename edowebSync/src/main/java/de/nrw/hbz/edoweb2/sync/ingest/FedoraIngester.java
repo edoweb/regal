@@ -37,6 +37,8 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 
 import de.nrw.hbz.edoweb2.api.DCBeanAnnotated;
+import de.nrw.hbz.edoweb2.api.ObjectType;
+import de.nrw.hbz.edoweb2.api.TypeType;
 import de.nrw.hbz.edoweb2.api.UploadDataBean;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
@@ -101,12 +103,22 @@ public class FedoraIngester implements IngestInterface
 
 			if (partitionC.compareTo("EJO01") == 0)
 			{
-				logger.info(pid + ": start ingesting eJournal");
-				ingestEJournal(dtlBean);
-				logger.info(pid + ": end ingesting eJournal");
+				if (dtlBean.isParent())
+				{
+					logger.info(pid + ": start ingesting eJournal");
+					ingestEJournalComplete(dtlBean);
+					logger.info(pid + ": end ingesting eJournal");
+				}
+				else
+				{
+					logger.info(pid + ": start ingesting eJournal volume");
+					ingestEJournalPart(dtlBean);
+					logger.info(pid + ": end ingesting eJournal volume");
+				}
 			}
 			else if (partitionC.compareTo("WPD01") == 0)
 			{
+
 				logger.info(pid + ": start updating monograph (wpd01)");
 				updateMonographs(dtlBean);
 				logger.info(pid + ": end updating monograph (wpd01)");
@@ -120,9 +132,19 @@ public class FedoraIngester implements IngestInterface
 			}
 			else if (partitionC.compareTo("WSC01") == 0)
 			{
-				logger.info(pid + ": start ingesting webpage (wsc01)");
-				ingestWebpage(dtlBean);
-				logger.info(pid + ": end ingesting webpage (wsc01)");
+				if (dtlBean.isParent())
+				{
+					logger.info(pid + ": start ingesting webpage (wsc01)");
+					ingestWebpageComplete(dtlBean);
+					logger.info(pid + ": end ingesting webpage (wsc01)");
+				}
+				else
+				{
+					logger.info(pid
+							+ ": start ingesting webpage version (wsc01)");
+					ingestWebpagePart(dtlBean);
+					logger.info(pid + ": end ingesting webpage version (wsc01)");
+				}
 			}
 			else if (partitionC.compareTo("WSI01") == 0)
 			{
@@ -164,6 +186,16 @@ public class FedoraIngester implements IngestInterface
 
 	}
 
+	private void ingestEJournalPart(DigitalEntity dtlBean)
+	{
+		updateEJournalPart(dtlBean);
+	}
+
+	private void ingestWebpagePart(DigitalEntity dtlBean)
+	{
+		updateWebpagePart(dtlBean);
+	}
+
 	@Override
 	public void update(DigitalEntity dtlBean)
 	{
@@ -186,9 +218,18 @@ public class FedoraIngester implements IngestInterface
 
 			if (partitionC.compareTo("EJO01") == 0)
 			{
-				logger.info(pid + ": start updating eJournal");
-				updateEJournal(dtlBean);
-				logger.info(pid + ": end updating eJournal");
+				if (dtlBean.isParent())
+				{
+					logger.info(pid + ": start updating eJournal");
+					updateEJournalParent(dtlBean);
+					logger.info(pid + ": end updating eJournal");
+				}
+				else
+				{
+					logger.info(pid + ": start updating eJournal volume");
+					updateEJournalPart(dtlBean);
+					logger.info(pid + ": end updating eJournal volume");
+				}
 			}
 			else if (partitionC.compareTo("WPD01") == 0)
 			{
@@ -205,9 +246,19 @@ public class FedoraIngester implements IngestInterface
 			}
 			else if (partitionC.compareTo("WSC01") == 0)
 			{
-				logger.info(pid + ": start updating webpage (wsc01)");
-				updateWebpage(dtlBean);
-				logger.info(pid + ": end updating webpage (wsc01)");
+				if (dtlBean.isParent())
+				{
+					logger.info(pid + ": start updating webpage (wsc01)");
+					updateWebpageParent(dtlBean);
+					logger.info(pid + ": end updating webpage (wsc01)");
+				}
+				else
+				{
+					logger.info(pid
+							+ ": start updating webpage version (wsc01)");
+					updateWebpagePart(dtlBean);
+					logger.info(pid + ": end updating webpage version (wsc01)");
+				}
 			}
 			else if (partitionC.compareTo("WSI01") == 0)
 			{
@@ -247,6 +298,147 @@ public class FedoraIngester implements IngestInterface
 			logger.error(e.getMessage());
 		}
 
+	}
+
+	private void updateEJournalPart(DigitalEntity dtlBean)
+	{
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
+		String volName = edowebNamespace + ":" + dtlBean.getPid();
+		logger.info("Update eJournal volume: " + volName);
+		WebResource ejournalVolume = c.resource(host
+				+ ":8080/edoweb2-api/ejournal/" + edowebNamespace + ":"
+				+ dtlBean.getParentPid() + "/volume/" + volName);
+
+		String mimeType = dtlBean.getStreamMime();
+		if (mimeType.compareTo("application/pdf") != 0)
+		{
+			logger.info("Volume " + dtlBean.getPid() + " contains no pdf!");
+			return;
+		}
+
+		try
+		{
+			ejournalVolume.put();
+			logger.info("Created new volume!");
+		}
+		catch (Exception e)
+		{
+			logger.info("Volume exists no new volume is created!");
+		}
+		WebResource ejournalVolumeDC = c.resource(ejournalVolume.toString()
+				+ "/dc");
+		WebResource ejournalVolumeData = c.resource(ejournalVolume.toString()
+				+ "/data");
+		// WebResource ejournalVolumeMetadata =
+		// c.resource(ejournalVolume
+		// .toString() + "/metadata");
+
+		UploadDataBean data = new UploadDataBean();
+
+		try
+		{
+			String protocol = "file";
+			String host = "";
+			String path = dtlBean.getStream().getAbsolutePath();
+			String fragment = "";
+			data.path = new URI(protocol, host, path, fragment);
+			data.mime = mimeType;
+			ejournalVolumeData.post(data);
+		}
+		catch (URISyntaxException e)
+		{
+
+			e.printStackTrace();
+		}
+
+		DCBeanAnnotated dc = new DCBeanAnnotated();
+
+		try
+		{
+			dc.addDescription(dtlBean.getLabel());
+			dc.addTitle("Volume of: edoweb:" + dtlBean.getParentPid());
+			dc.addType(TypeType.contentType + ":" + ObjectType.ejournalVolume);
+			ejournalVolumeDC.post(dc);
+		}
+		catch (Exception e)
+		{
+			logger.debug(e.getMessage());
+		}
+
+	}
+
+	private void updateWebpagePart(DigitalEntity dtlBean)
+	{
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
+		String versionName = edowebNamespace + ":" + dtlBean.getPid();
+		logger.info("Update webpage version: " + versionName);
+		WebResource webpageVersion = c.resource(host
+				+ ":8080/edoweb2-api/webpage/" + edowebNamespace + ":"
+				+ dtlBean.getParentPid() + "/version/" + versionName);
+
+		String mimeType = dtlBean.getStreamMime();
+		if (mimeType.compareTo("application/zip") != 0)
+		{
+			logger.info("Version " + dtlBean.getPid() + " contains no zip!");
+			return;
+		}
+
+		try
+		{
+			webpageVersion.put();
+			logger.info("Create new version!");
+		}
+		catch (Exception e)
+		{
+			logger.info("Version exists no new version is created!");
+		}
+		WebResource ejournalVolumeDC = c.resource(webpageVersion.toString()
+				+ "/dc");
+		WebResource ejournalVolumeData = c.resource(webpageVersion.toString()
+				+ "/data");
+		// WebResource ejournalVolumeMetadata =
+		// c.resource(ejournalVolume
+		// .toString() + "/metadata");
+
+		UploadDataBean data = new UploadDataBean();
+
+		try
+		{
+			String protocol = "file";
+			String host = "";
+			String path = dtlBean.getStream().getAbsolutePath();
+			String fragment = "";
+			data.path = new URI(protocol, host, path, fragment);
+			data.mime = mimeType;
+			ejournalVolumeData.post(data);
+		}
+		catch (URISyntaxException e)
+		{
+
+			e.printStackTrace();
+		}
+
+		DCBeanAnnotated dc = new DCBeanAnnotated();
+
+		try
+		{
+			dc.addDescription(dtlBean.getLabel());
+			dc.addTitle("Version of: edoweb:" + dtlBean.getParentPid());
+			dc.addType(TypeType.contentType + ":" + ObjectType.webpageVersion);
+			ejournalVolumeDC.post(dc);
+		}
+		catch (Exception e)
+		{
+			logger.debug(e.getMessage());
+		}
 	}
 
 	private DCBeanAnnotated marc2dc(DigitalEntity dtlBean)
@@ -438,7 +630,7 @@ public class FedoraIngester implements IngestInterface
 		}
 	}
 
-	private void ingestEJournal(DigitalEntity dtlBean)
+	private void ingestEJournalComplete(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -562,7 +754,7 @@ public class FedoraIngester implements IngestInterface
 		}
 	}
 
-	private void updateEJournal(DigitalEntity dtlBean)
+	private void updateEJournalParent(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -586,19 +778,13 @@ public class FedoraIngester implements IngestInterface
 		{
 
 			WebResource ejournalDC = c.resource(ejournal.toString() + "/dc");
-			DCBeanAnnotated dc = null;
-			try
-			{
-				dc = ejournalDC.get(DCBeanAnnotated.class);
-			}
-			catch (Exception e)
-			{
-				dc = new DCBeanAnnotated();
-			}
+			DCBeanAnnotated dc = new DCBeanAnnotated();
 
 			try
 			{
 				dc.add(marc2dc(dtlBean));
+				dc.addType(TypeType.contentType + ":"
+						+ ObjectType.ejournal.toString());
 				ejournalDC.post(dc);
 			}
 			catch (Exception e)
@@ -617,7 +803,7 @@ public class FedoraIngester implements IngestInterface
 		}
 	}
 
-	private void ingestWebpage(DigitalEntity dtlBean)
+	private void ingestWebpageComplete(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -644,8 +830,6 @@ public class FedoraIngester implements IngestInterface
 			// WebResource webpageMetadata = c.resource(webpage.toString()
 			// + "/metadata");
 
-			String title = "";
-
 			DCBeanAnnotated dc = null;
 			try
 			{
@@ -661,7 +845,7 @@ public class FedoraIngester implements IngestInterface
 				dc.add(marc2dc(dtlBean));
 				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
-				title = dc.getFirstTitle();
+				dc.getFirstTitle();
 			}
 			catch (Exception e)
 			{
@@ -770,7 +954,7 @@ public class FedoraIngester implements IngestInterface
 		// "/current/");
 	}
 
-	private void updateWebpage(DigitalEntity dtlBean)
+	private void updateWebpageParent(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -797,24 +981,15 @@ public class FedoraIngester implements IngestInterface
 			// WebResource webpageMetadata = c.resource(webpage.toString()
 			// + "/metadata");
 
-			String title = "";
-
-			DCBeanAnnotated dc = null;
-			try
-			{
-				dc = webpageDC.get(DCBeanAnnotated.class);
-			}
-			catch (Exception e)
-			{
-				dc = new DCBeanAnnotated();
-			}
+			DCBeanAnnotated dc = new DCBeanAnnotated();
 
 			try
 			{
 				dc.add(marc2dc(dtlBean));
+				dc.addType(TypeType.contentType + ":"
+						+ ObjectType.webpage.toString());
 				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
-				title = dc.getFirstTitle();
 			}
 			catch (Exception e)
 			{

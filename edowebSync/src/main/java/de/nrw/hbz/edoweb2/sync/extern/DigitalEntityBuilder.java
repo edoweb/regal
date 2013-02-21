@@ -163,6 +163,11 @@ public class DigitalEntityBuilder
 					dtlDe.addViewLink(b);
 				}
 			}
+			else if (type.compareTo(DigitalEntity.PART_OF) == 0)
+			{
+				dtlDe.setIsParent(false);
+				dtlDe.setParentPid(relPid);
+			}
 		}
 
 		return dtlDe;
