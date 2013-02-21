@@ -118,23 +118,12 @@ public class Webpage
 		}
 		catch (RemoteException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		MessageBean msg = new MessageBean("Create Failed");
 		return Response.serverError().type(MediaType.APPLICATION_JSON)
 				.entity(msg).build();
 	}
-
-	// @POST
-	// @Path("/{pid}")
-	// @Produces({ "application/json", "application/xml" })
-	// @Consumes({ "application/json", "application/xml" })
-	// public MessageBean updateWebpage(@PathParam("pid") String pid,
-	// StatusBean status)
-	// {
-	// return new MessageBean(actions.update(pid, status, false));
-	// }
 
 	@DELETE
 	@Path("/{pid}")
@@ -171,9 +160,6 @@ public class Webpage
 		logger.info("create Webpage Version");
 		try
 		{
-			// String volumeId = actions.getPid(namespace);
-			// if (actions.nodeExists(volumeId))
-			// return new MessageBean("ERROR: Node already exists");
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -212,22 +198,13 @@ public class Webpage
 			link.setPredicate(HAS_VERSION);
 			link.setObject(versionPid, false);
 
-			// long addLinkStart = System.nanoTime();
 			actions.addLink(pid, link);
-			// long addLinkElapsed = System.nanoTime() - addLinkStart;
-			// System.out.println("Create new link duration1: " +
-			// addLinkElapsed);
 
 			link = new Link();
 			link.setPredicate(REL_IS_RELATED);
 			link.setObject(versionPid, false);
 
-			// addLinkStart = System.nanoTime();
 			actions.addLink(pid, link);
-			// addLinkElapsed = System.nanoTime() - addLinkStart;
-			// System.out.println("Create new link duration2: " +
-			// addLinkElapsed);
-			// ;
 
 			return new MessageBean(actions.create(object, true));
 		}
@@ -245,9 +222,6 @@ public class Webpage
 	public MessageBean updateWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, DCBeanAnnotated content)
 	{
-		// String versionPid = null;
-		// String query = getVersionQuery(versionPid, pid);
-		// versionPid = actions.findSubject(query);
 		return new MessageBean(actions.updateDC(versionPid, content));
 	}
 
@@ -256,9 +230,6 @@ public class Webpage
 	public MessageBean updateWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, UploadDataBean content)
 	{
-		// String versionPid = null;
-		// String query = getVersionQuery(versionPid, pid);
-		// versionPid = actions.findSubject(query);
 		return new MessageBean(actions.updateData(versionPid, content));
 	}
 
@@ -268,9 +239,6 @@ public class Webpage
 			@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, UploadDataBean content)
 	{
-		// String versionPid = null;
-		// String query = getVersionQuery(versionPid, pid);
-		// versionPid = actions.findSubject(query);
 		return new MessageBean(actions.updateMetadata(versionPid, content));
 	}
 
@@ -279,9 +247,6 @@ public class Webpage
 	public MessageBean setCurrentVersion(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		// String versionPid = null;
-		// String query = getVersionQuery(versionPid, pid);
-		// versionPid = actions.findSubject(query);
 		Link link = new Link();
 		link.setPredicate(IS_CURRENT_VERSION);
 		link.setObject(versionPid);
@@ -294,9 +259,6 @@ public class Webpage
 	public Response readWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		// String versionPid = null;
-		// String query = getVersionQuery(versionPid, pid);
-		// versionPid = actions.findSubject(query);
 		return actions.readMetadata(versionPid);
 	}
 
@@ -306,9 +268,6 @@ public class Webpage
 	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		// String versionPid = null;
-		// String query = getVersionQuery(versionPid, pid);
-		// versionPid = actions.findSubject(query);
 		return actions.readDC(versionPid);
 	}
 
@@ -318,24 +277,8 @@ public class Webpage
 	public Response readWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		// String versionPid = null;
-		// String query = getVersionQuery(versionPid, pid);
-		// versionPid = actions.findSubject(query);
 		return actions.readData(versionPid);
 	}
-
-	// @GET
-	// @Path("/{pid}/version/{versionPid}")
-	// @Produces({ "application/json", "application/xml" })
-	// public StatusBean readWebpageVersion(@PathParam("pid") String pid,
-	// @PathParam("versionPid") String versionPid)
-	// {
-	// String versionPid = null;
-	// String query = getVersionQuery(versionPid, pid);
-	// versionPid = actions.findSubject(query);
-	//
-	// return actions.read(versionPid);
-	// }
 
 	@GET
 	@Path("/{pid}/version/{versionPid}")
@@ -343,9 +286,6 @@ public class Webpage
 	public View getVersionView(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		// String versionPid = null;
-		// String query = getVersionQuery(versionPid, pid);
-		// versionPid = actions.findSubject(query);
 		return actions.getView(versionPid, ObjectType.webpageVersion);
 	}
 
@@ -354,14 +294,6 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVersions(@PathParam("pid") String pid)
 	{
-		// Vector<String> v = new Vector<String>();
-		//
-		// for (String volPid : )
-		// {
-		//
-		// v.add(actions.findObject(volPid, HAS_VERSION_NAME).get(0));
-		//
-		// }
 		return new ObjectList(actions.findObject(pid, HAS_VERSION));
 	}
 
@@ -380,14 +312,6 @@ public class Webpage
 				.toString() + ":" + webpageType.toString()));
 	}
 
-	// @GET
-	// @Path("/{pid}")
-	// @Produces({ "application/json", "application/xml" })
-	// public StatusBean readWebpage(@PathParam("pid") String pid)
-	// {
-	// return actions.read(pid);
-	// }
-
 	@GET
 	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
@@ -403,14 +327,4 @@ public class Webpage
 	{
 		return actions.readDC(pid);
 	}
-
-	// public static String getVersionQuery(String versionPid, String pid)
-	// {
-	// return "SELECT ?volPid ?p ?o WHERE "
-	// + "	{"
-	// + "	?volPid <info:hbz/hbz-ingest:def/model#isVersionOf> <info:fedora/"
-	// + pid
-	// + "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVersionName> \""
-	// + versionPid + "\". ?volPid ?p ?o .	} ";
-	// }
 }
