@@ -24,9 +24,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
-import java.net.URLDecoder;
 import java.rmi.RemoteException;
-import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -85,16 +83,6 @@ public class EJournal
 		return new MessageBean(eJournal + "\n" + eJournalVolume);
 	}
 
-	// @GET
-	// @Path("/{namespace}:{pid}")
-	// @Produces({ "application/json", "application/xml" })
-	// public StatusBean readEJournal(@PathParam("pid") String pid,
-	// @PathParam("namespace") String userNamespace)
-	// {
-	//
-	// return actions.read(namespace + ":" + pid);
-	// }
-
 	@GET
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
@@ -102,17 +90,6 @@ public class EJournal
 	{
 		return actions.getView(namespace + ":" + pid, ObjectType.ejournal);
 	}
-
-	// @POST
-	// @Path("/{namespace}:{pid}")
-	// @Produces({ "application/json", "application/xml" })
-	// @Consumes({ "application/json", "application/xml" })
-	// public MessageBean updateEJournal(@PathParam("pid") String pid,
-	// StatusBean status, @PathParam("namespace") String userNamespace)
-	// {
-	// return new MessageBean(actions.update(namespace + ":" + pid, status,
-	// false));
-	// }
 
 	@DELETE
 	@Path("/{namespace}:{pid}")
@@ -176,7 +153,6 @@ public class EJournal
 		}
 		catch (RemoteException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		MessageBean msg = new MessageBean("Create Failed");
@@ -222,31 +198,19 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVolumes(@PathParam("pid") String pid)
 	{
-		Vector<String> v = new Vector<String>();
-
-		for (String volPid : actions.findObject(pid, HAS_VOLUME))
-		{
-
-			v.add(actions.findObject(volPid, HAS_VOLUME_NAME).get(0));
-
-		}
-		return new ObjectList(v);
+		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
 	}
 
 	@PUT
-	@Path("/{pid}/volume/{volName}")
+	@Path("/{pid}/volume/{volumePid}")
 	@Produces({ "application/json", "application/xml" })
 	public MessageBean createEJournalVolume(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
+			@PathParam("volumePid") String volumePid)
 	{
 
 		logger.info("create EJournal Volume");
 		try
 		{
-
-			String volumeId = actions.getPid(namespace);
-			if (actions.nodeExists(volumeId))
-				return new MessageBean("ERROR: Node already exists");
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -266,12 +230,12 @@ public class EJournal
 
 			link = new Link();
 			link.setPredicate(HAS_VOLUME_NAME);
-			link.setObject(URLDecoder.decode(volName), true);
+			link.setObject(volumePid, true);
 			rootObject.addRelation(link);
 
 			rootObject
 					.setNamespace(namespace)
-					.setPID(volumeId)
+					.setPID(volumePid)
 					.addType(TypeType.contentType + ":" + volumeType.toString());
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
@@ -281,12 +245,12 @@ public class EJournal
 
 			link = new Link();
 			link.setPredicate(HAS_VOLUME);
-			link.setObject(volumeId, false);
+			link.setObject(volumePid, false);
 			actions.addLink(pid, link);
 
 			link = new Link();
 			link.setPredicate(REL_IS_RELATED);
-			link.setObject(volumeId, false);
+			link.setObject(volumePid, false);
 			actions.addLink(pid, link);
 
 			return new MessageBean(actions.create(object, true));
@@ -299,114 +263,69 @@ public class EJournal
 		return new MessageBean("create eJournal Volume Failed");
 	}
 
-	// @GET
-	// @Path("/{pid}/volume/{volName}")
-	// @Produces({ "application/*" })
-	// public StatusBean readVolume(@PathParam("pid") String pid,
-	// @PathParam("volName") String volName)
-	// {
-	// String volumePid = null;
-	// String query = getVolumeQuery(volName, pid);
-	// volumePid = actions.findSubject(query);
-	//
-	// return actions.read(volumePid);
-	// }
-
 	@GET
-	@Path("/{pid}/volume/{volName}")
+	@Path("/{pid}/volume/{volumePid}")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVolumeView(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
+			@PathParam("volumePid") String volumePid)
 	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
 		return actions.getView(volumePid, ObjectType.ejournalVolume);
 	}
 
 	@GET
-	@Path("/{pid}/volume/{volName}/data")
+	@Path("/{pid}/volume/{volumePid}/data")
 	@Produces({ "application/*" })
 	public Response readVolumeData(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
+			@PathParam("volumePid") String volumePid)
 	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
-
 		return actions.readData(volumePid);
 	}
 
 	@POST
-	@Path("/{pid}/volume/{volName}/data")
+	@Path("/{pid}/volume/{volumePid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
 	public MessageBean updateVolumeData(@PathParam("pid") String pid,
-			@PathParam("volName") String volName, UploadDataBean content)
+			@PathParam("volumePid") String volumePid, UploadDataBean content)
 	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
 		return new MessageBean(actions.updateData(volumePid, content));
 	}
 
 	@GET
-	@Path("/{pid}/volume/{volName}/dc")
+	@Path("/{pid}/volume/{volumePid}/dc")
 	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
+			@PathParam("volumePid") String volumePid)
 	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
 		return actions.readDC(volumePid);
 	}
 
 	@POST
-	@Path("/{pid}/volume/{volName}/dc")
+	@Path("/{pid}/volume/{volumePid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
 	public MessageBean updateVolumeDC(@PathParam("pid") String pid,
-			@PathParam("volName") String volName, DCBeanAnnotated content)
+			@PathParam("volumePid") String volumePid, DCBeanAnnotated content)
 	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
 		return new MessageBean(actions.updateDC(volumePid, content));
 	}
 
 	@GET
-	@Path("/{pid}/volume/{volName}/metadata")
+	@Path("/{pid}/volume/{volumePid}/metadata")
 	@Produces({ "application/*" })
 	public Response readVolumeMetadata(@PathParam("pid") String pid,
-			@PathParam("volName") String volName)
+			@PathParam("volumePid") String volumePid)
 	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
 		return actions.readMetadata(volumePid);
 	}
 
 	@POST
-	@Path("/{pid}/volume/{volName}/metadata")
+	@Path("/{pid}/volume/{volumePid}/metadata")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
 	public MessageBean updateVolumeMetadata(@PathParam("pid") String pid,
-			@PathParam("volName") String volName, UploadDataBean content)
+			@PathParam("volumePid") String volumePid, UploadDataBean content)
 	{
-		String volumePid = null;
-		String query = getVolumeQuery(volName, pid);
-		volumePid = actions.findSubject(query);
 		return new MessageBean(actions.updateMetadata(volumePid, content));
-	}
-
-	public static String getVolumeQuery(String volName, String pid)
-	{
-		return "SELECT ?volPid ?p ?o WHERE "
-				+ "	{"
-				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVolumeOf> <info:fedora/"
-				+ pid
-				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVolumeName> \""
-				+ URLDecoder.decode(volName) + "\". ?volPid ?p ?o .	} ";
 	}
 }

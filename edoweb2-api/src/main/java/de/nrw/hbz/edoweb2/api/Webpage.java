@@ -25,9 +25,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
-import java.net.URLDecoder;
 import java.rmi.RemoteException;
-import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -120,23 +118,12 @@ public class Webpage
 		}
 		catch (RemoteException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		MessageBean msg = new MessageBean("Create Failed");
 		return Response.serverError().type(MediaType.APPLICATION_JSON)
 				.entity(msg).build();
 	}
-
-	// @POST
-	// @Path("/{pid}")
-	// @Produces({ "application/json", "application/xml" })
-	// @Consumes({ "application/json", "application/xml" })
-	// public MessageBean updateWebpage(@PathParam("pid") String pid,
-	// StatusBean status)
-	// {
-	// return new MessageBean(actions.update(pid, status, false));
-	// }
 
 	@DELETE
 	@Path("/{pid}")
@@ -165,17 +152,14 @@ public class Webpage
 	}
 
 	@PUT
-	@Path("/{pid}/version/{versionName}")
+	@Path("/{pid}/version/{versionPid}")
 	@Produces({ "application/json", "application/xml" })
 	public MessageBean createWebpageVersion(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+			@PathParam("versionPid") String versionPid)
 	{
 		logger.info("create Webpage Version");
 		try
 		{
-			String volumeId = actions.getPid(namespace);
-			if (actions.nodeExists(volumeId))
-				return new MessageBean("ERROR: Node already exists");
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -190,7 +174,7 @@ public class Webpage
 
 			link = new Link();
 			link.setPredicate(HAS_VERSION_NAME);
-			link.setObject(URLDecoder.decode(versionName), true);
+			link.setObject(versionPid, true);
 			rootObject.addRelation(link);
 
 			link = new Link();
@@ -200,7 +184,7 @@ public class Webpage
 
 			rootObject
 					.setNamespace(namespace)
-					.setPID(volumeId)
+					.setPID(versionPid)
 					.addType(
 							TypeType.contentType + ":"
 									+ ObjectType.webpageVersion.toString());
@@ -212,24 +196,15 @@ public class Webpage
 
 			link = new Link();
 			link.setPredicate(HAS_VERSION);
-			link.setObject(volumeId, false);
+			link.setObject(versionPid, false);
 
-			// long addLinkStart = System.nanoTime();
 			actions.addLink(pid, link);
-			// long addLinkElapsed = System.nanoTime() - addLinkStart;
-			// System.out.println("Create new link duration1: " +
-			// addLinkElapsed);
 
 			link = new Link();
 			link.setPredicate(REL_IS_RELATED);
-			link.setObject(volumeId, false);
+			link.setObject(versionPid, false);
 
-			// addLinkStart = System.nanoTime();
 			actions.addLink(pid, link);
-			// addLinkElapsed = System.nanoTime() - addLinkStart;
-			// System.out.println("Create new link duration2: " +
-			// addLinkElapsed);
-			// ;
 
 			return new MessageBean(actions.create(object, true));
 		}
@@ -241,50 +216,37 @@ public class Webpage
 	}
 
 	@POST
-	@Path("/{pid}/version/{versionName}/dc")
+	@Path("/{pid}/version/{versionPid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
 	public MessageBean updateWebpageVersionDC(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName,
-			DCBeanAnnotated content)
+			@PathParam("versionPid") String versionPid, DCBeanAnnotated content)
 	{
-		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
 		return new MessageBean(actions.updateDC(versionPid, content));
 	}
 
 	@POST
-	@Path("/{pid}/version/{versionName}/data")
+	@Path("/{pid}/version/{versionPid}/data")
 	public MessageBean updateWebpageVersionData(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName, UploadDataBean content)
+			@PathParam("versionPid") String versionPid, UploadDataBean content)
 	{
-		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
 		return new MessageBean(actions.updateData(versionPid, content));
 	}
 
 	@POST
-	@Path("/{pid}/version/{versionName}/metadata")
+	@Path("/{pid}/version/{versionPid}/metadata")
 	public MessageBean updateWebpageVersionMetadata(
 			@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName, UploadDataBean content)
+			@PathParam("versionPid") String versionPid, UploadDataBean content)
 	{
-		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
 		return new MessageBean(actions.updateMetadata(versionPid, content));
 	}
 
 	@POST
-	@Path("/{pid}/current/{versionName}")
+	@Path("/{pid}/current/{versionPid}")
 	public MessageBean setCurrentVersion(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+			@PathParam("versionPid") String versionPid)
 	{
-		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
 		Link link = new Link();
 		link.setPredicate(IS_CURRENT_VERSION);
 		link.setObject(versionPid);
@@ -292,63 +254,38 @@ public class Webpage
 	}
 
 	@GET
-	@Path("/{pid}/version/{versionName}/metadata")
+	@Path("/{pid}/version/{versionPid}/metadata")
 	@Produces({ "application/*" })
 	public Response readWebpageVersionMetadata(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+			@PathParam("versionPid") String versionPid)
 	{
-		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
 		return actions.readMetadata(versionPid);
 	}
 
 	@GET
-	@Path("/{pid}/version/{versionName}/dc")
+	@Path("/{pid}/version/{versionPid}/dc")
 	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+			@PathParam("versionPid") String versionPid)
 	{
-		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
 		return actions.readDC(versionPid);
 	}
 
 	@GET
-	@Path("/{pid}/version/{versionName}/data")
+	@Path("/{pid}/version/{versionPid}/data")
 	@Produces({ "application/*" })
 	public Response readWebpageVersionData(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+			@PathParam("versionPid") String versionPid)
 	{
-		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
 		return actions.readData(versionPid);
 	}
 
-	// @GET
-	// @Path("/{pid}/version/{versionName}")
-	// @Produces({ "application/json", "application/xml" })
-	// public StatusBean readWebpageVersion(@PathParam("pid") String pid,
-	// @PathParam("versionName") String versionName)
-	// {
-	// String versionPid = null;
-	// String query = getVersionQuery(versionName, pid);
-	// versionPid = actions.findSubject(query);
-	//
-	// return actions.read(versionPid);
-	// }
-
 	@GET
-	@Path("/{pid}/version/{versionName}")
+	@Path("/{pid}/version/{versionPid}")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getVersionView(@PathParam("pid") String pid,
-			@PathParam("versionName") String versionName)
+			@PathParam("versionPid") String versionPid)
 	{
-		String versionPid = null;
-		String query = getVersionQuery(versionName, pid);
-		versionPid = actions.findSubject(query);
 		return actions.getView(versionPid, ObjectType.webpageVersion);
 	}
 
@@ -357,15 +294,7 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVersions(@PathParam("pid") String pid)
 	{
-		Vector<String> v = new Vector<String>();
-
-		for (String volPid : actions.findObject(pid, HAS_VERSION))
-		{
-
-			v.add(actions.findObject(volPid, HAS_VERSION_NAME).get(0));
-
-		}
-		return new ObjectList(v);
+		return new ObjectList(actions.findObject(pid, HAS_VERSION));
 	}
 
 	@GET
@@ -383,14 +312,6 @@ public class Webpage
 				.toString() + ":" + webpageType.toString()));
 	}
 
-	// @GET
-	// @Path("/{pid}")
-	// @Produces({ "application/json", "application/xml" })
-	// public StatusBean readWebpage(@PathParam("pid") String pid)
-	// {
-	// return actions.read(pid);
-	// }
-
 	@GET
 	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
@@ -405,15 +326,5 @@ public class Webpage
 	public DCBeanAnnotated readWebpageDC(@PathParam("pid") String pid)
 	{
 		return actions.readDC(pid);
-	}
-
-	public static String getVersionQuery(String versionName, String pid)
-	{
-		return "SELECT ?volPid ?p ?o WHERE "
-				+ "	{"
-				+ "	?volPid <info:hbz/hbz-ingest:def/model#isVersionOf> <info:fedora/"
-				+ pid
-				+ "> . ?volPid <info:hbz/hbz-ingest:def/model#hasVersionName> \""
-				+ URLDecoder.decode(versionName) + "\". ?volPid ?p ?o .	} ";
 	}
 }

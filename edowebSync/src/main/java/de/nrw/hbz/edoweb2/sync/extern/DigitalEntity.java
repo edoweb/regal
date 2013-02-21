@@ -47,7 +47,9 @@ public class DigitalEntity
 
 	public static String MANIFESTATION = "manifestation";
 	public static String INCLUDE = "include";
+	public static String PART_OF = "part_of";
 
+	boolean isParent = true;
 	String pid = null;
 	String usageType = null;
 	String location = null;
@@ -88,6 +90,7 @@ public class DigitalEntity
 	Vector<DigitalEntity> viewLinks;
 	Vector<DigitalEntity> viewMainLinks = null;
 	private String label = null;
+	private String parentPid;
 
 	public DigitalEntity(String location)
 	{
@@ -547,8 +550,26 @@ public class DigitalEntity
 
 	public File getMarcFile()
 	{
-		// TODO Auto-generated method stub
 		return this.marc;
 	}
 
+	public boolean isParent()
+	{
+		return isParent;
+	}
+
+	public void setIsParent(boolean isParent)
+	{
+		this.isParent = isParent;
+	}
+
+	public void setParentPid(String relPid)
+	{
+		parentPid = relPid;
+	}
+
+	public String getParentPid()
+	{
+		return parentPid;
+	}
 }

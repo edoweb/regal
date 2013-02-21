@@ -289,7 +289,7 @@ public class Main
 					logger.info("Update Files!");
 					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
 							pids.get(i));
-					ingester.update(dtlBean);
+					ingester.ingest(dtlBean);
 					dtlBean = null;
 				}
 
@@ -449,7 +449,7 @@ public class Main
 					logger.info("Update Files!");
 					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
 							pids.get(i));
-					ingester.update(dtlBean);
+					ingester.ingest(dtlBean);
 					dtlBean = null;
 				}
 
@@ -481,9 +481,8 @@ public class Main
 				{
 					logger.info((i + 1) + " / " + size);
 					String pid = pids.get(i);
-					// TODO Remove false parameter?
+
 					String baseDir = downloader.download(pid, false);
-					// logger.info("\tBuild Bean \t" + pid);
 
 					if (!downloader.hasUpdated())
 					{
@@ -501,7 +500,7 @@ public class Main
 
 						DigitalEntity dtlBean = builder.buildComplexBean(
 								baseDir, pids.get(i));
-						ingester.update(dtlBean);
+						ingester.ingest(dtlBean);
 						dtlBean = null;
 						logger.info((i + 1) + "/" + size + " " + pid
 								+ " has been updated!\n");
