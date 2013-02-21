@@ -482,7 +482,7 @@ public class Main
 					logger.info((i + 1) + " / " + size);
 					String pid = pids.get(i);
 
-					String baseDir = downloader.download(pid, true);
+					String baseDir = downloader.download(pid, false);
 
 					if (!downloader.hasUpdated())
 					{
