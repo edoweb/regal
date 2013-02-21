@@ -131,7 +131,7 @@ public class Actions
 	}
 
 	// ---------------------OPTIMIZE--------------------------
-	public String deleteAll(Vector<String> pids, boolean wait)
+	public String deleteAll(List<String> pids, boolean wait)
 	{
 		logger.info("Delete All");
 		for (String pid : pids)
@@ -862,25 +862,12 @@ public class Actions
 
 	public String formatAll()
 	{
-		List<String> objects = archive.findNodes("test:*");
 		StringBuffer result = new StringBuffer();
-		for (String pid : objects)
-		{
-			result.append(pid + "\n");
-			archive.deleteNode(pid);
-		}
-		objects = archive.findNodes("edoweb:*");
-		for (String pid : objects)
-		{
-			result.append(pid + "\n");
-			archive.deleteNode(pid);
-		}
-		objects = archive.findNodes("oai:*");
-		for (String pid : objects)
-		{
-			result.append(pid + "\n");
-			archive.deleteNode(pid);
-		}
+
+		result.append(deleteAll(archive.findNodes("test:*"), false));
+		result.append(deleteAll(archive.findNodes("edoweb:*"), false));
+		result.append(deleteAll(archive.findNodes("oai:*"), false));
+
 		return result.toString();
 	}
 
