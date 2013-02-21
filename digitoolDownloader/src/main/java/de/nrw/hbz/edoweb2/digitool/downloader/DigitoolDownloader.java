@@ -152,86 +152,90 @@ public class DigitoolDownloader
 			setDownloaded(false);
 		}
 
-		String ppid = getParent(digitalEntityFile, pid);
-
-		if (ppid != null)
+		if (digitalEntityFile != null)
 		{
+			String ppid = getParent(digitalEntityFile, pid);
 
-			String path = downloadLoaction + File.separator + ppid;
-			File parent = new File(path);
-			if (!parent.exists())
+			if (ppid != null)
 			{
-				FileUtils.deleteDirectory(dir);
-				throw new IOException(
-						"Can't download part without downloading parent. Parent pid is "
-								+ ppid);
-			}
-			else
-			{
-				File tdir = new File(parent.getAbsolutePath());
-				if (!tdir.exists())
+
+				String path = downloadLoaction + File.separator + ppid;
+				File parent = new File(path);
+				if (!parent.exists())
 				{
-					for (String file : dir.list())
-					{
-						File f = new File(dir.getAbsoluteFile()
-								+ File.separator + file);
-						if (f.isDirectory())
-						{
-							FileUtils.moveDirectoryToDirectory(f, tdir, true);
-						}
-						else
-						{
-							File test = new File(tdir + File.separator
-									+ f.getName());
-							if (test.exists())
-								test.delete();
-							FileUtils.moveFileToDirectory(f, tdir, true);
-
-						}
-					}
-
-					setUpdated(false);
-					setDownloaded(true);
-				}
-				else if (forceDownload)
-				{
-
-					for (String file : dir.list())
-					{
-						File f = new File(dir.getAbsoluteFile()
-								+ File.separator + file);
-						if (f.isDirectory())
-						{
-							File test = new File(tdir + File.separator
-									+ f.getName());
-							if (test.exists())
-								FileUtils.deleteDirectory(test);
-							FileUtils.moveDirectoryToDirectory(f, tdir, true);
-						}
-						else
-						{
-							File test = new File(tdir + File.separator
-									+ f.getName());
-							if (test.exists())
-								test.delete();
-							FileUtils.moveFileToDirectory(f, tdir, true);
-						}
-					}
-					setUpdated(true);
-					setDownloaded(true);
+					FileUtils.deleteDirectory(dir);
+					throw new IOException(
+							"Can't download part without downloading parent. Parent pid is "
+									+ ppid);
 				}
 				else
 				{
-					logger.info("Directory " + tdir.getAbsoluteFile()
-							+ " exists. Step over.");
-					setDownloaded(false);
+					File tdir = new File(parent.getAbsolutePath());
+					if (!tdir.exists())
+					{
+						for (String file : dir.list())
+						{
+							File f = new File(dir.getAbsoluteFile()
+									+ File.separator + file);
+							if (f.isDirectory())
+							{
+								FileUtils.moveDirectoryToDirectory(f, tdir,
+										true);
+							}
+							else
+							{
+								File test = new File(tdir + File.separator
+										+ f.getName());
+								if (test.exists())
+									test.delete();
+								FileUtils.moveFileToDirectory(f, tdir, true);
+
+							}
+						}
+
+						setUpdated(false);
+						setDownloaded(true);
+					}
+					else if (forceDownload)
+					{
+
+						for (String file : dir.list())
+						{
+							File f = new File(dir.getAbsoluteFile()
+									+ File.separator + file);
+							if (f.isDirectory())
+							{
+								File test = new File(tdir + File.separator
+										+ f.getName());
+								if (test.exists())
+									FileUtils.deleteDirectory(test);
+								FileUtils.moveDirectoryToDirectory(f, tdir,
+										true);
+							}
+							else
+							{
+								File test = new File(tdir + File.separator
+										+ f.getName());
+								if (test.exists())
+									test.delete();
+								FileUtils.moveFileToDirectory(f, tdir, true);
+							}
+						}
+						setUpdated(true);
+						setDownloaded(true);
+					}
+					else
+					{
+						logger.info("Directory " + tdir.getAbsoluteFile()
+								+ " exists. Step over.");
+						setDownloaded(false);
+					}
+
 				}
-
+				FileUtils.deleteDirectory(dir);
+				return parent.getAbsolutePath();
 			}
-			FileUtils.deleteDirectory(dir);
-			return parent.getAbsolutePath();
 		}
-
 		return dir.getAbsolutePath();
 	}
 
