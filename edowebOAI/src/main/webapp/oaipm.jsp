@@ -52,14 +52,25 @@
 
 		String[] originalSets = new String[] {
 				"edoweb-oai_dc-pubType-wpd",
-				"edoweb-oai_dc-pubType-ws",
+				"edoweb-oai_dc-pubType-ws", 
+				"edoweb-oai_dc-pubType-ws_zip",
 				"edoweb-oai_dc-pubType-ejo01_mets",
-				"edoweb-oai_dc-pubType-ejo01_pdf", "edoweb-oai_dc-all" };
-		String[] displayedSets = new String[] { "doc-type:report",
-				"doc-type:website", "doc-type:periodical",
-				"doc-type:periodicalPart", "edoweb-oai_dc-all" };
-		String[] namedSets = new String[] { "report", "Website",
-				"Periodical", "PeriodicalPart", "All" };
+				"edoweb-oai_dc-pubType-ejo01_pdf", 
+				"edoweb-oai_dc-all" };
+		String[] displayedSets = new String[] { 
+				"doc-type:report",
+				"doc-type:website",
+				"doc-type:webVersion", 
+				"doc-type:periodical",
+				"doc-type:periodicalPart", 
+				"edoweb-oai_dc-all" };
+		String[] namedSets = new String[] { 
+				"report", 
+				"Website",
+				"Version of a Website",
+				"Periodical", 
+				"PeriodicalPart", 
+				"All" };
 		//-----------------------------------
 		//-----------------------------------
 
