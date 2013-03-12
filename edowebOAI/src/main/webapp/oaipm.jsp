@@ -1,10 +1,8 @@
-
 <%@ page language="java" contentType="text/xml; charset=UTF-8"
 	pageEncoding="UTF-8"%><%@ page import="org.xml.sax.*"%><%@ page
 	import="javax.xml.transform.*"%><%@ page import="java.io.*"%><%@ page
 	import="java.net.*"%><%@ page import="java.util.*"%><%@ page
-	import="java.text.*"%>
-<%
+	import="java.text.*"%><%
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -237,17 +235,13 @@
 			}
 		}
 		
-		
-		stream = stream.replaceAll("\n", "").replace("\r", "");
 		byte[] bArray = stream.getBytes("UTF-8");
 		bos = new ByteArrayOutputStream();
 		for (int j = 0; j < bArray.length; j++)
 		{
 			bos.write(bArray[j]);
 		}
-
 		out.print(bos);
-		
 	} catch (Exception e)
 	{
 		e.printStackTrace();
