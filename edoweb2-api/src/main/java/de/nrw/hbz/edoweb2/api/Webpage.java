@@ -101,11 +101,7 @@ public class Webpage
 			link.setPredicate(REL_IS_NODE_TYPE);
 			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
-			rootObject
-					.setNamespace(namespace)
-					.setPID(pid)
-					.addType(
-							TypeType.contentType + ":" + webpageType.toString());
+			rootObject.setNamespace(namespace).setPID(pid);
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, webpageType));
@@ -182,12 +178,7 @@ public class Webpage
 			link.setObject(pid, false);
 			rootObject.addRelation(link);
 
-			rootObject
-					.setNamespace(namespace)
-					.setPID(versionPid)
-					.addType(
-							TypeType.contentType + ":"
-									+ ObjectType.webpageVersion.toString());
+			rootObject.setNamespace(namespace).setPID(versionPid);
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, webpageType));

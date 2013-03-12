@@ -135,12 +135,7 @@ public class EJournal
 			link.setPredicate(REL_IS_NODE_TYPE);
 			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
-			rootObject
-					.setNamespace(namespace)
-					.setPID(namespace + ":" + pid)
-					.addType(
-							TypeType.contentType + ":"
-									+ ejournalType.toString());
+			rootObject.setNamespace(namespace).setPID(namespace + ":" + pid);
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, ejournalType));
@@ -233,10 +228,7 @@ public class EJournal
 			link.setObject(volumePid, true);
 			rootObject.addRelation(link);
 
-			rootObject
-					.setNamespace(namespace)
-					.setPID(volumePid)
-					.addType(TypeType.contentType + ":" + volumeType.toString());
+			rootObject.setNamespace(namespace).setPID(volumePid);
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, volumeType));

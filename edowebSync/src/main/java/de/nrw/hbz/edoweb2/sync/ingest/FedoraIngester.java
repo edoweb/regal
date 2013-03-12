@@ -524,6 +524,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				dc.add(marc2dc(dtlBean));
 				dc.addDescription(dtlBean.getLabel());
+				dc.addType(TypeType.contentType + ":" + ObjectType.monograph);
 				monographDC.post(dc);
 			}
 			catch (Exception e)
@@ -601,6 +602,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				dc.add(marc2dc(dtlBean));
 				dc.addDescription(dtlBean.getLabel());
+				dc.addType(TypeType.contentType + ":" + ObjectType.monograph);
 				monographDC.post(dc);
 			}
 			catch (Exception e)
@@ -651,6 +653,7 @@ public class FedoraIngester implements IngestInterface
 			try
 			{
 				dc.add(marc2dc(dtlBean));
+				dc.addType(TypeType.contentType + ":" + ObjectType.ejournal);
 				ejournalDC.post(dc);
 			}
 			catch (Exception e)
@@ -723,6 +726,8 @@ public class FedoraIngester implements IngestInterface
 				{
 					dc.addDescription(b.getLabel());
 					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
+					dc.addType(TypeType.contentType + ":"
+							+ ObjectType.ejournalVolume);
 					ejournalVolumeDC.post(dc);
 				}
 				catch (Exception e)
@@ -828,8 +833,8 @@ public class FedoraIngester implements IngestInterface
 			{
 				dc.add(marc2dc(dtlBean));
 				dc.addDescription(dtlBean.getLabel());
+				dc.addType(TypeType.contentType + ":" + ObjectType.webpage);
 				webpageDC.post(dc);
-				dc.getFirstTitle();
 			}
 			catch (Exception e)
 			{
@@ -916,6 +921,8 @@ public class FedoraIngester implements IngestInterface
 				{
 					dc.addTitle("Version of: " + dtlBean.getPid());
 					dc.addDescription(b.getLabel());
+					dc.addType(TypeType.contentType + ":"
+							+ ObjectType.webpageVersion);
 					webpageVersionDC.post(dc);
 				}
 				catch (Exception e)
@@ -1029,6 +1036,7 @@ public class FedoraIngester implements IngestInterface
 			{
 				dc.add(marc2dc(dtlBean));
 				dc.addDescription(dtlBean.getLabel());
+				dc.addType(TypeType.contentType + ":" + ObjectType.webpage);
 				webpageDC.post(dc);
 				title = dc.getFirstTitle();
 			}
@@ -1095,6 +1103,8 @@ public class FedoraIngester implements IngestInterface
 				{
 					dc.addTitle("Version of: edoweb:" + dtlBean.getPid());
 					dc.addDescription(b.getLabel());
+					dc.addType(TypeType.contentType + ":"
+							+ ObjectType.webpageVersion);
 					webpageVersionDC.post(dc);
 				}
 				catch (Exception e)

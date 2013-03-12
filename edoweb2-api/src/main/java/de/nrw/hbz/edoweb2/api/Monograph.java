@@ -93,10 +93,7 @@ public class Monograph
 			link.setPredicate(REL_IS_NODE_TYPE);
 			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
-			rootObject
-					.setNamespace(namespace)
-					.setPID(pid)
-					.addType(TypeType.contentType + ":" + objectType.toString());
+			rootObject.setNamespace(namespace).setPID(pid);
 
 			rootObject.addContentModel(ContentModelFactory.createMonographCM(
 					namespace, objectType));
