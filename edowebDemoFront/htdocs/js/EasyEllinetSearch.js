@@ -92,7 +92,7 @@ EasyEllinetSearch.prototype.request = function(myQuery,searchterm) {
 			var index=0;
 			for(hit in obj.hits.hits) {
 				index++;
-				var source = obj.hits.hits[hit]._source.view;
+				var source = obj.hits.hits[hit]._source;
 				var id = source.pid;
 				var title = source.title;
 				var creator = source.creator;
