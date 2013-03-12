@@ -518,15 +518,7 @@ public class FedoraIngester implements IngestInterface
 				e.printStackTrace();
 			}
 
-			DCBeanAnnotated dc = null;
-			try
-			{
-				dc = monographDC.get(DCBeanAnnotated.class);
-			}
-			catch (Exception e)
-			{
-				dc = new DCBeanAnnotated();
-			}
+			DCBeanAnnotated dc = new DCBeanAnnotated();
 
 			try
 			{
@@ -603,15 +595,7 @@ public class FedoraIngester implements IngestInterface
 				}
 			}
 
-			DCBeanAnnotated dc = null;
-			try
-			{
-				dc = monographDC.get(DCBeanAnnotated.class);
-			}
-			catch (Exception e)
-			{
-				dc = new DCBeanAnnotated();
-			}
+			DCBeanAnnotated dc = new DCBeanAnnotated();
 
 			try
 			{
@@ -1039,15 +1023,7 @@ public class FedoraIngester implements IngestInterface
 
 			String title = "";
 
-			DCBeanAnnotated dc = null;
-			try
-			{
-				dc = webpageDC.get(DCBeanAnnotated.class);
-			}
-			catch (Exception e)
-			{
-				dc = new DCBeanAnnotated();
-			}
+			DCBeanAnnotated dc = new DCBeanAnnotated();
 
 			try
 			{
