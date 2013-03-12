@@ -14,20 +14,7 @@
 
 	<name>edoweb2-api</name>
 
-	<repositories>
-		<repository>
-			<id>private</id>
-			<name>myprivaterepo</name>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>ignore</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<url>file://${basedir}/src/main/resources/repo</url>
-		</repository>
-	</repositories>
+	
 	<dependencies>
 
 		<dependency>
