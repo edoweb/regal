@@ -56,23 +56,23 @@
 	</developers>
 
 
-     <scm>
-        <connection>scm:git:git@github.com:edoweb/edoweb2.git</connection>
-        <developerConnection>scm:git:git@github.com:edoweb/edoweb2.git</developerConnection>
-        <url>http://github.com/jschnasse/edoweb2</url>
-    </scm>
-    
-    <distributionManagement>
-          <repository>
-            <id>repo</id>
-            <url>https://github.com/edoweb/maven-repo/raw/master/releases</url>
-          </repository>
-          <snapshotRepository>
-            <id>snapshot-repo</id>
-            <url>https://github.com/edoweb/maven-repo/raw/master/snapshots</url>
-          </snapshotRepository>
-    </distributionManagement>
-    
+	<scm>
+		<connection>scm:git:git@github.com:edoweb/edoweb2.git</connection>
+		<developerConnection>scm:git:git@github.com:edoweb/edoweb2.git</developerConnection>
+		<url>http://github.com/jschnasse/edoweb2</url>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>repo</id>
+			<url>https://github.com/edoweb/maven-repo/raw/master/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshot-repo</id>
+			<url>https://github.com/edoweb/maven-repo/raw/master/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<repositories>
 		<repository>
 			<id>aduna</id>
@@ -90,7 +90,21 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-	</repositories>
+
+		<repository>
+			<id>private</id>
+			<name>myprivaterepo</name>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>ignore</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<url>file://${basedir}/edoweb2-api/src/main/resources/repo</url>
+		</repository>
+	
+</repositories>
 
 	<build>
 		<plugins>
@@ -117,7 +131,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		</build>
+	</build>
 	<dependencies>
 
 
@@ -129,7 +143,7 @@
 		<module>edowebSync</module>
 		<module>edoweb2-api</module>
 		<module>edowebOAI</module>
-	<!--	<module>integrationTests</module>-->
+		<!-- <module>integrationTests</module> -->
 	</modules>
 
 
