@@ -25,32 +25,22 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.ITEM_ID;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -58,9 +48,6 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.util.URIUtil;
-import org.codehaus.jettison.mapped.Configuration;
-import org.codehaus.jettison.mapped.MappedNamespaceConvention;
-import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -1066,7 +1053,7 @@ public class Actions
 	{
 		String message = "";
 
-		View view = getView(node, type);
+		// View view = getView(node, type);
 
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -1077,33 +1064,42 @@ public class Actions
 			WebResource index = c
 					.resource("http://localhost:9200/edoweb/titel/"
 							+ node.getPID());
+
+			WebResource view = c.resource("http://localhost/objects/"
+					+ node.getPID());
+
 			index.accept(MediaType.APPLICATION_JSON);
+			view.accept(MediaType.APPLICATION_JSON);
 
-			JAXBContext jc = JAXBContext.newInstance(View.class);
+			String viewAsString = view.get(String.class);
 
-			Configuration config = new Configuration();
-			Map<String, String> xmlToJsonNamespaces = new HashMap<String, String>(
-					1);
-			xmlToJsonNamespaces.put(
-					"http://www.w3.org/2001/XMLSchema-instance", "");
-			config.setXmlToJsonNamespaces(xmlToJsonNamespaces);
-			MappedNamespaceConvention con = new MappedNamespaceConvention(
-					config);
-
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			PrintStream out = new PrintStream(baos);
-			Writer writer = new OutputStreamWriter(out);
-			XMLStreamWriter xmlStreamWriter = new MappedXMLStreamWriter(con,
-					writer);
-
-			Marshaller marshaller = jc.createMarshaller();
-			marshaller.marshal(view, xmlStreamWriter);
-			String viewAsString = baos.toString("utf-8");
-
+			// JAXBContext jc = JAXBContext.newInstance(View.class);
+			//
+			// Configuration config = new Configuration();
+			// Map<String, String> xmlToJsonNamespaces = new HashMap<String,
+			// String>(
+			// 1);
+			// xmlToJsonNamespaces.put(
+			// "http://www.w3.org/2001/XMLSchema-instance", "");
+			// config.setXmlToJsonNamespaces(xmlToJsonNamespaces);
+			// MappedNamespaceConvention con = new MappedNamespaceConvention(
+			// config);
+			//
+			// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			// PrintStream out = new PrintStream(baos);
+			// Writer writer = new OutputStreamWriter(out);
+			// XMLStreamWriter xmlStreamWriter = new MappedXMLStreamWriter(con,
+			// writer);
+			//
+			// Marshaller marshaller = jc.createMarshaller();
+			// marshaller.marshal(view, xmlStreamWriter);
+			//
+			// String viewAsString = baos.toString("utf-8");
+			//
 			// System.out.println(view.getType());
-			// System.out.println("JSON-------------------");
-			// System.out.println(viewAsString);
-			// System.out.println("-----------------------");
+			System.out.println("JSON-------------------");
+			System.out.println(viewAsString);
+			System.out.println("-----------------------");
 			message = index.put(String.class, viewAsString);
 		}
 		catch (Exception e)
@@ -1135,7 +1131,7 @@ public class Actions
 		return "Remove " + pid + " from index!";
 	}
 
-	public String index(UriInfo urlInfo, String pid)
+	public String index(String pid)
 	{
 		try
 		{
