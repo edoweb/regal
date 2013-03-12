@@ -8,8 +8,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 @Path("/edowebAdmin")
 public class EdowebAdmin
@@ -49,9 +47,9 @@ public class EdowebAdmin
 	@POST
 	@Path("/index/{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public MessageBean index(@PathParam("pid") String pid, @Context UriInfo info)
+	public MessageBean index(@PathParam("pid") String pid)
 	{
-		return new MessageBean(actions.index(info, pid));
+		return new MessageBean(actions.index(pid));
 	}
 
 	@GET
