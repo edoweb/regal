@@ -79,7 +79,7 @@ public class ObjectResource
 	@GET
 	@Path("/{pid}")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_XHTML_XML })
+			MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid)
 	{
 		return actions.getView(pid);
