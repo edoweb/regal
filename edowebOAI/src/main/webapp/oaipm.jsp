@@ -236,7 +236,9 @@
 								+ "</setSpec>");
 			}
 		}
-
+		
+		
+		stream = stream.replaceAll("\n", "").replace("\r", "");
 		byte[] bArray = stream.getBytes("UTF-8");
 		bos = new ByteArrayOutputStream();
 		for (int j = 0; j < bArray.length; j++)
@@ -245,6 +247,7 @@
 		}
 
 		out.print(bos);
+		
 	} catch (Exception e)
 	{
 		e.printStackTrace();
