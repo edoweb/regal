@@ -1054,7 +1054,7 @@ public class FedoraIngester implements IngestInterface
 				}
 				catch (Exception e)
 				{
-					logger.info(e.getMessage());
+					logger.info("Version exists no new version is created!");
 				}
 				// logger.info(response);
 				WebResource webpageVersionDC = c.resource(webpageVersion
