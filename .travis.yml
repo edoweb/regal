@@ -1,7 +1,7 @@
 language: java
 jdk: oraclejdk7
 install:
-  - mvn clean install -e -q -DskipTests=true
+  - mvn clean install -e -DskipTests=true
 before_script:
   - 
 script:
