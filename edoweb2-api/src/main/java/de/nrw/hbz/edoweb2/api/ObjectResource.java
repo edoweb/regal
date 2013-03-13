@@ -78,8 +78,7 @@ public class ObjectResource
 
 	@GET
 	@Path("/{pid}")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
-			MediaType.TEXT_HTML })
+	@Produces({ "application/json", "application/xml", "text/html" })
 	public View getView(@PathParam("pid") String pid)
 	{
 		return actions.getView(pid);
