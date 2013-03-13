@@ -92,8 +92,8 @@
 		</repository>
 
 		<repository>
-			<id>private</id>
-			<name>myprivaterepo</name>
+			<id>edoweb.github.com</id>
+			<name>edoweb.github.com</name>
 			<releases>
 				<enabled>true</enabled>
 				<checksumPolicy>ignore</checksumPolicy>
@@ -101,8 +101,14 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-			<url>file://${basedir}/edoweb2-api/src/main/resources/repo</url>
+			<url>http://edoweb.github.com/releases</url>
 		</repository>
+		
+		<repository>
+		 <id>jboss-nonssl</id>
+      	<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+		</repository>
+		
 	
 </repositories>
 
