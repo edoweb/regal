@@ -27,9 +27,11 @@ import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.ITEM_ID;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
@@ -48,6 +50,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.commons.io.IOUtils;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -1065,13 +1068,20 @@ public class Actions
 					.resource("http://localhost:9200/edoweb/titel/"
 							+ node.getPID());
 
-			WebResource view = c.resource("http://localhost/objects/"
-					+ node.getPID());
-
 			index.accept(MediaType.APPLICATION_JSON);
-			view.accept(MediaType.APPLICATION_JSON);
 
-			String viewAsString = view.get(String.class);
+			URL url = new URL("http://localhost/objects/" + node.getPID());
+
+			URLConnection con = url.openConnection();
+			con.setRequestProperty("Accept", "application/json");
+			con.connect();
+
+			InputStream in = con.getInputStream();
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(in, writer, "UTF-8");
+			String viewAsString = writer.toString();
+
+			in.close();
 
 			// JAXBContext jc = JAXBContext.newInstance(View.class);
 			//
