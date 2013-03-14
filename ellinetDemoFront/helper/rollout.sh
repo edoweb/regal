@@ -1,27 +1,36 @@
 #! /bin/bash
 
+HOME=/opt/ellinet
+SRC=ellinet
+WEBAPP_SRC=edoweb2-api/target/edoweb2-api.war
+WEBAPP_DEST=edoweb2-api.war
+SYNCER_SRC=ellinetSync/target/ellinetSync-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+SYNCER_DEST=ellisync/ellisync.jar
+FRONTENDSRC=ellinetDemoFront/htdocs
+FRONTEND_DEST=ellihtml
+
 echo "Update src must be done manually!"
 echo "OK?"
-/opt/fedora/tomcat/bin/shutdown.sh
+ $HOME/fedora/tomcat/bin/shutdown.sh
 
 echo "Compile..."
-cd /opt/edoweb/edoweb2
-mvn clean install --settings /opt/edoweb/edoweb2/settings.xml
-cd /opt/edoweb/edoweb2/edowebSync
-mvn assembly:assembly -o --settings /opt/edoweb/edoweb2/settings.xml
-cd /opt/edoweb/edoweb2/edoweb2-api
+cd $HOME/$SRC
+mvn clean install --settings  $HOME/$SRC/settings.xml
+cd $HOME/$SRC/edowebSync
+mvn assembly:assembly -o --settings  $HOME/$SRC/settings.xml
+cd $HOME/$SRC/edoweb2-api
 echo "Compile end ..."
 
 echo "Install Webapi"
 
-mvn war:war --settings /opt/edoweb/edoweb2/settings.xml
+mvn war:war --settings  $HOME/$SRC/settings.xml
 echo "Rollout..."
-rm -rf /opt/fedora/tomcat/webapps/edoweb2-api*
-cp /opt/edoweb/edoweb2/edoweb2-api/target/edoweb2-api.war /opt/fedora/tomcat/webapps/
-cp /opt/edoweb/edoweb2/edowebSync/target/edowebSync-0.0.1-SNAPSHOT-jar-with-dependencies.jar /opt/edoweb/edosync/edosync.jar
-/opt/fedora/tomcat/bin/startup.sh
+rm -rf  $HOME/fedora/tomcat/webapps/edoweb2-api*
+cp $HOME/$SRC/$WEBAPP_SRC  $HOME/fedora/tomcat/webapps/$WEBAPP_DEST
+cp $HOME/$SRC/§SYNCER_SRC $HOME/$SYNCER_DEST
+$HOME/fedora/tomcat/bin/startup.sh
 echo "FINISHED!"
 echo install htdocs
-cp -r /opt/edoweb/edoweb2/edowebDemoFront/htdocs/* /opt/edoweb/edohtml/
+cp -r $HOME/$SRC/FRONTEND_SRC/* $HOME/$FRONTEND_DEST
 
-tail -f /opt/fedora/tomcat/logs/catalina.out
+tail -f $HOME/tomcat/logs/catalina.out
