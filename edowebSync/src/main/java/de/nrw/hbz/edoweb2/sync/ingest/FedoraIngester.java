@@ -819,15 +819,7 @@ public class FedoraIngester implements IngestInterface
 			// WebResource webpageMetadata = c.resource(webpage.toString()
 			// + "/metadata");
 
-			DCBeanAnnotated dc = null;
-			try
-			{
-				dc = webpageDC.get(DCBeanAnnotated.class);
-			}
-			catch (Exception e)
-			{
-				dc = new DCBeanAnnotated();
-			}
+			DCBeanAnnotated dc = new DCBeanAnnotated();
 
 			try
 			{
@@ -907,15 +899,7 @@ public class FedoraIngester implements IngestInterface
 				{
 					webpageVersionData = null;
 				}
-				dc = null;
-				try
-				{
-					dc = webpageVersionDC.get(DCBeanAnnotated.class);
-				}
-				catch (Exception e)
-				{
-					dc = new DCBeanAnnotated();
-				}
+				dc = new DCBeanAnnotated();
 
 				try
 				{
@@ -1089,15 +1073,7 @@ public class FedoraIngester implements IngestInterface
 				{
 					e.printStackTrace();
 				}
-				dc = null;
-				try
-				{
-					dc = webpageVersionDC.get(DCBeanAnnotated.class);
-				}
-				catch (Exception e)
-				{
-					dc = new DCBeanAnnotated();
-				}
+				dc = new DCBeanAnnotated();
 
 				try
 				{
