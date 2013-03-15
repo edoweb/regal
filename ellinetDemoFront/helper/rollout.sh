@@ -6,7 +6,7 @@ WEBAPP_SRC=edoweb2-api/target/edoweb2-api.war
 WEBAPP_DEST=edoweb2-api.war
 SYNCER_SRC=ellinetSync/target/ellinetSync-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 SYNCER_DEST=ellisync/ellisync.jar
-FRONTENDSRC=ellinetDemoFront/htdocs
+FRONTEND_SRC=ellinetDemoFront/htdocs
 FRONTEND_DEST=ellihtml
 
 echo "Update src must be done manually!"
