@@ -15,22 +15,21 @@ echo "OK?"
 
 echo "Compile..."
 cd $HOME/$SRC
-mvn clean install --settings  $HOME/$SRC/settings.xml
-cd $HOME/$SRC/edowebSync
-mvn assembly:assembly -o --settings  $HOME/$SRC/settings.xml
+mvn clean install
+cd $HOME/$SRC/ellinetSync
+mvn assembly:assembly 
 cd $HOME/$SRC/edoweb2-api
 echo "Compile end ..."
 
 echo "Install Webapi"
-
-mvn war:war --settings  $HOME/$SRC/settings.xml
+mvn war:war
 echo "Rollout..."
 rm -rf  $HOME/fedora/tomcat/webapps/edoweb2-api*
 cp $HOME/$SRC/$WEBAPP_SRC  $HOME/fedora/tomcat/webapps/$WEBAPP_DEST
-cp $HOME/$SRC/§SYNCER_SRC $HOME/$SYNCER_DEST
+cp $HOME/$SRC/$SYNCER_SRC $HOME/$SYNCER_DEST
 $HOME/fedora/tomcat/bin/startup.sh
 echo "FINISHED!"
 echo install htdocs
-cp -r $HOME/$SRC/FRONTEND_SRC/* $HOME/$FRONTEND_DEST
+cp -r $HOME/$SRC/$FRONTEND_SRC/* $HOME/$FRONTEND_DEST
 
-tail -f $HOME/tomcat/logs/catalina.out
+tail -f $HOME/fedora/tomcat/logs/catalina.out
