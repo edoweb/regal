@@ -34,8 +34,8 @@ import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 import de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBuilder;
-import de.nrw.hbz.edoweb2.sync.ingest.FedoraIngester;
 import de.nrw.hbz.edoweb2.sync.ingest.IngestInterface;
+import de.nrw.hbz.ellinet.sync.ingest.EllinetIngester;
 
 /**
  * Class Main
@@ -175,7 +175,7 @@ public class Main
 		harvester = new OaiPidGrabber(oaiServer, timestampFile);
 		downloader = new DigitoolDownloader(server, downloadLocation);
 
-		ingester = new FedoraIngester(user, password, host);
+		ingester = new EllinetIngester(user, password, host);
 
 		if (mode.compareTo("INIT") == 0)
 		{
