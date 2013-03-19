@@ -485,7 +485,7 @@ public class FedoraIngester implements IngestInterface
 		try
 		{
 			String request = "content";
-			String response = monograph.put(String.class, request);
+			monograph.put(String.class, request);
 		}
 		catch (Exception e)
 		{
@@ -552,7 +552,7 @@ public class FedoraIngester implements IngestInterface
 		try
 		{
 			String request = "content";
-			String response = monograph.put(String.class, request);
+			monograph.put(String.class, request);
 		}
 		catch (Exception e)
 		{
@@ -630,7 +630,7 @@ public class FedoraIngester implements IngestInterface
 		try
 		{
 			String request = "content";
-			String response = ejournal.put(String.class, request);
+			ejournal.put(String.class, request);
 		}
 		catch (Exception e)
 		{
@@ -757,7 +757,7 @@ public class FedoraIngester implements IngestInterface
 		try
 		{
 			String request = "content";
-			String response = ejournal.put(String.class, request);
+			ejournal.put(String.class, request);
 		}
 		catch (Exception e)
 		{
@@ -942,11 +942,11 @@ public class FedoraIngester implements IngestInterface
 
 		try
 		{
-			String response = "";
+
 			try
 			{
 				String request = "content";
-				response = webpage.put(String.class, request);
+				webpage.put(String.class, request);
 			}
 			catch (Exception e)
 			{
@@ -972,7 +972,7 @@ public class FedoraIngester implements IngestInterface
 			}
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
-			int num = 1;
+
 			logger.info("Found " + numOfVersions + " versions.");
 			logger.info("Will not update versions.");
 
@@ -999,7 +999,7 @@ public class FedoraIngester implements IngestInterface
 		String request = "content";
 		try
 		{
-			String response = webpage.put(String.class, request);
+			webpage.put(String.class, request);
 		}
 		catch (Exception e)
 		{
@@ -1012,8 +1012,6 @@ public class FedoraIngester implements IngestInterface
 			// WebResource webpageMetadata = c.resource(webpage.toString()
 			// + "/metadata");
 
-			String title = "";
-
 			DCBeanAnnotated dc = new DCBeanAnnotated();
 
 			try
@@ -1022,7 +1020,7 @@ public class FedoraIngester implements IngestInterface
 				dc.addDescription(dtlBean.getLabel());
 				dc.addType(TypeType.contentType + ":" + ObjectType.webpage);
 				webpageDC.post(dc);
-				title = dc.getFirstTitle();
+
 			}
 			catch (Exception e)
 			{
@@ -1042,7 +1040,7 @@ public class FedoraIngester implements IngestInterface
 						+ "/version/" + version);
 				try
 				{
-					String response = webpageVersion.put(String.class);
+					webpageVersion.put(String.class);
 				}
 				catch (Exception e)
 				{

@@ -16,10 +16,6 @@
  */
 package de.nrw.hbz.edoweb2.api;
 
-import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION_NAME;
-import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME_NAME;
-import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VERSION;
-import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VOLUME;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
@@ -135,7 +131,7 @@ public class Actions
 	public String create(ComplexObject object, boolean wait)
 			throws RemoteException
 	{
-		Node node = archive.createComplexObject(object);
+		archive.createComplexObject(object);
 		if (wait)
 			waitWorkaround();
 
@@ -1233,25 +1229,25 @@ public class Actions
 		return serverName + "/" + typePath + "/" + node.getPID();
 	}
 
-	private String getVolumeName(Node node)
-	{
-		return findObject(node.getPID(), HAS_VOLUME_NAME).firstElement();
-	}
-
-	private String getJournalPid(Node node)
-	{
-		return findObject(node.getPID(), IS_VOLUME).firstElement();
-	}
-
-	private String getVersionName(Node node)
-	{
-		return findObject(node.getPID(), HAS_VERSION_NAME).firstElement();
-	}
-
-	private String getWebpagePid(Node node)
-	{
-		return findObject(node.getPID(), IS_VERSION).firstElement();
-	}
+	// private String getVolumeName(Node node)
+	// {
+	// return findObject(node.getPID(), HAS_VOLUME_NAME).firstElement();
+	// }
+	//
+	// private String getJournalPid(Node node)
+	// {
+	// return findObject(node.getPID(), IS_VOLUME).firstElement();
+	// }
+	//
+	// private String getVersionName(Node node)
+	// {
+	// return findObject(node.getPID(), HAS_VERSION_NAME).firstElement();
+	// }
+	//
+	// private String getWebpagePid(Node node)
+	// {
+	// return findObject(node.getPID(), IS_VERSION).firstElement();
+	// }
 
 	public List<String> getAll()
 	{

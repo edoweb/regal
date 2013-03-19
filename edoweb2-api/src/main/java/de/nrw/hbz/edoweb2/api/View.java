@@ -226,7 +226,7 @@ public class View
 
 	public void setHasPartName(Vector<String> hasPart)
 	{
-		this.hasPartName = hasPartName;
+		this.hasPartName = hasPart;
 	}
 
 	public Vector<String> getDescription()

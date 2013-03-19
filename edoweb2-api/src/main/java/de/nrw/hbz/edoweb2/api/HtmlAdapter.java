@@ -24,7 +24,6 @@ public class HtmlAdapter
 	public static String getHtml(View view)
 	{
 
-		String fedoraLogo = "http://www.fedora-commons.org/site-images/logo_vertical_white_200_251";
 		String edowebStyle = "http://orthos.hbz-nrw.de/style.css";
 		String edowebLogo = "http://orthos.hbz-nrw.de/logo.gif";
 
@@ -207,7 +206,7 @@ public class HtmlAdapter
 		tr = doc.createElement("tr");
 		td0 = doc.createElement("td");
 		td1 = doc.createElement("td");
-		Element image = doc.createElement("img");
+		doc.createElement("img");
 
 		td0.setAttribute("class", "editIcon");
 		// a = doc.createElement("a");
@@ -404,10 +403,6 @@ public class HtmlAdapter
 	static void addIsPartOf(Document doc, Element table, String fieldName,
 			View view)
 	{
-		String urnResolver = "http://nbn-resolving.de/";
-		String doiResolver = "http://dx.doi.org/";
-		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
-		String zipLogo = "http://orthos.hbz-nrw.de/zip.png";
 
 		List<String> isPartOf = view.getIsPartOf();
 		List<String> isPartOfName = view.getIsPartOfName();
@@ -442,10 +437,6 @@ public class HtmlAdapter
 	static void addHasPart(Document doc, Element table, String fieldName,
 			View view)
 	{
-		String urnResolver = "http://nbn-resolving.de/";
-		String doiResolver = "http://dx.doi.org/";
-		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
-		String zipLogo = "http://orthos.hbz-nrw.de/zip.png";
 
 		List<String> hasPart = view.getHasPart();
 		List<String> hasPartName = view.getHasPartName();

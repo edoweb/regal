@@ -164,7 +164,7 @@ public class EllinetIngester implements IngestInterface
 		try
 		{
 			String request = "content";
-			String response = monograph.put(String.class, request);
+			monograph.put(String.class, request);
 		}
 		catch (Exception e)
 		{

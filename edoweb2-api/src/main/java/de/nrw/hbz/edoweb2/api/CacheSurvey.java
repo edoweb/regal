@@ -18,7 +18,6 @@ import org.marc4j.marc.Subfield;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class CacheSurvey
 {
 	final static Logger logger = LoggerFactory.getLogger(CacheSurvey.class);
@@ -34,7 +33,7 @@ public class CacheSurvey
 	{
 		List<View> rows = new Vector<View>();
 		File cacheDirFile = new File(cacheDir);
-		int count = 1;
+		// int count = 1;
 		for (File file : cacheDirFile.listFiles())
 		{
 			if (file.isDirectory())
@@ -125,6 +124,8 @@ public class CacheSurvey
 
 				try
 				{
+
+					@SuppressWarnings("rawtypes")
 					List creators = record.getVariableFields(new String[] {
 							"100", "110", "111", "700", "710", "711", "720" });
 					for (Object c : creators)
@@ -140,8 +141,11 @@ public class CacheSurvey
 
 				try
 				{
+					@SuppressWarnings("rawtypes")
 					List types = record.getVariableFields(new String[] { "655",
 							"501" });
+
+					@SuppressWarnings("rawtypes")
 					List stypes = ((DataField) (types.get(0))).getSubfields();
 
 					view.addType(((Subfield) stypes.get(0)).getData());
