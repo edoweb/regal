@@ -131,10 +131,10 @@ public class EllinetIngester implements IngestInterface
 					+ ":" + dtlBean.getPid());
 			index.post();
 			logger.info(pid + ": got indexed!");
-			WebResource oaiSet = c.resource(host
-					+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/"
-					+ ellinetNamespace + ":" + dtlBean.getPid());
-			oaiSet.post();
+			// WebResource oaiSet = c.resource(host
+			// + ":8080/edoweb2-api/edowebAdmin/makeOaiSet/"
+			// + ellinetNamespace + ":" + dtlBean.getPid());
+			// oaiSet.post();
 			logger.info(pid + ": got set! Thanx and goodbye!\n");
 		}
 		catch (Exception e)
