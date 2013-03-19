@@ -180,10 +180,19 @@ public class EJournal
 		return actions.readMetadata(pid);
 	}
 
-	@POST
+	@PUT
 	@Path("/{pid}/metadata")
 	public MessageBean updateEJournalMetadata(@PathParam("pid") String pid,
-			UploadDataBean content)
+			String content)
+	{
+		return new MessageBean(actions.updateMetadata(pid, content));
+	}
+
+	@Deprecated
+	@POST
+	@Path("/{pid}/metadata")
+	public MessageBean updateEJournalMetadataPost(@PathParam("pid") String pid,
+			String content)
 	{
 		return new MessageBean(actions.updateMetadata(pid, content));
 	}
@@ -311,12 +320,23 @@ public class EJournal
 		return actions.readMetadata(volumePid);
 	}
 
-	@POST
+	@PUT
 	@Path("/{pid}/volume/{volumePid}/metadata")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
 	public MessageBean updateVolumeMetadata(@PathParam("pid") String pid,
-			@PathParam("volumePid") String volumePid, UploadDataBean content)
+			@PathParam("volumePid") String volumePid, String content)
+	{
+		return new MessageBean(actions.updateMetadata(volumePid, content));
+	}
+
+	@Deprecated
+	@POST
+	@Path("/{pid}/volume/{volumePid}/metadata")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public MessageBean updateVolumeMetadataPost(@PathParam("pid") String pid,
+			@PathParam("volumePid") String volumePid, String content)
 	{
 		return new MessageBean(actions.updateMetadata(volumePid, content));
 	}

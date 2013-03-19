@@ -21,6 +21,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.ITEM_ID;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -46,6 +47,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
@@ -397,20 +399,27 @@ public class Actions
 		return "updateDC";
 	}
 
-	public String updateMetadata(String pid, UploadDataBean content)
+	public String updateMetadata(String pid, String content)
 	{
 
 		try
 		{
+			File file = new File("/tmp/edowebtmpfile");
+			FileUtils.writeStringToFile(file, content);
 			Node node = archive.readNode(pid);
 			if (node != null)
 			{
-				node.setMetadataFile(content.path.getPath());
+				node.setMetadataFile(file.getAbsolutePath());
 				archive.updateNode(pid, node);
 			}
 		}
 		catch (RemoteException e)
 		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -1252,6 +1261,69 @@ public class Actions
 	public List<String> getAll()
 	{
 		return archive.findNodes("edoweb:*");
+	}
+
+	public String lobidify(String pid)
+	{
+		Node node;
+		try
+		{
+			node = archive.readNode(pid);
+
+			List<String> identifier = node.getIdentifier();
+			String alephid = "";
+			for (String id : identifier)
+			{
+				if (id.startsWith("TT") || id.startsWith("HT"))
+				{
+					alephid = id;
+					break;
+				}
+			}
+			if (alephid.isEmpty())
+			{
+				return "No Catalog-Id found";
+			}
+			String lobidUrl = " http://lobid.org/resource/" + alephid;
+			InputStream in = null;
+			try
+			{
+				URL url = new URL(lobidUrl);
+
+				URLConnection con = url.openConnection();
+				con.setRequestProperty("Accept", "text/plain");
+				con.connect();
+
+				in = con.getInputStream();
+				StringWriter writer = new StringWriter();
+				IOUtils.copy(in, writer, "UTF-8");
+				String str = writer.toString();
+
+				updateMetadata(pid, str);
+			}
+			catch (IOException e)
+			{
+
+			}
+			finally
+			{
+				try
+				{
+					if (in != null)
+						in.close();
+				}
+				catch (IOException e)
+				{
+
+				}
+			}
+		}
+		catch (RemoteException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return "Success";
 	}
 
 }

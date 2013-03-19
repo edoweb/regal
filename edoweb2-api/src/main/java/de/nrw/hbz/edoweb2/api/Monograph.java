@@ -199,10 +199,19 @@ public class Monograph
 		return actions.readDC(pid);
 	}
 
-	@POST
+	@PUT
 	@Path("/{pid}/metadata")
 	public MessageBean updateMonographMetadata(@PathParam("pid") String pid,
-			UploadDataBean content)
+			String content)
+	{
+		return new MessageBean(actions.updateMetadata(pid, content));
+	}
+
+	@Deprecated
+	@POST
+	@Path("/{pid}/metadata")
+	public MessageBean updateMonographMetadataPost(
+			@PathParam("pid") String pid, String content)
 	{
 		return new MessageBean(actions.updateMetadata(pid, content));
 	}

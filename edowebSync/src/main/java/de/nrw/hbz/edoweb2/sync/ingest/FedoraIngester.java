@@ -178,6 +178,9 @@ public class FedoraIngester implements IngestInterface
 					+ edowebNamespace + ":" + dtlBean.getPid());
 			oaiSet.post();
 			logger.info(pid + ": got set! Thanx and goodbye!\n");
+
+			lobidify(dtlBean);
+
 		}
 		catch (Exception e)
 		{
@@ -1135,5 +1138,20 @@ public class FedoraIngester implements IngestInterface
 	// // url = url.substring(0, 10);
 	// return URLEncoder.encode(url);
 	// }
+
+	private void lobidify(DigitalEntity dtlBean)
+	{
+
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		c.addFilter(new HTTPBasicAuthFilter(user, password));
+
+		WebResource lobid = c.resource(host
+				+ ":8080/edoweb2-api/edowebAdmin/lobidify/" + edowebNamespace
+				+ ":" + dtlBean.getPid());
+		lobid.post();
+	}
 
 }

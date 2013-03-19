@@ -139,10 +139,19 @@ public class Webpage
 		return new MessageBean(actions.updateDC(pid, content));
 	}
 
-	@POST
+	@PUT
 	@Path("/{pid}/metadata")
 	public MessageBean updateWebpageMetadata(@PathParam("pid") String pid,
-			UploadDataBean content)
+			String content)
+	{
+		return new MessageBean(actions.updateMetadata(pid, content));
+	}
+
+	@Deprecated
+	@POST
+	@Path("/{pid}/metadata")
+	public MessageBean updateWebpageMetadataPost(@PathParam("pid") String pid,
+			String content)
 	{
 		return new MessageBean(actions.updateMetadata(pid, content));
 	}
@@ -224,11 +233,21 @@ public class Webpage
 		return new MessageBean(actions.updateData(versionPid, content));
 	}
 
-	@POST
+	@PUT
 	@Path("/{pid}/version/{versionPid}/metadata")
 	public MessageBean updateWebpageVersionMetadata(
 			@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid, UploadDataBean content)
+			@PathParam("versionPid") String versionPid, String content)
+	{
+		return new MessageBean(actions.updateMetadata(versionPid, content));
+	}
+
+	@Deprecated
+	@POST
+	@Path("/{pid}/version/{versionPid}/metadata")
+	public MessageBean updateWebpageVersionMetadataPost(
+			@PathParam("pid") String pid,
+			@PathParam("versionPid") String versionPid, String content)
 	{
 		return new MessageBean(actions.updateMetadata(versionPid, content));
 	}

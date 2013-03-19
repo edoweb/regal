@@ -72,4 +72,13 @@ public class EdowebAdmin
 		return new CollectionProfile(rows);
 	}
 
+	@POST
+	@Path("/lobidify/{pid}")
+	@Produces({ "application/json", "application/xml" })
+	public MessageBean lobidify(@PathParam("pid") String pid,
+			@PathParam("alephid") String alephid)
+	{
+		return new MessageBean(actions.lobidify(pid));
+	}
+
 }

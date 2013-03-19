@@ -270,14 +270,16 @@ public class OaiPidGrabber
 	private Vector<String> collectPids(IdentifiersList reclist)
 	{
 		String stream = reclist.getResponse().asXML();
+
 		Vector<String> result = new Vector<String>();
 		int start = 0;
 		// int i = 0;
-		Pattern pattern = Pattern.compile("<identifier>[^:]*:([0-9]*)");
+		Pattern pattern = Pattern.compile("<identifier>oai:[^:]*:([0-9]*)");
 		Matcher matcher = pattern.matcher(stream);
 		while (matcher.find(start))
 		{
 			String pid = stream.substring(matcher.start(1), matcher.end(1));
+
 			result.add(pid);
 			start = matcher.end();
 		}
