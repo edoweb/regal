@@ -726,7 +726,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			String newID = fedoraManager.addDatastream(node.getPID(),
 					"metadata", altIDs, "metadata",
 					versionable, // DEFAULT_VERSIONABLE
-					"text/turtle", formatURI, location, "M", state,
+					"text/plain", formatURI, location, "M", state,
 					checksumType, null, // checksum type and checksum
 					"metadata");
 			node.setMetadataUrl(new URL(this.host + "/objects/" + node.getPID()
@@ -737,7 +737,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			node.addRelation(link);
 
 			link = new Link();
-			link.setObject("text/turtle", true);
+			link.setObject("text/plain", true);
 			link.setPredicate(METADATASTREAM_MIME);
 			node.addRelation(link);
 
@@ -827,7 +827,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			{
 				newID = fedoraManager.modifyDatastreamByReference(
 						node.getPID(), "metadata", altIDs, "metadata",
-						"text/turtle", formatURI, location, checksumType, null,
+						"text/plain", formatURI, location, checksumType, null,
 						"", true);
 			}
 			else
@@ -836,7 +836,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 				newID = fedoraManager.addDatastream(node.getPID(), "metadata",
 						altIDs, "metadata",
 						versionable, // DEFAULT_VERSIONABLE
-						"text/turtle", formatURI, location, "M", state,
+						"text/plain", formatURI, location, "M", state,
 						checksumType, null, // checksum type and checksum
 						"metadata");
 			}
@@ -848,7 +848,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			node.addRelation(link);
 
 			link = new Link();
-			link.setObject("text/turtle", true);
+			link.setObject("text/plain", true);
 			link.setPredicate(METADATASTREAM_MIME);
 			node.addRelation(link);
 		}
