@@ -127,7 +127,14 @@ public class DigitoolDownloader
 			dir.mkdir();
 			digitalEntityFile = getView(pid);
 			getRelated(digitalEntityFile, pid);
-			getStream(digitalEntityFile, pid);
+			try
+			{
+				getStream(digitalEntityFile, pid);
+			}
+			catch (Exception e)
+			{
+				logger.error(e.getMessage());
+			}
 			// beanBuilder.buildComplexBean(objectDirectory, pid);
 			setUpdated(false);
 			setDownloaded(true);
@@ -608,7 +615,7 @@ public class DigitoolDownloader
 		for (int i = 0; i < pids.size(); i++)
 		{
 			String pid = pids.elementAt(i);
-			logger.info((i++) + "/" + pids.size() + "Download " + pid + " !");
+			logger.info((i + 1) + "/" + pids.size() + " Download " + pid + " !");
 			download(pid);
 		}
 
