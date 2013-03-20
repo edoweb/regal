@@ -75,10 +75,17 @@ public class EdowebAdmin
 	@POST
 	@Path("/lobidify/{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public MessageBean lobidify(@PathParam("pid") String pid,
-			@PathParam("alephid") String alephid)
+	public MessageBean lobidify(@PathParam("pid") String pid)
 	{
 		return new MessageBean(actions.lobidify(pid));
+	}
+
+	@GET
+	@Path("/oaidc/{pid}")
+	@Produces({ "application/xml" })
+	public String oaidc(@PathParam("pid") String pid)
+	{
+		return actions.oaidc(pid);
 	}
 
 }

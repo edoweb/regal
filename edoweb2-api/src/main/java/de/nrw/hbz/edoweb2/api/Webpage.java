@@ -143,6 +143,7 @@ public class Webpage
 
 	@PUT
 	@Path("/{pid}/metadata")
+	@Consumes({ "text/plain" })
 	public MessageBean updateWebpageMetadata(@PathParam("pid") String pid,
 			String content)
 	{
@@ -152,6 +153,7 @@ public class Webpage
 	@Deprecated
 	@POST
 	@Path("/{pid}/metadata")
+	@Consumes({ "text/plain" })
 	public MessageBean updateWebpageMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
@@ -241,6 +243,7 @@ public class Webpage
 
 	@PUT
 	@Path("/{pid}/version/{versionPid}/metadata")
+	@Consumes({ "text/plain" })
 	public MessageBean updateWebpageVersionMetadata(
 			@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
@@ -251,6 +254,7 @@ public class Webpage
 	@Deprecated
 	@POST
 	@Path("/{pid}/version/{versionPid}/metadata")
+	@Consumes({ "text/plain" })
 	public MessageBean updateWebpageVersionMetadataPost(
 			@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)

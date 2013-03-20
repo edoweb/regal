@@ -204,6 +204,7 @@ public class Monograph
 
 	@PUT
 	@Path("/{pid}/metadata")
+	@Consumes({ "text/plain" })
 	public MessageBean updateMonographMetadata(@PathParam("pid") String pid,
 			String content)
 	{
@@ -213,6 +214,7 @@ public class Monograph
 	@Deprecated
 	@POST
 	@Path("/{pid}/metadata")
+	@Consumes({ "text/plain" })
 	public MessageBean updateMonographMetadataPost(
 			@PathParam("pid") String pid, String content)
 	{

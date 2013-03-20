@@ -184,6 +184,7 @@ public class EJournal
 
 	@PUT
 	@Path("/{pid}/metadata")
+	@Consumes({ "text/plain" })
 	public MessageBean updateEJournalMetadata(@PathParam("pid") String pid,
 			String content)
 	{
@@ -193,6 +194,7 @@ public class EJournal
 	@Deprecated
 	@POST
 	@Path("/{pid}/metadata")
+	@Consumes({ "text/plain" })
 	public MessageBean updateEJournalMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
@@ -327,7 +329,7 @@ public class EJournal
 	@PUT
 	@Path("/{pid}/volume/{volumePid}/metadata")
 	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
+	@Consumes({ "text/plain" })
 	public MessageBean updateVolumeMetadata(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, String content)
 	{
@@ -338,7 +340,7 @@ public class EJournal
 	@POST
 	@Path("/{pid}/volume/{volumePid}/metadata")
 	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
+	@Consumes({ "text/plain" })
 	public MessageBean updateVolumeMetadataPost(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, String content)
 	{

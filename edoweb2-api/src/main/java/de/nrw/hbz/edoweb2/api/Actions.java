@@ -1334,4 +1334,9 @@ public class Actions
 		return "Success";
 	}
 
+	public String oaidc(String pid)
+	{
+		return "";
+	}
+
 }
