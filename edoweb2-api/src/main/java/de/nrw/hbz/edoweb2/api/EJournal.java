@@ -289,9 +289,10 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/pdf" })
 	public MessageBean updateVolumeData(@PathParam("pid") String pid,
-			byte[] content, @Context HttpHeaders headers)
+			@PathParam("volumePid") String volumePid, byte[] content,
+			@Context HttpHeaders headers)
 	{
-		return new MessageBean(actions.updateData(pid, content, headers
+		return new MessageBean(actions.updateData(volumePid, content, headers
 				.getMediaType().toString()));
 	}
 

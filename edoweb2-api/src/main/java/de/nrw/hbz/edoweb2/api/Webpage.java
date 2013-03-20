@@ -232,9 +232,10 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/zip" })
 	public MessageBean updateWebpageVersionData(@PathParam("pid") String pid,
-			byte[] content, @Context HttpHeaders headers)
+			@PathParam("versionPid") String versionPid, byte[] content,
+			@Context HttpHeaders headers)
 	{
-		return new MessageBean(actions.updateData(pid, content, headers
+		return new MessageBean(actions.updateData(versionPid, content, headers
 				.getMediaType().toString()));
 	}
 
