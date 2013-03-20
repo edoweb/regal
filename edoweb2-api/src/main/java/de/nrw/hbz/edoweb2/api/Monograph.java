@@ -29,6 +29,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -153,11 +155,12 @@ public class Monograph
 	@POST
 	@Path("/{pid}/data")
 	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
+	@Consumes({ "application/pdf" })
 	public MessageBean updateMonographData(@PathParam("pid") String pid,
-			UploadDataBean content)
+			byte[] content, @Context HttpHeaders headers)
 	{
-		return new MessageBean(actions.updateData(pid, content));
+		return new MessageBean(actions.updateData(pid, content, headers
+				.getMediaType().toString()));
 	}
 
 	@GET

@@ -35,6 +35,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -227,10 +229,13 @@ public class Webpage
 
 	@POST
 	@Path("/{pid}/version/{versionPid}/data")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/zip" })
 	public MessageBean updateWebpageVersionData(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid, UploadDataBean content)
+			byte[] content, @Context HttpHeaders headers)
 	{
-		return new MessageBean(actions.updateData(versionPid, content));
+		return new MessageBean(actions.updateData(pid, content, headers
+				.getMediaType().toString()));
 	}
 
 	@PUT
