@@ -16,9 +16,11 @@
  */
 package de.nrw.hbz.ellinet.sync.ingest;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +34,6 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import de.nrw.hbz.edoweb2.api.DCBeanAnnotated;
 import de.nrw.hbz.edoweb2.api.ObjectType;
 import de.nrw.hbz.edoweb2.api.TypeType;
-import de.nrw.hbz.edoweb2.api.UploadDataBean;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.ingest.IngestInterface;
@@ -56,7 +57,7 @@ public class EllinetIngester implements IngestInterface
 {
 	final static Logger logger = LoggerFactory.getLogger(EllinetIngester.class);
 
-	final static String ellinetNamespace = "ellinet";
+	final static String namespace = "ellinet";
 
 	String user = null;
 	String password = null;
@@ -78,8 +79,7 @@ public class EllinetIngester implements IngestInterface
 	@Override
 	public void ingest(DigitalEntity dtlBean)
 	{
-		logger.info("Start ingest: " + ellinetNamespace + ":"
-				+ dtlBean.getPid());
+		logger.info("Start ingest: " + namespace + ":" + dtlBean.getPid());
 
 		String partitionC = null;
 		String pid = null;
@@ -127,8 +127,8 @@ public class EllinetIngester implements IngestInterface
 			c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 			WebResource index = c.resource(host
-					+ ":8080/edoweb2-api/edowebAdmin/index/" + ellinetNamespace
-					+ ":" + dtlBean.getPid());
+					+ ":8080/edoweb2-api/edowebAdmin/index/" + namespace + ":"
+					+ dtlBean.getPid());
 			index.post();
 			logger.info(pid + ": got indexed!");
 			// WebResource oaiSet = c.resource(host
@@ -159,7 +159,7 @@ public class EllinetIngester implements IngestInterface
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource monograph = c.resource(host
-				+ ":8080/edoweb2-api/monograph/" + ellinetNamespace + ":"
+				+ ":8080/edoweb2-api/monograph/" + namespace + ":"
 				+ dtlBean.getPid());
 		try
 		{
@@ -180,21 +180,23 @@ public class EllinetIngester implements IngestInterface
 			// WebResource monographMetadata = c
 			// .resource(monograph.toString() + "/metadata");
 
-			UploadDataBean data = new UploadDataBean();
 			try
 			{
-				String protocol = "file";
-				String host = "";
-				String path = dtlBean.getStream().getAbsolutePath();
-				String fragment = "";
-				data.path = new URI(protocol, host, path, fragment);
-				data.mime = "application/pdf";
+				byte[] data = IOUtils.toByteArray(new FileInputStream(dtlBean
+						.getStream()));
+				monographData.setProperty("Content-Type",
+						dtlBean.getStreamMime());
 				monographData.post(data);
-			}
-			catch (URISyntaxException e)
-			{
 
-				e.printStackTrace();
+			}
+			catch (FileNotFoundException e1)
+			{
+				logger.error("FileNotFound "
+						+ dtlBean.getStream().getAbsolutePath());
+			}
+			catch (IOException e1)
+			{
+				logger.error("Problem " + dtlBean.getStream().getAbsolutePath());
 			}
 
 			DCBeanAnnotated dc = new DCBeanAnnotated();
@@ -227,8 +229,8 @@ public class EllinetIngester implements IngestInterface
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource delete = c.resource(host
-				+ ":8080/edoweb2-api/edowebAdmin/delete/" + ellinetNamespace
-				+ ":" + pid);
+				+ ":8080/edoweb2-api/edowebAdmin/delete/" + namespace + ":"
+				+ pid);
 		delete.delete();
 	}
 }
