@@ -28,7 +28,7 @@
 							<classpathPrefix>lib</classpathPrefix>
 							<classpathLayoutType>repository</classpathLayoutType>
 							<classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
-							<mainClass>de.nrw.hbz.edoweb2.sync.Main</mainClass>
+							<mainClass>de.nrw.hbz.ellinet.sync.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -41,7 +41,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.nrw.hbz.edoweb2.sync.Main</mainClass>
+							<mainClass>de.nrw.hbz.ellinet.sync.Main</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -68,6 +68,11 @@
 		<dependency>
 			<groupId>de.nrw.hbz.edoweb2</groupId>
 			<artifactId>edoweb2-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.nrw.hbz.edoweb2</groupId>
+			<artifactId>edowebSync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
