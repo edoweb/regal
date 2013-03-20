@@ -182,11 +182,10 @@ public class EllinetIngester implements IngestInterface
 
 			try
 			{
+				logger.info(dtlBean.getStreamMime());
 				byte[] data = IOUtils.toByteArray(new FileInputStream(dtlBean
 						.getStream()));
-				monographData.setProperty("Content-Type",
-						dtlBean.getStreamMime());
-				monographData.post(data);
+				monographData.type(dtlBean.getStreamMime()).post(data);
 
 			}
 			catch (FileNotFoundException e1)

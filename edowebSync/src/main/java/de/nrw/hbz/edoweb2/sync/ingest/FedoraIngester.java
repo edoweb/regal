@@ -343,9 +343,8 @@ public class FedoraIngester implements IngestInterface
 			logger.info(dtlBean.getStreamMime());
 			byte[] data = IOUtils.toByteArray(new FileInputStream(dtlBean
 					.getStream()));
-			ejournalVolumeData.setProperty("Content-Type",
-					dtlBean.getStreamMime());
-			ejournalVolumeData.post(data);
+
+			ejournalVolumeData.type(dtlBean.getStreamMime()).post(data);
 
 		}
 		catch (FileNotFoundException e1)
@@ -414,9 +413,8 @@ public class FedoraIngester implements IngestInterface
 			logger.info(dtlBean.getStreamMime());
 			byte[] data = IOUtils.toByteArray(new FileInputStream(dtlBean
 					.getStream()));
-			ejournalVolumeData.setProperty("Content-Type",
-					dtlBean.getStreamMime());
-			ejournalVolumeData.post(data);
+
+			ejournalVolumeData.type(dtlBean.getStreamMime()).post(data);
 
 		}
 		catch (FileNotFoundException e1)
@@ -507,10 +505,7 @@ public class FedoraIngester implements IngestInterface
 				logger.info(dtlBean.getStreamMime());
 				byte[] data = IOUtils.toByteArray(new FileInputStream(dtlBean
 						.getStream()));
-				monographData.setProperty("Content-Type",
-						dtlBean.getStreamMime());
-
-				monographData.type("application/json").post(data);
+				monographData.type(dtlBean.getStreamMime()).post(data);
 
 			}
 			catch (FileNotFoundException e1)
@@ -587,9 +582,7 @@ public class FedoraIngester implements IngestInterface
 					logger.info(dtlBean.getStreamMime());
 					byte[] data = IOUtils.toByteArray(new FileInputStream(
 							dtlBean.getStream()));
-					monographData.setProperty("Content-Type",
-							dtlBean.getStreamMime());
-					monographData.type("application/json").post(data);
+					monographData.type(dtlBean.getStreamMime()).post(data);
 
 				}
 				catch (FileNotFoundException e1)
@@ -704,9 +697,7 @@ public class FedoraIngester implements IngestInterface
 					logger.info(b.getStreamMime());
 					byte[] data = IOUtils.toByteArray(new FileInputStream(b
 							.getStream()));
-					ejournalVolumeData.setProperty("Content-Type",
-							b.getStreamMime());
-					ejournalVolumeData.post(data);
+					ejournalVolumeData.type(b.getStreamMime()).post(data);
 
 				}
 				catch (FileNotFoundException e1)
@@ -887,9 +878,7 @@ public class FedoraIngester implements IngestInterface
 					logger.info(b.getStreamMime());
 					byte[] data = IOUtils.toByteArray(new FileInputStream(b
 							.getStream()));
-					webpageVersionData.setProperty("Content-Type",
-							b.getStreamMime());
-					webpageVersionData.post(data);
+					webpageVersionData.type(b.getStreamMime()).post(data);
 
 				}
 				catch (FileNotFoundException e1)
@@ -1055,9 +1044,8 @@ public class FedoraIngester implements IngestInterface
 					logger.info(b.getStreamMime());
 					byte[] data = IOUtils.toByteArray(new FileInputStream(b
 							.getStream()));
-					webpageVersionData.setProperty("Content-Type",
-							b.getStreamMime());
-					webpageVersionData.post(data);
+
+					webpageVersionData.type(b.getStreamMime()).post(data);
 
 				}
 				catch (FileNotFoundException e1)
