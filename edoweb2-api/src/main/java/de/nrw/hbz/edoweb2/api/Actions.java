@@ -348,19 +348,27 @@ public class Actions
 		return null;
 	}
 
-	public String updateData(String pid, UploadDataBean content)
+	public String updateData(String pid, byte[] content, String mimeType)
 	{
 		try
 		{
+			File tmp = new File("/tmp/edowebdatatmpfile");
+
+			FileUtils.writeByteArrayToFile(tmp, content);
 			Node node = archive.readNode(pid);
 			if (node != null)
 			{
-				node.setUploadData(content.path.getPath(), "data", content.mime);
+				node.setUploadData(tmp.getAbsolutePath(), "data", mimeType);
 				archive.updateNode(pid, node);
 			}
 		}
 		catch (RemoteException e)
 		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "updateData";
@@ -404,7 +412,7 @@ public class Actions
 
 		try
 		{
-			File file = new File("/tmp/edowebtmpfile");
+			File file = new File("/tmp/edowebmetatmpfile");
 			FileUtils.writeStringToFile(file, content);
 			Node node = archive.readNode(pid);
 			if (node != null)
