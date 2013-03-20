@@ -340,6 +340,7 @@ public class FedoraIngester implements IngestInterface
 
 		try
 		{
+			logger.info(dtlBean.getStreamMime());
 			byte[] data = IOUtils.toByteArray(new FileInputStream(dtlBean
 					.getStream()));
 			ejournalVolumeData.setProperty("Content-Type",
@@ -410,6 +411,7 @@ public class FedoraIngester implements IngestInterface
 
 		try
 		{
+			logger.info(dtlBean.getStreamMime());
 			byte[] data = IOUtils.toByteArray(new FileInputStream(dtlBean
 					.getStream()));
 			ejournalVolumeData.setProperty("Content-Type",
@@ -502,11 +504,13 @@ public class FedoraIngester implements IngestInterface
 					+ "/data");
 			try
 			{
+				logger.info(dtlBean.getStreamMime());
 				byte[] data = IOUtils.toByteArray(new FileInputStream(dtlBean
 						.getStream()));
 				monographData.setProperty("Content-Type",
 						dtlBean.getStreamMime());
-				monographData.post(data);
+
+				monographData.type("application/json").post(data);
 
 			}
 			catch (FileNotFoundException e1)
@@ -580,11 +584,12 @@ public class FedoraIngester implements IngestInterface
 			{
 				try
 				{
+					logger.info(dtlBean.getStreamMime());
 					byte[] data = IOUtils.toByteArray(new FileInputStream(
 							dtlBean.getStream()));
 					monographData.setProperty("Content-Type",
 							dtlBean.getStreamMime());
-					monographData.post(data);
+					monographData.type("application/json").post(data);
 
 				}
 				catch (FileNotFoundException e1)
@@ -696,6 +701,7 @@ public class FedoraIngester implements IngestInterface
 
 				try
 				{
+					logger.info(b.getStreamMime());
 					byte[] data = IOUtils.toByteArray(new FileInputStream(b
 							.getStream()));
 					ejournalVolumeData.setProperty("Content-Type",
@@ -878,6 +884,7 @@ public class FedoraIngester implements IngestInterface
 
 				try
 				{
+					logger.info(b.getStreamMime());
 					byte[] data = IOUtils.toByteArray(new FileInputStream(b
 							.getStream()));
 					webpageVersionData.setProperty("Content-Type",
@@ -1045,6 +1052,7 @@ public class FedoraIngester implements IngestInterface
 
 				try
 				{
+					logger.info(b.getStreamMime());
 					byte[] data = IOUtils.toByteArray(new FileInputStream(b
 							.getStream()));
 					webpageVersionData.setProperty("Content-Type",
