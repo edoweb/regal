@@ -1113,7 +1113,7 @@ public class FedoraIngester implements IngestInterface
 		WebResource lobid = c.resource(host
 				+ ":8080/edoweb2-api/edowebAdmin/lobidify/" + namespace + ":"
 				+ dtlBean.getPid());
-		lobid.post();
+		lobid.type("text/plain").post();
 	}
 
 }
