@@ -29,45 +29,164 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
 public interface ArchiveInterface
 {
 
+	/**
+	 * @param namespace
+	 *            The namespace of the new object
+	 * @return The new created object.
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
 	public Node createRootObject(String namespace) throws RemoteException;
 
-	public Node createComplexObject(ComplexObject tree) throws RemoteException;
+	/**
+	 * @param object
+	 *            A complex object
+	 * @return the root of the newly created complex object
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
+	public Node createComplexObject(ComplexObject object)
+			throws RemoteException;
 
+	/**
+	 * Adds a new node as child of the parent.
+	 * 
+	 * @param parent
+	 *            the parent of the new node
+	 * @param node
+	 *            the new node
+	 * @return The new created object.
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
 	public Node createNode(Node parent, Node node) throws RemoteException;
 
+	/**
+	 * @param parentPid
+	 *            the pid of an existing node
+	 * @return the new node
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
 	public Node createNode(String parentPid) throws RemoteException;
 
-	public Node readObject(String rootPID) throws RemoteException;
+	/**
+	 * @param pid
+	 *            the pid of the node to read
+	 * @return the node
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
+	public Node readObject(String pid) throws RemoteException;
 
-	public ComplexObject readComplexObject(String rootPID)
-			throws RemoteException;
+	/**
+	 * @param pid
+	 *            the pid of the object to read
+	 * @return A tree-like complex object
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
+	public ComplexObject readComplexObject(String pid) throws RemoteException;
 
-	public Node readNode(String rootPID) throws RemoteException;
+	/**
+	 * @param pid
+	 *            of the node
+	 * @return the node
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
+	public Node readNode(String pid) throws RemoteException;
 
-	public void updateObject(String nodePid, Node object)
-			throws RemoteException;
+	/**
+	 * @param pid
+	 *            of the node to update
+	 * @param node
+	 *            the new version of the node
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
+	public void updateObject(String pid, Node node) throws RemoteException;
 
+	/**
+	 * @param object
+	 *            The new verions of the object
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
 	public void updateComplexObject(ComplexObject object)
 			throws RemoteException;
 
-	public void updateNode(String nodePid, Node node) throws RemoteException;
+	/**
+	 * @param pid
+	 *            The pid of the node to update
+	 * @param node
+	 *            The new version of the node
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
+	public void updateNode(String pid, Node node) throws RemoteException;
 
-	public String deleteComplexObject(String rootPID) throws RemoteException;
+	/**
+	 * @param pid
+	 *            The pid that must be deleted
+	 * @return The pid that has been deleted
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
+	public String deleteComplexObject(String pid) throws RemoteException;
 
+	/**
+	 * @param pid
+	 *            The node that must be deleted
+	 * @return the pid that has been deleted
+	 */
 	public String deleteNode(String pid);
 
+	/**
+	 * @param searchTerm
+	 *            A search term
+	 * @return A list of pids
+	 */
 	public List<String> findNodes(String searchTerm);
 
+	/**
+	 * @param rdfQuery
+	 *            An rdf query
+	 * @param queryType
+	 *            The type of the query
+	 * @param outputFormat
+	 *            the type of the result
+	 * @return the result as stream
+	 */
 	public InputStream findTriples(String rdfQuery, String queryType,
 			String outputFormat);
 
+	/**
+	 * @param namespace
+	 * @param number
+	 * @return
+	 * @throws RemoteException
+	 *             if backend is not available
+	 */
 	public String[] getPids(String namespace, int number)
 			throws RemoteException;
 
+	/**
+	 * @param pid
+	 * @return
+	 */
 	public boolean nodeExists(String pid);
 
+	/**
+	 * @param pid
+	 * @return
+	 */
 	public String addUriPrefix(String pid);
 
+	/**
+	 * @param pred
+	 * @return
+	 */
 	public String removeUriPrefix(String pred);
 
 }

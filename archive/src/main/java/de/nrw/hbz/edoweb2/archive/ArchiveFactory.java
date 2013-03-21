@@ -21,6 +21,17 @@ package de.nrw.hbz.edoweb2.archive;
  */
 public class ArchiveFactory
 {
+	/**
+	 * @param host
+	 *            The webadress of the backend system
+	 * @param user
+	 *            A user to operate in the archive
+	 * @param passwd
+	 *            The users password
+	 * @param sesameNativeStore
+	 *            The webadress of the connected sesame triple store
+	 * @return An archive object implementing the ArchivInterface.java
+	 */
 	public static ArchiveInterface getArchiveImpl(String host, String user,
 			String passwd, String sesameNativeStore)
 	{
