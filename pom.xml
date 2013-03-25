@@ -100,8 +100,23 @@
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
+				<checksumPolicy>ignore</checksumPolicy>
 			</snapshots>
-			<url>http://edoweb.github.com</url>
+			<url>http://edoweb.github.com/releases</url>
+		</repository>
+		
+		<repository>
+			<id>edoweb.github.com-snapshots</id>
+			<name>edoweb.github.com-snapshots</name>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>ignore</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<checksumPolicy>ignore</checksumPolicy>
+			</snapshots>
+			<url>http://edoweb.github.com/snapshots</url>
 		</repository>
 		
 		<repository>
