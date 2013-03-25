@@ -25,6 +25,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
@@ -37,13 +38,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.core.status.Status;
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
@@ -79,7 +79,9 @@ public class EJournal
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -99,28 +101,33 @@ public class EJournal
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
-	@GET
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getView(@PathParam("pid") String pid)
-	{
-		try
-		{
-			return actions.getView(namespace + ":" + pid, ObjectType.ejournal);
-		}
-
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
-		}
-	}
+	// @GET
+	// @Path("/{namespace}:{pid}")
+	// @Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
+	// public View getView(@PathParam("pid") String pid)
+	// {
+	// try
+	// {
+	// return actions.getView(namespace + ":" + pid, ObjectType.ejournal);
+	// }
+	//
+	// catch (ArchiveException e)
+	// {
+	// throw new HttpArchiveException(
+	// Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+	// e.getMessage());
+	// }
+	// }
 
 	@DELETE
 	@Path("/{namespace}:{pid}")
+	@Produces({ "application/json", "application/xml" })
 	public String deleteEJournal(@PathParam("pid") String pid,
 			@PathParam("namespace") String userNamespace)
 	{
@@ -132,7 +139,9 @@ public class EJournal
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -145,19 +154,16 @@ public class EJournal
 		logger.info("create EJournal");
 		try
 		{
-			// if (actions.nodeExists(namespace + ":" + pid))
-			// {
-			// logger.warn("Node exists: " + pid);
-			// MessageBean msg = new MessageBean(
-			// "Node already exists. I do nothing!");
-			// Response response = Response.status(409)
-			// .type(MediaType.APPLICATION_JSON).entity(msg).build();
-			// logger.warn("Node exists: " + pid);
-			// return response;
-			// }
+			if (actions.nodeExists(namespace + ":" + pid))
+			{
+				throw new HttpArchiveException(
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+						"Node already exists. I do nothing!");
+			}
 			if (userNamespace.compareTo(namespace) != 0)
 			{
-				throw new HttpArchiveException(Status.ERROR,
+				throw new HttpArchiveException(
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
 						" Wrong namespace. Must be " + namespace);
 			}
 			Node rootObject = new Node();
@@ -177,7 +183,9 @@ public class EJournal
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -192,7 +200,9 @@ public class EJournal
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -209,21 +219,44 @@ public class EJournal
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
 	@GET
 	@Path("/{pid}/metadata")
-	public Response readEJournalMetadata(@PathParam("pid") String pid)
+	@Produces({ "text/plain" })
+	public String readEJournalMetadata(@PathParam("pid") String pid)
 	{
 		try
 		{
 			return actions.readMetadata(pid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 
 	}
@@ -231,6 +264,7 @@ public class EJournal
 	@PUT
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
 	public String updateEJournalMetadata(@PathParam("pid") String pid,
 			String content)
 	{
@@ -238,9 +272,17 @@ public class EJournal
 		{
 			return actions.updateMetadata(pid, content);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 
 	}
@@ -249,6 +291,7 @@ public class EJournal
 	@POST
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
 	public String updateEJournalMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
@@ -256,9 +299,17 @@ public class EJournal
 		{
 			return actions.updateMetadata(pid, content);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 
 	}
@@ -274,7 +325,9 @@ public class EJournal
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -332,26 +385,30 @@ public class EJournal
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 
 	}
 
-	@GET
-	@Path("/{pid}/volume/{volumePid}")
-	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getVolumeView(@PathParam("pid") String pid,
-			@PathParam("volumePid") String volumePid)
-	{
-		try
-		{
-			return actions.getView(volumePid, ObjectType.ejournalVolume);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
-		}
-	}
+	// @GET
+	// @Path("/{pid}/volume/{volumePid}")
+	// @Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
+	// public View getVolumeView(@PathParam("pid") String pid,
+	// @PathParam("volumePid") String volumePid)
+	// {
+	// try
+	// {
+	// return actions.getView(volumePid, ObjectType.ejournalVolume);
+	// }
+	// catch (ArchiveException e)
+	// {
+	// throw new HttpArchiveException(
+	// Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+	// e.getMessage());
+	// }
+	// }
 
 	@GET
 	@Path("/{pid}/volume/{volumePid}/data")
@@ -363,9 +420,17 @@ public class EJournal
 		{
 			return actions.readData(volumePid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -382,9 +447,17 @@ public class EJournal
 			return actions.updateData(volumePid, content, headers
 					.getMediaType().toString());
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -400,7 +473,9 @@ public class EJournal
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -418,7 +493,9 @@ public class EJournal
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 
 	}
@@ -426,16 +503,36 @@ public class EJournal
 	@GET
 	@Path("/{pid}/volume/{volumePid}/metadata")
 	@Produces({ "application/*" })
-	public Response readVolumeMetadata(@PathParam("pid") String pid,
+	public String readVolumeMetadata(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
 		try
 		{
 			return actions.readMetadata(volumePid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -450,9 +547,17 @@ public class EJournal
 		{
 			return actions.updateMetadata(volumePid, content);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -468,9 +573,17 @@ public class EJournal
 		{
 			return actions.updateMetadata(volumePid, content);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 }

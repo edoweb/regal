@@ -20,6 +20,7 @@ import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION;
 import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import javax.ws.rs.GET;
@@ -28,11 +29,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.core.status.Status;
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 
 @Path("/objects")
@@ -59,9 +60,17 @@ public class ObjectResource
 		{
 			return actions.readData(pid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -78,7 +87,9 @@ public class ObjectResource
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -93,9 +104,17 @@ public class ObjectResource
 		{
 			return actions.readData(volumePid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -136,7 +155,7 @@ public class ObjectResource
 	@GET
 	@Path("/{pid}/volume/{volumePid}/metadata")
 	@Produces({ "application/*" })
-	public Response readVolumeMetadata(@PathParam("pid") String pid,
+	public String readVolumeMetadata(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
 
@@ -144,23 +163,64 @@ public class ObjectResource
 		{
 			return actions.readMetadata(volumePid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
 	@GET
 	@Path("/{pid}/metadata")
-	public Response readMetadata(@PathParam("pid") String pid)
+	@Produces({ "text/plain" })
+	public String readMetadata(@PathParam("pid") String pid)
 	{
 		try
 		{
 			return actions.readMetadata(pid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -175,7 +235,7 @@ public class ObjectResource
 	@GET
 	@Path("/{pid}/version/{versionPid}/metadata")
 	@Produces({ "application/*" })
-	public Response readWebpageVersionMetadata(@PathParam("pid") String pid,
+	public String readWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
 		try
@@ -184,9 +244,29 @@ public class ObjectResource
 			return actions.readMetadata(versionPid);
 		}
 
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -203,7 +283,9 @@ public class ObjectResource
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -218,9 +300,17 @@ public class ObjectResource
 
 			return actions.readData(versionPid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -237,7 +327,9 @@ public class ObjectResource
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -253,7 +345,9 @@ public class ObjectResource
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 

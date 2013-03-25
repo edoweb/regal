@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Vector;
 
+import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObjectNode;
 import de.nrw.hbz.edoweb2.datatypes.Link;
@@ -112,18 +113,17 @@ class Archive implements ArchiveInterface
 		Node rootObject = null;
 
 		String pid = object.getPID();
+		if (nodeExists(pid))
+		{
+			throw new ArchiveException("Node " + pid + " already exists");
+		}
+
 		String namespace = object.getNamespace();
 		if (namespace == null)
 		{
-			// TODO Do anything
-			try
+			if (nodeExists(pid))
 			{
-				throw new Exception("Object has no namespace");
-			}
-			catch (Exception e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new ArchiveException("Node " + pid + " has no namespace.");
 			}
 		}
 
@@ -161,6 +161,12 @@ class Archive implements ArchiveInterface
 	{
 
 		String pid = node.getPID();
+
+		if (nodeExists(pid))
+		{
+			throw new ArchiveException("Node " + pid + " already exists");
+		}
+
 		String namespace = parent.getNamespace();// FedoraFacade.pred2pid(parent.getNamespace());
 		if (pid == null)
 		{
@@ -234,7 +240,10 @@ class Archive implements ArchiveInterface
 	@Override
 	public Node readObject(String rootPID)
 	{
-
+		if (!nodeExists(rootPID))
+		{
+			throw new ArchiveException("Node " + rootPID + " doesn't exist");
+		}
 		return fedoraInterface.readNode(rootPID);
 
 	}
@@ -292,6 +301,10 @@ class Archive implements ArchiveInterface
 	@Override
 	public Node readNode(String rootPID)
 	{
+		if (!nodeExists(rootPID))
+		{
+			throw new ArchiveException("Node " + rootPID + " doesn't exist");
+		}
 		Node node = fedoraInterface.readNode(rootPID);
 
 		return node;
@@ -300,6 +313,10 @@ class Archive implements ArchiveInterface
 	@Override
 	public void updateNode(String nodePid, Node node)
 	{
+		if (!nodeExists(nodePid))
+		{
+			throw new ArchiveException("Node " + nodePid + " doesn't exist");
+		}
 		node.setPID(nodePid);
 		fedoraInterface.updateNode(node);
 		// sesame.updateNode(node);
@@ -308,6 +325,10 @@ class Archive implements ArchiveInterface
 	@Override
 	public String deleteComplexObject(String rootPID)
 	{
+		if (!nodeExists(rootPID))
+		{
+			throw new ArchiveException("Node " + rootPID + " doesn't exist");
+		}
 		// logger.info("deleteObject");
 		fedoraInterface.deleteNode(rootPID);
 
@@ -342,6 +363,17 @@ class Archive implements ArchiveInterface
 	}
 
 	@Override
+	public String deleteNode(String pid)
+	{
+		if (!nodeExists(pid))
+		{
+			throw new ArchiveException("Node " + pid + " doesn't exist");
+		}
+		fedoraInterface.deleteNode(pid);
+		return pid;
+	}
+
+	@Override
 	public List<String> findNodes(String searchTerm)
 	{
 		return fedoraInterface.findPids(searchTerm, FedoraVocabulary.SIMPLE);
@@ -354,16 +386,13 @@ class Archive implements ArchiveInterface
 	}
 
 	@Override
-	public String deleteNode(String pid)
-	{
-		fedoraInterface.deleteNode(pid);
-		return pid;
-	}
-
-	@Override
 	public void updateObject(String nodePid, Node object)
 
 	{
+		if (!nodeExists(nodePid))
+		{
+			throw new ArchiveException("Node " + nodePid + " doesn't exist");
+		}
 		updateNode(nodePid, object);
 		sesame.updateNode(object);
 
@@ -372,6 +401,7 @@ class Archive implements ArchiveInterface
 	@Override
 	public void updateComplexObject(ComplexObject tree)
 	{
+
 		Node object = tree.getRoot();
 
 		for (int i = 0; i < tree.sizeOfChildren(); i++)

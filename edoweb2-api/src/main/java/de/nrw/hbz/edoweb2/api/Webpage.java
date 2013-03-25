@@ -26,6 +26,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
@@ -40,11 +41,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.core.status.Status;
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
@@ -86,7 +87,9 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -99,16 +102,12 @@ public class Webpage
 		{
 			logger.info("create Webpage");
 
-			// if (actions.nodeExists(pid))
-			// {
-			// msg =
-			// "Node already exists. I do nothing!";
-			// Response response = Response.status(409)
-			// .type(MediaType.APPLICATION_JSON).entity(msg)
-			// .build();
-			// logger.warn("Node exists: " + pid);
-			// return response;
-			// }
+			if (actions.nodeExists(pid))
+			{
+				throw new HttpArchiveException(
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+						"Node already exists. I do nothing!");
+			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -126,12 +125,15 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
 	@DELETE
 	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml" })
 	public String deleteWebpage(@PathParam("pid") String pid)
 	{
 		try
@@ -141,7 +143,9 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -158,13 +162,16 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
 	@PUT
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
 	public String updateWebpageMetadata(@PathParam("pid") String pid,
 			String content)
 	{
@@ -172,9 +179,17 @@ public class Webpage
 		{
 			return actions.updateMetadata(pid, content);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -182,6 +197,7 @@ public class Webpage
 	@POST
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
 	public String updateWebpageMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
@@ -189,9 +205,17 @@ public class Webpage
 		{
 			return actions.updateMetadata(pid, content);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -251,7 +275,9 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -268,7 +294,9 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -285,15 +313,24 @@ public class Webpage
 			return actions.updateData(versionPid, content, headers
 					.getMediaType().toString());
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
 	@PUT
 	@Path("/{pid}/version/{versionPid}/metadata")
 	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
 	public String updateWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
 	{
@@ -301,9 +338,17 @@ public class Webpage
 		{
 			return actions.updateMetadata(versionPid, content);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -311,6 +356,7 @@ public class Webpage
 	@POST
 	@Path("/{pid}/version/{versionPid}/metadata")
 	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
 	public String updateWebpageVersionMetadataPost(
 			@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
@@ -319,14 +365,23 @@ public class Webpage
 		{
 			return actions.updateMetadata(versionPid, content);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
 	@POST
 	@Path("/{pid}/current/{versionPid}")
+	@Produces({ "application/xml", "application/json" })
 	public String setCurrentVersion(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
@@ -339,23 +394,45 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
 	@GET
 	@Path("/{pid}/version/{versionPid}/metadata")
 	@Produces({ "application/*" })
-	public Response readWebpageVersionMetadata(@PathParam("pid") String pid,
+	public String readWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
 		try
 		{
 			return actions.readMetadata(versionPid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -371,7 +448,9 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -385,27 +464,37 @@ public class Webpage
 		{
 			return actions.readData(versionPid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
-	@GET
-	@Path("/{pid}/version/{versionPid}")
-	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getVersionView(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid)
-	{
-		try
-		{
-			return actions.getView(versionPid, ObjectType.webpageVersion);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
-		}
-	}
+	// @GET
+	// @Path("/{pid}/version/{versionPid}")
+	// @Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
+	// public View getVersionView(@PathParam("pid") String pid,
+	// @PathParam("versionPid") String versionPid)
+	// {
+	// try
+	// {
+	// return actions.getView(versionPid, ObjectType.webpageVersion);
+	// }
+	// catch (ArchiveException e)
+	// {
+	// throw new HttpArchiveException(
+	// Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+	// e.getMessage());
+	// }
+	// }
 
 	@GET
 	@Path("/{pid}/version/")
@@ -418,21 +507,44 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
 	@GET
 	@Path("/{pid}/metadata")
-	public Response readWebpageMetadata(@PathParam("pid") String pid)
+	@Produces({ "text/plain" })
+	public String readWebpageMetadata(@PathParam("pid") String pid)
 	{
 		try
 		{
 			return actions.readMetadata(pid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -447,7 +559,9 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -462,7 +576,9 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -477,7 +593,9 @@ public class Webpage
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 }

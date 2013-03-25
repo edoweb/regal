@@ -34,37 +34,8 @@ public class ContentModelFactory
 		cm.setServiceDeploymentPID(namespace + ":" + type.toString()
 				+ "ServiceDeployment");
 
-		cm.addMethod("oai_dc",
-				"http://localhost:8080/services/report/oai_dc/(pid)");
-		cm.addMethod("xepicur",
-				"http://localhost:8080/services/report/xepicur/(pid)");
-		cm.addMethod("xMetaDissPlus",
-				"http://localhost:8080/services/report/xMetaDissPlus/(pid)");
-		cm.addMethod("Aleph_MARC",
-				"http://localhost:8080/services/report/aleph_marc/(pid)");
-		cm.addMethod("mets", "http://localhost:8080/services/report/mets/(pid)");
-
-		return cm;
-	}
-
-	public static ContentModel createWpdCM(String namespace, ObjectType type)
-	{
-		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + ":" + type.toString() + "ObjectModel");
-		cm.setServiceDefinitionPID(namespace + ":" + type.toString()
-				+ "ServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + ":" + type.toString()
-				+ "ServiceDeployment");
-
-		cm.addMethod("oai_dc",
-				"http://localhost:8080/services/wpd/oai_dc/(pid)");
-		cm.addMethod("xepicur",
-				"http://localhost:8080/services/wpd/xepicur/(pid)");
-		cm.addMethod("xMetaDissPlus",
-				"http://localhost:8080/services/wpd/xMetaDissPlus/(pid)");
-		cm.addMethod("Aleph_MARC",
-				"http://localhost:8080/services/wpd/aleph_marc/(pid)");
-		cm.addMethod("mets", "http://localhost:8080/services/wpd/mets/(pid)");
+		cm.addMethod("oai_dc", "http://localhost/edowebAdmin/oaidc/(pid)");
+		cm.addMethod("lobid", "http://localhost/objects/(pid)/metadata");
 
 		return cm;
 	}

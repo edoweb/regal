@@ -25,8 +25,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response.Status;
 
-import ch.qos.logback.core.status.Status;
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 
 @Path("/edowebAdmin")
@@ -50,6 +50,7 @@ public class EdowebAdmin
 	 */
 	@DELETE
 	@Path("/formatAll")
+	@Produces({ "application/json", "application/xml" })
 	public String formatAll()
 	{
 		try
@@ -58,7 +59,9 @@ public class EdowebAdmin
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -69,6 +72,7 @@ public class EdowebAdmin
 	 */
 	@DELETE
 	@Path("/delete/{pid}")
+	@Produces({ "application/json", "application/xml" })
 	public String delete(@PathParam("pid") String pid)
 	{
 		try
@@ -77,13 +81,16 @@ public class EdowebAdmin
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 
 	}
 
 	@POST
 	@Path("/makeOaiSet/{pid}")
+	@Produces({ "application/json", "application/xml" })
 	public String makeOaiSet(@PathParam("pid") String pid)
 	{
 		try
@@ -92,7 +99,9 @@ public class EdowebAdmin
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 
 	}
@@ -108,7 +117,9 @@ public class EdowebAdmin
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -125,7 +136,9 @@ public class EdowebAdmin
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -141,9 +154,17 @@ public class EdowebAdmin
 
 			return new CollectionProfile(rows);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -158,7 +179,9 @@ public class EdowebAdmin
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -173,7 +196,9 @@ public class EdowebAdmin
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 

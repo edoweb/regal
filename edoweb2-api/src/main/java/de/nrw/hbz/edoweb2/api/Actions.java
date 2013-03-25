@@ -72,6 +72,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import de.nrw.hbz.edoweb2.archive.ArchiveFactory;
 import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
+import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
@@ -293,21 +294,33 @@ public class Actions
 	 * @return The Metadatastream
 	 * @throws URISyntaxException
 	 *             if the metadata url is not valid.
+	 * @throws IOException
+	 * @throws MalformedURLException
 	 */
-	public Response readMetadata(String pid) throws URISyntaxException
+	public String readMetadata(String pid) throws URISyntaxException,
+			MalformedURLException, IOException
 	{
-
+		String result = "";
 		Node node = archive.readNode(pid);
 		if (node != null && node.getMetadataUrl() != null)
 		{
+			InputStream in = null;
+			System.out.println(node.getMetadataUrl());
+			try
+			{
+				in = new URL(fedoraExtern + "/objects/" + pid
+						+ "/datastreams/metadata/content").openStream();
+				result = IOUtils.toString(in);
 
-			return Response.temporaryRedirect(
-					new java.net.URI(fedoraExtern + "/objects/" + pid
-							+ "/datastreams/metadata/content")).build();
+			}
+			finally
+			{
+				if (in != null)
+					IOUtils.closeQuietly(in);
+			}
 
 		}
-
-		return null;
+		return result;
 	}
 
 	/**
@@ -325,6 +338,11 @@ public class Actions
 			throws IOException
 	{
 
+		if (content == null || content.length == 0)
+		{
+			throw new ArchiveException(
+					"You've tried to upload an empty byte array. This action is not supported. Use HTTP DELETE instead.");
+		}
 		File tmp = File.createTempFile("edowebDatafile", "tmp");
 		tmp.deleteOnExit();
 
@@ -384,6 +402,11 @@ public class Actions
 	public String updateMetadata(String pid, String content) throws IOException
 	{
 
+		if (content == null || content.isEmpty())
+		{
+			throw new ArchiveException(
+					"You've tried to upload an empty string. This action is not supported. Use HTTP DELETE instead.");
+		}
 		File file = File.createTempFile("edowebtmpmetadata", "tmp");
 		file.deleteOnExit();
 		FileUtils.writeStringToFile(file, content);
@@ -394,7 +417,7 @@ public class Actions
 			archive.updateNode(pid, node);
 		}
 
-		return pid + "metadata successfully updated!";
+		return pid + " metadata successfully updated!";
 	}
 
 	/**
@@ -1351,12 +1374,19 @@ public class Actions
 					"url=" + lobidUrl, "out=" + outfile.getAbsolutePath() });
 			return FileUtils.readFileToString(outfile);
 		}
-		catch (IOException | RecognitionException | URISyntaxException e)
+		catch (IOException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException(e.getMessage(), e);
+		}
+		catch (URISyntaxException e)
+		{
+			throw new ArchiveException(e.getMessage(), e);
+		}
+		catch (RecognitionException e)
+		{
+			throw new ArchiveException(e.getMessage(), e);
 		}
 
-		return "";
 	}
 
 	private void waitWorkaround()

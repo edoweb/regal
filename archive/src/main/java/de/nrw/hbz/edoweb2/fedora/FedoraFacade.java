@@ -168,7 +168,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 			throw new ArchiveException("The variable host: " + host
 					+ " may contain a malformed url.", e);
 		}
-		catch (ServiceException | IOException e)
+		catch (ServiceException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+		catch (IOException e)
 		{
 			throw new ArchiveException("An unknown exception occured.", e);
 		}
@@ -455,12 +459,16 @@ public class FedoraFacade implements FedoraInterface, Constants
 			AutoPurger purger = new AutoPurger(fedoraManager);
 			purger.purge(rootPID, "delete");
 		}
-		catch (MalformedURLException | RemoteException | ServiceException e)
+		catch (MalformedURLException e)
 		{
 
 			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (IOException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+		catch (ServiceException e)
 		{
 			throw new ArchiveException("An unknown exception occured.", e);
 		}

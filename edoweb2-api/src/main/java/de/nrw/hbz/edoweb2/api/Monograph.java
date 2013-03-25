@@ -20,6 +20,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
@@ -34,11 +35,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.core.status.Status;
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
@@ -76,7 +77,9 @@ public class Monograph
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -88,17 +91,12 @@ public class Monograph
 		logger.info("create Monograph");
 		try
 		{
-			// if (actions.nodeExists(pid))
-			// {
-			// // String msg =
-			// // "{\"message\":\" Node already exists. I do nothing!\"}";
-			// MessageBean msg = new MessageBean(
-			// "Node already exists. I do nothing!");
-			// Response response = Response.status(409)
-			// .type(MediaType.APPLICATION_JSON).entity(msg).build();
-			// logger.warn("Node exists: " + pid);
-			// return response;
-			// }
+			if (actions.nodeExists(pid))
+			{
+				throw new HttpArchiveException(
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+						"Node already exists. I do nothing!");
+			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -116,7 +114,9 @@ public class Monograph
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -132,6 +132,7 @@ public class Monograph
 
 	@DELETE
 	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml" })
 	public String deleteMonograph(@PathParam("pid") String pid)
 	{
 		try
@@ -140,7 +141,9 @@ public class Monograph
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 
 	}
@@ -158,22 +161,32 @@ public class Monograph
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
 	@GET
 	@Path("/{pid}/data")
-	@Produces({ "application/*" })
+	@Produces({ "application/*", "application/json" })
 	public Response readMonographData(@PathParam("pid") String pid)
 	{
 		try
 		{
 			return actions.readData(pid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -186,27 +199,64 @@ public class Monograph
 	{
 		try
 		{
+
 			return actions.updateData(pid, content, headers.getMediaType()
 					.toString());
 
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (NullPointerException e)
+		{
+
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					"You must provide a mimeType via http header Content-Type.");
 		}
 	}
 
 	@GET
 	@Path("/{pid}/metadata")
-	public Response readMonographMetadata(@PathParam("pid") String pid)
+	@Produces({ "text/plain" })
+	public String readMonographMetadata(@PathParam("pid") String pid)
 	{
 		try
 		{
 			return actions.readMetadata(pid);
 		}
-		catch (ArchiveException | URISyntaxException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -221,7 +271,9 @@ public class Monograph
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -244,7 +296,9 @@ public class Monograph
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -259,13 +313,16 @@ public class Monograph
 		}
 		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
 	@PUT
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
 	public String updateMonographMetadata(@PathParam("pid") String pid,
 			String content)
 	{
@@ -273,9 +330,17 @@ public class Monograph
 		{
 			return actions.updateMetadata(pid, content);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
@@ -283,6 +348,7 @@ public class Monograph
 	@POST
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
 	public String updateMonographMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
@@ -290,9 +356,17 @@ public class Monograph
 		{
 			return actions.updateMetadata(pid, content);
 		}
-		catch (ArchiveException | IOException e)
+		catch (ArchiveException e)
 		{
-			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
 		}
 	}
 
