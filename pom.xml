@@ -101,14 +101,16 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-			<url>http://edoweb.github.com/releases</url>
+			<url>http://edoweb.github.com</url>
 		</repository>
 		
 		<repository>
 		 <id>jboss-nonssl</id>
       	<url>http://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
-		
+	
+	
+	
 	
 </repositories>
 
