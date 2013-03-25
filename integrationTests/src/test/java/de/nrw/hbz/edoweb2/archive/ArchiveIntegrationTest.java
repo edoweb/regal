@@ -39,7 +39,7 @@ import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 import de.nrw.hbz.edoweb2.datatypes.Vocabulary;
-import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
+import de.nrw.hbz.edoweb2.fedora.FedoraVocabulary;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -190,7 +190,7 @@ public class ArchiveIntegrationTest
 					"<http://127.0.0.1:8080/fedora/objects/"
 							+ myObject.getPID() + "> <"
 							+ Vocabulary.REL_IS_RELATED + "> *",
-					FedoraFacade.TYPE_SPO, FedoraFacade.FORMAT_N3);
+					FedoraVocabulary.SPO, FedoraVocabulary.N3);
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(stream, writer, "utf-8");
 			String theString = writer.toString();

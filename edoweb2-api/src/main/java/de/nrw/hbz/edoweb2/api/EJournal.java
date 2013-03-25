@@ -24,7 +24,8 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
-import java.rmi.RemoteException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -42,6 +43,8 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.core.status.Status;
+import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
@@ -58,31 +61,46 @@ public class EJournal
 	ObjectType volumeType = ObjectType.ejournalVolume;
 	String namespace = "edoweb";
 
-	Actions actions = new Actions();
+	Actions actions = null;
 
-	public EJournal()
+	public EJournal() throws IOException
 	{
-
+		actions = new Actions();
 	}
 
 	@GET
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return new ObjectList(actions.findByType(TypeType.contentType
-				.toString() + ":" + ejournalType.toString()));
+		try
+		{
+			return new ObjectList(actions.findByType(TypeType.contentType
+					.toString() + ":" + ejournalType.toString()));
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
-	public MessageBean deleteAll()
+	public String deleteAll()
 	{
-		String eJournal = actions.deleteAll(
-				actions.findByType(TypeType.contentType.toString() + ":"
-						+ ejournalType.toString()), false);
-		String eJournalVolume = actions.deleteAll(
-				actions.findByType(volumeType.toString()), false);
-		return new MessageBean(eJournal + "\n" + eJournalVolume);
+		try
+		{
+			String eJournal = actions.deleteAll(
+					actions.findByType(TypeType.contentType.toString() + ":"
+							+ ejournalType.toString()), false);
+			String eJournalVolume = actions.deleteAll(
+					actions.findByType(volumeType.toString()), false);
+			return eJournal + "\n" + eJournalVolume;
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -90,46 +108,57 @@ public class EJournal
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid)
 	{
-		return actions.getView(namespace + ":" + pid, ObjectType.ejournal);
+		try
+		{
+			return actions.getView(namespace + ":" + pid, ObjectType.ejournal);
+		}
+
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@DELETE
 	@Path("/{namespace}:{pid}")
-	public MessageBean deleteEJournal(@PathParam("pid") String pid,
+	public String deleteEJournal(@PathParam("pid") String pid,
 			@PathParam("namespace") String userNamespace)
 	{
-		logger.info("delete EJournal");
-		actions.delete(namespace + ":" + pid, false);
-		return new MessageBean(namespace + ":" + pid + " EJournal deleted!");
+		try
+		{
+			logger.info("delete EJournal");
+			return actions.delete(namespace + ":" + pid, false);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@PUT
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public Response createEJournal(@PathParam("pid") String pid,
+	public String createEJournal(@PathParam("pid") String pid,
 			@PathParam("namespace") String userNamespace)
 	{
 		logger.info("create EJournal");
 		try
 		{
-			if (actions.nodeExists(namespace + ":" + pid))
-			{
-				logger.warn("Node exists: " + pid);
-				MessageBean msg = new MessageBean(
-						"Node already exists. I do nothing!");
-				Response response = Response.status(409)
-						.type(MediaType.APPLICATION_JSON).entity(msg).build();
-				logger.warn("Node exists: " + pid);
-				return response;
-			}
+			// if (actions.nodeExists(namespace + ":" + pid))
+			// {
+			// logger.warn("Node exists: " + pid);
+			// MessageBean msg = new MessageBean(
+			// "Node already exists. I do nothing!");
+			// Response response = Response.status(409)
+			// .type(MediaType.APPLICATION_JSON).entity(msg).build();
+			// logger.warn("Node exists: " + pid);
+			// return response;
+			// }
 			if (userNamespace.compareTo(namespace) != 0)
 			{
-				MessageBean msg = new MessageBean(" Wrong namespace. Must be "
-						+ namespace);
-				Response response = Response.status(409)
-						.type(MediaType.APPLICATION_JSON).entity(msg).build();
-				logger.warn("Node exists: " + pid);
-				return response;
+				throw new HttpArchiveException(Status.ERROR,
+						" Wrong namespace. Must be " + namespace);
 			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
@@ -143,18 +172,13 @@ public class EJournal
 					namespace, ejournalType));
 
 			ComplexObject object = new ComplexObject(rootObject);
-			MessageBean msg = new MessageBean(actions.create(object, true));
-			return Response.ok().type(MediaType.APPLICATION_JSON).entity(msg)
-					.build();
+			return actions.create(object, true);
 
 		}
-		catch (RemoteException e)
+		catch (ArchiveException e)
 		{
-			e.printStackTrace();
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
 		}
-		MessageBean msg = new MessageBean("Create Failed");
-		return Response.serverError().type(MediaType.APPLICATION_JSON)
-				.entity(msg).build();
 	}
 
 	@GET
@@ -162,43 +186,81 @@ public class EJournal
 	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readEJournalDC(@PathParam("pid") String pid)
 	{
-		return actions.readDC(pid);
+		try
+		{
+			return actions.readDC(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@POST
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public MessageBean updateEJournalDC(@PathParam("pid") String pid,
+	public String updateEJournalDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return new MessageBean(actions.updateDC(pid, content));
+		try
+		{
+			return actions.updateDC(pid, content);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
 	@Path("/{pid}/metadata")
 	public Response readEJournalMetadata(@PathParam("pid") String pid)
 	{
-		return actions.readMetadata(pid);
+		try
+		{
+			return actions.readMetadata(pid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
+
 	}
 
 	@PUT
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
-	public MessageBean updateEJournalMetadata(@PathParam("pid") String pid,
+	public String updateEJournalMetadata(@PathParam("pid") String pid,
 			String content)
 	{
-		return new MessageBean(actions.updateMetadata(pid, content));
+		try
+		{
+			return actions.updateMetadata(pid, content);
+		}
+		catch (ArchiveException | IOException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
+
 	}
 
 	@Deprecated
 	@POST
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
-	public MessageBean updateEJournalMetadataPost(@PathParam("pid") String pid,
+	public String updateEJournalMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
-		return new MessageBean(actions.updateMetadata(pid, content));
+		try
+		{
+			return actions.updateMetadata(pid, content);
+		}
+		catch (ArchiveException | IOException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
+
 	}
 
 	@GET
@@ -206,13 +268,20 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVolumes(@PathParam("pid") String pid)
 	{
-		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
+		try
+		{
+			return new ObjectList(actions.findObject(pid, HAS_VOLUME));
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@PUT
 	@Path("/{pid}/volume/{volumePid}")
 	@Produces({ "application/json", "application/xml" })
-	public MessageBean createEJournalVolume(@PathParam("pid") String pid,
+	public String createEJournalVolume(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
 
@@ -258,14 +327,14 @@ public class EJournal
 			link.setObject(volumePid, false);
 			actions.addLink(pid, link);
 
-			return new MessageBean(actions.create(object, true));
+			return actions.create(object, true);
 
 		}
-		catch (RemoteException e)
+		catch (ArchiveException e)
 		{
-			e.printStackTrace();
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
 		}
-		return new MessageBean("create eJournal Volume Failed");
+
 	}
 
 	@GET
@@ -274,7 +343,14 @@ public class EJournal
 	public View getVolumeView(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		return actions.getView(volumePid, ObjectType.ejournalVolume);
+		try
+		{
+			return actions.getView(volumePid, ObjectType.ejournalVolume);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -283,19 +359,33 @@ public class EJournal
 	public Response readVolumeData(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		return actions.readData(volumePid);
+		try
+		{
+			return actions.readData(volumePid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@POST
 	@Path("/{pid}/volume/{volumePid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/pdf" })
-	public MessageBean updateVolumeData(@PathParam("pid") String pid,
+	public String updateVolumeData(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, byte[] content,
 			@Context HttpHeaders headers)
 	{
-		return new MessageBean(actions.updateData(volumePid, content, headers
-				.getMediaType().toString()));
+		try
+		{
+			return actions.updateData(volumePid, content, headers
+					.getMediaType().toString());
+		}
+		catch (ArchiveException | IOException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -304,17 +394,33 @@ public class EJournal
 	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		return actions.readDC(volumePid);
+		try
+		{
+			return actions.readDC(volumePid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@POST
 	@Path("/{pid}/volume/{volumePid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public MessageBean updateVolumeDC(@PathParam("pid") String pid,
+	public String updateVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, DCBeanAnnotated content)
 	{
-		return new MessageBean(actions.updateDC(volumePid, content));
+		try
+		{
+			return actions.updateDC(volumePid, content);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
+
 	}
 
 	@GET
@@ -323,17 +429,31 @@ public class EJournal
 	public Response readVolumeMetadata(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		return actions.readMetadata(volumePid);
+		try
+		{
+			return actions.readMetadata(volumePid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@PUT
 	@Path("/{pid}/volume/{volumePid}/metadata")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "text/plain" })
-	public MessageBean updateVolumeMetadata(@PathParam("pid") String pid,
+	public String updateVolumeMetadata(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, String content)
 	{
-		return new MessageBean(actions.updateMetadata(volumePid, content));
+		try
+		{
+			return actions.updateMetadata(volumePid, content);
+		}
+		catch (ArchiveException | IOException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@Deprecated
@@ -341,9 +461,16 @@ public class EJournal
 	@Path("/{pid}/volume/{volumePid}/metadata")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "text/plain" })
-	public MessageBean updateVolumeMetadataPost(@PathParam("pid") String pid,
+	public String updateVolumeMetadataPost(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, String content)
 	{
-		return new MessageBean(actions.updateMetadata(volumePid, content));
+		try
+		{
+			return actions.updateMetadata(volumePid, content);
+		}
+		catch (ArchiveException | IOException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 }

@@ -83,10 +83,11 @@
 			<artifactId>commons-io</artifactId>
 			<version>1.3.2</version>
 		</dependency>
+	
 		<dependency>
-			<groupId>org.culturegraph</groupId>
-			<artifactId>metafacture-core</artifactId>
-			<version>0.0.0</version>
+			<groupId>org.lobid</groupId>
+			<artifactId>lodmill-rd</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>

@@ -29,7 +29,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -41,6 +40,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.antlr.runtime.RecognitionException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
@@ -49,6 +49,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.culturegraph.mf.Flux;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -74,7 +75,7 @@ import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
-import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
+import de.nrw.hbz.edoweb2.fedora.FedoraVocabulary;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -92,17 +93,16 @@ public class Actions
 	String baseUrl = null;
 	String serverName = null;
 
-	public Actions()
+	/**
+	 * @throws IOException
+	 *             if properties can not be loaded.
+	 */
+	public Actions() throws IOException
 	{
 		Properties properties = new Properties();
-		try
-		{
-			properties.load(getClass().getResourceAsStream("/api.properties"));
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+
+		properties.load(getClass().getResourceAsStream("/api.properties"));
+
 		fedoraExtern = properties.getProperty("fedoraExtern");
 		culturegraphUrl = properties.getProperty("culturegraphUrl");
 		lobidUrl = properties.getProperty("lobidUrl");
@@ -118,97 +118,80 @@ public class Actions
 
 	}
 
-	// ---------------------OPTIMIZE--------------------------
+	/**
+	 * @param pids
+	 *            The pids that must be deleted
+	 * @param wait
+	 *            If wait is true the method will wait few secs in order to get
+	 *            sync with the fedora triple store. TODO: Remove this ugly
+	 *            workaround.
+	 * @return A short message.
+	 */
 	public String deleteAll(List<String> pids, boolean wait)
 	{
 		logger.info("Delete All");
+		StringBuffer msg = new StringBuffer();
 		for (String pid : pids)
 		{
-			delete(pid, wait);
+			msg.append(delete(pid, wait));
 		}
 
-		return "deleteAll";
+		return msg.toString();
 	}
 
+	/**
+	 * @param object
+	 *            A representation of this object will be created in the
+	 *            archive.
+	 * @param wait
+	 *            If wait is true the method will wait few secs in order to get
+	 *            sync with the fedora triple store. TODO: Remove this ugly
+	 *            workaround.
+	 * @return a short message
+	 */
 	public String create(ComplexObject object, boolean wait)
-			throws RemoteException
 	{
 		archive.createComplexObject(object);
 		if (wait)
 			waitWorkaround();
 
-		return object.getRoot().getPID() + " CREATED!";
+		return object.getRoot().getPID() + " successfully created!";
 	}
 
-	// public String update(String pid, StatusBean status, boolean wait)
-	// {
-	// try
-	// {
-	// Node node = archive.readNode(pid);
-	// if (node != null)
-	// {
-	// Vector<String> v = new Vector<String>();
-	// v.add(status.visibleFor.toString());
-	// node.setRights(v);
-	// archive.updateNode(pid, node);
-	// if (wait)
-	// waitWorkaround();
-	// }
-	// }
-	// catch (RemoteException e)
-	// {
-	// e.printStackTrace();
-	// }
-	// return "update";
-	// }
-
+	/**
+	 * @param pid
+	 *            The pid that must be deleted
+	 * @param wait
+	 *            If wait is true the method will wait few secs in order to get
+	 *            sync with the fedora triple store. TODO: Remove this ugly
+	 *            workaround.
+	 * @return A short Message
+	 */
 	public String delete(String pid, boolean wait)
 	{
 
-		try
-		{
-			archive.deleteComplexObject(pid);
-			outdex(pid);
-			if (wait)
-				waitWorkaround();
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return "delete";
-	}
+		archive.deleteComplexObject(pid);
+		outdex(pid);
+		if (wait)
+			waitWorkaround();
 
-	private void waitWorkaround()
-	{
-		/*
-		 * Workaround START
-		 */
-		try
-		{
-			logger.info("Wait 10 sec! Nasty workaround.");
-			Thread.sleep(10000);
-			logger.info("Stop Waiting! Nasty workaround.");
-		}
-		catch (InterruptedException e1)
-		{
-
-			e1.printStackTrace();
-		}
-		/*
-		 * Workaround END
-		 */
+		return pid + " successfully deleted!";
 	}
 
 	// -------------------------------------------------------
 
+	/**
+	 * @param type
+	 *            The objectTyp
+	 * @return A list of pids with type {@type}
+	 */
 	public Vector<String> findByType(String type)
 	{
 		Vector<String> pids = new Vector<String>();
 		String query = "* <http://purl.org/dc/elements/1.1/type> \"" + type
 				+ "\"";
-		InputStream stream = archive.findTriples(query, FedoraFacade.TYPE_SPO,
-				FedoraFacade.FORMAT_N3);
+		InputStream stream = archive.findTriples(query, FedoraVocabulary.SPO,
+				FedoraVocabulary.N3);
 		String findpid = null;
 		RepositoryConnection con = null;
 		Repository myRepository = new SailRepository(new MemoryStore());
@@ -263,182 +246,167 @@ public class Actions
 		return pids;
 	}
 
-	// public StatusBean read(String pid)
-	// {
-	// try
-	// {
-	// Node object = archive.readObject(pid);
-	// return new StatusBean(object);
-	// }
-	// catch (RemoteException e)
-	// {
-	// e.printStackTrace();
-	// }
-	// return null;
-	// }
-
-	public Response readData(String pid)
+	/**
+	 * @param pid
+	 *            The pid to read the data from
+	 * @return the data part of the pid
+	 * @throws URISyntaxException
+	 *             if the data url is not wellformed
+	 */
+	public Response readData(String pid) throws URISyntaxException
 	{
-		try
-		{
-			Node node = archive.readNode(pid);
-			if (node != null && node.getDataUrl() != null)
-			{
-				try
-				{
-					return Response.temporaryRedirect(
-							new java.net.URI(fedoraExtern + "/objects/" + pid
-									+ "/datastreams/data/content")).build();
-				}
-				catch (URISyntaxException e)
-				{
-					e.printStackTrace();
-				}
-			}
+		Node node = null;
 
-		}
-		catch (RemoteException e)
+		node = archive.readNode(pid);
+
+		if (node != null && node.getDataUrl() != null)
 		{
-			e.printStackTrace();
+
+			return Response.temporaryRedirect(
+					new java.net.URI(fedoraExtern + "/objects/" + pid
+							+ "/datastreams/data/content")).build();
+
 		}
 		return null;
 	}
 
+	/**
+	 * @param pid
+	 *            The pid to read the dublin core stream from.
+	 * @return A DCBeanAnnotated java object.
+	 */
 	public DCBeanAnnotated readDC(String pid)
 	{
 
 		logger.info("Read DC");
-		try
-		{
-			Node node = archive.readNode(pid);
-			if (node != null)
-				return new DCBeanAnnotated(node);
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
+
+		Node node = archive.readNode(pid);
+		if (node != null)
+			return new DCBeanAnnotated(node);
+
 		return null;
 	}
 
-	public Response readMetadata(String pid)
+	/**
+	 * @param pid
+	 *            The pid to read metadata stream.
+	 * @return The Metadatastream
+	 * @throws URISyntaxException
+	 *             if the metadata url is not valid.
+	 */
+	public Response readMetadata(String pid) throws URISyntaxException
 	{
-		try
+
+		Node node = archive.readNode(pid);
+		if (node != null && node.getMetadataUrl() != null)
 		{
-			Node node = archive.readNode(pid);
-			if (node != null && node.getMetadataUrl() != null)
-			{
-				try
-				{
-					return Response.temporaryRedirect(
-							new java.net.URI(fedoraExtern + "/objects/" + pid
-									+ "/datastreams/metadata/content")).build();
-				}
-				catch (URISyntaxException e)
-				{
-					e.printStackTrace();
-				}
-			}
+
+			return Response.temporaryRedirect(
+					new java.net.URI(fedoraExtern + "/objects/" + pid
+							+ "/datastreams/metadata/content")).build();
 
 		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
+
 		return null;
 	}
 
+	/**
+	 * @param pid
+	 *            the pid that must be updated
+	 * @param content
+	 *            the data as byte array
+	 * @param mimeType
+	 *            the mimetype of the data
+	 * @return A short message
+	 * @throws IOException
+	 *             if data can not be written to a tmp file
+	 */
 	public String updateData(String pid, byte[] content, String mimeType)
+			throws IOException
 	{
-		try
-		{
-			File tmp = new File("/tmp/edowebdatatmpfile");
 
-			FileUtils.writeByteArrayToFile(tmp, content);
-			Node node = archive.readNode(pid);
-			if (node != null)
-			{
-				node.setUploadData(tmp.getAbsolutePath(), "data", mimeType);
-				archive.updateNode(pid, node);
-			}
-		}
-		catch (RemoteException e)
+		File tmp = File.createTempFile("edowebDatafile", "tmp");
+		tmp.deleteOnExit();
+
+		FileUtils.writeByteArrayToFile(tmp, content);
+		Node node = archive.readNode(pid);
+		if (node != null)
 		{
-			e.printStackTrace();
+			node.setUploadData(tmp.getAbsolutePath(), "data", mimeType);
+			archive.updateNode(pid, node);
 		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "updateData";
+
+		return pid + " data successfully updated!";
 	}
 
+	/**
+	 * @param pid
+	 *            The pid that must be updated
+	 * @param content
+	 *            A dublin core object
+	 * @return a short message
+	 */
 	public String updateDC(String pid, DCBeanAnnotated content)
 	{
 		logger.info("Update DC");
-		try
-		{
-			content.trim();
-			Node node = archive.readNode(pid);
-			node.setContributer(content.getContributer());
-			node.setCoverage(content.getCoverage());
-			node.setCreator(content.getCreator());
-			node.setDate(content.getDate());
-			node.setDescription(content.getDescription());
-			node.setFormat(content.getFormat());
-			node.setIdentifier(content.getIdentifier());
-			node.setLanguage(content.getLanguage());
-			node.setPublisher(content.getPublisher());
-			node.setDescription(content.getDescription());
-			node.setRights(content.getRights());
-			node.setSource(content.getSource());
-			node.setSubject(content.getSubject());
-			node.setTitle(content.getTitle());
-			node.setType(content.getType());
-			archive.updateNode(pid, node);
 
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
+		content.trim();
+		Node node = archive.readNode(pid);
+		node.setContributer(content.getContributer());
+		node.setCoverage(content.getCoverage());
+		node.setCreator(content.getCreator());
+		node.setDate(content.getDate());
+		node.setDescription(content.getDescription());
+		node.setFormat(content.getFormat());
+		node.setIdentifier(content.getIdentifier());
+		node.setLanguage(content.getLanguage());
+		node.setPublisher(content.getPublisher());
+		node.setDescription(content.getDescription());
+		node.setRights(content.getRights());
+		node.setSource(content.getSource());
+		node.setSubject(content.getSubject());
+		node.setTitle(content.getTitle());
+		node.setType(content.getType());
+		archive.updateNode(pid, node);
 
-		return "updateDC";
+		return pid + " dc successfully updated!";
 	}
 
-	public String updateMetadata(String pid, String content)
+	/**
+	 * @param pid
+	 *            The pid that must be updated
+	 * @param content
+	 *            The metadata as rdf string
+	 * @return a short message
+	 * @throws IOException
+	 *             if the metadata can not be cached
+	 */
+	public String updateMetadata(String pid, String content) throws IOException
 	{
 
-		try
+		File file = File.createTempFile("edowebtmpmetadata", "tmp");
+		file.deleteOnExit();
+		FileUtils.writeStringToFile(file, content);
+		Node node = archive.readNode(pid);
+		if (node != null)
 		{
-			File file = new File("/tmp/edowebmetatmpfile");
-			FileUtils.writeStringToFile(file, content);
-			Node node = archive.readNode(pid);
-			if (node != null)
-			{
-				node.setMetadataFile(file.getAbsolutePath());
-				archive.updateNode(pid, node);
-			}
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			node.setMetadataFile(file.getAbsolutePath());
+			archive.updateNode(pid, node);
 		}
 
-		return "updateMetadata";
+		return pid + "metadata successfully updated!";
 	}
 
+	/**
+	 * @param rdfQuery
+	 *            A sparql query
+	 * @return a short message
+	 */
 	public String findSubject(String rdfQuery)
 	{
 		String volumePid = null;
 		InputStream stream = archive.findTriples(rdfQuery,
-				FedoraFacade.TYPE_SPARQL, FedoraFacade.FORMAT_N3);
+				FedoraVocabulary.SPARQL, FedoraVocabulary.N3);
 
 		RepositoryConnection con = null;
 		Repository myRepository = new SailRepository(new MemoryStore());
@@ -494,12 +462,21 @@ public class Actions
 		return volumePid;
 	}
 
-	public Vector<String> findObject(String pid, String pred)
+	/**
+	 * 
+	 * @param pid
+	 *            The pid
+	 * @param pred
+	 *            the predicate
+	 * @return A list of objects that are referenced by pid/predicate
+	 *         combination.
+	 */
+	public List<String> findObject(String pid, String pred)
 	{
 		String query = "<info:fedora/" + pid + "> <" + pred + "> *";
 		logger.info(query);
-		InputStream stream = archive.findTriples(query, FedoraFacade.TYPE_SPO,
-				FedoraFacade.FORMAT_N3);
+		InputStream stream = archive.findTriples(query, FedoraVocabulary.SPO,
+				FedoraVocabulary.N3);
 		Vector<String> findpids = new Vector<String>();
 		RepositoryConnection con = null;
 		Repository myRepository = new SailRepository(new MemoryStore());
@@ -554,45 +531,68 @@ public class Actions
 		return findpids;
 	}
 
+	/**
+	 * @param pid
+	 *            A pid
+	 * @return true if the pid exists and fals if not
+	 */
 	public boolean nodeExists(String pid)
 	{
-
 		return archive.nodeExists(pid);
 	}
 
+	/**
+	 * @param pid
+	 *            A pid
+	 * @return the pid prefixed with a certain namespace.
+	 */
 	public String addUriPrefix(String pid)
 	{
 		return archive.addUriPrefix(pid);
 	}
 
-	public String getPid(String namespace) throws RemoteException
+	/**
+	 * @param namespace
+	 *            the namespace of the pid
+	 * @return a new generated empty pid
+	 */
+	public String getPid(String namespace)
 	{
 		return archive.getPids(namespace, 1)[0];
 	}
 
-	public String addLinks(String pid, Vector<Link> links)
+	/**
+	 * @param pid
+	 *            The pid to which links must be added
+	 * @param links
+	 *            list of links
+	 * @return a short message
+	 */
+	public String addLinks(String pid, List<Link> links)
 	{
-		try
-		{
-			Node node = archive.readNode(pid);
-			for (Link link : links)
-			{
-				node.addRelation(link);
-			}
-			// long start = System.nanoTime();
-			archive.updateNode(node.getPID(), node);
-			// long elapsed = System.nanoTime() - start;
-			// System.out.println("update node duration: " + elapsed);
 
-			return "Links succesfuly added";
-		}
-		catch (RemoteException e)
+		Node node = archive.readNode(pid);
+		for (Link link : links)
 		{
-			e.printStackTrace();
+			node.addRelation(link);
 		}
-		return "FAILED! No links added";
+		// long start = System.nanoTime();
+		archive.updateNode(node.getPID(), node);
+		// long elapsed = System.nanoTime() - start;
+		// System.out.println("update node duration: " + elapsed);
+
+		return links + " links succesfuly added";
+
 	}
 
+	/**
+	 * @param pid
+	 *            The pid to which links must be added uses: Vector<Link> v =
+	 *            new Vector<Link>(); v.add(link); return addLinks(pid, v);
+	 * @param link
+	 *            a link
+	 * @return a short message
+	 */
 	public String addLink(String pid, Link link)
 	{
 		Vector<Link> v = new Vector<Link>();
@@ -600,115 +600,102 @@ public class Actions
 		return addLinks(pid, v);
 	}
 
+	/**
+	 * If a link with same predicate exists it will be replaced.
+	 * 
+	 * @param pid
+	 *            pid of the object
+	 * @param link
+	 *            link to be updated
+	 * @return a short message
+	 */
 	public String updateLink(String pid, Link link)
 	{
-		try
-		{
-			Node node = archive.readNode(pid);
-			Vector<Link> links = node.getRelsExt();
-			Iterator<Link> iterator = links.iterator();
 
-			while (iterator.hasNext())
+		Node node = archive.readNode(pid);
+		Vector<Link> links = node.getRelsExt();
+		Iterator<Link> iterator = links.iterator();
+
+		while (iterator.hasNext())
+		{
+			Link l = iterator.next();
+			if (l.getPredicate().compareTo(link.getPredicate()) == 0)
 			{
-				Link l = iterator.next();
-				if (l.getPredicate().compareTo(link.getPredicate()) == 0)
-				{
-					links.remove(l);
-				}
+				links.remove(l);
 			}
+		}
 
-			links.add(link);
-			node.setRelsExt(links);
-			archive.updateNode(node.getPID(), node);
-			return "Link succesfuly updated";
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return "FAILED! No links added";
+		links.add(link);
+		node.setRelsExt(links);
+		archive.updateNode(node.getPID(), node);
+		return link + " link succesfuly updated";
+
 	}
 
-	// public void addChildToParent(String childPid, String parentPid)
-	// {
-	// try
-	// {
-	// ComplexObject parent = archive.readComplexObject(parentPid);
-	// Node child = archive.readNode(childPid);
-	// parent.addChild(new ComplexObjectNode(child));
-	// archive.updateComplexObject(parent);
-	// }
-	// catch (RemoteException e)
-	// {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
-
-	public void makeOAISet(String pid)
+	/**
+	 * @param pid
+	 *            the pid of a node that must be published on the oai interface
+	 * @return A short message.
+	 */
+	public String makeOAISet(String pid)
 	{
-		try
-		{
-			Node node = archive.readNode(pid);
-			if (node.getSubject() != null)
-				for (String subject : node.getSubject())
-				{
-					if (subject.startsWith("ddc"))
-					{
-						int end = 7;
-						if (subject.length() < 7)
-							end = subject.length();
-						String ddc = subject.subSequence(4, end).toString();
-						logger.info("Found ddc: " + ddc);
-
-						String name = ddcmap(ddc);
-						String spec = "ddc:" + ddc;
-						String namespace = "oai";
-						String oaipid = namespace + ":" + ddc;
-						if (!this.nodeExists(oaipid))
-						{
-							createOAISet(name, spec, oaipid);
-						}
-						linkObjectToOaiSet(node, spec, oaipid);
-					}
-
-				}
-			if (node.getType() != null)
-				for (String type : node.getType())
-				{
-					if (type.startsWith(TypeType.contentType.toString()))
-					{
-						String docType = type.substring(type.indexOf(':') + 1);
-						logger.info("Found contentType: " + docType);
-
-						String name = docmap(docType);
-						String spec = TypeType.contentType.toString() + ":"
-								+ docType;
-						String namespace = "oai";
-						String oaipid = namespace + ":" + docType;
-						if (!this.nodeExists(oaipid))
-						{
-							createOAISet(name, spec, oaipid);
-						}
-						linkObjectToOaiSet(node, spec, oaipid);
-					}
-				}
-
-			String name = "open_access";
-			String spec = "open_access";
-			String namespace = "oai";
-			String oaipid = namespace + ":" + "open_access";
-			if (!this.nodeExists(oaipid))
+		Node node = archive.readNode(pid);
+		if (node.getSubject() != null)
+			for (String subject : node.getSubject())
 			{
-				createOAISet(name, spec, oaipid);
+				if (subject.startsWith("ddc"))
+				{
+					int end = 7;
+					if (subject.length() < 7)
+						end = subject.length();
+					String ddc = subject.subSequence(4, end).toString();
+					logger.info("Found ddc: " + ddc);
+
+					String name = ddcmap(ddc);
+					String spec = "ddc:" + ddc;
+					String namespace = "oai";
+					String oaipid = namespace + ":" + ddc;
+					if (!this.nodeExists(oaipid))
+					{
+						createOAISet(name, spec, oaipid);
+					}
+					linkObjectToOaiSet(node, spec, oaipid);
+				}
+
 			}
-			linkObjectToOaiSet(node, spec, oaipid);
-		}
-		catch (RemoteException e)
+		if (node.getType() != null)
+			for (String type : node.getType())
+			{
+				if (type.startsWith(TypeType.contentType.toString()))
+				{
+					String docType = type.substring(type.indexOf(':') + 1);
+					logger.info("Found contentType: " + docType);
+
+					String name = docmap(docType);
+					String spec = TypeType.contentType.toString() + ":"
+							+ docType;
+					String namespace = "oai";
+					String oaipid = namespace + ":" + docType;
+					if (!this.nodeExists(oaipid))
+					{
+						createOAISet(name, spec, oaipid);
+					}
+					linkObjectToOaiSet(node, spec, oaipid);
+				}
+			}
+
+		String name = "open_access";
+		String spec = "open_access";
+		String namespace = "oai";
+		String oaipid = namespace + ":" + "open_access";
+		if (!this.nodeExists(oaipid))
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			createOAISet(name, spec, oaipid);
 		}
+		linkObjectToOaiSet(node, spec, oaipid);
+
+		return pid + "successfully created oai sets!";
+
 	}
 
 	private void createOAISet(String name, String spec, String pid)
@@ -734,14 +721,8 @@ public class Actions
 			setNameLink.setObject(name, true);
 			oaiset.addRelation(setNameLink);
 			oaiset.addTitle(name);
-			try
-			{
-				archive.createComplexObject(new ComplexObject(oaiset));
-			}
-			catch (RemoteException e)
-			{
-				e.printStackTrace();
-			}
+
+			archive.createComplexObject(new ComplexObject(oaiset));
 
 		}
 	}
@@ -773,15 +754,8 @@ public class Actions
 		relations.add(link);
 
 		node.setRelsExt(relations);
-		try
-		{
-			archive.updateNode(node.getPID(), node);
-		}
-		catch (RemoteException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		archive.updateNode(node.getPID(), node);
 
 	}
 
@@ -863,6 +837,11 @@ public class Actions
 		return name;
 	}
 
+	/**
+	 * Deletes all objects in namespaces test,edoweb and oai.
+	 * 
+	 * @return a short message
+	 */
 	public String formatAll()
 	{
 		StringBuffer result = new StringBuffer();
@@ -874,53 +853,59 @@ public class Actions
 		return result.toString();
 	}
 
+	/**
+	 * @param pid
+	 *            The pid of an existing object
+	 * @return a view object
+	 */
 	public View getView(String pid)
 	{
-		try
+
+		Node node = archive.readNode(pid);
+		if (node == null)
+			return null;
+
+		Vector<String> types = node.getType();
+
+		for (String t : types)
 		{
-			Node node = archive.readNode(pid);
-			if (node == null)
-				return null;
-
-			Vector<String> types = node.getType();
-
-			for (String t : types)
+			if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.ejournal.toString()) == 0)
 			{
-				if (t.compareTo(TypeType.contentType.toString() + ":"
-						+ ObjectType.ejournal.toString()) == 0)
-				{
-					return getView(node, ObjectType.ejournal);
-				}
-				else if (t.compareTo(TypeType.contentType.toString() + ":"
-						+ ObjectType.webpage.toString()) == 0)
-				{
-					return getView(node, ObjectType.webpage);
-				}
-				else if (t.compareTo(TypeType.contentType.toString() + ":"
-						+ ObjectType.monograph.toString()) == 0)
-				{
-					return getView(node, ObjectType.monograph);
-				}
-				else if (t.compareTo(TypeType.contentType.toString() + ":"
-						+ ObjectType.ejournalVolume.toString()) == 0)
-				{
-					return getView(node, ObjectType.ejournalVolume);
-				}
-				else if (t.compareTo(TypeType.contentType.toString() + ":"
-						+ ObjectType.webpageVersion.toString()) == 0)
-				{
-					return getView(node, ObjectType.webpageVersion);
-				}
+				return getView(node, ObjectType.ejournal);
 			}
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.webpage.toString()) == 0)
+			{
+				return getView(node, ObjectType.webpage);
+			}
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.monograph.toString()) == 0)
+			{
+				return getView(node, ObjectType.monograph);
+			}
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.ejournalVolume.toString()) == 0)
+			{
+				return getView(node, ObjectType.ejournalVolume);
+			}
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.webpageVersion.toString()) == 0)
+			{
+				return getView(node, ObjectType.webpageVersion);
+			}
+		}
 
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
 		return null;
 	}
 
+	/**
+	 * @param pid
+	 *            The pid of an existing object.
+	 * @param type
+	 *            the type of the object.
+	 * @return the typed view of the object
+	 */
 	public View getView(String pid, ObjectType type)
 	{
 
@@ -928,20 +913,20 @@ public class Actions
 		// String url = urlInfo.getPath();
 		// String objectUrl = host + url.substring(0, url.lastIndexOf('/'));
 
-		try
-		{
-			Node node = archive.readNode(pid);
-			if (node == null)
-				return null;
-			return getView(node, type);
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
+		Node node = archive.readNode(pid);
+		if (node == null)
+			return null;
+		return getView(node, type);
+
 	}
 
+	/**
+	 * @param node
+	 *            An object as node
+	 * @param type
+	 *            The type
+	 * @return the view of the object of type type.
+	 */
 	public View getView(Node node, ObjectType type)
 	{
 		View view = new View();
@@ -1065,6 +1050,13 @@ public class Actions
 		return view;
 	}
 
+	/**
+	 * @param node
+	 *            The node that must be indexed
+	 * @param type
+	 *            The type of the node
+	 * @return a short message
+	 */
 	public String index(Node node, ObjectType type)
 	{
 		String message = "";
@@ -1132,6 +1124,11 @@ public class Actions
 		return "Success! " + message;
 	}
 
+	/**
+	 * @param pid
+	 *            The pid to remove from index
+	 * @return A short message
+	 */
 	public String outdex(String pid)
 	{
 
@@ -1154,46 +1151,43 @@ public class Actions
 		return "Remove " + pid + " from index!";
 	}
 
+	/**
+	 * @param pid
+	 *            The pid that must be indexed
+	 * @return a short message.
+	 */
 	public String index(String pid)
 	{
-		try
+		Node node = archive.readNode(pid);
+		if (node == null)
+			return "Node not found! " + pid;
+		ObjectType type = null;
+		for (String t : node.getType())
 		{
-			Node node = archive.readNode(pid);
-			if (node == null)
-				return "Node not found! " + pid;
-			ObjectType type = null;
-			for (String t : node.getType())
+			if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.monograph.toString()) == 0)
 			{
-				if (t.compareTo(TypeType.contentType.toString() + ":"
-						+ ObjectType.monograph.toString()) == 0)
-				{
-					type = ObjectType.monograph;
-					break;
-				}
-				else if (t.compareTo(TypeType.contentType.toString() + ":"
-						+ ObjectType.ejournal.toString()) == 0)
-				{
-					type = ObjectType.ejournal;
-					break;
-				}
-				else if (t.compareTo(TypeType.contentType.toString() + ":"
-						+ ObjectType.webpage.toString()) == 0)
-				{
-					type = ObjectType.webpage;
-					break;
-				}
+				type = ObjectType.monograph;
+				break;
 			}
-			if (type == null)
-				return "Sorry the node has no type! ERROR! " + pid;
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.ejournal.toString()) == 0)
+			{
+				type = ObjectType.ejournal;
+				break;
+			}
+			else if (t.compareTo(TypeType.contentType.toString() + ":"
+					+ ObjectType.webpage.toString()) == 0)
+			{
+				type = ObjectType.webpage;
+				break;
+			}
+		}
+		if (type == null)
+			return "Sorry the node has no type! ERROR! " + pid;
 
-			return index(node, type);
-		}
-		catch (RemoteException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "Something unexpected occured! " + pid;
+		return index(node, type);
+
 	}
 
 	private String getURI(Node node)
@@ -1246,97 +1240,143 @@ public class Actions
 		return serverName + "/" + typePath + "/" + node.getPID();
 	}
 
-	// private String getVolumeName(Node node)
-	// {
-	// return findObject(node.getPID(), HAS_VOLUME_NAME).firstElement();
-	// }
-	//
-	// private String getJournalPid(Node node)
-	// {
-	// return findObject(node.getPID(), IS_VOLUME).firstElement();
-	// }
-	//
-	// private String getVersionName(Node node)
-	// {
-	// return findObject(node.getPID(), HAS_VERSION_NAME).firstElement();
-	// }
-	//
-	// private String getWebpagePid(Node node)
-	// {
-	// return findObject(node.getPID(), IS_VERSION).firstElement();
-	// }
-
+	/**
+	 * @return a list of all objects in namespace edoweb
+	 */
 	public List<String> getAll()
 	{
 		return archive.findNodes("edoweb:*");
 	}
 
+	/**
+	 * @param pid
+	 *            The pid for which to load lobid rdf
+	 * @return a short message
+	 */
 	public String lobidify(String pid)
 	{
 		Node node;
+
+		node = archive.readNode(pid);
+
+		List<String> identifier = node.getIdentifier();
+		String alephid = "";
+		for (String id : identifier)
+		{
+			if (id.startsWith("TT") || id.startsWith("HT"))
+			{
+				alephid = id;
+				break;
+			}
+		}
+		if (alephid.isEmpty())
+		{
+			return "No Catalog-Id found";
+		}
+		String lobidUrl = " http://lobid.org/resource/" + alephid;
+		InputStream in = null;
 		try
 		{
-			node = archive.readNode(pid);
+			URL url = new URL(lobidUrl);
 
-			List<String> identifier = node.getIdentifier();
-			String alephid = "";
-			for (String id : identifier)
-			{
-				if (id.startsWith("TT") || id.startsWith("HT"))
-				{
-					alephid = id;
-					break;
-				}
-			}
-			if (alephid.isEmpty())
-			{
-				return "No Catalog-Id found";
-			}
-			String lobidUrl = " http://lobid.org/resource/" + alephid;
-			InputStream in = null;
+			URLConnection con = url.openConnection();
+			con.setRequestProperty("Accept", "text/plain");
+			con.connect();
+
+			in = con.getInputStream();
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(in, writer, "UTF-8");
+			String str = writer.toString();
+
+			updateMetadata(pid, str);
+		}
+		catch (IOException e)
+		{
+
+		}
+		finally
+		{
 			try
 			{
-				URL url = new URL(lobidUrl);
-
-				URLConnection con = url.openConnection();
-				con.setRequestProperty("Accept", "text/plain");
-				con.connect();
-
-				in = con.getInputStream();
-				StringWriter writer = new StringWriter();
-				IOUtils.copy(in, writer, "UTF-8");
-				String str = writer.toString();
-
-				updateMetadata(pid, str);
+				if (in != null)
+					in.close();
 			}
 			catch (IOException e)
 			{
 
 			}
-			finally
-			{
-				try
-				{
-					if (in != null)
-						in.close();
-				}
-				catch (IOException e)
-				{
+		}
 
-				}
-			}
-		}
-		catch (RemoteException e1)
-		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		return "Success";
+		return pid + "lobid metadata successfully loaded!";
 	}
 
+	/**
+	 * @param pid
+	 *            The pid of an object
+	 * @return The metadata a oaidc-xml
+	 */
 	public String oaidc(String pid)
 	{
+
+		File old = new File("oaidc.xml");
+		if (old.exists())
+			old.delete();
+
+		Node node = archive.readNode(pid);
+		if (node == null)
+			return "No node with pid " + pid + " found";
+		List<String> identifier = node.getIdentifier();
+		String alephid = "";
+		for (String id : identifier)
+		{
+			if (id.startsWith("TT") || id.startsWith("HT"))
+			{
+				alephid = id;
+				break;
+			}
+		}
+		if (alephid.isEmpty())
+		{
+			return "No Catalog-Id found";
+		}
+		String lobidUrl = " http://lobid.org/resource/" + alephid + "/about";
+		try
+		{
+			File outfile = File.createTempFile("oaidc", "xml");
+			outfile.deleteOnExit();
+			File fluxFile = new File(Thread.currentThread()
+					.getContextClassLoader()
+					.getResource("morph-lobid-to-oaidc.flux").toURI());
+			Flux.main(new String[] { fluxFile.getAbsolutePath(),
+					"url=" + lobidUrl, "out=" + outfile.getAbsolutePath() });
+			return FileUtils.readFileToString(outfile);
+		}
+		catch (IOException | RecognitionException | URISyntaxException e)
+		{
+			e.printStackTrace();
+		}
+
 		return "";
 	}
 
+	private void waitWorkaround()
+	{
+		/*
+		 * Workaround START
+		 */
+		try
+		{
+			logger.info("Wait 10 sec! Nasty workaround.");
+			Thread.sleep(10000);
+			logger.info("Stop Waiting! Nasty workaround.");
+		}
+		catch (InterruptedException e1)
+		{
+
+			e1.printStackTrace();
+		}
+		/*
+		 * Workaround END
+		 */
+	}
 }

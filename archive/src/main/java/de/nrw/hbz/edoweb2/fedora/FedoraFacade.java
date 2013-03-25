@@ -104,6 +104,8 @@ import com.yourmediashelf.fedora.client.FedoraCredentials;
 import com.yourmediashelf.fedora.client.request.FedoraRequest;
 import com.yourmediashelf.fedora.client.response.FindObjectsResponse;
 
+import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
+import de.nrw.hbz.edoweb2.archive.exceptions.NodeNotFoundException;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
@@ -115,6 +117,7 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
  * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
+@SuppressWarnings("static-access")
 public class FedoraFacade implements FedoraInterface, Constants
 {
 
@@ -127,10 +130,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 	/**
 	 * TODO Use the mediashelf client for all operations
 	 */
-	public final static String TYPE_SIMPLE = "simple";
-	public static final String TYPE_SPO = "spo";
-	public static final String TYPE_SPARQL = "sparql";
-	public static final String FORMAT_N3 = "N3";
+
 	private FedoraAPIAMTOM fedoraAccess;
 	private FedoraAPIMMTOM fedoraManager;
 	private FedoraClient fedoraClient;
@@ -140,6 +140,14 @@ public class FedoraFacade implements FedoraInterface, Constants
 	private final String passwd;
 	String objecUrl = "info:fedora";
 
+	/**
+	 * @param host
+	 *            The url of the fedora web endpoint
+	 * @param aUser
+	 *            A valid fedora user
+	 * @param aPassword
+	 *            The password of the fedora user
+	 */
 	public FedoraFacade(String host, String aUser, String aPassword)
 	{
 		this.user = aUser;
@@ -157,90 +165,73 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (MalformedURLException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("The variable host: " + host
+					+ " may contain a malformed url.", e);
 		}
-
-		catch (IOException e)
+		catch (ServiceException | IOException e)
 		{
-			e.printStackTrace();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 
 	}
 
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: Creates a FedoraObject with properties of node
-	 * </p>
-	 * 
-	 * @param node
-	 *            the local POJO which is serialized as Fedora object
-	 * @throws IOException
-	 * @throws RemoteException
-	 */
 	@Override
-	public void createNode(Node node) throws RemoteException, IOException
+	public void createNode(Node node)
 	{
 
-		byte[] foxmlObject = serializeNode(node.getPID(), node.getLabel(),
-				new XMLBuilder(fedoraManager),
-				XMLBuilder.OBJECT_TYPE.dataObject);
-		AutoIngestor.ingestAndCommit(this.fedoraAccess, fedoraManager,
-				new ByteArrayInputStream(foxmlObject), FOXML1_1.uri,
-				"Created with HBZ Webservice");
-
-		updateDc(node);
-		createContentModels(node);
-
-		if (node.getUploadFile() != null)
-		{
-			createManagedStream(node);
-
-		}
-		if (node.getMetadataFile() != null)
-		{
-			createMetadataStream(node);
-
-		}
-		Link link = new Link();
-		link.setObject(node.getNamespace(), true);
-		link.setPredicate(REL_IS_IN_NAMESPACE);
-		node.addRelation(link);
-		createRelsExt(node);
-	}
-
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: The corresponding fedora object will be read into a new node
-	 * </p>
-	 * 
-	 * @param node
-	 *            It is assumed that node has the correct PID of an existing
-	 *            Node which will be replaced by this method
-	 * @throws RemoteException
-	 */
-	@SuppressWarnings("static-access")
-	@Override
-	public Node readNode(String nodePid) throws RemoteException
-	{
-		if (!nodeExists(nodePid))
-			return null;
-		Node node = new Node();
-		node.setPID(nodePid);
 		try
 		{
+			byte[] foxmlObject = serializeNode(node.getPID(), node.getLabel(),
+					new XMLBuilder(fedoraManager),
+					XMLBuilder.OBJECT_TYPE.dataObject);
+			AutoIngestor.ingestAndCommit(this.fedoraAccess, fedoraManager,
+					new ByteArrayInputStream(foxmlObject), FOXML1_1.uri,
+					"Created with HBZ Webservice");
 
+			updateDc(node);
+			createContentModels(node);
+
+			if (node.getUploadFile() != null)
+			{
+				createManagedStream(node);
+
+			}
+			if (node.getMetadataFile() != null)
+			{
+				createMetadataStream(node);
+
+			}
+			Link link = new Link();
+			link.setObject(node.getNamespace(), true);
+			link.setPredicate(REL_IS_IN_NAMESPACE);
+			node.addRelation(link);
+			createRelsExt(node);
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+		catch (RemoteException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+		catch (IOException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+
+	}
+
+	@Override
+	public Node readNode(String pid)
+	{
+		if (!nodeExists(pid))
+			throw new NodeNotFoundException("Node " + pid + " does not exist!");
+		Node node = new Node();
+		node.setPID(pid);
+
+		try
+		{
 			readDcToNode(node);
 			readRelsExt(node);
 			readContentModels(node);
@@ -252,34 +243,27 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 			FedoraRequest.setDefaultClient(fedora);
 
-			node.setLabel(fedora.getObjectProfile(nodePid).execute().getLabel());
-
+			node.setLabel(fedora.getObjectProfile(pid).execute().getLabel());
 		}
-		catch (Exception e)
+		catch (FedoraClientException e)
 		{
-			// e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
+		catch (java.net.MalformedURLException e)
+		{
+			throw new ArchiveException("The variable host: " + host
+					+ " may contain a malformed url.", e);
+		}
+		catch (RemoteException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+
 		return node;
 	}
 
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: The corresponding fedora object will be updated
-	 * (overwritten)
-	 * </p>
-	 * 
-	 * @param node
-	 *            It is assumed that node has the correct PID of an existing
-	 *            Node which will be replaced by this method
-	 * @throws UnsupportedEncodingException
-	 */
 	@Override
-	public void updateNode(Node node) throws RemoteException,
-			UnsupportedEncodingException
+	public void updateNode(Node node)
 	{
 		updateDc(node);
 		// updateContentModels(node);
@@ -295,6 +279,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			updateMetadataStream(node);
 		}
 		updateRelsExt(node);
+
 	}
 
 	@Override
@@ -309,16 +294,16 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
-		return null;
+
 	}
 
 	@Override
 	public List<String> findPids(String rdfQuery, String queryFormat)
 	{
 
-		if (queryFormat.compareTo(TYPE_SIMPLE) == 0)
+		if (queryFormat.compareTo(FedoraVocabulary.SIMPLE) == 0)
 		{
 
 			return findPidsSimple(rdfQuery);
@@ -333,8 +318,8 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 	private List<String> findPidsRdf(String rdfQuery, String queryFormat)
 	{
-		InputStream stream = findTriples(rdfQuery, FedoraFacade.TYPE_SPO,
-				FedoraFacade.FORMAT_N3);
+		InputStream stream = findTriples(rdfQuery, FedoraVocabulary.SPO,
+				FedoraVocabulary.N3);
 
 		List<String> resultVector = new Vector<String>();
 		RepositoryConnection con = null;
@@ -367,17 +352,17 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (RepositoryException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (RDFParseException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		finally
 		{
@@ -389,14 +374,12 @@ public class FedoraFacade implements FedoraInterface, Constants
 				}
 				catch (RepositoryException e)
 				{
-					e.printStackTrace();
+					throw new ArchiveException("Can not close stream.", e);
 				}
 			}
 		}
-		return null;
 	}
 
-	@SuppressWarnings("static-access")
 	private List<String> findPidsSimple(String rdfQuery)
 	{
 		FedoraCredentials credentials;
@@ -428,32 +411,15 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (MalformedURLException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (FedoraClientException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
-		return null;
 
 	}
 
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: If the object 'pid' has a datastream with 'datastreamId' the
-	 * method returns true.
-	 * </p>
-	 * 
-	 * @param pid
-	 *            of the object
-	 * @param datastreamId
-	 *            of the objects datastream
-	 * @return true ig datastream exists
-	 */
 	@Override
 	public boolean dataStreamExists(String pid, String datastreamId)
 	{
@@ -464,58 +430,8 @@ public class FedoraFacade implements FedoraInterface, Constants
 		return true;
 	}
 
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: Delete all relations from object with 'pid' to object with
-	 * 'rootPID'
-	 * </p>
-	 * 
-	 * @param pid
-	 *            the relations of this one will be deleted
-	 * @param rootPID
-	 *            will no longer be referenced
-	 * @throws Exception
-	 */
-	// @Override
-	// public void deleteRelationsByObjects(String pid, String rootPID)
-	// throws Exception
-	// {
-	// String[] predicates = null;
-	// try
-	// {
-	// predicates = findPredicates(pid, rootPID);
-	// }
-	// catch (Exception e)
-	// {
-	// return;
-	// }
-	// for (String pred : predicates)
-	// {
-	// fedoraManager.purgeRelationship(pid2pred(pid), pred,
-	// pid2pred(rootPID), false, null);
-	//
-	// }
-	//
-	// }
-
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: A new pid in the "test" namespace is generated
-	 * </p>
-	 * 
-	 * @return
-	 * @throws RemoteException
-	 */
 	@Override
-	public String getPid(String namespace) throws RemoteException
+	public String getPid(String namespace)
 	{
 		List<String> pids = fedoraManager.getNextPID(new BigInteger("1"),
 				namespace);
@@ -524,7 +440,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 	@Override
 	public String[] getPids(String namespace, int number)
-			throws RemoteException
 	{
 		List<String> pids = fedoraManager.getNextPID(
 				new BigInteger("" + number), namespace);
@@ -532,50 +447,23 @@ public class FedoraFacade implements FedoraInterface, Constants
 		return pids.toArray(arr);
 	}
 
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: The fedora object will be deleted
-	 * </p>
-	 * 
-	 * @param rootPID
-	 *            identifier of a fedora object
-	 */
 	@Override
 	public void deleteNode(String rootPID)
 	{
-
-		AutoPurger purger;
 		try
 		{
-			purger = new AutoPurger(fedoraManager);
-			purger.purge(rootPID, "delete"); // Change: delete "false" as third
-												// param
+			AutoPurger purger = new AutoPurger(fedoraManager);
+			purger.purge(rootPID, "delete");
 		}
-		catch (MalformedURLException e)
+		catch (MalformedURLException | RemoteException | ServiceException e)
 		{
-			// e.printStackTrace();
-		}
-		catch (ServiceException e)
-		{
-			// e.printStackTrace();
-		}
-		catch (RemoteException e)
-		{
-			// e.printStackTrace();
+
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
-			// e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
-		catch (Exception e)
-		{
-			// e.printStackTrace();
-		}
-
 	}
 
 	@Override
@@ -699,11 +587,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (RemoteException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 	}
 
@@ -744,11 +632,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (RemoteException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 	}
 
@@ -800,11 +688,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (RemoteException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 	}
 
@@ -854,11 +742,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (RemoteException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 	}
 
@@ -1181,17 +1069,17 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (ParserConfigurationException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (SAXException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 
 	}
@@ -1305,7 +1193,8 @@ public class FedoraFacade implements FedoraInterface, Constants
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
+					throw new ArchiveException("An unknown exception occured.",
+							e);
 				}
 
 				finally
@@ -1324,22 +1213,22 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (RepositoryException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (RemoteException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (RDFParseException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 
 	}
@@ -1420,17 +1309,17 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (ParserConfigurationException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (SAXException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 
 	}
@@ -1514,21 +1403,15 @@ public class FedoraFacade implements FedoraInterface, Constants
 			createFedoraXmlForRelsExt(pid);
 		}
 		Vector<Link> links = node.getRelsExt();
-		try
-		{
-			Node old = readNode(pid);
-			links.removeAll(old.getRelsExt());
-		}
-		catch (RemoteException e)
-		{
 
-		}
+		Node old = readNode(pid);
+		links.removeAll(old.getRelsExt());
+
 		updateRelsExt(pid, links);
 
 	}
 
-	private void updateDc(Node node) throws RemoteException,
-			UnsupportedEncodingException
+	private void updateDc(Node node)
 	{
 		String preamble = ""
 				+ "<oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" "
@@ -1709,13 +1592,20 @@ public class FedoraFacade implements FedoraInterface, Constants
 			}
 		}
 
-		String result = preamble + update.toString() + fazit;
-		DataHandler dh = new DataHandler(new ByteArrayDataSource(
-				result.getBytes("UTF-8"), "text/xml"));
-		fedoraManager.modifyDatastreamByValue(node.getPID(), "DC", null,
-				"Dublin Core Record for this object", "text/xml",
-				"http://www.openarchives.org/OAI/2.0/oai_dc/", dh, "DISABLED",
-				null, "UPDATE OF DC STREAM", false);
+		try
+		{
+			String result = preamble + update.toString() + fazit;
+			DataHandler dh = new DataHandler(new ByteArrayDataSource(
+					result.getBytes("UTF-8"), "text/xml"));
+			fedoraManager.modifyDatastreamByValue(node.getPID(), "DC", null,
+					"Dublin Core Record for this object", "text/xml",
+					"http://www.openarchives.org/OAI/2.0/oai_dc/", dh,
+					"DISABLED", null, "UPDATE OF DC STREAM", false);
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			throw new ArchiveException("UTF-8 encoding not supported.", e);
+		}
 	}
 
 	/**
@@ -2089,6 +1979,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 		return pid;
 	}
 
+	/**
+	 * @param cm
+	 *            A fedora-like content model
+	 * @return The fedora-ready content model as String.
+	 */
 	public String getDsCompositeModel(ContentModel cm)
 	{
 		String start = " <dsCompositeModel xmlns=\"info:fedora/fedora-system:def/dsCompositeModel#\">";
@@ -2112,6 +2007,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 		return start + middle.toString() + end;
 	}
 
+	/**
+	 * @param cm
+	 *            A fedora-like content model
+	 * @return A fedora-like methodmap as string
+	 */
 	public String getMethodMap(ContentModel cm)
 	{
 		String start = "<fmm:MethodMap name=\"MethodMap\" xmlns:fmm=\"http://fedora.comm.nsdlib.org/service/methodmap\">";
@@ -2129,6 +2029,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 		return start + middle.toString() + end;
 	}
 
+	/**
+	 * @param cm
+	 *            a fedora-like content model
+	 * @return the fedora-like method map to wsdl mapping as string
+	 */
 	public String getMethodMapToWsdl(ContentModel cm)
 	{
 
@@ -2157,6 +2062,9 @@ public class FedoraFacade implements FedoraInterface, Constants
 		return start + middle.toString() + end;
 	}
 
+	/**
+	 * @return the fedora-like input-spec as string
+	 */
 	public String getDSInputSpec()
 	{
 		return "<fbs:DSInputSpec label=\"Undefined\" xmlns:fbs=\"http://fedora.comm.nsdlib.org/service/bindspec\">"
@@ -2169,6 +2077,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 	}
 
+	/**
+	 * @param cm
+	 *            a fedora-like content model
+	 * @return the fedora-like wsdl as string
+	 */
 	public String getWsdl(ContentModel cm)
 	{
 		String start = "<wsdl:definitions name=\"Undefined\" targetNamespace=\"bmech\""

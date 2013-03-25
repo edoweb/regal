@@ -1,5 +1,3 @@
-package de.nrw.hbz.edoweb2.sync;
-
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -16,6 +14,8 @@ package de.nrw.hbz.edoweb2.sync;
  * limitations under the License.
  *
  */
+package de.nrw.hbz.edoweb2.sync;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;

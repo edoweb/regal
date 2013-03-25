@@ -36,7 +36,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public Node createRootObject(String namespace) throws RemoteException;
+	public Node createRootObject(String namespace);
 
 	/**
 	 * @param object
@@ -45,8 +45,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public Node createComplexObject(ComplexObject object)
-			throws RemoteException;
+	public Node createComplexObject(ComplexObject object);
 
 	/**
 	 * Adds a new node as child of the parent.
@@ -59,7 +58,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public Node createNode(Node parent, Node node) throws RemoteException;
+	public Node createNode(Node parent, Node node);
 
 	/**
 	 * @param parentPid
@@ -68,7 +67,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public Node createNode(String parentPid) throws RemoteException;
+	public Node createNode(String parentPid);
 
 	/**
 	 * @param pid
@@ -77,7 +76,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public Node readObject(String pid) throws RemoteException;
+	public Node readObject(String pid);
 
 	/**
 	 * @param pid
@@ -86,7 +85,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public ComplexObject readComplexObject(String pid) throws RemoteException;
+	public ComplexObject readComplexObject(String pid);
 
 	/**
 	 * @param pid
@@ -95,7 +94,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public Node readNode(String pid) throws RemoteException;
+	public Node readNode(String pid);
 
 	/**
 	 * @param pid
@@ -105,7 +104,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public void updateObject(String pid, Node node) throws RemoteException;
+	public void updateObject(String pid, Node node);
 
 	/**
 	 * @param object
@@ -113,8 +112,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public void updateComplexObject(ComplexObject object)
-			throws RemoteException;
+	public void updateComplexObject(ComplexObject object);
 
 	/**
 	 * @param pid
@@ -124,7 +122,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public void updateNode(String pid, Node node) throws RemoteException;
+	public void updateNode(String pid, Node node);
 
 	/**
 	 * @param pid
@@ -133,7 +131,7 @@ public interface ArchiveInterface
 	 * @throws RemoteException
 	 *             if backend is not available
 	 */
-	public String deleteComplexObject(String pid) throws RemoteException;
+	public String deleteComplexObject(String pid);
 
 	/**
 	 * @param pid
@@ -165,11 +163,8 @@ public interface ArchiveInterface
 	 * @param namespace
 	 * @param number
 	 * @return
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
-	public String[] getPids(String namespace, int number)
-			throws RemoteException;
+	public String[] getPids(String namespace, int number);
 
 	/**
 	 * @param pid
@@ -179,13 +174,14 @@ public interface ArchiveInterface
 
 	/**
 	 * @param pid
-	 * @return
+	 *            A pid.
+	 * @return the pid prfixed with a certain namespace, e.g info:fedora.
 	 */
 	public String addUriPrefix(String pid);
 
 	/**
 	 * @param pred
-	 * @return
+	 * @return the predicate prfixed with a certain namespace, e.g info:fedora.
 	 */
 	public String removeUriPrefix(String pred);
 

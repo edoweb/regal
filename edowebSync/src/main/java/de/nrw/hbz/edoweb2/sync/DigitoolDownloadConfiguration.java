@@ -1,4 +1,3 @@
-package de.nrw.hbz.edoweb2.sync;
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -15,6 +14,8 @@ package de.nrw.hbz.edoweb2.sync;
  * limitations under the License.
  *
  */
+package de.nrw.hbz.edoweb2.sync;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -50,7 +51,7 @@ public class DigitoolDownloadConfiguration
 	}
 
 	/**
-	 * @param key 
+	 * @param key
 	 *            Option key to check
 	 * @return <code>true</code> if the configuration contains the key
 	 */

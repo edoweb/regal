@@ -1,7 +1,26 @@
+/*
+ * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package de.nrw.hbz.edoweb2.api;
 
 import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION;
 import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -13,6 +32,9 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.core.status.Status;
+import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
+
 @Path("/objects")
 public class ObjectResource
 {
@@ -21,28 +43,27 @@ public class ObjectResource
 
 	String namespace = "edoweb";
 
-	Actions actions = new Actions();
+	Actions actions = null;
+
+	public ObjectResource() throws IOException
+	{
+		actions = new Actions();
+	}
 
 	@GET
 	@Path("/{pid}/data")
 	@Produces({ "application/*" })
 	public Response readData(@PathParam("pid") String pid)
 	{
-		return actions.readData(pid);
+		try
+		{
+			return actions.readData(pid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
-
-	// @GET
-	// @Path("/{pid}/volume/{volumePid}")
-	// @Produces({ "application/*" })
-	// public StatusBean readVolume(@PathParam("pid") String pid,
-	// @PathParam("volumePid") String volumePid)
-	// {
-	// String volumePid = null;
-	// String query = EJournal.getVolumeQuery(volumePid, pid);
-	// volumePid = actions.findSubject(query);
-	//
-	// return actions.read(volumePid);
-	// }
 
 	@GET
 	@Path("/{pid}/volume/{volumePid}")
@@ -50,10 +71,15 @@ public class ObjectResource
 	public View getVolumeView(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		// String volumePid = null;
-		// String query = EJournal.getVolumeQuery(volumePid, pid);
-		// volumePid = actions.findSubject(query);
-		return actions.getView(volumePid, ObjectType.ejournalVolume);
+
+		try
+		{
+			return actions.getView(volumePid, ObjectType.ejournalVolume);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -62,11 +88,15 @@ public class ObjectResource
 	public Response readVolumeData(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		// String volumePid = null;
-		// String query = EJournal.getVolumeQuery(volumePid, pid);
-		// volumePid = actions.findSubject(query);
 
-		return actions.readData(volumePid);
+		try
+		{
+			return actions.readData(volumePid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -89,14 +119,7 @@ public class ObjectResource
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVolumes(@PathParam("pid") String pid)
 	{
-		// Vector<String> v = new Vector<String>();
-		//
-		// for (String volPid : )
-		// {
-		//
-		// v.add(actions.findObject(volPid, HAS_VOLUME_NAME).get(0));
-		//
-		// }
+
 		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
 	}
 
@@ -106,9 +129,7 @@ public class ObjectResource
 	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		// String volumePid = null;
-		// String query = EJournal.getVolumeQuery(volumePid, pid);
-		// volumePid = actions.findSubject(query);
+
 		return actions.readDC(volumePid);
 	}
 
@@ -118,28 +139,30 @@ public class ObjectResource
 	public Response readVolumeMetadata(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		// String volumePid = null;
-		// String query = EJournal.getVolumeQuery(volumePid, pid);
-		// volumePid = actions.findSubject(query);
-		return actions.readMetadata(volumePid);
+
+		try
+		{
+			return actions.readMetadata(volumePid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
 	@Path("/{pid}/metadata")
 	public Response readMetadata(@PathParam("pid") String pid)
 	{
-		return actions.readMetadata(pid);
+		try
+		{
+			return actions.readMetadata(pid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
-
-	// @GET
-	// @Path("/{namespace}:{pid}")
-	// @Produces({ "application/json", "application/xml" })
-	// public StatusBean read(@PathParam("pid") String pid,
-	// @PathParam("namespace") String userNamespace)
-	// {
-	//
-	// return actions.read(namespace + ":" + pid);
-	// }
 
 	@GET
 	@Path("/{pid}/dc")
@@ -155,10 +178,16 @@ public class ObjectResource
 	public Response readWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		// String versionPid = null;
-		// String query = Webpage.getVersionQuery(versionPid, pid);
-		// versionPid = actions.findSubject(query);
-		return actions.readMetadata(versionPid);
+		try
+		{
+
+			return actions.readMetadata(versionPid);
+		}
+
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -167,10 +196,15 @@ public class ObjectResource
 	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		// String versionPid = null;
-		// String query = Webpage.getVersionQuery(versionName, pid);
-		// versionPid = actions.findSubject(query);
-		return actions.readDC(versionPid);
+		try
+		{
+
+			return actions.readDC(versionPid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -179,24 +213,16 @@ public class ObjectResource
 	public Response readWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionPid)
 	{
-		// String versionPid = null;
-		// String query = Webpage.getVersionQuery(versionName, pid);
-		// versionPid = actions.findSubject(query);
-		return actions.readData(versionPid);
-	}
+		try
+		{
 
-	// @GET
-	// @Path("/{pid}/version/{versionName}")
-	// @Produces({ "application/json", "application/xml" })
-	// public StatusBean readWebpageVersion(@PathParam("pid") String pid,
-	// @PathParam("versionName") String versionName)
-	// {
-	// String versionPid = null;
-	// String query = Webpage.getVersionQuery(versionName, pid);
-	// versionPid = actions.findSubject(query);
-	//
-	// return actions.read(versionPid);
-	// }
+			return actions.readData(versionPid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
+	}
 
 	@GET
 	@Path("/{pid}/version/{versionPid}")
@@ -204,10 +230,15 @@ public class ObjectResource
 	public View getVersionView(@PathParam("pid") String pid,
 			@PathParam("versionName") String versionPid)
 	{
-		// String versionPid = null;
-		// String query = Webpage.getVersionQuery(versionName, pid);
-		// versionPid = actions.findSubject(query);
-		return actions.getView(versionPid, ObjectType.webpageVersion);
+		try
+		{
+
+			return actions.getView(versionPid, ObjectType.webpageVersion);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -215,15 +246,15 @@ public class ObjectResource
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVersions(@PathParam("pid") String pid)
 	{
-		// Vector<String> v = new Vector<String>();
-		//
-		// for (String volPid : actions.findObject(pid, HAS_VERSION))
-		// {
-		//
-		// v.add(actions.findObject(volPid, HAS_VERSION_NAME).get(0));
-		//
-		// }
-		return new ObjectList(actions.findObject(pid, HAS_VERSION));
+
+		try
+		{
+			return new ObjectList(actions.findObject(pid, HAS_VERSION));
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 }

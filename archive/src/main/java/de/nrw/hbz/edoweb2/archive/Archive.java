@@ -21,10 +21,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Vector;
 
@@ -34,6 +31,7 @@ import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
 import de.nrw.hbz.edoweb2.fedora.FedoraInterface;
+import de.nrw.hbz.edoweb2.fedora.FedoraVocabulary;
 import de.nrw.hbz.edoweb2.sesame.SesameFacade;
 
 /**
@@ -90,72 +88,52 @@ class Archive implements ArchiveInterface
 	public Node createRootObject(String namespace)
 	{
 		Node rootObject = null;
-		try
-		{
-			String pid = fedoraInterface.getPid(namespace);
-			rootObject = new Node();
-			rootObject.setPID(pid);
-			rootObject.setLabel("Default Object");// (pid,
-													// "Ein wunderschönes Objekt");
-			rootObject.setNamespace(namespace);
 
-			rootObject.setNodeType(TYPE_OBJECT);
-			Link link = new Link();
-			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
-			rootObject.addRelation(link);
+		String pid = fedoraInterface.getPid(namespace);
+		rootObject = new Node();
+		rootObject.setPID(pid);
+		rootObject.setLabel("Default Object");// (pid,
+												// "Ein wunderschönes Objekt");
+		rootObject.setNamespace(namespace);
 
-			fedoraInterface.createNode(rootObject);
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		rootObject.setNodeType(TYPE_OBJECT);
+		Link link = new Link();
+		link.setPredicate(REL_IS_NODE_TYPE);
+		link.setObject(TYPE_OBJECT, false);
+		rootObject.addRelation(link);
+
+		fedoraInterface.createNode(rootObject);
+
 		return rootObject;
 	}
 
 	private Node createObject(Node object)
 	{
 		Node rootObject = null;
-		try
+
+		String pid = object.getPID();
+		String namespace = object.getNamespace();
+		if (namespace == null)
 		{
-			String pid = object.getPID();
-			String namespace = object.getNamespace();
-			if (namespace == null)
+			// TODO Do anything
+			try
 			{
-				// TODO Do anything
-				try
-				{
-					throw new Exception("Object has no namespace");
-				}
-				catch (Exception e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				throw new Exception("Object has no namespace");
 			}
-
-			if (pid == null)
+			catch (Exception e)
 			{
-				pid = fedoraInterface.getPid(namespace);
-				object.setPID(pid);
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		}
 
-			fedoraInterface.createNode(object);
+		if (pid == null)
+		{
+			pid = fedoraInterface.getPid(namespace);
+			object.setPID(pid);
+		}
 
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		fedoraInterface.createNode(object);
 
 		return rootObject;
 	}
@@ -165,22 +143,15 @@ class Archive implements ArchiveInterface
 	{
 		Node node = null;
 		Node parent = null;
-		try
-		{
-			parent = fedoraInterface.readNode(parentPid);
-			String namespace = parent.getNamespace();
-			String pid = fedoraInterface.getPid(namespace);
-			node = new Node();
-			node.setPID(pid);
-			node.setLabel("Blank Node");// (pid,
 
-			node.setNamespace(namespace);
+		parent = fedoraInterface.readNode(parentPid);
+		String namespace = parent.getNamespace();
+		String pid = fedoraInterface.getPid(namespace);
+		node = new Node();
+		node.setPID(pid);
+		node.setLabel("Blank Node");// (pid,
 
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
+		node.setNamespace(namespace);
 
 		return createNode(parent, node);
 	}
@@ -189,59 +160,44 @@ class Archive implements ArchiveInterface
 	public Node createNode(Node parent, Node node)
 	{
 
-		try
+		String pid = node.getPID();
+		String namespace = parent.getNamespace();// FedoraFacade.pred2pid(parent.getNamespace());
+		if (pid == null)
 		{
-			String pid = node.getPID();
-			String namespace = parent.getNamespace();// FedoraFacade.pred2pid(parent.getNamespace());
-			if (pid == null)
-			{
-				pid = fedoraInterface.getPid(namespace);// String pid =
-														// fedoraInterface.getPid(namespace);
-				node.setPID(pid);
-				node.setNamespace(namespace);
-			}
+			pid = fedoraInterface.getPid(namespace);// String pid =
+													// fedoraInterface.getPid(namespace);
+			node.setPID(pid);
+			node.setNamespace(namespace);
+		}
 
-			if (!fedoraInterface.nodeExists(pid))
-			{
-				parent.addRelation(node);
-				node.setNamespace(namespace);
-				fedoraInterface.createNode(node);
-			}
-			else
-			{
-				System.out.println("Das Objekt " + pid + " existiert bereits!");
-				node = fedoraInterface.readNode(node.getPID());
-				// Parent to node
-				Link meToNode = new Link();
-				meToNode.setPredicate(node.getHasNodeType());
-				meToNode.setObject(addUriPrefix(node.getPID()), false);
-				parent.addRelation(meToNode);
+		if (!fedoraInterface.nodeExists(pid))
+		{
+			parent.addRelation(node);
+			node.setNamespace(namespace);
+			fedoraInterface.createNode(node);
+		}
+		else
+		{
+			System.out.println("Das Objekt " + pid + " existiert bereits!");
+			node = fedoraInterface.readNode(node.getPID());
+			// Parent to node
+			Link meToNode = new Link();
+			meToNode.setPredicate(node.getHasNodeType());
+			meToNode.setObject(addUriPrefix(node.getPID()), false);
+			parent.addRelation(meToNode);
 
-				// node to parent
-				Link nodeToMe = new Link();
-				nodeToMe.setPredicate(node.getIsNodeTypeOf());
-				nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
-				node.addRelation(nodeToMe);
+			// node to parent
+			Link nodeToMe = new Link();
+			nodeToMe.setPredicate(node.getIsNodeTypeOf());
+			nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
+			node.addRelation(nodeToMe);
 
-				fedoraInterface.updateNode(node);
-				sesame.updateNode(node);
-			}
-
-			fedoraInterface.updateNode(parent);
+			fedoraInterface.updateNode(node);
 			sesame.updateNode(node);
 		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+
+		fedoraInterface.updateNode(parent);
+		sesame.updateNode(node);
 
 		return node;
 	}
@@ -260,15 +216,8 @@ class Archive implements ArchiveInterface
 			iterateCreate(node, object);
 		}
 
-		try
-		{
-			return readObject(object.getPID());
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
+		return readObject(object.getPID());
+
 	}
 
 	private void iterateCreate(ComplexObjectNode tnode, Node parent)
@@ -283,7 +232,7 @@ class Archive implements ArchiveInterface
 	}
 
 	@Override
-	public Node readObject(String rootPID) throws RemoteException
+	public Node readObject(String rootPID)
 	{
 
 		return fedoraInterface.readNode(rootPID);
@@ -292,7 +241,7 @@ class Archive implements ArchiveInterface
 
 	@Override
 	public ComplexObject readComplexObject(String rootPID)
-			throws RemoteException
+
 	{
 		// RootObject object = new RootObject();
 		Node object = fedoraInterface.readNode(rootPID);
@@ -322,7 +271,7 @@ class Archive implements ArchiveInterface
 	}
 
 	private void add(String rootPID, ComplexObjectNode cn, Vector<Link> rels)
-			throws RemoteException
+
 	{
 		for (Link rel : rels)
 		{
@@ -341,7 +290,7 @@ class Archive implements ArchiveInterface
 	}
 
 	@Override
-	public Node readNode(String rootPID) throws RemoteException
+	public Node readNode(String rootPID)
 	{
 		Node node = fedoraInterface.readNode(rootPID);
 
@@ -351,20 +300,9 @@ class Archive implements ArchiveInterface
 	@Override
 	public void updateNode(String nodePid, Node node)
 	{
-		try
-		{
-			node.setPID(nodePid);
-			fedoraInterface.updateNode(node);
-			// sesame.updateNode(node);
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			e.printStackTrace();
-		}
+		node.setPID(nodePid);
+		fedoraInterface.updateNode(node);
+		// sesame.updateNode(node);
 	}
 
 	@Override
@@ -375,47 +313,30 @@ class Archive implements ArchiveInterface
 
 		// Find all children
 		List<String> pids = null;
-		try
-		{
-			pids = fedoraInterface.findPids("* <" + REL_BELONGS_TO_OBJECT
-					+ "> <" + addUriPrefix(rootPID) + ">",
-					FedoraFacade.TYPE_SPO);
 
-			// Delete all children
-			if (pids != null)
-				for (String pid : pids)
+		pids = fedoraInterface.findPids("* <" + REL_BELONGS_TO_OBJECT + "> <"
+				+ addUriPrefix(rootPID) + ">", FedoraVocabulary.SPO);
+
+		// Delete all children
+		if (pids != null)
+			for (String pid : pids)
+			{
+
+				// Remove relation
+				Node node = readNode(pid);
+				Vector<String> objects = node.getObjects();
+				// If no object relation remains: delete
+				if (objects == null || objects.size() == 1)
+					fedoraInterface.deleteNode(node.getPID());
+				else
 				{
-
-					// Remove relation
-					Node node = readNode(pid);
-					Vector<String> objects = node.getObjects();
-					// If no object relation remains: delete
-					if (objects == null || objects.size() == 1)
-						fedoraInterface.deleteNode(node.getPID());
-					else
-					{
-						System.out.println("Can not delete " + pid
-								+ " node is shared by other objects.");
-						node.removeRelation(REL_BELONGS_TO_OBJECT, rootPID);
-						fedoraInterface.updateNode(node);
-						sesame.updateNode(node);
-					}
+					System.out.println("Can not delete " + pid
+							+ " node is shared by other objects.");
+					node.removeRelation(REL_BELONGS_TO_OBJECT, rootPID);
+					fedoraInterface.updateNode(node);
+					sesame.updateNode(node);
 				}
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			}
 
 		return rootPID;
 	}
@@ -423,12 +344,11 @@ class Archive implements ArchiveInterface
 	@Override
 	public List<String> findNodes(String searchTerm)
 	{
-		return fedoraInterface.findPids(searchTerm, FedoraFacade.TYPE_SIMPLE);
+		return fedoraInterface.findPids(searchTerm, FedoraVocabulary.SIMPLE);
 	}
 
 	@Override
 	public String[] getPids(String namespace, int number)
-			throws RemoteException
 	{
 		return fedoraInterface.getPids(namespace, number);
 	}
@@ -442,7 +362,7 @@ class Archive implements ArchiveInterface
 
 	@Override
 	public void updateObject(String nodePid, Node object)
-			throws RemoteException
+
 	{
 		updateNode(nodePid, object);
 		sesame.updateNode(object);
@@ -450,7 +370,7 @@ class Archive implements ArchiveInterface
 	}
 
 	@Override
-	public void updateComplexObject(ComplexObject tree) throws RemoteException
+	public void updateComplexObject(ComplexObject tree)
 	{
 		Node object = tree.getRoot();
 
@@ -461,14 +381,7 @@ class Archive implements ArchiveInterface
 			iterateUpdate(node, object);
 		}
 
-		try
-		{
-			updateObject(object.getPID(), object);
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
+		updateObject(object.getPID(), object);
 
 	}
 

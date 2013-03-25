@@ -25,7 +25,8 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
-import java.rmi.RemoteException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -43,6 +44,8 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.core.status.Status;
+import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
@@ -61,42 +64,51 @@ public class Webpage
 	String namespace = "edoweb";
 	String subnamespace = "edoweb";
 
-	Actions actions = new Actions();
+	Actions actions = null;
 
-	public Webpage()
+	public Webpage() throws IOException
 	{
-
+		actions = new Actions();
 	}
 
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
-	public MessageBean deleteAll()
+	public String deleteAll()
 	{
-		String eJournal = actions.deleteAll(
-				actions.findByType(TypeType.contentType.toString() + ":"
-						+ webpageType.toString()), false);
-		String eJournalVolume = actions.deleteAll(
-				actions.findByType(webpageVersionType.toString()), false);
-		return new MessageBean(eJournal + "\n" + eJournalVolume);
+		try
+		{
+			String eJournal = actions.deleteAll(
+					actions.findByType(TypeType.contentType.toString() + ":"
+							+ webpageType.toString()), false);
+			String eJournalVolume = actions.deleteAll(
+					actions.findByType(webpageVersionType.toString()), false);
+			return eJournal + "\n" + eJournalVolume;
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@PUT
 	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public Response createWebpage(@PathParam("pid") String pid)
+	public String createWebpage(@PathParam("pid") String pid)
 	{
-		logger.info("create Webpage");
 		try
 		{
-			if (actions.nodeExists(pid))
-			{
-				MessageBean msg = new MessageBean(
-						"Node already exists. I do nothing!");
-				Response response = Response.status(409)
-						.type(MediaType.APPLICATION_JSON).entity(msg).build();
-				logger.warn("Node exists: " + pid);
-				return response;
-			}
+			logger.info("create Webpage");
+
+			// if (actions.nodeExists(pid))
+			// {
+			// msg =
+			// "Node already exists. I do nothing!";
+			// Response response = Response.status(409)
+			// .type(MediaType.APPLICATION_JSON).entity(msg)
+			// .build();
+			// logger.warn("Node exists: " + pid);
+			// return response;
+			// }
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -109,66 +121,90 @@ public class Webpage
 					namespace, webpageType));
 
 			ComplexObject object = new ComplexObject(rootObject);
-			MessageBean msg = new MessageBean(actions.create(object, true));
-			return Response.ok().type(MediaType.APPLICATION_JSON).entity(msg)
-					.build();
+			return actions.create(object, true);
 
 		}
-		catch (RemoteException e)
+		catch (ArchiveException e)
 		{
-			e.printStackTrace();
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
 		}
-		MessageBean msg = new MessageBean("Create Failed");
-		return Response.serverError().type(MediaType.APPLICATION_JSON)
-				.entity(msg).build();
 	}
 
 	@DELETE
 	@Path("/{pid}")
-	public MessageBean deleteWebpage(@PathParam("pid") String pid)
+	public String deleteWebpage(@PathParam("pid") String pid)
 	{
-		actions.delete(pid, false);
-		return new MessageBean(pid + " DELETED!");
+		try
+		{
+			return actions.delete(pid, false);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@POST
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public MessageBean updateWebpageDC(@PathParam("pid") String pid,
+	public String updateWebpageDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return new MessageBean(actions.updateDC(pid, content));
+		try
+		{
+			return actions.updateDC(pid, content);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@PUT
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
-	public MessageBean updateWebpageMetadata(@PathParam("pid") String pid,
+	public String updateWebpageMetadata(@PathParam("pid") String pid,
 			String content)
 	{
-		return new MessageBean(actions.updateMetadata(pid, content));
+		try
+		{
+			return actions.updateMetadata(pid, content);
+		}
+		catch (ArchiveException | IOException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@Deprecated
 	@POST
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
-	public MessageBean updateWebpageMetadataPost(@PathParam("pid") String pid,
+	public String updateWebpageMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
-		return new MessageBean(actions.updateMetadata(pid, content));
+		try
+		{
+			return actions.updateMetadata(pid, content);
+		}
+		catch (ArchiveException | IOException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@PUT
 	@Path("/{pid}/version/{versionPid}")
 	@Produces({ "application/json", "application/xml" })
-	public MessageBean createWebpageVersion(@PathParam("pid") String pid,
+	public String createWebpageVersion(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		logger.info("create Webpage Version");
 		try
 		{
+			logger.info("create Webpage Version");
+
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -210,67 +246,101 @@ public class Webpage
 
 			actions.addLink(pid, link);
 
-			return new MessageBean(actions.create(object, true));
+			return actions.create(object, true);
+
 		}
-		catch (RemoteException e)
+		catch (ArchiveException e)
 		{
-			e.printStackTrace();
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
 		}
-		return new MessageBean("create WebpageVersion Failed");
 	}
 
 	@POST
 	@Path("/{pid}/version/{versionPid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public MessageBean updateWebpageVersionDC(@PathParam("pid") String pid,
+	public String updateWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, DCBeanAnnotated content)
 	{
-		return new MessageBean(actions.updateDC(versionPid, content));
+		try
+		{
+			return actions.updateDC(versionPid, content);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@POST
 	@Path("/{pid}/version/{versionPid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/zip" })
-	public MessageBean updateWebpageVersionData(@PathParam("pid") String pid,
+	public String updateWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, byte[] content,
 			@Context HttpHeaders headers)
 	{
-		return new MessageBean(actions.updateData(versionPid, content, headers
-				.getMediaType().toString()));
+		try
+		{
+			return actions.updateData(versionPid, content, headers
+					.getMediaType().toString());
+		}
+		catch (ArchiveException | IOException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@PUT
 	@Path("/{pid}/version/{versionPid}/metadata")
 	@Consumes({ "text/plain" })
-	public MessageBean updateWebpageVersionMetadata(
-			@PathParam("pid") String pid,
+	public String updateWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
 	{
-		return new MessageBean(actions.updateMetadata(versionPid, content));
+		try
+		{
+			return actions.updateMetadata(versionPid, content);
+		}
+		catch (ArchiveException | IOException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@Deprecated
 	@POST
 	@Path("/{pid}/version/{versionPid}/metadata")
 	@Consumes({ "text/plain" })
-	public MessageBean updateWebpageVersionMetadataPost(
+	public String updateWebpageVersionMetadataPost(
 			@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
 	{
-		return new MessageBean(actions.updateMetadata(versionPid, content));
+		try
+		{
+			return actions.updateMetadata(versionPid, content);
+		}
+		catch (ArchiveException | IOException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@POST
 	@Path("/{pid}/current/{versionPid}")
-	public MessageBean setCurrentVersion(@PathParam("pid") String pid,
+	public String setCurrentVersion(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		Link link = new Link();
-		link.setPredicate(IS_CURRENT_VERSION);
-		link.setObject(versionPid);
-		return new MessageBean(actions.updateLink(pid, link));
+		try
+		{
+			Link link = new Link();
+			link.setPredicate(IS_CURRENT_VERSION);
+			link.setObject(versionPid);
+			return actions.updateLink(pid, link);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -279,7 +349,14 @@ public class Webpage
 	public Response readWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		return actions.readMetadata(versionPid);
+		try
+		{
+			return actions.readMetadata(versionPid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -288,7 +365,14 @@ public class Webpage
 	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		return actions.readDC(versionPid);
+		try
+		{
+			return actions.readDC(versionPid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -297,7 +381,14 @@ public class Webpage
 	public Response readWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		return actions.readData(versionPid);
+		try
+		{
+			return actions.readData(versionPid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -306,7 +397,14 @@ public class Webpage
 	public View getVersionView(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		return actions.getView(versionPid, ObjectType.webpageVersion);
+		try
+		{
+			return actions.getView(versionPid, ObjectType.webpageVersion);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -314,22 +412,43 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVersions(@PathParam("pid") String pid)
 	{
-		return new ObjectList(actions.findObject(pid, HAS_VERSION));
+		try
+		{
+			return new ObjectList(actions.findObject(pid, HAS_VERSION));
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
 	@Path("/{pid}/metadata")
 	public Response readWebpageMetadata(@PathParam("pid") String pid)
 	{
-		return actions.readMetadata(pid);
+		try
+		{
+			return actions.readMetadata(pid);
+		}
+		catch (ArchiveException | URISyntaxException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return new ObjectList(actions.findByType(TypeType.contentType
-				.toString() + ":" + webpageType.toString()));
+		try
+		{
+			return new ObjectList(actions.findByType(TypeType.contentType
+					.toString() + ":" + webpageType.toString()));
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -337,7 +456,14 @@ public class Webpage
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid)
 	{
-		return actions.getView(pid, ObjectType.webpage);
+		try
+		{
+			return actions.getView(pid, ObjectType.webpage);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 
 	@GET
@@ -345,6 +471,13 @@ public class Webpage
 	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readWebpageDC(@PathParam("pid") String pid)
 	{
-		return actions.readDC(pid);
+		try
+		{
+			return actions.readDC(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(Status.ERROR, e.getMessage());
+		}
 	}
 }

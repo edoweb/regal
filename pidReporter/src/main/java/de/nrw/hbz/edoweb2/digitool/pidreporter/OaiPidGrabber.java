@@ -54,9 +54,6 @@ public class OaiPidGrabber
 
 	final Logger logger = LoggerFactory.getLogger(OaiPidGrabber.class);
 
-	/**
-	 * @param harvestLocation
-	 */
 	public OaiPidGrabber(String server, String timestampFile)
 	{
 		this.server = server;
