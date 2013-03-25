@@ -99,7 +99,7 @@
 				<checksumPolicy>ignore</checksumPolicy>
 			</releases>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 			</snapshots>
 			<url>http://edoweb.github.com/releases</url>
 		</repository>
