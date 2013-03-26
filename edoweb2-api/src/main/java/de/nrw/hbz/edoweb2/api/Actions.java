@@ -22,6 +22,7 @@ import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.ITEM_ID;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -357,6 +358,41 @@ public class Actions
 		tmp.deleteOnExit();
 
 		FileUtils.writeByteArrayToFile(tmp, content);
+		Node node = archive.readNode(pid);
+		if (node != null)
+		{
+			node.setUploadData(tmp.getAbsolutePath(), "data", mimeType);
+			archive.updateNode(pid, node);
+		}
+
+		return pid + " data successfully updated!";
+	}
+
+	/**
+	 * @param pid
+	 *            the pid that must be updated
+	 * @param content
+	 *            the data as byte array
+	 * @param mimeType
+	 *            the mimetype of the data
+	 * @return A short message
+	 * @throws IOException
+	 *             if data can not be written to a tmp file
+	 */
+	public String updateData(String pid, InputStream content, String mimeType)
+			throws IOException
+	{
+
+		if (content == null)
+		{
+			throw new ArchiveException(pid
+					+ " you've tried to upload an empty stream."
+					+ " This action is not supported. Use HTTP DELETE instead.");
+		}
+		File tmp = File.createTempFile("edowebDatafile", "tmp");
+		tmp.deleteOnExit();
+
+		IOUtils.copy(content, new FileWriter(tmp));
 		Node node = archive.readNode(pid);
 		if (node != null)
 		{

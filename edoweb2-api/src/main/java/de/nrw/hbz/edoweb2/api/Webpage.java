@@ -26,6 +26,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
@@ -45,6 +46,9 @@ import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
 
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
@@ -303,15 +307,17 @@ public class Webpage
 	@POST
 	@Path("/{pid}/version/{versionPid}/data")
 	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/zip" })
+	@Consumes({ MediaType.MULTIPART_FORM_DATA })
 	public String updateWebpageVersionData(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid, byte[] content,
+			@PathParam("versionPid") String versionPid,
+			@FormDataParam("file") InputStream content,
+			@FormDataParam("fileType") FormDataContentDisposition fileDetail,
 			@Context HttpHeaders headers)
 	{
+
 		try
 		{
-			return actions.updateData(versionPid, content, headers
-					.getMediaType().toString());
+			return actions.updateData(versionPid, content, "application/zip");
 		}
 		catch (ArchiveException e)
 		{
@@ -325,6 +331,7 @@ public class Webpage
 					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
 					e.getMessage());
 		}
+
 	}
 
 	@PUT

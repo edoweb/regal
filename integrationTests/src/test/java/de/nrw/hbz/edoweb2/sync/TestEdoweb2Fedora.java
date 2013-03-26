@@ -23,6 +23,7 @@ import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 //import java.text.ParseException;
 //import java.util.Date;
 //import de.nrw.hbz.dtl2fedora.util.ISO8601DateParser;
@@ -133,6 +134,7 @@ public class TestEdoweb2Fedora
 
 	}
 
+	@Test
 	public void mainTest() throws IOException
 	{
 		Main main = new Main();
