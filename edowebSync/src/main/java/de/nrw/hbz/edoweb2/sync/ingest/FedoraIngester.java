@@ -907,9 +907,25 @@ public class FedoraIngester implements IngestInterface
 	private void ingestWebpageComplete(DigitalEntity dtlBean)
 	{
 		ClientConfig cc = new DefaultClientConfig();
+		cc.getClasses().add(MultiPartWriter.class);
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
+		// Thanks to Tomasz Krzyżak
+		// http://stackoverflow.com/questions/11584791/jersey-client-upload-progress
+		URLConnectionClientHandler clientHandler = new URLConnectionClientHandler(
+				new HttpURLConnectionFactory()
+				{
+					@Override
+					public HttpURLConnection getHttpURLConnection(URL url)
+							throws IOException
+					{
+						HttpURLConnection connection = (HttpURLConnection) url
+								.openConnection();
+						connection.setChunkedStreamingMode(1024);
+						return connection;
+					}
+				});
+		Client c = new Client(clientHandler, cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource webpage = c.resource(host + ":8080/edoweb2-api/webpage/"
@@ -1000,9 +1016,19 @@ public class FedoraIngester implements IngestInterface
 				try
 				{
 					logger.info(b.getStreamMime());
-					byte[] data = IOUtils.toByteArray(new FileInputStream(b
-							.getStream()));
-					webpageVersionData.type(b.getStreamMime()).post(data);
+
+					FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
+
+					formDataMultiPart.field("fileType", b.getStreamMime());
+					FormDataBodyPart bodyPart = new FormDataBodyPart("file",
+							new FileInputStream(b.getStream()),
+							MediaType.MULTIPART_FORM_DATA_TYPE);
+					formDataMultiPart.bodyPart(bodyPart);
+
+					webpageVersionData.type(MediaType.MULTIPART_FORM_DATA)
+							.post(formDataMultiPart);
+
+					// webpageVersionData.type(b.getStreamMime()).post(data);
 
 				}
 				catch (UniformInterfaceException e)
