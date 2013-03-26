@@ -1142,7 +1142,7 @@ public class Actions
 		}
 		catch (Exception e)
 		{
-			return "Error! " + message + e.getMessage();
+			throw new ArchiveException("Error! " + message + e.getMessage(), e);
 		}
 		return "Success! " + message;
 	}
@@ -1169,7 +1169,8 @@ public class Actions
 		}
 		catch (Exception e)
 		{
-			return "Error! Cannot delete " + pid + "from index";
+			throw new ArchiveException("Error! Cannot delete " + pid
+					+ "from index", e);
 		}
 		return "Remove " + pid + " from index!";
 	}
@@ -1258,7 +1259,9 @@ public class Actions
 
 		}
 		if (typePath == null)
+		{
 			return "Sorry the node has no type! ERROR! " + node.getPID();
+		}
 
 		return serverName + "/" + typePath + "/" + node.getPID();
 	}
@@ -1294,7 +1297,7 @@ public class Actions
 		}
 		if (alephid.isEmpty())
 		{
-			return "No Catalog-Id found";
+			throw new ArchiveException(pid + " no Catalog-Id found");
 		}
 		String lobidUrl = " http://lobid.org/resource/" + alephid;
 		InputStream in = null;
@@ -1315,7 +1318,8 @@ public class Actions
 		}
 		catch (IOException e)
 		{
-
+			throw new ArchiveException(
+					"IOException happens during copy operation.", e);
 		}
 		finally
 		{
@@ -1326,11 +1330,11 @@ public class Actions
 			}
 			catch (IOException e)
 			{
-
+				throw new ArchiveException("Wasn't able to close stream.", e);
 			}
 		}
 
-		return pid + "lobid metadata successfully loaded!";
+		return pid + " lobid metadata successfully loaded!";
 	}
 
 	/**
@@ -1360,7 +1364,8 @@ public class Actions
 		}
 		if (alephid.isEmpty())
 		{
-			return "No Catalog-Id found";
+
+			throw new ArchiveException("No Catalog-Id found.");
 		}
 		String lobidUrl = " http://lobid.org/resource/" + alephid + "/about";
 		try

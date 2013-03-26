@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
@@ -489,8 +490,18 @@ public class FedoraIngester implements IngestInterface
 			String request = "content";
 			monograph.put(String.class, request);
 		}
+		catch (ClientHandlerException e)
+		{
+			logger.info(e.getMessage());
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getMessage());
+			logger.info(e.getResponse().toString());
+		}
 		catch (Exception e)
 		{
+
 			logger.info(e.getMessage());
 		}
 
