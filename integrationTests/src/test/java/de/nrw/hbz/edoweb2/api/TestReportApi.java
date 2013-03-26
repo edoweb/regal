@@ -18,18 +18,18 @@ package de.nrw.hbz.edoweb2.api;
  */
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Properties;
 import java.util.Vector;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -64,87 +64,94 @@ public class TestReportApi
 	}
 
 	@Test
-	public void testReport()
+	public void testReport() throws FileNotFoundException, IOException
 	{
-		// ----------------Init------------------
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
-				properties.getProperty("password")));
-
-		WebResource monographs = c.resource(properties.getProperty("apiUrl")
-				+ "/monograph/");
-		WebResource myReport = c.resource(monographs.toString() + "test:123");
-		WebResource myReportData = c.resource(myReport.toString() + "/data");
-		WebResource myReportMetadata = c.resource(myReport.toString()
-				+ "/metadata");
-		WebResource myReportDc = c.resource(myReport.toString() + "/dc");
-
-		// --------------Clean up--------------------
+		try
 		{
-			String response = monographs.delete(String.class);
-			waitWorkaround();
+			// ----------------Init------------------
+			ClientConfig cc = new DefaultClientConfig();
+			cc.getProperties()
+					.put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+			cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
+					true);
+			Client c = Client.create(cc);
+			c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
+					properties.getProperty("password")));
+
+			WebResource delete = c.resource(properties.getProperty("apiUrl")
+					+ "/edowebAdmin/delete/test:123");
+			WebResource monographs = c.resource(properties
+					.getProperty("apiUrl") + "/monograph/");
+			WebResource myReport = c.resource(monographs.toString()
+					+ "test:123");
+			WebResource myReportData = c
+					.resource(myReport.toString() + "/data");
+			WebResource myReportMetadata = c.resource(myReport.toString()
+					+ "/metadata");
+			WebResource myReportDc = c.resource(myReport.toString() + "/dc");
+
+			// --------------Clean up--------------------
+			{
+				try
+				{
+					String response = delete.delete(String.class);
+					waitWorkaround();
+					System.out.println(response);
+				}
+				catch (UniformInterfaceException e)
+				{
+					System.out.println(e.getResponse().getEntity(String.class));
+				}
+
+			}
+
+			String request = "content";
+			String response = myReport.put(String.class, request);
+
+			try
+			{
+				myReport.put(String.class, request);
+
+			}
+			catch (UniformInterfaceException e)
+			{
+				System.out.println(e.getResponse().getEntity(String.class));
+			}
+
 			System.out.println(response);
-			ObjectList list = monographs.get(ObjectList.class);
-			Assert.assertTrue(list.getList().isEmpty());
+
+			byte[] data = IOUtils.toByteArray(Thread.currentThread()
+					.getContextClassLoader().getResourceAsStream("test.pdf"));
+			myReportData.type("application/pdf").post(data);
+
+			byte[] metadata = IOUtils.toByteArray(Thread.currentThread()
+					.getContextClassLoader().getResourceAsStream("test.ttl"));
+			myReportMetadata.type("text/plain").post(metadata);
+
+			try
+			{
+				DCBeanAnnotated dc = myReportDc.get(DCBeanAnnotated.class);
+				Vector<String> v = new Vector<String>();
+				v.add("Test");
+				dc.setCreator(v);
+				myReportDc.post(DCBeanAnnotated.class, dc);
+				waitWorkaround();
+				dc = myReportDc.get(DCBeanAnnotated.class);
+				Assert.assertEquals("Test", dc.getCreator().get(0));
+			}
+			catch (Exception e)
+			{
+
+			}
+
+			response = delete.delete(String.class);
+			System.out.println(response);
+		}
+		catch (UniformInterfaceException e)
+		{
+			System.out.println(e.getResponse().getEntity(String.class));
 		}
 
-		String request = "content";
-		String response = myReport.put(String.class, request);
-
-		System.out.println(response);
-		ObjectList list = monographs.get(ObjectList.class);
-		Assert.assertEquals("test:123", list.getList().get(0));
-
-		try
-		{
-			UploadDataBean data = new UploadDataBean();
-			data.path = new URI(getClass().getResource("/test.pdf").getPath());
-			data.mime = "application/pdf";
-			myReportData.post(data);
-		}
-		catch (URISyntaxException e)
-		{
-			e.printStackTrace();
-			Assert.fail(e.getMessage());
-		}
-
-		try
-		{
-			UploadDataBean metadata = new UploadDataBean();
-			metadata.path = new URI(getClass().getResource("/test.ttl")
-					.getPath());
-			metadata.mime = "text/turtle";
-			myReportMetadata.post(metadata);
-		}
-		catch (URISyntaxException e)
-		{
-			e.printStackTrace();
-			Assert.fail(e.getMessage());
-		}
-		try
-		{
-			DCBeanAnnotated dc = myReportDc.get(DCBeanAnnotated.class);
-			Vector<String> v = new Vector<String>();
-			v.add("Test");
-			dc.setCreator(v);
-			myReportDc.post(DCBeanAnnotated.class, dc);
-			waitWorkaround();
-			dc = myReportDc.get(DCBeanAnnotated.class);
-			Assert.assertEquals("Test", dc.getCreator().get(0));
-		}
-		catch (Exception e)
-		{
-
-		}
-
-		response = monographs.delete(String.class);
-		waitWorkaround();
-		System.out.println(response);
-		list = monographs.get(ObjectList.class);
-		Assert.assertTrue(list.getList().isEmpty());
 	}
 
 	private void waitWorkaround()

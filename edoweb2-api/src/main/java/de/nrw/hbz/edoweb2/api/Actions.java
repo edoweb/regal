@@ -171,12 +171,21 @@ public class Actions
 	public String delete(String pid, boolean wait)
 	{
 
+		String msg = "";
 		archive.deleteComplexObject(pid);
-		outdex(pid);
+
+		try
+		{
+			outdex(pid);
+		}
+		catch (Exception e)
+		{
+			msg = e.getMessage();
+		}
 		if (wait)
 			waitWorkaround();
 
-		return pid + " successfully deleted!";
+		return pid + " successfully deleted! " + msg;
 	}
 
 	// -------------------------------------------------------
@@ -1169,8 +1178,8 @@ public class Actions
 		}
 		catch (Exception e)
 		{
-			throw new ArchiveException("Error! Cannot delete " + pid
-					+ "from index", e);
+			throw new ArchiveException("Cannot delete " + pid + " from index.",
+					e);
 		}
 		return "Remove " + pid + " from index!";
 	}

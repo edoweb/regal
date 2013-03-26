@@ -169,21 +169,35 @@ public class FedoraIngester implements IngestInterface
 					true);
 			Client c = Client.create(cc);
 			c.addFilter(new HTTPBasicAuthFilter(user, password));
-
-			WebResource index = c.resource(host
-					+ ":8080/edoweb2-api/edowebAdmin/index/" + namespace + ":"
-					+ dtlBean.getPid());
-			index.post();
-			logger.info(pid + ": got indexed!");
-			WebResource oaiSet = c.resource(host
-					+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/" + namespace
-					+ ":" + dtlBean.getPid());
-			oaiSet.post();
+			try
+			{
+				WebResource index = c.resource(host
+						+ ":8080/edoweb2-api/edowebAdmin/index/" + namespace
+						+ ":" + dtlBean.getPid());
+				index.post();
+			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
+			}
+			try
+			{
+				logger.info(pid + ": got indexed!");
+				WebResource oaiSet = c.resource(host
+						+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/"
+						+ namespace + ":" + dtlBean.getPid());
+				oaiSet.post();
+			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
+			}
 			logger.info(pid + ": got set! Thanx and goodbye!\n");
 
 			lobidify(dtlBean);
 
 		}
+
 		catch (Exception e)
 		{
 			logger.error(e.getMessage());
@@ -330,6 +344,10 @@ public class FedoraIngester implements IngestInterface
 			ejournalVolume.put();
 			logger.info("Created new volume!");
 		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
+		}
 		catch (Exception e)
 		{
 			logger.info("Volume exists no new volume is created!");
@@ -347,6 +365,10 @@ public class FedoraIngester implements IngestInterface
 
 			ejournalVolumeData.type(dtlBean.getStreamMime()).post(data);
 
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
 		}
 		catch (FileNotFoundException e1)
 		{
@@ -367,6 +389,10 @@ public class FedoraIngester implements IngestInterface
 					+ dtlBean.getParentPid());
 			dc.addType(TypeType.contentType + ":" + ObjectType.ejournalVolume);
 			ejournalVolumeDC.post(dc);
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
 		}
 		catch (Exception e)
 		{
@@ -400,6 +426,10 @@ public class FedoraIngester implements IngestInterface
 			webpageVersion.put();
 			logger.info("Create new version!");
 		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
+		}
 		catch (Exception e)
 		{
 			logger.info("Version exists no new version is created!");
@@ -417,6 +447,10 @@ public class FedoraIngester implements IngestInterface
 
 			ejournalVolumeData.type(dtlBean.getStreamMime()).post(data);
 
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
 		}
 		catch (FileNotFoundException e1)
 		{
@@ -437,6 +471,10 @@ public class FedoraIngester implements IngestInterface
 					+ dtlBean.getParentPid());
 			dc.addType(TypeType.contentType + ":" + ObjectType.webpageVersion);
 			ejournalVolumeDC.post(dc);
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
 		}
 		catch (Exception e)
 		{
@@ -496,8 +534,7 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (UniformInterfaceException e)
 		{
-			logger.info(e.getMessage());
-			logger.info(e.getResponse().toString());
+			logger.info(e.getResponse().getEntity(String.class));
 		}
 		catch (Exception e)
 		{
@@ -519,6 +556,10 @@ public class FedoraIngester implements IngestInterface
 				monographData.type(dtlBean.getStreamMime()).post(data);
 
 			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
+			}
 			catch (FileNotFoundException e1)
 			{
 				logger.error("FileNotFound "
@@ -537,6 +578,10 @@ public class FedoraIngester implements IngestInterface
 				dc.addDescription(dtlBean.getLabel());
 				dc.addType(TypeType.contentType + ":" + ObjectType.monograph);
 				monographDC.post(dc);
+			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
 			}
 			catch (Exception e)
 			{
@@ -564,6 +609,10 @@ public class FedoraIngester implements IngestInterface
 		{
 			String request = "content";
 			monograph.put(String.class, request);
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
 		}
 		catch (Exception e)
 		{
@@ -596,6 +645,10 @@ public class FedoraIngester implements IngestInterface
 					monographData.type(dtlBean.getStreamMime()).post(data);
 
 				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
+				}
 				catch (FileNotFoundException e1)
 				{
 					logger.error("FileNotFound "
@@ -616,6 +669,10 @@ public class FedoraIngester implements IngestInterface
 				dc.addDescription(dtlBean.getLabel());
 				dc.addType(TypeType.contentType + ":" + ObjectType.monograph);
 				monographDC.post(dc);
+			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
 			}
 			catch (Exception e)
 			{
@@ -644,6 +701,10 @@ public class FedoraIngester implements IngestInterface
 			String request = "content";
 			ejournal.put(String.class, request);
 		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
+		}
 		catch (Exception e)
 		{
 			logger.info(e.getMessage());
@@ -657,6 +718,10 @@ public class FedoraIngester implements IngestInterface
 			{
 				dc = ejournalDC.get(DCBeanAnnotated.class);
 			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
+			}
 			catch (Exception e)
 			{
 				dc = new DCBeanAnnotated();
@@ -667,6 +732,10 @@ public class FedoraIngester implements IngestInterface
 				dc.add(marc2dc(dtlBean));
 				dc.addType(TypeType.contentType + ":" + ObjectType.ejournal);
 				ejournalDC.post(dc);
+			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
 			}
 			catch (Exception e)
 			{
@@ -694,6 +763,10 @@ public class FedoraIngester implements IngestInterface
 				{
 					ejournalVolume.put();
 				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
+				}
 				catch (Exception e)
 				{
 					logger.info(e.getMessage());
@@ -711,6 +784,10 @@ public class FedoraIngester implements IngestInterface
 					ejournalVolumeData.type(b.getStreamMime()).post(data);
 
 				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
+				}
 				catch (FileNotFoundException e1)
 				{
 					logger.error("FileNotFound "
@@ -727,6 +804,10 @@ public class FedoraIngester implements IngestInterface
 				{
 					dc = ejournalVolumeDC.get(DCBeanAnnotated.class);
 				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
+				}
 				catch (Exception e)
 				{
 					dc = new DCBeanAnnotated();
@@ -740,6 +821,10 @@ public class FedoraIngester implements IngestInterface
 					dc.addType(TypeType.contentType + ":"
 							+ ObjectType.ejournalVolume);
 					ejournalVolumeDC.post(dc);
+				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
 				}
 				catch (Exception e)
 				{
@@ -770,6 +855,10 @@ public class FedoraIngester implements IngestInterface
 			String request = "content";
 			ejournal.put(String.class, request);
 		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
+		}
 		catch (Exception e)
 		{
 			logger.info(e.getMessage());
@@ -786,6 +875,10 @@ public class FedoraIngester implements IngestInterface
 				dc.addType(TypeType.contentType + ":"
 						+ ObjectType.ejournal.toString());
 				ejournalDC.post(dc);
+			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
 			}
 			catch (Exception e)
 			{
@@ -822,6 +915,10 @@ public class FedoraIngester implements IngestInterface
 				String request = "content";
 				response = webpage.put(String.class, request);
 			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
+			}
 			catch (Exception e)
 			{
 				logger.info(e.getMessage());
@@ -836,6 +933,10 @@ public class FedoraIngester implements IngestInterface
 				dc.addDescription(dtlBean.getLabel());
 				dc.addType(TypeType.contentType + ":" + ObjectType.webpage);
 				webpageDC.post(dc);
+			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
 			}
 			catch (Exception e)
 			{
@@ -875,6 +976,10 @@ public class FedoraIngester implements IngestInterface
 					// logger.info("Create new version duration: "
 					// + versionelapsedTime);
 				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
+				}
 				catch (Exception e)
 				{
 					logger.info(e.getMessage());
@@ -891,6 +996,10 @@ public class FedoraIngester implements IngestInterface
 							.getStream()));
 					webpageVersionData.type(b.getStreamMime()).post(data);
 
+				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
 				}
 				catch (FileNotFoundException e1)
 				{
@@ -912,6 +1021,10 @@ public class FedoraIngester implements IngestInterface
 					dc.addType(TypeType.contentType + ":"
 							+ ObjectType.webpageVersion);
 					webpageVersionDC.post(dc);
+				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
 				}
 				catch (Exception e)
 				{
@@ -951,6 +1064,10 @@ public class FedoraIngester implements IngestInterface
 				String request = "content";
 				webpage.put(String.class, request);
 			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
+			}
 			catch (Exception e)
 			{
 				logger.info(e.getMessage());
@@ -966,6 +1083,10 @@ public class FedoraIngester implements IngestInterface
 						+ ObjectType.webpage.toString());
 				dc.addDescription(dtlBean.getLabel());
 				webpageDC.post(dc);
+			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
 			}
 			catch (Exception e)
 			{
@@ -1001,6 +1122,10 @@ public class FedoraIngester implements IngestInterface
 		{
 			webpage.put(String.class, request);
 		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
+		}
 		catch (Exception e)
 		{
 			logger.info(e.getMessage());
@@ -1019,6 +1144,10 @@ public class FedoraIngester implements IngestInterface
 				dc.addType(TypeType.contentType + ":" + ObjectType.webpage);
 				webpageDC.post(dc);
 
+			}
+			catch (UniformInterfaceException e)
+			{
+				logger.info(e.getResponse().getEntity(String.class));
 			}
 			catch (Exception e)
 			{
@@ -1040,6 +1169,10 @@ public class FedoraIngester implements IngestInterface
 				{
 					webpageVersion.put(String.class);
 				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
+				}
 				catch (Exception e)
 				{
 					logger.info("Version exists no new version is created!");
@@ -1058,6 +1191,10 @@ public class FedoraIngester implements IngestInterface
 
 					webpageVersionData.type(b.getStreamMime()).post(data);
 
+				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
 				}
 				catch (FileNotFoundException e1)
 				{
@@ -1079,6 +1216,10 @@ public class FedoraIngester implements IngestInterface
 					dc.addType(TypeType.contentType + ":"
 							+ ObjectType.webpageVersion);
 					webpageVersionDC.post(dc);
+				}
+				catch (UniformInterfaceException e)
+				{
+					logger.info(e.getResponse().getEntity(String.class));
 				}
 				catch (Exception e)
 				{
@@ -1107,8 +1248,14 @@ public class FedoraIngester implements IngestInterface
 		WebResource delete = c.resource(host
 				+ ":8080/edoweb2-api/edowebAdmin/delete/" + namespace + ":"
 				+ pid);
-
-		delete.delete();
+		try
+		{
+			delete.delete();
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
+		}
 
 	}
 
@@ -1124,7 +1271,15 @@ public class FedoraIngester implements IngestInterface
 		WebResource lobid = c.resource(host
 				+ ":8080/edoweb2-api/edowebAdmin/lobidify/" + namespace + ":"
 				+ dtlBean.getPid());
-		lobid.type("text/plain").post();
+		try
+
+		{
+			lobid.type("text/plain").post();
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(e.getResponse().getEntity(String.class));
+		}
 	}
 
 }

@@ -115,16 +115,16 @@ class Archive implements ArchiveInterface
 		String pid = object.getPID();
 		if (nodeExists(pid))
 		{
-			throw new ArchiveException("Node " + pid + " already exists");
+			throw new ArchiveException("Node " + pid
+					+ " already exists. Can't create");
 		}
 
 		String namespace = object.getNamespace();
 		if (namespace == null)
 		{
-			if (nodeExists(pid))
-			{
-				throw new ArchiveException("Node " + pid + " has no namespace.");
-			}
+
+			throw new ArchiveException("Node " + pid + " has no namespace.");
+
 		}
 
 		if (pid == null)
@@ -164,7 +164,8 @@ class Archive implements ArchiveInterface
 
 		if (nodeExists(pid))
 		{
-			throw new ArchiveException("Node " + pid + " already exists");
+			throw new ArchiveException("Node " + pid
+					+ " already exists. Can't create.");
 		}
 
 		String namespace = parent.getNamespace();// FedoraFacade.pred2pid(parent.getNamespace());
@@ -327,7 +328,8 @@ class Archive implements ArchiveInterface
 	{
 		if (!nodeExists(rootPID))
 		{
-			throw new ArchiveException("Node " + rootPID + " doesn't exist");
+			throw new ArchiveException("Node " + rootPID
+					+ " doesn't exist. Can't delete!");
 		}
 		// logger.info("deleteObject");
 		fedoraInterface.deleteNode(rootPID);
@@ -367,7 +369,8 @@ class Archive implements ArchiveInterface
 	{
 		if (!nodeExists(pid))
 		{
-			throw new ArchiveException("Node " + pid + " doesn't exist");
+			throw new ArchiveException("Node " + pid
+					+ " doesn't exist. Can't delete node.");
 		}
 		fedoraInterface.deleteNode(pid);
 		return pid;

@@ -126,15 +126,15 @@ public class EJournal
 	// }
 
 	@DELETE
-	@Path("/{namespace}:{pid}")
+	@Path("/{userNamespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
 	public String deleteEJournal(@PathParam("pid") String pid,
-			@PathParam("namespace") String userNamespace)
+			@PathParam("userNamespace") String userNamespace)
 	{
 		try
 		{
 			logger.info("delete EJournal");
-			return actions.delete(namespace + ":" + pid, false);
+			return actions.delete(userNamespace + ":" + pid, false);
 
 		}
 		catch (ArchiveException e)
@@ -146,19 +146,20 @@ public class EJournal
 	}
 
 	@PUT
-	@Path("/{namespace}:{pid}")
+	@Path("/{userNamespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
 	public String createEJournal(@PathParam("pid") String pid,
-			@PathParam("namespace") String userNamespace)
+			@PathParam("userNamespace") String userNamespace)
 	{
 		logger.info("create EJournal");
 		try
 		{
-			if (actions.nodeExists(namespace + ":" + pid))
+			if (actions.nodeExists(userNamespace + ":" + pid))
 			{
 				throw new HttpArchiveException(
-						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-						"Node already exists. I do nothing!");
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(), namespace
+								+ ":" + pid
+								+ " node already exists. I do nothing!");
 			}
 			if (userNamespace.compareTo(namespace) != 0)
 			{
