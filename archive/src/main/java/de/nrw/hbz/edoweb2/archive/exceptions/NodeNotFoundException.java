@@ -16,20 +16,27 @@
  */
 package de.nrw.hbz.edoweb2.archive.exceptions;
 
+/**
+ * @author Jan Schnasse
+ * 
+ */
 public class NodeNotFoundException extends ArchiveException
 {
 	private static final long serialVersionUID = -5728526458760884738L;
 
+	@SuppressWarnings("javadoc")
 	public NodeNotFoundException(final String message, final Throwable cause)
 	{
 		super(message, cause);
 	}
 
+	@SuppressWarnings("javadoc")
 	public NodeNotFoundException(final Throwable cause)
 	{
 		super(cause);
 	}
 
+	@SuppressWarnings("javadoc")
 	public NodeNotFoundException(final String message)
 	{
 		super(message);

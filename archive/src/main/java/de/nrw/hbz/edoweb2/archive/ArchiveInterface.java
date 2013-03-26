@@ -17,7 +17,6 @@
 package de.nrw.hbz.edoweb2.archive;
 
 import java.io.InputStream;
-import java.rmi.RemoteException;
 import java.util.List;
 
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
@@ -33,8 +32,6 @@ public interface ArchiveInterface
 	 * @param namespace
 	 *            The namespace of the new object
 	 * @return The new created object.
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public Node createRootObject(String namespace);
 
@@ -42,8 +39,6 @@ public interface ArchiveInterface
 	 * @param object
 	 *            A complex object
 	 * @return the root of the newly created complex object
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public Node createComplexObject(ComplexObject object);
 
@@ -55,8 +50,6 @@ public interface ArchiveInterface
 	 * @param node
 	 *            the new node
 	 * @return The new created object.
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public Node createNode(Node parent, Node node);
 
@@ -64,8 +57,6 @@ public interface ArchiveInterface
 	 * @param parentPid
 	 *            the pid of an existing node
 	 * @return the new node
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public Node createNode(String parentPid);
 
@@ -73,8 +64,6 @@ public interface ArchiveInterface
 	 * @param pid
 	 *            the pid of the node to read
 	 * @return the node
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public Node readObject(String pid);
 
@@ -82,8 +71,6 @@ public interface ArchiveInterface
 	 * @param pid
 	 *            the pid of the object to read
 	 * @return A tree-like complex object
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public ComplexObject readComplexObject(String pid);
 
@@ -91,8 +78,6 @@ public interface ArchiveInterface
 	 * @param pid
 	 *            of the node
 	 * @return the node
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public Node readNode(String pid);
 
@@ -101,16 +86,12 @@ public interface ArchiveInterface
 	 *            of the node to update
 	 * @param node
 	 *            the new version of the node
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public void updateObject(String pid, Node node);
 
 	/**
 	 * @param object
 	 *            The new verions of the object
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public void updateComplexObject(ComplexObject object);
 
@@ -119,8 +100,6 @@ public interface ArchiveInterface
 	 *            The pid of the node to update
 	 * @param node
 	 *            The new version of the node
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public void updateNode(String pid, Node node);
 
@@ -128,8 +107,6 @@ public interface ArchiveInterface
 	 * @param pid
 	 *            The pid that must be deleted
 	 * @return The pid that has been deleted
-	 * @throws RemoteException
-	 *             if backend is not available
 	 */
 	public String deleteComplexObject(String pid);
 
@@ -161,14 +138,17 @@ public interface ArchiveInterface
 
 	/**
 	 * @param namespace
+	 *            pids from this namespace will be returned
 	 * @param number
-	 * @return
+	 *            number of pids
+	 * @return A Array of pids.
 	 */
 	public String[] getPids(String namespace, int number);
 
 	/**
 	 * @param pid
-	 * @return
+	 *            the pid of the node
+	 * @return true if the node exists false if not
 	 */
 	public boolean nodeExists(String pid);
 
@@ -181,6 +161,7 @@ public interface ArchiveInterface
 
 	/**
 	 * @param pred
+	 *            the predicate
 	 * @return the predicate prfixed with a certain namespace, e.g info:fedora.
 	 */
 	public String removeUriPrefix(String pred);

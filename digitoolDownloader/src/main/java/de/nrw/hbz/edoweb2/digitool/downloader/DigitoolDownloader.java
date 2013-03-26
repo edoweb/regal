@@ -90,7 +90,6 @@ public class DigitoolDownloader
 	 * @param server
 	 * @param downloadLocation
 	 */
-	@SuppressWarnings("javadoc")
 	public DigitoolDownloader(String server, String downloadLocation)
 	{
 		this.downloadLoaction = downloadLocation;

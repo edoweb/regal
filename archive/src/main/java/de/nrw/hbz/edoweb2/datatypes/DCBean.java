@@ -31,7 +31,7 @@ import java.util.Vector;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-
+@SuppressWarnings("javadoc")
 public class DCBean
 {
 	Vector<String> contributer = new Vector<String>();

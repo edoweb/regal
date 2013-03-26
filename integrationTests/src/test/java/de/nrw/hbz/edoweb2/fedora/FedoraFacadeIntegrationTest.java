@@ -211,19 +211,6 @@ public class FedoraFacadeIntegrationTest
 				.findPids("test:*", FedoraVocabulary.SIMPLE);
 		for (String pid : result)
 			facade.deleteNode(pid);
-
-		// result = facade.findPids("dtl:*", FedoraFacade.TYPE_SIMPLE);
-		// for (String pid : result)
-		// facade.deleteNode(pid);
-		//
-		// result = facade.findPids("default:*", FedoraFacade.TYPE_SIMPLE);
-		// for (String pid : result)
-		// facade.deleteNode(pid);
-		//
-		// result = facade.findPids("edoweb:*", FedoraFacade.TYPE_SIMPLE);
-		// for (String pid : result)
-		// facade.deleteNode(pid);
-
 	}
 
 }
