@@ -349,8 +349,9 @@ public class Actions
 
 		if (content == null || content.length == 0)
 		{
-			throw new ArchiveException(
-					"You've tried to upload an empty byte array. This action is not supported. Use HTTP DELETE instead.");
+			throw new ArchiveException(pid
+					+ " you've tried to upload an empty byte array."
+					+ " This action is not supported. Use HTTP DELETE instead.");
 		}
 		File tmp = File.createTempFile("edowebDatafile", "tmp");
 		tmp.deleteOnExit();
@@ -413,8 +414,10 @@ public class Actions
 
 		if (content == null || content.isEmpty())
 		{
-			throw new ArchiveException(
-					"You've tried to upload an empty string. This action is not supported. Use HTTP DELETE instead.");
+			throw new ArchiveException(pid
+					+ "You've tried to upload an empty string."
+					+ " This action is not supported."
+					+ " Use HTTP DELETE instead.");
 		}
 		File file = File.createTempFile("edowebtmpmetadata", "tmp");
 		file.deleteOnExit();
@@ -613,7 +616,7 @@ public class Actions
 		// long elapsed = System.nanoTime() - start;
 		// System.out.println("update node duration: " + elapsed);
 
-		return links + " links succesfuly added";
+		return pid + " " + links + " links successfully added.";
 
 	}
 
@@ -660,7 +663,7 @@ public class Actions
 		links.add(link);
 		node.setRelsExt(links);
 		archive.updateNode(node.getPID(), node);
-		return link + " link succesfuly updated";
+		return pid + " " + link + " link successfully updated.";
 
 	}
 
@@ -726,7 +729,7 @@ public class Actions
 		}
 		linkObjectToOaiSet(node, spec, oaipid);
 
-		return pid + "successfully created oai sets!";
+		return pid + " successfully created oai sets!";
 
 	}
 
@@ -1178,10 +1181,9 @@ public class Actions
 		}
 		catch (Exception e)
 		{
-			throw new ArchiveException("Cannot delete " + pid + " from index.",
-					e);
+			throw new ArchiveException(pid + " can't delete from index.", e);
 		}
-		return "Remove " + pid + " from index!";
+		return pid + " remove from index!";
 	}
 
 	/**
@@ -1269,7 +1271,7 @@ public class Actions
 		}
 		if (typePath == null)
 		{
-			return "Sorry the node has no type! ERROR! " + node.getPID();
+			return node.getPID() + " sorry the node has no type! ERROR!";
 		}
 
 		return serverName + "/" + typePath + "/" + node.getPID();
@@ -1327,8 +1329,8 @@ public class Actions
 		}
 		catch (IOException e)
 		{
-			throw new ArchiveException(
-					"IOException happens during copy operation.", e);
+			throw new ArchiveException(pid
+					+ " IOException happens during copy operation.", e);
 		}
 		finally
 		{
@@ -1339,7 +1341,8 @@ public class Actions
 			}
 			catch (IOException e)
 			{
-				throw new ArchiveException("Wasn't able to close stream.", e);
+				throw new ArchiveException(pid
+						+ " wasn't able to close stream.", e);
 			}
 		}
 
@@ -1374,7 +1377,7 @@ public class Actions
 		if (alephid.isEmpty())
 		{
 
-			throw new ArchiveException("No Catalog-Id found.");
+			throw new ArchiveException(pid + " no Catalog-Id found.");
 		}
 		String lobidUrl = " http://lobid.org/resource/" + alephid + "/about";
 		try
@@ -1390,15 +1393,15 @@ public class Actions
 		}
 		catch (IOException e)
 		{
-			throw new ArchiveException(e.getMessage(), e);
+			throw new ArchiveException(pid + " " + e.getMessage(), e);
 		}
 		catch (URISyntaxException e)
 		{
-			throw new ArchiveException(e.getMessage(), e);
+			throw new ArchiveException(pid + " " + e.getMessage(), e);
 		}
 		catch (RecognitionException e)
 		{
-			throw new ArchiveException(e.getMessage(), e);
+			throw new ArchiveException(pid + " " + e.getMessage(), e);
 		}
 
 	}

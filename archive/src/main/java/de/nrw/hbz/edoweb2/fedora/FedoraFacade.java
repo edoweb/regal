@@ -230,7 +230,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 	public Node readNode(String pid)
 	{
 		if (!nodeExists(pid))
-			throw new NodeNotFoundException("Node " + pid + " does not exist!");
+			throw new NodeNotFoundException(pid + " does not exist!");
 		Node node = new Node();
 		node.setPID(pid);
 
@@ -462,15 +462,18 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (MalformedURLException e)
 		{
 
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(rootPID
+					+ " an unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(rootPID
+					+ " an unknown exception occured.", e);
 		}
 		catch (ServiceException e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(rootPID
+					+ " an unknown exception occured.", e);
 		}
 	}
 
@@ -595,11 +598,13 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (RemoteException e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 	}
 
@@ -640,11 +645,13 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (RemoteException e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 	}
 
@@ -696,11 +703,13 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (RemoteException e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 	}
 
@@ -750,11 +759,13 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (RemoteException e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 	}
 
@@ -1201,8 +1212,8 @@ public class FedoraFacade implements FedoraInterface, Constants
 				}
 				catch (Exception e)
 				{
-					throw new ArchiveException("An unknown exception occured.",
-							e);
+					throw new ArchiveException(node.getPID()
+							+ " an unknown exception occured.", e);
 				}
 
 				finally
@@ -1221,22 +1232,26 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (RepositoryException e)
 		{
 
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (RemoteException e)
 		{
 
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (RDFParseException e)
 		{
 
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
 
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 
 	}
@@ -1317,17 +1332,20 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (ParserConfigurationException e)
 		{
 
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (SAXException e)
 		{
 
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
 
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 
 	}
@@ -1612,7 +1630,8 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (UnsupportedEncodingException e)
 		{
-			throw new ArchiveException("UTF-8 encoding not supported.", e);
+			throw new ArchiveException(node.getPID()
+					+ " UTF-8 encoding not supported.", e);
 		}
 	}
 

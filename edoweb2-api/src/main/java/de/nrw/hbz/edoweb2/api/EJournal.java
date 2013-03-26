@@ -157,15 +157,16 @@ public class EJournal
 			if (actions.nodeExists(userNamespace + ":" + pid))
 			{
 				throw new HttpArchiveException(
-						Status.INTERNAL_SERVER_ERROR.getStatusCode(), namespace
-								+ ":" + pid
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+						userNamespace + ":" + pid
 								+ " node already exists. I do nothing!");
 			}
 			if (userNamespace.compareTo(namespace) != 0)
 			{
 				throw new HttpArchiveException(
 						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-						" Wrong namespace. Must be " + namespace);
+						userNamespace + ":" + pid
+								+ " Wrong namespace. Must be " + namespace);
 			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
