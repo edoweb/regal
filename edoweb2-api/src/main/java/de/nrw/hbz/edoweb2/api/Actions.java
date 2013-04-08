@@ -22,9 +22,10 @@ import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.ITEM_ID;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -392,7 +393,46 @@ public class Actions
 		File tmp = File.createTempFile("edowebDatafile", "tmp");
 		tmp.deleteOnExit();
 
-		IOUtils.copy(content, new FileWriter(tmp));
+		// File tmp = new File("/tmp/edoweb.zip");
+
+		// THIS DOESN'T WORK and will end in large Files
+		// TODO find out what happens here
+		// IOUtils.copy(content, new FileWriter(tmp));
+
+		// go on with the classic method
+		OutputStream out = null;
+		try
+		{
+
+			int read = 0;
+			byte[] bytes = new byte[1024];
+
+			out = new FileOutputStream(tmp);
+			while ((read = content.read(bytes)) != -1)
+			{
+				out.write(bytes, 0, read);
+			}
+
+		}
+		catch (IOException e)
+		{
+
+			throw new IOException(e);
+		}
+		finally
+		{
+			try
+			{
+
+				if (out != null)
+					out.close();
+			}
+			catch (IOException e)
+			{
+
+			}
+		}
+
 		Node node = archive.readNode(pid);
 		if (node != null)
 		{
