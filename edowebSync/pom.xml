@@ -70,27 +70,37 @@
 			<artifactId>edoweb2-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<dependency>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-bundle</artifactId>
-                    <version>1.14</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-client</artifactId>
-                    <version>1.14</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-servlet</artifactId>
-                    <version>1.14</version>
-                </dependency>
-                <dependency>
-                   <groupId>com.sun.jersey.contribs</groupId>
-                   <artifactId>jersey-multipart</artifactId>
-                   <version>1.14</version>
-                </dependency>
-		
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-bundle</artifactId>
+			<version>1.14</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>1.14</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-servlet</artifactId>
+			<version>1.14</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-multipart</artifactId>
+			<version>1.14</version>
+		</dependency>
+
+
+		<dependency>
+
+			<groupId>com.sun.jersey.contribs</groupId>
+
+			<artifactId>jersey-apache-client</artifactId>
+
+			<version>1.14</version>
+
+		</dependency>
 	</dependencies>
 </project>
