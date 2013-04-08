@@ -24,7 +24,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
 
-import javax.ws.rs.core.MediaType;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -41,12 +40,11 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
-import com.sun.jersey.client.apache.ApacheHttpClient;
 import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
 import com.sun.jersey.client.urlconnection.HttpURLConnectionFactory;
 import com.sun.jersey.client.urlconnection.URLConnectionClientHandler;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.MultiPart;
+import com.sun.jersey.multipart.file.StreamDataBodyPart;
 import com.sun.jersey.multipart.impl.MultiPartWriter;
 
 import de.nrw.hbz.edoweb2.api.DCBeanAnnotated;
@@ -450,16 +448,27 @@ public class FedoraIngester implements IngestInterface
 		}
 		WebResource ejournalVolumeDC = c.resource(webpageVersion.toString()
 				+ "/dc");
-		WebResource ejournalVolumeData = c.resource(webpageVersion.toString()
+		WebResource webpageVersionData = c.resource(webpageVersion.toString()
 				+ "/data");
 
 		try
 		{
 			logger.info(dtlBean.getStreamMime());
-			byte[] data = IOUtils.toByteArray(new FileInputStream(dtlBean
-					.getStream()));
+			MultiPart multiPart = new MultiPart();
+			multiPart.bodyPart(new StreamDataBodyPart("InputStream",
+					new FileInputStream(dtlBean.getStream()), dtlBean
+							.getStream().getName()));
 
-			ejournalVolumeData.type(dtlBean.getStreamMime()).post(data);
+			// FormDataMultiPart formDataMultiPart = new
+			// FormDataMultiPart();
+			//
+			// formDataMultiPart.field("fileType", b.getStreamMime());
+			// FormDataBodyPart bodyPart = new FormDataBodyPart("file",
+			// new FileInputStream(b.getStream()),
+			// MediaType.APPLICATION_OCTET_STREAM_TYPE);
+			// formDataMultiPart.bodyPart(bodyPart);
+
+			webpageVersionData.type("multipart/mixed").post(multiPart);
 
 		}
 		catch (UniformInterfaceException e)
@@ -1023,20 +1032,21 @@ public class FedoraIngester implements IngestInterface
 				try
 				{
 					logger.info(b.getStreamMime());
+					MultiPart multiPart = new MultiPart();
+					multiPart.bodyPart(new StreamDataBodyPart("InputStream",
+							new FileInputStream(b.getStream()), b.getStream()
+									.getName()));
 
-					FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
+					// FormDataMultiPart formDataMultiPart = new
+					// FormDataMultiPart();
+					//
+					// formDataMultiPart.field("fileType", b.getStreamMime());
+					// FormDataBodyPart bodyPart = new FormDataBodyPart("file",
+					// new FileInputStream(b.getStream()),
+					// MediaType.APPLICATION_OCTET_STREAM_TYPE);
+					// formDataMultiPart.bodyPart(bodyPart);
 
-					formDataMultiPart.field("fileType", b.getStreamMime());
-					FormDataBodyPart bodyPart = new FormDataBodyPart("file",
-							new FileInputStream(b.getStream()),
-							MediaType.MULTIPART_FORM_DATA_TYPE);
-					formDataMultiPart.bodyPart(bodyPart);
-
-					webpageVersionData.type(MediaType.MULTIPART_FORM_DATA)
-							.post(formDataMultiPart);
-
-					// webpageVersionData.type(b.getStreamMime()).post(data);
-
+					webpageVersionData.type("multipart/mixed").post(multiPart);
 				}
 				catch (UniformInterfaceException e)
 				{
@@ -1157,9 +1167,9 @@ public class FedoraIngester implements IngestInterface
 				DefaultApacheHttpClientConfig.PROPERTY_CHUNKED_ENCODING_SIZE,
 				1024);
 
-		Client c = ApacheHttpClient.create(cc);
+		// Client c = ApacheHttpClient.create(cc);
 
-		// Client c = Client.create(cc);
+		Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
 
 		WebResource webpage = c.resource(host + ":8080/edoweb2-api/webpage/"
@@ -1230,24 +1240,26 @@ public class FedoraIngester implements IngestInterface
 				try
 				{
 					logger.info(b.getStreamMime());
+					MultiPart multiPart = new MultiPart();
+					multiPart.bodyPart(new StreamDataBodyPart("InputStream",
+							new FileInputStream(b.getStream()), b.getStream()
+									.getName()));
 
-					FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
-
+					// FormDataMultiPart formDataMultiPart = new
+					// FormDataMultiPart();
+					//
 					// formDataMultiPart.field("fileType", b.getStreamMime());
-					FormDataBodyPart bodyPart = new FormDataBodyPart("file",
-							new FileInputStream(b.getStream()),
-							MediaType.MULTIPART_FORM_DATA_TYPE);
-					formDataMultiPart.bodyPart(bodyPart);
+					// FormDataBodyPart bodyPart = new FormDataBodyPart("file",
+					// new FileInputStream(b.getStream()),
+					// MediaType.APPLICATION_OCTET_STREAM_TYPE);
+					// formDataMultiPart.bodyPart(bodyPart);
 
-					webpageVersionData.type(MediaType.MULTIPART_FORM_DATA)
-							.post(formDataMultiPart);
-
-					// webpageVersionData.type(b.getStreamMime()).post(data);
+					webpageVersionData.type("multipart/mixed").post(multiPart);
 
 				}
 				catch (UniformInterfaceException e)
 				{
-					logger.warn(e.getResponse().getEntity(String.class));
+					logger.error(e.getResponse().getEntity(String.class));
 				}
 				catch (FileNotFoundException e1)
 				{

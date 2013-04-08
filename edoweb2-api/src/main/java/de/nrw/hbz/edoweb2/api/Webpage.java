@@ -38,8 +38,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -47,7 +45,7 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.multipart.FormDataParam;
+import com.sun.jersey.multipart.MultiPart;
 
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
@@ -306,16 +304,17 @@ public class Webpage
 	@POST
 	@Path("/{pid}/version/{versionPid}/data")
 	@Produces({ "application/json", "application/xml" })
-	@Consumes({ MediaType.MULTIPART_FORM_DATA })
+	@Consumes("multipart/mixed")
 	public String updateWebpageVersionData(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid,
-			@FormDataParam("file") InputStream content,
-			@Context HttpHeaders headers)
+			@PathParam("versionPid") String versionPid, MultiPart multiPart)
 	{
 
 		try
 		{
-			return actions.updateData(versionPid, content, "application/zip");
+			return actions.updateData(
+					versionPid,
+					multiPart.getBodyParts().get(0)
+							.getEntityAs(InputStream.class), "application/zip");
 		}
 		catch (ArchiveException e)
 		{
