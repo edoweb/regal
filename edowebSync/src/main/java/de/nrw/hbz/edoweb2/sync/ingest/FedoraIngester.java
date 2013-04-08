@@ -41,6 +41,8 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.client.apache.ApacheHttpClient;
+import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
 import com.sun.jersey.client.urlconnection.HttpURLConnectionFactory;
 import com.sun.jersey.client.urlconnection.URLConnectionClientHandler;
 import com.sun.jersey.multipart.FormDataBodyPart;
@@ -649,8 +651,9 @@ public class FedoraIngester implements IngestInterface
 				{
 					logger.info(dtlBean.getStreamMime());
 					byte[] data = IOUtils.toByteArray(new FileInputStream(
-							dtlBean.getStream()));
-					monographData.type(dtlBean.getStreamMime()).post(data);
+							fulltextObject.getStream()));
+					monographData.type(fulltextObject.getStreamMime()).post(
+							data);
 
 				}
 				catch (UniformInterfaceException e)
@@ -1146,22 +1149,11 @@ public class FedoraIngester implements IngestInterface
 		cc.getClasses().add(MultiPartWriter.class);
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		// Thanks to Tomasz Krzyżak
-		// http://stackoverflow.com/questions/11584791/jersey-client-upload-progress
-		URLConnectionClientHandler clientHandler = new URLConnectionClientHandler(
-				new HttpURLConnectionFactory()
-				{
-					@Override
-					public HttpURLConnection getHttpURLConnection(URL url)
-							throws IOException
-					{
-						HttpURLConnection connection = (HttpURLConnection) url
-								.openConnection();
-						connection.setChunkedStreamingMode(1024);
-						return connection;
-					}
-				});
-		Client c = new Client(clientHandler, cc);
+		cc.getProperties().put(
+				DefaultApacheHttpClientConfig.PROPERTY_CHUNKED_ENCODING_SIZE,
+				1024);
+
+		Client c = ApacheHttpClient.create(cc);
 
 		// Client c = Client.create(cc);
 		c.addFilter(new HTTPBasicAuthFilter(user, password));
@@ -1224,10 +1216,6 @@ public class FedoraIngester implements IngestInterface
 				catch (UniformInterfaceException e)
 				{
 					logger.info(e.getResponse().getEntity(String.class));
-				}
-				catch (Exception e)
-				{
-					logger.info("Version exists no new version is created!");
 				}
 
 				WebResource webpageVersionDC = c.resource(webpageVersion
