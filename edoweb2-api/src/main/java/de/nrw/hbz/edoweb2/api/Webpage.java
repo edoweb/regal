@@ -47,7 +47,6 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
@@ -311,7 +310,6 @@ public class Webpage
 	public String updateWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid,
 			@FormDataParam("file") InputStream content,
-			@FormDataParam("fileType") FormDataContentDisposition fileDetail,
 			@Context HttpHeaders headers)
 	{
 
