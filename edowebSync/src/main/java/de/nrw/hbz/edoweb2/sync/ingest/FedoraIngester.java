@@ -185,24 +185,27 @@ public class FedoraIngester implements IngestInterface
 						+ ":8080/edoweb2-api/edowebAdmin/index/" + namespace
 						+ ":" + dtlBean.getPid());
 				index.post();
+				logger.info(pid + ": got indexed!");
 			}
 			catch (UniformInterfaceException e)
 			{
-				logger.info(e.getResponse().getEntity(String.class));
+				logger.warn("Not indexed! "
+						+ e.getResponse().getEntity(String.class));
 			}
 			try
 			{
-				logger.info(pid + ": got indexed!");
+
 				WebResource oaiSet = c.resource(host
 						+ ":8080/edoweb2-api/edowebAdmin/makeOaiSet/"
 						+ namespace + ":" + dtlBean.getPid());
 				oaiSet.post();
+				logger.info(pid + ": is oai provided! ");
 			}
 			catch (UniformInterfaceException e)
 			{
-				logger.info(e.getResponse().getEntity(String.class));
+				logger.warn("Not oai provided! "
+						+ e.getResponse().getEntity(String.class));
 			}
-			logger.info(pid + ": got set! Thanx and goodbye!\n");
 
 			lobidify(dtlBean);
 
@@ -213,6 +216,7 @@ public class FedoraIngester implements IngestInterface
 			logger.error(e.getMessage());
 		}
 
+		logger.info("Thanx and goodbye!\n");
 	}
 
 	private void ingestEJournalPart(DigitalEntity dtlBean)
@@ -1229,7 +1233,7 @@ public class FedoraIngester implements IngestInterface
 
 					FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
 
-					formDataMultiPart.field("fileType", b.getStreamMime());
+					// formDataMultiPart.field("fileType", b.getStreamMime());
 					FormDataBodyPart bodyPart = new FormDataBodyPart("file",
 							new FileInputStream(b.getStream()),
 							MediaType.MULTIPART_FORM_DATA_TYPE);
@@ -1243,7 +1247,7 @@ public class FedoraIngester implements IngestInterface
 				}
 				catch (UniformInterfaceException e)
 				{
-					logger.info(e.getResponse().getEntity(String.class));
+					logger.warn(e.getResponse().getEntity(String.class));
 				}
 				catch (FileNotFoundException e1)
 				{
@@ -1327,7 +1331,8 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (UniformInterfaceException e)
 		{
-			logger.info(e.getResponse().getEntity(String.class));
+			logger.warn("Fetching lobid-data failed: "
+					+ e.getResponse().getEntity(String.class));
 		}
 	}
 
