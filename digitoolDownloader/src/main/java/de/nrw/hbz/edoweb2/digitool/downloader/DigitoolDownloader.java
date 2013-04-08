@@ -279,8 +279,7 @@ public class DigitoolDownloader
 
 		String filename = ((Element) streamRef)
 				.getElementsByTagName("file_name").item(0).getTextContent();
-		// DIFF between pdfs and zips here! Make different DeliveryRule in
-		// Digitoo
+
 		if (filename == null || filename.isEmpty())
 			return;
 		File streamDir = new File(objectDirectory + File.separator + pid);
