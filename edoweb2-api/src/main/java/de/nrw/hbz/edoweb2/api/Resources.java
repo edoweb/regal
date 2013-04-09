@@ -29,12 +29,18 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
@@ -48,27 +54,196 @@ import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 
 /**
- * Collects all methods for creating resources
+ * GetResource collects all Methods for read access to a archive resource.
  * 
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
 @Path("/resources")
-public class PutResource
+public class Resources
 {
 
-	final static Logger logger = LoggerFactory.getLogger(PutResource.class);
+	final static Logger logger = LoggerFactory.getLogger(Resources.class);
+
+	String namespace = "edoweb";
 
 	Actions actions = null;
-	final String namespace = "edoweb";
 
 	/**
+	 * Creates a new GetResource
+	 * 
 	 * @throws IOException
-	 *             if Actions can't not be initialized.
+	 *             if properties of the Actions class can't get loaded
 	 */
-	public PutResource() throws IOException
+	public Resources() throws IOException
 	{
 		actions = new Actions();
+	}
+
+	/**
+	 * Returns the actual data of a resource. The format of the binary data is
+	 * not defined.
+	 * 
+	 * @param pid
+	 *            The pid of the resource
+	 * @return the actual binary data
+	 */
+	@GET
+	@Path("/{pid}/data")
+	@Produces({ "application/*" })
+	public Response readData(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.readData(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	/**
+	 * @return a list of all archived objects
+	 */
+	@GET
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAll()
+	{
+		return new ObjectList(actions.getAll());
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 */
+	@GET
+	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml", "text/html" })
+	public View getView(@PathParam("pid") String pid)
+	{
+		return actions.getView(pid);
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of a resource containing multiple volumes
+	 * @return all volumes of the resource
+	 */
+	@GET
+	@Path("/{pid}/volume/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllVolumes(@PathParam("pid") String pid)
+	{
+
+		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
+	}
+
+	/**
+	 * @param pid
+	 *            the metadata of a pid
+	 * @return the rdf metadata as n-triple
+	 */
+	@GET
+	@Path("/{pid}/metadata")
+	@Produces({ "text/plain" })
+	public String readMetadata(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.readMetadata(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return the dublin core as json or xml
+	 */
+	@GET
+	@Path("/{pid}/dc")
+	@Produces({ "application/xml", "application/json" })
+	public DCBeanAnnotated readDC(@PathParam("pid") String pid)
+	{
+		return actions.readDC(pid);
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource containing versions
+	 * @return a list with pids of each version
+	 */
+	@GET
+	@Path("/{pid}/version/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllVersions(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return new ObjectList(actions.findObject(pid, HAS_VERSION));
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	/**
+	 * @param type
+	 *            the type of the resources that must be returned
+	 * @return a list of pids
+	 */
+	@GET
+	@Path("/{pid}/type/{type}")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllOfType(@PathParam("type") String type)
+	{
+		try
+		{
+			return new ObjectList(actions.findByType(TypeType.contentType
+					.toString() + ":" + type));
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
 	}
 
 	/**
@@ -127,8 +302,8 @@ public class PutResource
 		try
 		{
 			return actions.updateData(pid, multiPart.getBodyParts().get(0)
-					.getEntityAs(InputStream.class), multiPart.getMediaType()
-					.toString());
+					.getEntityAs(InputStream.class), multiPart.getBodyParts()
+					.get(1).getEntityAs(String.class));
 		}
 		catch (ArchiveException e)
 		{
@@ -415,6 +590,176 @@ public class PutResource
 					e.getMessage());
 		}
 
+	}
+
+	/**
+	 * Creates a new Resource. The Resource has a certain type an can be
+	 * connected to a parent resource.
+	 * 
+	 * @param pid
+	 *            the pid of the new resource
+	 * @param input
+	 *            a json string of the form { "type" :
+	 *            "<monograph | ejournal | webpage | webpageVersion | ejournalVolume | monographPart >"
+	 *            , "parentPid" : "uuid" }
+	 * @return a human readable message and a status code 200 if successful or a
+	 *         400 if not
+	 */
+	@POST
+	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes("application/json")
+	public String createResourcePost(@PathParam("pid") String pid,
+			final CreateObjectBean input)
+	{
+		return createResource(pid, input);
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @param multiPart
+	 *            The data is transfered as multipart data in order to provide
+	 *            upload of large files
+	 * @return A human readable message and a status code of 200 if successful
+	 *         an of 500 if not.
+	 */
+	@POST
+	@Path("/{pid}/data")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes("multipart/mixed")
+	public String updateResourceDataPost(@PathParam("pid") String pid,
+			MultiPart multiPart)
+	{
+
+		return updateResourceData(pid, multiPart);
+
+	}
+
+	/**
+	 * @param pid
+	 *            The pid of the resource
+	 * @param content
+	 *            the metadata as n-triple rdf
+	 * @return a human readable message and a status code of 200 if successful
+	 *         and 500 if not.
+	 */
+	@POST
+	@Path("/{pid}/metadata")
+	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
+	public String updateResourceMetadataPost(@PathParam("pid") String pid,
+			String content)
+	{
+		return updateResourceMetadata(pid, content);
+	}
+
+	@Deprecated
+	@POST
+	@Path("/{pid}/dc")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public String updateResourceDCPost(String pid, DCBeanAnnotated content)
+	{
+		return updateResourceDC(pid, content);
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource that must be deleted
+	 * @return a human readable message and a status code of 200 if successful
+	 *         or a 500 if not.
+	 */
+	@DELETE
+	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml" })
+	public String deleteResource(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.delete(pid, false);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource that data must be deleted
+	 * @return a human readable message and a status code of 200 if successful
+	 *         or a 500 if not.
+	 */
+	@DELETE
+	@Path("/{pid}/data")
+	@Produces({ "application/json", "application/xml" })
+	public String deleteResourceData(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.deleteData(pid);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource that data must be deleted
+	 * @return a human readable message and a status code of 200 if successful
+	 *         or a 500 if not.
+	 */
+	@DELETE
+	@Path("/{pid}/metadata")
+	@Produces({ "application/json", "application/xml" })
+	public String deleteResourceMetadata(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.deleteMetadata(pid);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	/**
+	 * Deletes all Resources of a certain type.
+	 * 
+	 * @param type
+	 *            the type of resources that will be deleted
+	 * @return A message and status code 200 if ok and 500 if not
+	 */
+	@DELETE
+	@Path("/type/{type}")
+	@Produces({ "application/json", "application/xml" })
+	public String deleteResourceOfType(@PathParam("type") String type)
+	{
+		try
+		{
+			return actions.deleteAll(
+					actions.findByType(TypeType.contentType.toString() + ":"
+							+ type), false);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
 	}
 
 }

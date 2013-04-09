@@ -45,24 +45,20 @@ public class Monograph
 {
 	final static Logger logger = LoggerFactory.getLogger(Monograph.class);
 
-	DeleteResource delete = null;
-	GetResource get = null;
-	PutResource put = null;
-	PostResource post = null;
+	Resources resources = null;
 
 	public Monograph() throws IOException
 	{
-		delete = new DeleteResource();
-		get = new GetResource();
-		put = new PutResource();
-		post = new PostResource();
+
+		resources = new Resources();
+
 	}
 
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return delete.deleteResource(ObjectType.monograph.toString());
+		return resources.deleteResource(ObjectType.monograph.toString());
 
 	}
 
@@ -73,7 +69,7 @@ public class Monograph
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.monograph.toString();
-		return put.createResource(pid, input);
+		return resources.createResource(pid, input);
 
 	}
 
@@ -82,7 +78,7 @@ public class Monograph
 	@Produces({ "application/json", "application/xml" })
 	public String deleteMonograph(@PathParam("pid") String pid)
 	{
-		return delete.deleteResource(pid);
+		return resources.deleteResource(pid);
 	}
 
 	@Deprecated
@@ -94,7 +90,7 @@ public class Monograph
 			DCBeanAnnotated content)
 	{
 
-		return put.updateResourceDC(pid, content);
+		return resources.updateResourceDC(pid, content);
 
 	}
 
@@ -103,7 +99,7 @@ public class Monograph
 	@Produces({ "application/*", "application/json" })
 	public Response readMonographData(@PathParam("pid") String pid)
 	{
-		return get.readData(pid);
+		return resources.readData(pid);
 	}
 
 	@POST
@@ -113,7 +109,7 @@ public class Monograph
 	public String updateMonographData(@PathParam("pid") String pid,
 			MultiPart multiPart)
 	{
-		return put.updateResourceData(pid, multiPart);
+		return resources.updateResourceData(pid, multiPart);
 	}
 
 	@GET
@@ -121,14 +117,14 @@ public class Monograph
 	@Produces({ "text/plain" })
 	public String readMonographMetadata(@PathParam("pid") String pid)
 	{
-		return get.readMetadata(pid);
+		return resources.readMetadata(pid);
 	}
 
 	@GET
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return get.getAllOfType(ObjectType.monograph.toString());
+		return resources.getAllOfType(ObjectType.monograph.toString());
 
 	}
 
@@ -145,7 +141,7 @@ public class Monograph
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid)
 	{
-		return get.getView(pid);
+		return resources.getView(pid);
 	}
 
 	@GET
@@ -153,7 +149,7 @@ public class Monograph
 	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readMonographDC(@PathParam("pid") String pid)
 	{
-		return get.readDC(pid);
+		return resources.readDC(pid);
 	}
 
 	@PUT
@@ -163,7 +159,7 @@ public class Monograph
 	public String updateMonographMetadata(@PathParam("pid") String pid,
 			String content)
 	{
-		return put.updateResourceMetadata(pid, content);
+		return resources.updateResourceMetadata(pid, content);
 	}
 
 	@POST
@@ -173,7 +169,7 @@ public class Monograph
 	public String updateMonographMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
-		return post.updateResourceMetadata(pid, content);
+		return resources.updateResourceMetadata(pid, content);
 	}
 
 	// be it hot or be it not

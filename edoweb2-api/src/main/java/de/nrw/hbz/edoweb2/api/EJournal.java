@@ -41,24 +41,21 @@ import com.sun.jersey.multipart.MultiPart;
 public class EJournal
 {
 	final static Logger logger = LoggerFactory.getLogger(EJournal.class);
-	DeleteResource delete = null;
-	GetResource get = null;
-	PutResource put = null;
-	PostResource post = null;
+
+	Resources resources = null;
 
 	public EJournal() throws IOException
 	{
-		delete = new DeleteResource();
-		get = new GetResource();
-		put = new PutResource();
-		post = new PostResource();
+
+		resources = new Resources();
+
 	}
 
 	@GET
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return get.getAllOfType(ObjectType.ejournal.toString());
+		return resources.getAllOfType(ObjectType.ejournal.toString());
 
 	}
 
@@ -66,7 +63,7 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return delete.deleteResourceOfType(ObjectType.ejournal.toString());
+		return resources.deleteResourceOfType(ObjectType.ejournal.toString());
 
 	}
 
@@ -76,7 +73,7 @@ public class EJournal
 	public String deleteEJournal(@PathParam("pid") String pid,
 			@PathParam("userNamespace") String userNamespace)
 	{
-		return delete.deleteResource(pid);
+		return resources.deleteResource(pid);
 	}
 
 	@PUT
@@ -87,7 +84,7 @@ public class EJournal
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.ejournal.toString();
-		return put.createResource(pid, input);
+		return resources.createResource(pid, input);
 
 	}
 
@@ -96,7 +93,7 @@ public class EJournal
 	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readEJournalDC(@PathParam("pid") String pid)
 	{
-		return get.readDC(pid);
+		return resources.readDC(pid);
 
 	}
 
@@ -107,7 +104,7 @@ public class EJournal
 	public String updateEJournalDCPost(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return post.updateResourceDC(pid, content);
+		return resources.updateResourceDC(pid, content);
 	}
 
 	@PUT
@@ -117,7 +114,7 @@ public class EJournal
 	public String updateEJournalDCPut(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return put.updateResourceDC(pid, content);
+		return resources.updateResourceDC(pid, content);
 	}
 
 	@GET
@@ -125,7 +122,7 @@ public class EJournal
 	@Produces({ "text/plain" })
 	public String readEJournalMetadata(@PathParam("pid") String pid)
 	{
-		return get.readMetadata(pid);
+		return resources.readMetadata(pid);
 	}
 
 	@PUT
@@ -135,7 +132,7 @@ public class EJournal
 	public String updateEJournalMetadata(@PathParam("pid") String pid,
 			String content)
 	{
-		return put.updateResourceMetadata(pid, content);
+		return resources.updateResourceMetadata(pid, content);
 	}
 
 	@Deprecated
@@ -146,7 +143,7 @@ public class EJournal
 	public String updateEJournalMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
-		return post.updateResourceMetadata(pid, content);
+		return resources.updateResourceMetadata(pid, content);
 
 	}
 
@@ -155,7 +152,7 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVolumes(@PathParam("pid") String pid)
 	{
-		return get.getAllVolumes(pid);
+		return resources.getAllVolumes(pid);
 	}
 
 	@PUT
@@ -167,7 +164,7 @@ public class EJournal
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.ejournalVolume.toString();
 		input.parentPid = pid;
-		return put.createResource(volumePid, input);
+		return resources.createResource(volumePid, input);
 	}
 
 	@GET
@@ -176,7 +173,7 @@ public class EJournal
 	public Response readVolumeData(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		return get.readData(volumePid);
+		return resources.readData(volumePid);
 	}
 
 	@POST
@@ -186,7 +183,7 @@ public class EJournal
 	public String updateVolumeData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, MultiPart multiPart)
 	{
-		return post.updateResourceData(versionPid, multiPart);
+		return resources.updateResourceData(versionPid, multiPart);
 	}
 
 	@GET
@@ -195,7 +192,7 @@ public class EJournal
 	public DCBeanAnnotated readVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		return get.readDC(volumePid);
+		return resources.readDC(volumePid);
 	}
 
 	@POST
@@ -205,7 +202,7 @@ public class EJournal
 	public String updateVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, DCBeanAnnotated content)
 	{
-		return post.updateResourceDC(volumePid, content);
+		return resources.updateResourceDC(volumePid, content);
 	}
 
 	@GET
@@ -214,7 +211,7 @@ public class EJournal
 	public String readVolumeMetadata(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid)
 	{
-		return get.readMetadata(volumePid);
+		return resources.readMetadata(volumePid);
 	}
 
 	@PUT
@@ -224,7 +221,7 @@ public class EJournal
 	public String updateVolumeMetadata(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, String content)
 	{
-		return put.updateResourceMetadata(volumePid, content);
+		return resources.updateResourceMetadata(volumePid, content);
 	}
 
 	@Deprecated
@@ -235,6 +232,6 @@ public class EJournal
 	public String updateVolumeMetadataPost(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, String content)
 	{
-		return post.updateResourceMetadata(volumePid, content);
+		return resources.updateResourceMetadata(volumePid, content);
 	}
 }

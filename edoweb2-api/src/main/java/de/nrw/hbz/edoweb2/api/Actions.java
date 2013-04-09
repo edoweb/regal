@@ -136,7 +136,7 @@ public class Actions
 		StringBuffer msg = new StringBuffer();
 		for (String pid : pids)
 		{
-			msg.append(delete(pid, wait));
+			msg.append(delete(pid, wait) + "\n");
 		}
 
 		return msg.toString();
@@ -971,9 +971,9 @@ public class Actions
 	{
 		StringBuffer result = new StringBuffer();
 
-		result.append(deleteAll(archive.findNodes("test:*"), false));
-		result.append(deleteAll(archive.findNodes("edoweb:*"), false));
-		result.append(deleteAll(archive.findNodes("oai:*"), false));
+		result.append(deleteAll(archive.findNodes("test:*"), false) + "\n");
+		result.append(deleteAll(archive.findNodes("edoweb:*"), false) + "\n");
+		result.append(deleteAll(archive.findNodes("oai:*"), false) + "\n");
 
 		return result.toString();
 	}
@@ -1153,14 +1153,14 @@ public class Actions
 
 		for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
 		{
-			String relUrl = serverName + "/objects/" + relPid;
+			String relUrl = serverName + "/resources/" + relPid;
 
 			view.addIsPartOf(relUrl, relPid);
 		}
 
 		for (String relPid : findObject(pid, REL_IS_RELATED))
 		{
-			String relUrl = serverName + "/objects/" + relPid;
+			String relUrl = serverName + "/resources/" + relPid;
 
 			List<String> desc = findObject(relPid,
 					"http://purl.org/dc/elements/1.1/description");
@@ -1182,7 +1182,7 @@ public class Actions
 	 *            The type of the node
 	 * @return a short message
 	 */
-	public String index(Node node, ObjectType type)
+	public String index(Node node)
 	{
 		String message = "";
 
@@ -1200,7 +1200,7 @@ public class Actions
 
 			index.accept(MediaType.APPLICATION_JSON);
 
-			URL url = new URL("http://localhost/objects/" + node.getPID());
+			URL url = new URL("http://localhost/resources/" + node.getPID());
 
 			URLConnection con = url.openConnection();
 			con.setRequestProperty("Accept", "application/json");
@@ -1284,87 +1284,12 @@ public class Actions
 	public String index(String pid)
 	{
 		Node node = archive.readNode(pid);
-		if (node == null)
-			return "Node not found! " + pid;
-		ObjectType type = null;
-		for (String t : node.getType())
-		{
-			if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.monograph.toString()) == 0)
-			{
-				type = ObjectType.monograph;
-				break;
-			}
-			else if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.ejournal.toString()) == 0)
-			{
-				type = ObjectType.ejournal;
-				break;
-			}
-			else if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.webpage.toString()) == 0)
-			{
-				type = ObjectType.webpage;
-				break;
-			}
-		}
-		if (type == null)
-			return "Sorry the node has no type! ERROR! " + pid;
-
-		return index(node, type);
-
+		return index(node);
 	}
 
 	private String getURI(Node node)
 	{
-
-		String typePath = null;
-		for (String t : node.getType())
-		{
-			if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.monograph.toString()) == 0)
-			{
-				typePath = "objects";
-				break;
-			}
-			else if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.ejournal.toString()) == 0)
-			{
-				typePath = "objects";
-				break;
-			}
-			else if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.webpage.toString()) == 0)
-			{
-				typePath = "objects";
-				break;
-			}
-			else if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.webpageVersion.toString()) == 0)
-			{
-				typePath = "objects";
-				// return serverName + "/" + typePath + "/" +
-				// getWebpagePid(node)
-				// + "/version/" + getVersionName(node);
-				break;
-			}
-			else if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.ejournalVolume.toString()) == 0)
-			{
-				typePath = "objects";
-				// return serverName + "/" + typePath + "/" +
-				// getJournalPid(node)
-				// + "/volume/" + getVolumeName(node);
-				break;
-			}
-
-		}
-		if (typePath == null)
-		{
-			return node.getPID() + " sorry the node has no type! ERROR!";
-		}
-
-		return serverName + "/" + typePath + "/" + node.getPID();
+		return serverName + "/" + "resources" + "/" + node.getPID();
 	}
 
 	/**

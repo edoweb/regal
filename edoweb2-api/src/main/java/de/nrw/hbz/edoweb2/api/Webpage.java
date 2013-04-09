@@ -43,24 +43,20 @@ public class Webpage
 {
 	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
 
-	DeleteResource delete = null;
-	GetResource get = null;
-	PutResource put = null;
-	PostResource post = null;
+	Resources resources = null;
 
 	public Webpage() throws IOException
 	{
-		delete = new DeleteResource();
-		get = new GetResource();
-		put = new PutResource();
-		post = new PostResource();
+
+		resources = new Resources();
+
 	}
 
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return delete.deleteResourceOfType(ObjectType.webpage.toString());
+		return resources.deleteResourceOfType(ObjectType.webpage.toString());
 	}
 
 	@PUT
@@ -70,7 +66,7 @@ public class Webpage
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.webpage.toString();
-		return put.createResource(pid, input);
+		return resources.createResource(pid, input);
 	}
 
 	@DELETE
@@ -78,7 +74,7 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public String deleteWebpage(@PathParam("pid") String pid)
 	{
-		return delete.deleteResource(pid);
+		return resources.deleteResource(pid);
 	}
 
 	@POST
@@ -88,7 +84,7 @@ public class Webpage
 	public String updateWebpageDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return put.updateResourceDC(pid, content);
+		return resources.updateResourceDC(pid, content);
 	}
 
 	@PUT
@@ -98,7 +94,7 @@ public class Webpage
 	public String updateWebpageMetadata(@PathParam("pid") String pid,
 			String content)
 	{
-		return put.updateResourceMetadata(pid, content);
+		return resources.updateResourceMetadata(pid, content);
 	}
 
 	@Deprecated
@@ -109,7 +105,7 @@ public class Webpage
 	public String updateWebpageMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
-		return post.updateResourceMetadata(pid, content);
+		return resources.updateResourceMetadata(pid, content);
 	}
 
 	@PUT
@@ -121,7 +117,7 @@ public class Webpage
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.webpageVersion.toString();
 		input.parentPid = pid;
-		return put.createResource(versionPid, input);
+		return resources.createResource(versionPid, input);
 
 	}
 
@@ -132,7 +128,7 @@ public class Webpage
 	public String updateWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, DCBeanAnnotated content)
 	{
-		return put.updateResourceDC(versionPid, content);
+		return resources.updateResourceDC(versionPid, content);
 	}
 
 	@POST
@@ -142,7 +138,7 @@ public class Webpage
 	public String updateWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, MultiPart multiPart)
 	{
-		return put.updateResourceData(versionPid, multiPart);
+		return resources.updateResourceData(versionPid, multiPart);
 	}
 
 	@PUT
@@ -152,7 +148,7 @@ public class Webpage
 	public String updateWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
 	{
-		return put.updateResourceMetadata(versionPid, content);
+		return resources.updateResourceMetadata(versionPid, content);
 	}
 
 	@Deprecated
@@ -164,7 +160,7 @@ public class Webpage
 			@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
 	{
-		return post.updateResourceMetadata(versionPid, content);
+		return resources.updateResourceMetadata(versionPid, content);
 	}
 
 	@GET
@@ -173,7 +169,7 @@ public class Webpage
 	public String readWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		return get.readMetadata(versionPid);
+		return resources.readMetadata(versionPid);
 
 	}
 
@@ -183,7 +179,7 @@ public class Webpage
 	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		return get.readDC(versionPid);
+		return resources.readDC(versionPid);
 
 	}
 
@@ -193,7 +189,7 @@ public class Webpage
 	public Response readWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		return get.readData(versionPid);
+		return resources.readData(versionPid);
 
 	}
 
@@ -202,7 +198,7 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVersions(@PathParam("pid") String pid)
 	{
-		return get.getAllVersions(pid);
+		return resources.getAllVersions(pid);
 
 	}
 
@@ -211,14 +207,14 @@ public class Webpage
 	@Produces({ "text/plain" })
 	public String readWebpageMetadata(@PathParam("pid") String pid)
 	{
-		return get.readMetadata(pid);
+		return resources.readMetadata(pid);
 	}
 
 	@GET
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return get.getAllOfType(ObjectType.webpage.toString());
+		return resources.getAllOfType(ObjectType.webpage.toString());
 	}
 
 	@GET
@@ -226,7 +222,7 @@ public class Webpage
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid)
 	{
-		return get.getView(pid);
+		return resources.getView(pid);
 	}
 
 	@GET
@@ -234,6 +230,6 @@ public class Webpage
 	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readWebpageDC(@PathParam("pid") String pid)
 	{
-		return get.readDC(pid);
+		return resources.readDC(pid);
 	}
 }
