@@ -178,6 +178,25 @@ public class PutResource
 		}
 	}
 
+	@Deprecated
+	@PUT
+	@Path("/{pid}/dc")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public String updateResourceDC(String pid, DCBeanAnnotated content)
+	{
+		try
+		{
+			return actions.updateDC(pid, content);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
 	private String createWebpage(String pid)
 	{
 		try

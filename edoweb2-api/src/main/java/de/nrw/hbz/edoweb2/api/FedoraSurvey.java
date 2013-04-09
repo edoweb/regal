@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author jan
+ * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
 public class FedoraSurvey

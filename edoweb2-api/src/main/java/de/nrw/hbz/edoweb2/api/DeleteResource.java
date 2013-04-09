@@ -100,4 +100,30 @@ public class DeleteResource
 		}
 	}
 
+	/**
+	 * Deletes all Resources of a certain type.
+	 * 
+	 * @param type
+	 *            the type of resources that will be deleted
+	 * @return A message and status code 200 if ok and 500 if not
+	 */
+	@DELETE
+	@Path("/type/{type}")
+	@Produces({ "application/json", "application/xml" })
+	public String deleteResourceOfType(@PathParam("type") String type)
+	{
+		try
+		{
+			return actions.deleteAll(
+					actions.findByType(TypeType.contentType.toString() + ":"
+							+ type), false);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
 }

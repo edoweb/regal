@@ -5,6 +5,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class CreateObjectBean
 {
-	public String type;
-	public String parentPid;
+	public String type = null;
+	public String parentPid = null;
 }

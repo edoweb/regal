@@ -205,4 +205,27 @@ public class GetResource
 		}
 	}
 
+	/**
+	 * @param type
+	 *            the type of the resources that must be returned
+	 * @return a list of pids
+	 */
+	@GET
+	@Path("/{pid}/type/{type}")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllOfType(@PathParam("type") String type)
+	{
+		try
+		{
+			return new ObjectList(actions.findByType(TypeType.contentType
+					.toString() + ":" + type));
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
 }
