@@ -29,8 +29,8 @@ import javax.ws.rs.core.Response.Status;
 
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 
-@Path("/edowebAdmin")
-public class EdowebAdmin
+@Path("/utils")
+public class Utils
 {
 	Actions actions = null;
 
@@ -39,7 +39,7 @@ public class EdowebAdmin
 	 *             if properties cannot be loaded
 	 * 
 	 */
-	public EdowebAdmin() throws IOException
+	public Utils() throws IOException
 	{
 
 		actions = new Actions();

@@ -190,6 +190,20 @@ public class Actions
 		return pid + " successfully deleted! " + msg;
 	}
 
+	public String deleteMetadata(String pid)
+	{
+
+		archive.deleteDatastream(pid, "metadata");
+
+		return pid + ": metadata - datastream successfully deleted! ";
+	}
+
+	public String deleteData(String pid)
+	{
+		archive.deleteDatastream(pid, "data");
+		return pid + ": data - datastream successfully deleted! ";
+	}
+
 	// -------------------------------------------------------
 
 	/**
@@ -1502,4 +1516,5 @@ public class Actions
 		 * Workaround END
 		 */
 	}
+
 }

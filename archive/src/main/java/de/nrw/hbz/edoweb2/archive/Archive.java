@@ -376,6 +376,18 @@ class Archive implements ArchiveInterface
 	}
 
 	@Override
+	public String deleteDatastream(String pid, String datastreamName)
+	{
+		if (!nodeExists(pid))
+		{
+			throw new ArchiveException(pid
+					+ " doesn't exist. Can't delete node.");
+		}
+		fedoraInterface.deleteDatastream(pid, datastreamName);
+		return pid;
+	}
+
+	@Override
 	public List<String> findNodes(String searchTerm)
 	{
 		return fedoraInterface.findPids(searchTerm, FedoraVocabulary.SIMPLE);
@@ -459,4 +471,5 @@ class Archive implements ArchiveInterface
 	 * #How is the #earth so #small. #elliptic #rider, #spaceegg, #transport of
 	 * my #soul. #ahouuuuu
 	 */
+
 }

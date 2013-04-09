@@ -478,6 +478,13 @@ public class FedoraFacade implements FedoraInterface, Constants
 	}
 
 	@Override
+	public void deleteDatastream(String pid, String datastream)
+	{
+		fedoraManager.setDatastreamState(pid, datastream, "D",
+				"marked as deleted");
+	}
+
+	@Override
 	public boolean nodeExists(String pid)
 	{
 		try

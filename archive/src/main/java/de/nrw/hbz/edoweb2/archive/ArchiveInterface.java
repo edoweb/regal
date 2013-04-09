@@ -118,6 +118,15 @@ public interface ArchiveInterface
 	public String deleteNode(String pid);
 
 	/**
+	 * @param pid
+	 *            the pid of the object
+	 * @param datastreamName
+	 *            the name of the datastream that must be deleted
+	 * @return the pid:datastream that has been deleted
+	 */
+	public String deleteDatastream(String pid, String datastreamName);
+
+	/**
 	 * @param searchTerm
 	 *            A search term
 	 * @return A list of pids

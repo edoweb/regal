@@ -97,6 +97,14 @@ public interface FedoraInterface
 	public void deleteNode(String rootPID);
 
 	/**
+	 * @param pid
+	 *            the pid of the object
+	 * @param datastream
+	 *            the datastream that must be deleted
+	 */
+	public void deleteDatastream(String pid, String datastream);
+
+	/**
 	 * @param namespace
 	 *            The namespace to generate a pid .
 	 * @return A new generated id.
