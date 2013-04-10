@@ -47,20 +47,20 @@ import se.kb.oai.pmh.ResumptionToken;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class OaiPidGrabber
+class OaiPidGrabber
 {
 	String server = null;
 	String timestampfile = null;
 
 	final Logger logger = LoggerFactory.getLogger(OaiPidGrabber.class);
 
-	public OaiPidGrabber(String server, String timestampFile)
+	OaiPidGrabber(String server, String timestampFile)
 	{
 		this.server = server;
 		this.timestampfile = timestampFile;
 	}
 
-	public Vector<String> harvest(String set, boolean harvestFromScratch)
+	Vector<String> harvest(String set, boolean harvestFromScratch)
 	{
 
 		String[] sets = null;
@@ -82,7 +82,7 @@ public class OaiPidGrabber
 	 * @param setSpec
 	 * @return
 	 */
-	public Vector<String> harvest(String[] sets, boolean harvestFromScratch)
+	Vector<String> harvest(String[] sets, boolean harvestFromScratch)
 	{
 
 		logger.info("Start harvesting " + server + " !");

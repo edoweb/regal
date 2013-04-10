@@ -39,11 +39,11 @@ import org.slf4j.LoggerFactory;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class PIDWriter
+class PIDWriter
 {
 	final Logger logger = LoggerFactory.getLogger(PIDWriter.class);
 
-	public void print(Vector<String> pids, String path)
+	void print(Vector<String> pids, String path)
 	{
 
 		logger.info("Print pids separated by newline to " + path + " !");
