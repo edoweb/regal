@@ -22,12 +22,12 @@ import java.util.Vector;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-class TypeObjectDictionary
+public class TypeObjectDictionary
 {
 	String type;
 	List<String> uris;
 
-	TypeObjectDictionary()
+	public TypeObjectDictionary()
 	{
 		uris = new Vector<String>();
 	}

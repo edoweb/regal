@@ -25,7 +25,7 @@ import java.util.Vector;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-class CollectionProfile
+public class CollectionProfile
 {
 	String message = "";
 	List<View> all;
@@ -41,7 +41,7 @@ class CollectionProfile
 	List<TypeObjectDictionary> types = new Vector<TypeObjectDictionary>();
 	private HashMap<String, List<String>> map = new HashMap<String, List<String>>();
 
-	CollectionProfile()
+	public CollectionProfile()
 	{
 
 	}

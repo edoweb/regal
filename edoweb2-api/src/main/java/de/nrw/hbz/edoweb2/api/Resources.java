@@ -264,8 +264,9 @@ public class Resources
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("application/json")
 	public String createResource(@PathParam("pid") String pid,
-			final CreateObjectBean input)
+			CreateObjectBean input)
 	{
+
 		if (input.type.compareTo(ObjectType.monograph.toString()) == 0)
 			return createMonograph(pid);
 		else if (input.type.compareTo(ObjectType.ejournal.toString()) == 0)
@@ -358,7 +359,8 @@ public class Resources
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateResourceDC(String pid, DCBeanAnnotated content)
+	public String updateResourceDC(@PathParam("pid") String pid,
+			DCBeanAnnotated content)
 	{
 		try
 		{
@@ -392,8 +394,8 @@ public class Resources
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
 
-			rootObject.addContentModel(ContentModelFactory.createMonographCM(
-					namespace, ObjectType.webpage));
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					ObjectType.webpage));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -426,8 +428,8 @@ public class Resources
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
 
-			rootObject.addContentModel(ContentModelFactory.createMonographCM(
-					namespace, ObjectType.monograph));
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					ObjectType.monograph));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -462,8 +464,8 @@ public class Resources
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(namespace + ":" + pid);
 
-			rootObject.addContentModel(ContentModelFactory.createMonographCM(
-					namespace, ObjectType.ejournal));
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					ObjectType.ejournal));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -507,8 +509,8 @@ public class Resources
 
 			rootObject.setNamespace(namespace).setPID(versionPid);
 
-			rootObject.addContentModel(ContentModelFactory.createMonographCM(
-					namespace, ObjectType.webpageVersion));
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					ObjectType.webpageVersion));
 
 			ComplexObject object = new ComplexObject(rootObject);
 
@@ -565,8 +567,8 @@ public class Resources
 
 			rootObject.setNamespace(namespace).setPID(volumePid);
 
-			rootObject.addContentModel(ContentModelFactory.createMonographCM(
-					namespace, ObjectType.ejournalVolume));
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					ObjectType.ejournalVolume));
 
 			ComplexObject object = new ComplexObject(rootObject);
 

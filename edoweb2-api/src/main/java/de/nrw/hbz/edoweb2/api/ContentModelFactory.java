@@ -31,7 +31,7 @@ public class ContentModelFactory
 	 *            the type of object
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createMonographCM(String namespace,
+	public static ContentModel create(String namespace,
 			ObjectType type)
 	{
 		ContentModel cm = new ContentModel();

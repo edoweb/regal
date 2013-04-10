@@ -294,7 +294,6 @@ class Actions
 
 		if (node != null && node.getDataUrl() != null)
 		{
-
 			return Response.temporaryRedirect(
 					new java.net.URI(fedoraExtern + "/objects/" + pid
 							+ "/datastreams/data/content")).build();
@@ -830,35 +829,6 @@ class Actions
 
 	}
 
-	private void createOAISet(String name, String spec, String pid)
-	{
-		String setSpecPred = "http://www.openarchives.org/OAI/2.0/setSpec";
-		String setNamePred = "http://www.openarchives.org/OAI/2.0/setName";
-
-		Link setSpecLink = new Link();
-		setSpecLink.setPredicate(setSpecPred);
-
-		Link setNameLink = new Link();
-		setNameLink.setPredicate(setNamePred);
-
-		String namespace = "oai";
-		{
-			Node oaiset = new Node();
-			oaiset.setNamespace(namespace);
-			oaiset.setPID(pid);
-
-			setSpecLink.setObject(spec, true);
-			oaiset.addRelation(setSpecLink);
-
-			setNameLink.setObject(name, true);
-			oaiset.addRelation(setNameLink);
-			oaiset.addTitle(name);
-
-			archive.createComplexObject(new ComplexObject(oaiset));
-
-		}
-	}
-
 	void linkObjectToOaiSet(Node node, String spec, String pid)
 	{
 		Vector<Link> relations = node.getRelsExt();
@@ -891,84 +861,6 @@ class Actions
 
 	}
 
-	private String docmap(String type)
-	{
-		if (type.compareTo("report") == 0)
-		{
-			return "Monograph";
-		}
-		if (type.compareTo("webpage") == 0)
-		{
-			return "Webpage";
-		}
-		if (type.compareTo("ejournal") == 0)
-		{
-			return "EJournal";
-		}
-		return "";
-	}
-
-	private String ddcmap(String number)
-	{
-		if (number == null || number.length() != 3)
-			logger.info("Didn't found ddc name for ddc:" + number);
-		String name = "";
-		try
-		{
-			URL url = new URL("http://dewey.info/class/" + number
-					+ "/2009-08/about.en");
-			HttpClient httpClient = new HttpClient();
-
-			HttpMethod method = new GetMethod(url.toString());
-			httpClient.executeMethod(method);
-			InputStream stream = method.getResponseBodyAsStream();
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder docBuilder;
-			factory.setNamespaceAware(true);
-			factory.setExpandEntityReferences(false);
-			docBuilder = factory.newDocumentBuilder();
-
-			Document doc;
-
-			doc = docBuilder.parse(stream);
-			Element root = doc.getDocumentElement();
-			root.normalize();
-			try
-			{
-				name = root.getElementsByTagName("skos:prefLabel").item(0)
-						.getTextContent();
-				logger.info("Found ddc name: " + name);
-			}
-			catch (Exception e)
-			{
-				logger.info("Didn't found ddc name for ddc:" + number);
-			}
-		}
-		catch (MalformedURLException e)
-		{
-			e.printStackTrace();
-		}
-		catch (HttpException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		catch (ParserConfigurationException e)
-		{
-			e.printStackTrace();
-		}
-		catch (SAXException e)
-		{
-			e.printStackTrace();
-		}
-
-		return name;
-	}
-
 	/**
 	 * Deletes all objects in namespaces test,edoweb and oai.
 	 * 
@@ -987,69 +879,15 @@ class Actions
 
 	/**
 	 * @param pid
-	 *            The pid of an existing object
-	 * @return a view object
-	 */
-	View getView(String pid)
-	{
-
-		Node node = archive.readNode(pid);
-		if (node == null)
-			return null;
-
-		Vector<String> types = node.getType();
-
-		for (String t : types)
-		{
-			if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.ejournal.toString()) == 0)
-			{
-				return getView(node, ObjectType.ejournal);
-			}
-			else if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.webpage.toString()) == 0)
-			{
-				return getView(node, ObjectType.webpage);
-			}
-			else if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.monograph.toString()) == 0)
-			{
-				return getView(node, ObjectType.monograph);
-			}
-			else if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.ejournalVolume.toString()) == 0)
-			{
-				return getView(node, ObjectType.ejournalVolume);
-			}
-			else if (t.compareTo(TypeType.contentType.toString() + ":"
-					+ ObjectType.webpageVersion.toString()) == 0)
-			{
-				return getView(node, ObjectType.webpageVersion);
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * @param pid
 	 *            The pid of an existing object.
 	 * @param type
 	 *            the type of the object.
 	 * @return the typed view of the object
 	 */
-	View getView(String pid, ObjectType type)
+	View getView(String pid)
 	{
-
-		// String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
-		// String url = urlInfo.getPath();
-		// String objectUrl = host + url.substring(0, url.lastIndexOf('/'));
-
 		Node node = archive.readNode(pid);
-		if (node == null)
-			return null;
-		return getView(node, type);
-
+		return getView(node);
 	}
 
 	/**
@@ -1059,7 +897,7 @@ class Actions
 	 *            The type
 	 * @return the view of the object of type type.
 	 */
-	View getView(Node node, ObjectType type)
+	View getView(Node node)
 	{
 		View view = new View();
 		String pid = node.getPID();
@@ -1197,80 +1035,6 @@ class Actions
 	}
 
 	/**
-	 * @param node
-	 *            The node that must be indexed
-	 * @param type
-	 *            The type of the node
-	 * @return a short message
-	 */
-	String index(Node node)
-	{
-		String message = "";
-
-		// View view = getView(node, type);
-
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		try
-		{
-			WebResource index = c
-					.resource("http://localhost:9200/edoweb/titel/"
-							+ node.getPID());
-
-			index.accept(MediaType.APPLICATION_JSON);
-
-			URL url = new URL("http://localhost/resources/" + node.getPID());
-
-			URLConnection con = url.openConnection();
-			con.setRequestProperty("Accept", "application/json");
-			con.connect();
-
-			InputStream in = con.getInputStream();
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(in, writer, "UTF-8");
-			String viewAsString = writer.toString();
-
-			in.close();
-
-			// JAXBContext jc = JAXBContext.newInstance(View.class);
-			//
-			// Configuration config = new Configuration();
-			// Map<String, String> xmlToJsonNamespaces = new HashMap<String,
-			// String>(
-			// 1);
-			// xmlToJsonNamespaces.put(
-			// "http://www.w3.org/2001/XMLSchema-instance", "");
-			// config.setXmlToJsonNamespaces(xmlToJsonNamespaces);
-			// MappedNamespaceConvention con = new MappedNamespaceConvention(
-			// config);
-			//
-			// ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			// PrintStream out = new PrintStream(baos);
-			// Writer writer = new OutputStreamWriter(out);
-			// XMLStreamWriter xmlStreamWriter = new MappedXMLStreamWriter(con,
-			// writer);
-			//
-			// Marshaller marshaller = jc.createMarshaller();
-			// marshaller.marshal(view, xmlStreamWriter);
-			//
-			// String viewAsString = baos.toString("utf-8");
-			//
-			// System.out.println(view.getType());
-			System.out.println("JSON-------------------");
-			System.out.println(viewAsString);
-			System.out.println("-----------------------");
-			message = index.put(String.class, viewAsString);
-		}
-		catch (Exception e)
-		{
-			throw new ArchiveException("Error! " + message + e.getMessage(), e);
-		}
-		return "Success! " + message;
-	}
-
-	/**
 	 * @param pid
 	 *            The pid to remove from index
 	 * @return A short message
@@ -1304,13 +1068,35 @@ class Actions
 	 */
 	String index(String pid)
 	{
-		Node node = archive.readNode(pid);
-		return index(node);
-	}
+		String message = "";
+		String viewAsString = "";
+		// View view = getView(pid);
 
-	private String getURI(Node node)
-	{
-		return serverName + "/" + "resources" + "/" + node.getPID();
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+		Client c = Client.create(cc);
+		try
+		{
+			WebResource index = c
+					.resource("http://localhost:9200/edoweb/titel/" + pid);
+			index.accept(MediaType.APPLICATION_JSON);
+			URL url = new URL("http://localhost/resources/" + pid);
+			URLConnection con = url.openConnection();
+			con.setRequestProperty("Accept", "application/json");
+			con.connect();
+			InputStream in = con.getInputStream();
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(in, writer, "UTF-8");
+			viewAsString = writer.toString();
+			in.close();
+			message = index.put(String.class, viewAsString);
+		}
+		catch (Exception e)
+		{
+			throw new ArchiveException("Error! " + message + e.getMessage(), e);
+		}
+		return "Success! " + message + "\n" + viewAsString;
 	}
 
 	/**
@@ -1442,6 +1228,113 @@ class Actions
 
 	}
 
+	private void createOAISet(String name, String spec, String pid)
+	{
+		String setSpecPred = "http://www.openarchives.org/OAI/2.0/setSpec";
+		String setNamePred = "http://www.openarchives.org/OAI/2.0/setName";
+
+		Link setSpecLink = new Link();
+		setSpecLink.setPredicate(setSpecPred);
+
+		Link setNameLink = new Link();
+		setNameLink.setPredicate(setNamePred);
+
+		String namespace = "oai";
+		{
+			Node oaiset = new Node();
+			oaiset.setNamespace(namespace);
+			oaiset.setPID(pid);
+
+			setSpecLink.setObject(spec, true);
+			oaiset.addRelation(setSpecLink);
+
+			setNameLink.setObject(name, true);
+			oaiset.addRelation(setNameLink);
+			oaiset.addTitle(name);
+
+			archive.createComplexObject(new ComplexObject(oaiset));
+
+		}
+	}
+
+	private String docmap(String type)
+	{
+		if (type.compareTo("report") == 0)
+		{
+			return "Monograph";
+		}
+		if (type.compareTo("webpage") == 0)
+		{
+			return "Webpage";
+		}
+		if (type.compareTo("ejournal") == 0)
+		{
+			return "EJournal";
+		}
+		return "";
+	}
+
+	private String ddcmap(String number)
+	{
+		if (number == null || number.length() != 3)
+			logger.info("Didn't found ddc name for ddc:" + number);
+		String name = "";
+		try
+		{
+			URL url = new URL("http://dewey.info/class/" + number
+					+ "/2009-08/about.en");
+			HttpClient httpClient = new HttpClient();
+
+			HttpMethod method = new GetMethod(url.toString());
+			httpClient.executeMethod(method);
+			InputStream stream = method.getResponseBodyAsStream();
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder docBuilder;
+			factory.setNamespaceAware(true);
+			factory.setExpandEntityReferences(false);
+			docBuilder = factory.newDocumentBuilder();
+
+			Document doc;
+
+			doc = docBuilder.parse(stream);
+			Element root = doc.getDocumentElement();
+			root.normalize();
+			try
+			{
+				name = root.getElementsByTagName("skos:prefLabel").item(0)
+						.getTextContent();
+				logger.info("Found ddc name: " + name);
+			}
+			catch (Exception e)
+			{
+				logger.info("Didn't found ddc name for ddc:" + number);
+			}
+		}
+		catch (MalformedURLException e)
+		{
+			e.printStackTrace();
+		}
+		catch (HttpException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		catch (ParserConfigurationException e)
+		{
+			e.printStackTrace();
+		}
+		catch (SAXException e)
+		{
+			e.printStackTrace();
+		}
+
+		return name;
+	}
+
 	private void waitWorkaround()
 	{
 		/*
@@ -1461,6 +1354,11 @@ class Actions
 		/*
 		 * Workaround END
 		 */
+	}
+
+	private String getURI(Node node)
+	{
+		return serverName + "/" + "resources" + "/" + node.getPID();
 	}
 
 }

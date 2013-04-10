@@ -22,11 +22,11 @@ import java.util.Vector;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-class ObjectList
+public class ObjectList
 {
 	List<String> list = null;
 
-	ObjectList()
+	public ObjectList()
 	{
 		list = new Vector<String>();
 	}
