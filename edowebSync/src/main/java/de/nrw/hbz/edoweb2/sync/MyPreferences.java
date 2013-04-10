@@ -25,9 +25,9 @@ import org.apache.commons.configuration.BaseConfiguration;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class MyPreferences extends BaseConfiguration
+class MyPreferences extends BaseConfiguration
 {
-	public MyPreferences(Class<?> cl)
+	MyPreferences(Class<?> cl)
 	{
 		try
 		{

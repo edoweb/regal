@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
-import de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber;
+import de.nrw.hbz.edoweb2.digitool.pidreporter.PIDReporter;
 import de.nrw.hbz.edoweb2.sync.DigitoolDownloadConfiguration;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBuilder;
@@ -57,7 +57,7 @@ public class Main
 	final static Logger logger = LoggerFactory.getLogger(Main.class);
 
 	IngestInterface ingester = null;
-	OaiPidGrabber harvester = null;
+	PIDReporter harvester = null;
 	DigitoolDownloader downloader = null;
 
 	public Main()
@@ -173,7 +173,7 @@ public class Main
 		String oaiServer = oai;
 		String timestampFile = timestamp;
 
-		harvester = new OaiPidGrabber(oaiServer, timestampFile);
+		harvester = new PIDReporter(oaiServer, timestampFile);
 		downloader = new DigitoolDownloader(server, downloadLocation);
 
 		ingester = new FedoraIngester(user, password, host);

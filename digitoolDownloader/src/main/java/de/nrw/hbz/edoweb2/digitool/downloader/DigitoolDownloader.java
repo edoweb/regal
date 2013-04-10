@@ -88,7 +88,9 @@ public class DigitoolDownloader
 
 	/**
 	 * @param server
+	 *            the digitool server to download from
 	 * @param downloadLocation
+	 *            a local directory to store the downloaded data
 	 */
 	public DigitoolDownloader(String server, String downloadLocation)
 	{
@@ -97,20 +99,27 @@ public class DigitoolDownloader
 		// beanBuilder = new DigitalEntityBeanBuilder();
 	}
 
+	/**
+	 * @param pid
+	 *            the digitool pid
+	 * @return a message for the user
+	 * @throws IOException
+	 *             if something goes wrong
+	 */
 	public String download(String pid) throws IOException
 	{
 		return download(pid, true);
 	}
 
 	/**
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description:
-	 * </p>
-	 * 
-	 * @param string
+	 * @param pid
+	 *            a valid digitool pid
+	 * @param forceDownload
+	 *            if true the data will be downloaded. if false the data will
+	 *            only be downloaded if isn't there yet
+	 * @return a message for the user
+	 * @throws IOException
+	 *             if something goes wrong
 	 */
 	public String download(String pid, boolean forceDownload)
 			throws IOException
@@ -251,6 +260,32 @@ public class DigitoolDownloader
 			}
 		}
 		return dir.getAbsolutePath();
+	}
+
+	/**
+	 * @return true if the downloader has updated an existing dataset
+	 */
+	public boolean hasUpdated()
+	{
+		return updated;
+	}
+
+	/**
+	 * @return true if data has been downloaded
+	 */
+	public boolean hasDownloaded()
+	{
+		return downloaded;
+	}
+
+	private void setDownloaded(boolean downloaded)
+	{
+		this.downloaded = downloaded;
+	}
+
+	private void setUpdated(boolean updated)
+	{
+		this.updated = updated;
 	}
 
 	/**
@@ -572,26 +607,6 @@ public class DigitoolDownloader
 		return null;
 	}
 
-	public boolean hasUpdated()
-	{
-		return updated;
-	}
-
-	public void setUpdated(boolean updated)
-	{
-		this.updated = updated;
-	}
-
-	public boolean hasDownloaded()
-	{
-		return downloaded;
-	}
-
-	public void setDownloaded(boolean downloaded)
-	{
-		this.downloaded = downloaded;
-	}
-
 	private void run(String propFile) throws IOException
 	{
 		Properties properties = new Properties();
@@ -620,6 +635,11 @@ public class DigitoolDownloader
 
 	}
 
+	/**
+	 * @param argv
+	 *            the argument vector must contain exactly one item which points
+	 *            to a valid property file
+	 */
 	public static void main(String[] argv)
 	{
 		if (argv.length != 1)

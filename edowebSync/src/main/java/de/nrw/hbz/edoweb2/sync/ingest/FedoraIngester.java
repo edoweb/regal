@@ -74,6 +74,14 @@ public class FedoraIngester implements IngestInterface
 	String host = null;
 	Client webclient = null;
 
+	/**
+	 * @param usr
+	 *            a valid user
+	 * @param pwd
+	 *            the users password
+	 * @param host
+	 *            the host of the webapi
+	 */
 	public FedoraIngester(String usr, String pwd, String host)
 	{
 		user = usr;
@@ -482,6 +490,7 @@ public class FedoraIngester implements IngestInterface
 			if (fulltextObject != null)
 			{
 				updateData(data, fulltextObject);
+				updateDC(dc, fulltextObject);
 			}
 			else
 			{
@@ -491,9 +500,9 @@ public class FedoraIngester implements IngestInterface
 		else
 		{
 			updateData(data, dtlBean);
+			updateDC(dc, dtlBean);
 		}
 
-		updateDC(dc, dtlBean);
 	}
 
 	private void createResource(String endpoint, DigitalEntity dtlBean)
@@ -598,6 +607,11 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (UniformInterfaceException e)
 		{
+			logger.warn(pid + " " + "Not indexed! "
+					+ e.getResponse().getEntity(String.class));
+		}
+		catch (Exception e)
+		{
 			logger.warn(pid + " " + "Not indexed! " + e.getMessage());
 		}
 	}
@@ -644,7 +658,7 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (Throwable t)
 		{
-			logger.warn(pid + " " + t.getMessage());
+			logger.warn(pid + " " + t.getCause().getMessage());
 		}
 		return null;
 	}

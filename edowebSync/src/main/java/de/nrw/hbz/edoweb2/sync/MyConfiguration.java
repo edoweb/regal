@@ -24,7 +24,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.configuration.BaseConfiguration;
 
-public class MyConfiguration extends BaseConfiguration
+class MyConfiguration extends BaseConfiguration
 {
 	/**
 	 * 
@@ -40,8 +40,7 @@ public class MyConfiguration extends BaseConfiguration
 	 * @author Jan Schnasse, schnasse@hbz-nrw.de
 	 * 
 	 */
-	public MyConfiguration(String[] args, Options options)
-			throws ParseException
+	MyConfiguration(String[] args, Options options) throws ParseException
 	{
 		CommandLineParser parser = new BasicParser();
 		CommandLine commandLine = parser.parse(options, args);

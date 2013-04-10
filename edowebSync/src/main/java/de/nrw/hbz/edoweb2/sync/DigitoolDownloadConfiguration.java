@@ -24,6 +24,10 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 
+/**
+ * @author Jan Schnasse
+ * 
+ */
 public class DigitoolDownloadConfiguration
 {
 	private CompositeConfiguration config = null;

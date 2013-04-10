@@ -25,11 +25,30 @@ import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
  */
 public interface IngestInterface
 {
+	/**
+	 * Ingests a digitool object in the archive
+	 * 
+	 * @param dtlBean the java representation of a digitool object
+	 */
 	public abstract void ingest(DigitalEntity dtlBean);
 
+	/**
+	 * Deletes a object from the archive
+	 * 
+	 * @param pid the pid of the object
+	 */
 	public abstract void delete(String pid);
 
+	/**
+	 * Updates a object in the archive
+	 * @param dtlBean the digitool object
+	 */
 	public abstract void update(DigitalEntity dtlBean);
 
+	/**
+	 * Recreates only the used content models
+	 * 
+	 * @return the model
+	 */
 	public abstract ContentModel createContentModel();
 }

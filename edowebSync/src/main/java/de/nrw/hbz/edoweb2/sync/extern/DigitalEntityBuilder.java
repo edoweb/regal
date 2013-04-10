@@ -41,15 +41,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Class DigitalEntityBeanBuilder
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
- * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
 public class DigitalEntityBuilder
@@ -59,11 +50,18 @@ public class DigitalEntityBuilder
 			.getLogger(DigitalEntityBuilder.class);
 	String baseDir = null;
 
-	public DigitalEntityBuilder()
-	{
-
-	}
-
+	/**
+	 * Builds a java representation of a Digitool object the original object
+	 * must be downloaded first in a local directory using DigitoolDownloader.
+	 * 
+	 * @param baseDir
+	 *            the dir in which the downloaded digitool object exists
+	 * @param pid
+	 *            the pid of the object
+	 * @return a DigitalEntity java representation of the digitool object
+	 * @throws Exception
+	 *             if something goes wrong you probably want to stop.
+	 */
 	public DigitalEntity buildComplexBean(String baseDir, String pid)
 			throws Exception
 	{
@@ -80,12 +78,12 @@ public class DigitalEntityBuilder
 		return buildComplexBean(root);
 	}
 
-	public DigitalEntity buildComplexBean(String baseDir, Element root)
-			throws Exception
-	{
-		this.baseDir = baseDir;
-		return buildComplexBean(root);
-	}
+	// private DigitalEntity buildComplexBean(String baseDir, Element root)
+	// throws Exception
+	// {
+	// this.baseDir = baseDir;
+	// return buildComplexBean(root);
+	// }
 
 	private DigitalEntity buildComplexBean(Element root) throws Exception
 	{
@@ -238,7 +236,7 @@ public class DigitalEntityBuilder
 		return getDocument(digitalEntityFile);
 	}
 
-	public DigitalEntity buildSimpleBean(String pid, String usageType,
+	private DigitalEntity buildSimpleBean(String pid, String usageType,
 			Element root)
 	{
 		DigitalEntity dtlDe = new DigitalEntity(baseDir);

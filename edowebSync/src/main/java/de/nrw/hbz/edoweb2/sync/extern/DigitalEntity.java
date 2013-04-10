@@ -25,15 +25,6 @@ import java.io.IOException;
 import java.util.Vector;
 
 /**
- * Class DigitalEntityBean
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
- * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
@@ -103,18 +94,6 @@ public class DigitalEntity
 
 	}
 
-	/**
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description:
-	 * </p>
-	 * 
-	 * @param dc2
-	 * @return
-	 * @throws Exception
-	 */
 	private String fileToString(File file, String streamId) throws Exception
 	{
 		// String str = "";
@@ -148,18 +127,6 @@ public class DigitalEntity
 
 	}
 
-	/**
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description:
-	 * </p>
-	 * 
-	 * @param dc2
-	 * @return
-	 * @throws Exception
-	 */
 	private File stringToFile(String str, String streamId) throws Exception
 	{
 		if (pid == null)
