@@ -63,9 +63,9 @@ import de.nrw.hbz.edoweb2.sync.mapper.DCBean;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class FedoraIngester implements IngestInterface
+public class EdowebIngester implements IngestInterface
 {
-	final static Logger logger = LoggerFactory.getLogger(FedoraIngester.class);
+	final static Logger logger = LoggerFactory.getLogger(EdowebIngester.class);
 
 	final static String namespace = "edoweb";
 
@@ -82,7 +82,7 @@ public class FedoraIngester implements IngestInterface
 	 * @param host
 	 *            the host of the webapi
 	 */
-	public FedoraIngester(String usr, String pwd, String host)
+	public EdowebIngester(String usr, String pwd, String host)
 	{
 		user = usr;
 		password = pwd;
@@ -313,7 +313,8 @@ public class FedoraIngester implements IngestInterface
 		logger.info(pid + " " + "Found eJournal volume.");
 		String resource = host + ":8080/edoweb2-api/ejournal/" + namespace
 				+ ":" + dtlBean.getParentPid() + "/volume/" + pid;
-		createObject(resource, dtlBean, "application/pdf");
+		createObject(resource, dtlBean, "application/pdf",
+				ObjectType.ejournalVolume);
 		logger.info(pid + " " + "updated.\n");
 	}
 
@@ -323,7 +324,8 @@ public class FedoraIngester implements IngestInterface
 		logger.info(pid + " Found webpage version.");
 		String resource = host + ":8080/edoweb2-api/webpage/" + namespace + ":"
 				+ dtlBean.getParentPid() + "/version/" + pid;
-		createObject(resource, dtlBean, "application/zip");
+		createObject(resource, dtlBean, "application/zip",
+				ObjectType.webpageVersion);
 		logger.info(pid + " " + "updated.\n");
 	}
 
@@ -333,7 +335,7 @@ public class FedoraIngester implements IngestInterface
 		String pid = namespace + ":" + dtlBean.getPid();
 		logger.info(pid + " Found monograph.");
 		String resource = host + ":8080/edoweb2-api/monograph/" + pid;
-		createObject(resource, dtlBean, "application/pdf");
+		createObject(resource, dtlBean, "application/pdf", ObjectType.monograph);
 		logger.info(pid + " " + "updated.\n");
 	}
 
@@ -346,7 +348,7 @@ public class FedoraIngester implements IngestInterface
 			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
 			String ejournalDC = ejournal.toString() + "/dc";
 			createResource(ejournal, dtlBean);
-			updateDC(ejournalDC, dtlBean);
+			updateDC(ejournalDC, dtlBean, ObjectType.ejournal);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
 			logger.info(pid + " " + "Found " + numOfVols + " volumes.");
@@ -369,7 +371,7 @@ public class FedoraIngester implements IngestInterface
 			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
 			createResource(webpage, dtlBean);
 			String webpageDC = webpage + "/dc";
-			updateDC(webpageDC, dtlBean);
+			updateDC(webpageDC, dtlBean, ObjectType.webpage);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
 			logger.info(pid + " " + "Found " + numOfVersions + " versions.");
@@ -391,7 +393,7 @@ public class FedoraIngester implements IngestInterface
 			logger.info(pid + " Found webpage.");
 			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
 			createResource(webpage, dtlBean);
-			updateDC(webpage + "/dc", dtlBean);
+			updateDC(webpage + "/dc", dtlBean, ObjectType.webpage);
 
 			for (DigitalEntity b : dtlBean.getArchiveLinks())
 			{
@@ -399,7 +401,7 @@ public class FedoraIngester implements IngestInterface
 				if (b.getStreamMime().compareTo("application/zip") == 0)
 				{
 					createObject(webpage + "/version/" + versionPid, b,
-							"application/zip");
+							"application/zip", ObjectType.webpageVersion);
 					break;
 				}
 			}
@@ -421,7 +423,7 @@ public class FedoraIngester implements IngestInterface
 			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
 			String ejournalDC = ejournal + "/dc";
 			createResource(ejournal, dtlBean);
-			updateDC(ejournalDC, dtlBean);
+			updateDC(ejournalDC, dtlBean, ObjectType.ejournal);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
 			int count = 1;
@@ -448,7 +450,7 @@ public class FedoraIngester implements IngestInterface
 			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
 			String webpageDC = webpage + "/dc";
 			createResource(webpage, dtlBean);
-			updateDC(webpageDC, dtlBean);
+			updateDC(webpageDC, dtlBean, ObjectType.webpage);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
 			logger.info(pid + " Found " + numOfVersions + " versions.");
@@ -468,7 +470,7 @@ public class FedoraIngester implements IngestInterface
 	}
 
 	private void createObject(String resource, DigitalEntity dtlBean,
-			String expectedMime)
+			String expectedMime, ObjectType type)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
 		String dc = resource + "/dc";
@@ -490,7 +492,7 @@ public class FedoraIngester implements IngestInterface
 			if (fulltextObject != null)
 			{
 				updateData(data, fulltextObject);
-				updateDC(dc, fulltextObject);
+				updateDC(dc, fulltextObject, type);
 			}
 			else
 			{
@@ -500,7 +502,7 @@ public class FedoraIngester implements IngestInterface
 		else
 		{
 			updateData(data, dtlBean);
-			updateDC(dc, dtlBean);
+			updateDC(dc, dtlBean, type);
 		}
 
 	}
@@ -519,7 +521,8 @@ public class FedoraIngester implements IngestInterface
 		}
 	}
 
-	private void updateDC(String endpoint, DigitalEntity dtlBean)
+	private void updateDC(String endpoint, DigitalEntity dtlBean,
+			ObjectType type)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
 		WebResource webpageDC = webclient.resource(endpoint);
@@ -530,7 +533,7 @@ public class FedoraIngester implements IngestInterface
 		{
 			dc.add(marc2dc(dtlBean));
 			dc.addDescription(dtlBean.getLabel());
-			dc.addType(TypeType.contentType + ":" + ObjectType.webpage);
+			dc.addType(TypeType.contentType + ":" + type);
 			webpageDC.post(dc);
 
 		}
