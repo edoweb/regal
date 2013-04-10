@@ -29,15 +29,9 @@ public class HttpArchiveException extends WebApplicationException
 
 	/**
 	 * @param status
-	 *            the status code
-	 * @param httpHeaderName
-	 *            the name of the header
-	 * @param headerValue
-	 *            the value of the header
+	 *            a http status code
 	 * @param message
-	 *            a message
-	 * @param cause
-	 *            the original cause
+	 *            a human readable message
 	 */
 	public HttpArchiveException(int status, String message)
 	{

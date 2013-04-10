@@ -22,26 +22,26 @@ import java.util.Vector;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ObjectList
+class ObjectList
 {
 	List<String> list = null;
 
-	public ObjectList()
+	ObjectList()
 	{
 		list = new Vector<String>();
 	}
 
-	public ObjectList(List<String> v)
+	ObjectList(List<String> v)
 	{
 		list = v;
 	}
 
-	public List<String> getList()
+	List<String> getList()
 	{
 		return list;
 	}
 
-	public void setList(List<String> list)
+	void setList(List<String> list)
 	{
 		this.list = list;
 	}

@@ -21,7 +21,7 @@ import java.util.Vector;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class View
+class View
 {
 	String uri = null;
 
@@ -77,7 +77,7 @@ public class View
 	// Vector<String> qdcUrl = null;
 	// Vector<String> jsonUrl = null;
 
-	public View()
+	View()
 	{
 		title = new Vector<String>();
 		creator = new Vector<String>();
@@ -130,624 +130,624 @@ public class View
 		// jsonUrl = new Vector<String>();
 	}
 
-	// public Vector<String> getQdcUrl()
+	// Vector<String> getQdcUrl()
 	// {
 	// return qdcUrl;
 	// }
 	//
-	// public void setQdcUrl(Vector<String> qdcUrl)
+	// void setQdcUrl(Vector<String> qdcUrl)
 	// {
 	// this.qdcUrl = qdcUrl;
 	// }
 	//
-	// public Vector<String> getMetsUrl()
+	// Vector<String> getMetsUrl()
 	// {
 	// return metsUrl;
 	// }
 	//
-	// public void setMetsUrl(Vector<String> metsUrl)
+	// void setMetsUrl(Vector<String> metsUrl)
 	// {
 	// this.metsUrl = metsUrl;
 	// }
 	//
-	// public Vector<String> getOaioreUrl()
+	// Vector<String> getOaioreUrl()
 	// {
 	// return oaioreUrl;
 	// }
 	//
-	// public void setOaioreUrl(Vector<String> oaioreUrl)
+	// void setOaioreUrl(Vector<String> oaioreUrl)
 	// {
 	// this.oaioreUrl = oaioreUrl;
 	// }
 	//
-	// public Vector<String> getOaidcUrl()
+	// Vector<String> getOaidcUrl()
 	// {
 	// return oaidcUrl;
 	// }
 	//
-	// public void setOaidcUrl(Vector<String> oaidcUrl)
+	// void setOaidcUrl(Vector<String> oaidcUrl)
 	// {
 	// this.oaidcUrl = oaidcUrl;
 	// }
 	//
-	// public Vector<String> getXepicurUrl()
+	// Vector<String> getXepicurUrl()
 	// {
 	// return xepicurUrl;
 	// }
 	//
-	// public void setXepicurUrl(Vector<String> xepicurUrl)
+	// void setXepicurUrl(Vector<String> xepicurUrl)
 	// {
 	// this.xepicurUrl = xepicurUrl;
 	// }
 	//
-	// public Vector<String> getXmetadissplusUrl()
+	// Vector<String> getXmetadissplusUrl()
 	// {
 	// return xmetadissplusUrl;
 	// }
 	//
-	// public void setXmetadissplusUrl(Vector<String> xmetadissplusUrl)
+	// void setXmetadissplusUrl(Vector<String> xmetadissplusUrl)
 	// {
 	// this.xmetadissplusUrl = xmetadissplusUrl;
 	// }
 	//
-	// public Vector<String> getAlephMarcUrl()
+	// Vector<String> getAlephMarcUrl()
 	// {
 	// return alephMarcUrl;
 	// }
 	//
-	// public void setAlephMarcUrl(Vector<String> alephMarcUrl)
+	// void setAlephMarcUrl(Vector<String> alephMarcUrl)
 	// {
 	// this.alephMarcUrl = alephMarcUrl;
 	// }
 	//
-	// public Vector<String> getEditorUrl()
+	// Vector<String> getEditorUrl()
 	// {
 	// return editorUrl;
 	// }
 	//
-	// public void setEditorUrl(Vector<String> editorUrl)
+	// void setEditorUrl(Vector<String> editorUrl)
 	// {
 	// this.editorUrl = editorUrl;
 	// }
 	//
-	// public Vector<String> getOaiPmhUrl()
+	// Vector<String> getOaiPmhUrl()
 	// {
 	// return oaiPmhUrl;
 	// }
 	//
-	// public void setOaiPmhUrl(Vector<String> oaiPmhUrl)
+	// void setOaiPmhUrl(Vector<String> oaiPmhUrl)
 	// {
 	// this.oaiPmhUrl = oaiPmhUrl;
 	// }
 	//
-	// public Vector<String> getVerbundUrl()
+	// Vector<String> getVerbundUrl()
 	// {
 	// return verbundUrl;
 	// }
 
-	public Vector<String> getIsPartOfName()
+	Vector<String> getIsPartOfName()
 	{
 		return isPartOfName;
 	}
 
-	public void setIsPartOfName(Vector<String> isPartOfName)
+	void setIsPartOfName(Vector<String> isPartOfName)
 	{
 		this.isPartOfName = isPartOfName;
 	}
 
-	public Vector<String> getHasPartName()
+	Vector<String> getHasPartName()
 	{
 		return hasPartName;
 	}
 
-	public void setHasPartName(Vector<String> hasPart)
+	void setHasPartName(Vector<String> hasPart)
 	{
 		this.hasPartName = hasPart;
 	}
 
-	public Vector<String> getDescription()
+	Vector<String> getDescription()
 	{
 		return description;
 	}
 
-	public void setDescription(Vector<String> description)
+	void setDescription(Vector<String> description)
 	{
 		this.description = description;
 	}
 
-	public Vector<String> getRights()
+	Vector<String> getRights()
 	{
 		return rights;
 	}
 
-	public void setRights(Vector<String> rights)
+	void setRights(Vector<String> rights)
 	{
 		this.rights = rights;
 	}
 
-	public Vector<String> getDigitoolUrl()
+	Vector<String> getDigitoolUrl()
 	{
 		return digitoolUrl;
 	}
 
-	public void setDigitoolUrl(Vector<String> digitoolUrl)
+	void setDigitoolUrl(Vector<String> digitoolUrl)
 	{
 		this.digitoolUrl = digitoolUrl;
 	}
 
-	public Vector<String> getCacheUrl()
+	Vector<String> getCacheUrl()
 	{
 		return cacheUrl;
 	}
 
-	public void setCacheUrl(Vector<String> cacheUrl)
+	void setCacheUrl(Vector<String> cacheUrl)
 	{
 		this.cacheUrl = cacheUrl;
 	}
 
-	public Vector<String> getFedoraUrl()
+	Vector<String> getFedoraUrl()
 	{
 		return fedoraUrl;
 	}
 
-	public void setFedoraUrl(Vector<String> fedoraUrl)
+	void setFedoraUrl(Vector<String> fedoraUrl)
 	{
 		this.fedoraUrl = fedoraUrl;
 	}
 
-	public Vector<String> getRisearchUrl()
+	Vector<String> getRisearchUrl()
 	{
 		return risearchUrl;
 	}
 
-	public void setRisearchUrl(Vector<String> risearchUrl)
+	void setRisearchUrl(Vector<String> risearchUrl)
 	{
 		this.risearchUrl = risearchUrl;
 	}
 
-	public Vector<String> getHasPart()
+	Vector<String> getHasPart()
 	{
 		return hasPart;
 	}
 
-	public Vector<String> getZipUrl()
+	Vector<String> getZipUrl()
 	{
 		return zipUrl;
 	}
 
-	public void setZipUrl(Vector<String> zipUrl)
+	void setZipUrl(Vector<String> zipUrl)
 	{
 		this.zipUrl = zipUrl;
 	}
 
-	public void setHasPart(Vector<String> hasPart)
+	void setHasPart(Vector<String> hasPart)
 	{
 		this.hasPart = hasPart;
 	}
 
-	public Vector<String> getDataciteUrl()
+	Vector<String> getDataciteUrl()
 	{
 		return dataciteUrl;
 	}
 
-	public void setDataciteUrl(Vector<String> dataciteUrl)
+	void setDataciteUrl(Vector<String> dataciteUrl)
 	{
 		this.dataciteUrl = dataciteUrl;
 	}
 
-	public Vector<String> getBaseUrl()
+	Vector<String> getBaseUrl()
 	{
 		return baseUrl;
 	}
 
-	public void setBaseUrl(Vector<String> baseUrl)
+	void setBaseUrl(Vector<String> baseUrl)
 	{
 		this.baseUrl = baseUrl;
 	}
 
-	public void setVerbundUrl(Vector<String> verbundUrl)
+	void setVerbundUrl(Vector<String> verbundUrl)
 	{
 		this.verbundUrl = verbundUrl;
 	}
 
-	public Vector<String> getDdc()
+	Vector<String> getDdc()
 	{
 		return ddc;
 	}
 
-	public void setDdc(Vector<String> ddc)
+	void setDdc(Vector<String> ddc)
 	{
 		this.ddc = ddc;
 	}
 
-	public Vector<String> getSubject()
+	Vector<String> getSubject()
 	{
 		return subject;
 	}
 
-	public void setSubject(Vector<String> subject)
+	void setSubject(Vector<String> subject)
 	{
 		this.subject = subject;
 	}
 
-	public Vector<String> getCulturegraphUrl()
+	Vector<String> getCulturegraphUrl()
 	{
 		return culturegraphUrl;
 	}
 
-	public void setCulturegraphUrl(Vector<String> culturegraphUrl)
+	void setCulturegraphUrl(Vector<String> culturegraphUrl)
 	{
 		this.culturegraphUrl = culturegraphUrl;
 	}
 
-	public Vector<String> getLobidUrl()
+	Vector<String> getLobidUrl()
 	{
 		return lobidUrl;
 	}
 
-	public void setLobidUrl(Vector<String> lobidUrl)
+	void setLobidUrl(Vector<String> lobidUrl)
 	{
 		this.lobidUrl = lobidUrl;
 	}
 
-	public Vector<String> getLanguage()
+	Vector<String> getLanguage()
 	{
 		return language;
 	}
 
-	public void setLanguage(Vector<String> language)
+	void setLanguage(Vector<String> language)
 	{
 		this.language = language;
 	}
 
-	public Vector<String> getDoi()
+	Vector<String> getDoi()
 	{
 		return doi;
 	}
 
-	public void setDoi(Vector<String> doi)
+	void setDoi(Vector<String> doi)
 	{
 		this.doi = doi;
 	}
 
-	public Vector<String> getUrn()
+	Vector<String> getUrn()
 	{
 		return urn;
 	}
 
-	public void setUrn(Vector<String> urn)
+	void setUrn(Vector<String> urn)
 	{
 		this.urn = urn;
 	}
 
-	public Vector<String> getUrl()
+	Vector<String> getUrl()
 	{
 		return url;
 	}
 
-	public void setUrl(Vector<String> url)
+	void setUrl(Vector<String> url)
 	{
 		this.url = url;
 	}
 
-	public Vector<String> getLocation()
+	Vector<String> getLocation()
 	{
 		return location;
 	}
 
-	public void setLocation(Vector<String> location)
+	void setLocation(Vector<String> location)
 	{
 		this.location = location;
 	}
 
-	public Vector<String> getIsPartOf()
+	Vector<String> getIsPartOf()
 	{
 		return isPartOf;
 	}
 
-	public void setIsPartOf(Vector<String> isPartOf)
+	void setIsPartOf(Vector<String> isPartOf)
 	{
 		this.isPartOf = isPartOf;
 	}
 
-	public Vector<String> getMedium()
+	Vector<String> getMedium()
 	{
 		return medium;
 	}
 
-	public void setMedium(Vector<String> medium)
+	void setMedium(Vector<String> medium)
 	{
 		this.medium = medium;
 	}
 
-	public Vector<String> getAlephid()
+	Vector<String> getAlephid()
 	{
 		return alephid;
 	}
 
-	public void setAlephid(Vector<String> alephid)
+	void setAlephid(Vector<String> alephid)
 	{
 		this.alephid = alephid;
 	}
 
-	public Vector<String> getType()
+	Vector<String> getType()
 	{
 		return type;
 	}
 
-	public void setType(Vector<String> type)
+	void setType(Vector<String> type)
 	{
 		this.type = type;
 	}
 
-	public Vector<String> getPid()
+	Vector<String> getPid()
 	{
 		return pid;
 	}
 
-	public void setPid(Vector<String> pid)
+	void setPid(Vector<String> pid)
 	{
 		this.pid = pid;
 	}
 
-	public Vector<String> getTitle()
+	Vector<String> getTitle()
 	{
 		return title;
 	}
 
-	public void setTitle(Vector<String> title)
+	void setTitle(Vector<String> title)
 	{
 		this.title = title;
 	}
 
-	public Vector<String> getCreator()
+	Vector<String> getCreator()
 	{
 		return creator;
 	}
 
-	// public Vector<String> getHtmlUrl()
+	// Vector<String> getHtmlUrl()
 	// {
 	// return htmlUrl;
 	// }
 	//
-	// public void setHtmlUrl(Vector<String> htmlUrl)
+	// void setHtmlUrl(Vector<String> htmlUrl)
 	// {
 	// this.htmlUrl = htmlUrl;
 	// }
 
-	public void setCreator(Vector<String> creator)
+	void setCreator(Vector<String> creator)
 	{
 		this.creator = creator;
 	}
 
-	public Vector<String> getPublisher()
+	Vector<String> getPublisher()
 	{
 		return publisher;
 	}
 
-	public void setPublisher(Vector<String> publisher)
+	void setPublisher(Vector<String> publisher)
 	{
 		this.publisher = publisher;
 	}
 
-	public Vector<String> getYear()
+	Vector<String> getYear()
 	{
 		return year;
 	}
 
-	public void setYear(Vector<String> year)
+	void setYear(Vector<String> year)
 	{
 		this.year = year;
 	}
 
-	public Vector<String> getPdfUrl()
+	Vector<String> getPdfUrl()
 	{
 		return pdfUrl;
 	}
 
-	public void setPdfUrl(Vector<String> pdfUrl)
+	void setPdfUrl(Vector<String> pdfUrl)
 	{
 		this.pdfUrl = pdfUrl;
 	}
 
-	public Vector<String> getThumbnailUrl()
+	Vector<String> getThumbnailUrl()
 	{
 		return thumbnailUrl;
 	}
 
-	public void setThumbnailUrl(Vector<String> thumbnailUrl)
+	void setThumbnailUrl(Vector<String> thumbnailUrl)
 	{
 		this.thumbnailUrl = thumbnailUrl;
 	}
 
-	public boolean addAlephId(String e)
+	boolean addAlephId(String e)
 	{
 		return alephid.add(e);
 	}
 
-	public boolean addCreator(String e)
+	boolean addCreator(String e)
 	{
 		return creator.add(e);
 	}
 
-	public boolean addTitle(String e)
+	boolean addTitle(String e)
 	{
 		return title.add(e);
 	}
 
-	public boolean addSubject(String e)
+	boolean addSubject(String e)
 	{
 		return subject.add(e);
 	}
 
-	public boolean addYear(String e)
+	boolean addYear(String e)
 	{
 		return year.add(e);
 	}
 
-	public boolean addType(String e)
+	boolean addType(String e)
 	{
 		return type.add(e);
 	}
 
-	public boolean addDDC(String e)
+	boolean addDDC(String e)
 	{
 		return ddc.add(e);
 	}
 
-	public boolean addLanguage(String e)
+	boolean addLanguage(String e)
 	{
 		return language.add(e);
 	}
 
-	public boolean addLocation(String e)
+	boolean addLocation(String e)
 	{
 		return location.add(e);
 	}
 
-	public boolean addIsPartOf(String e, String name)
+	boolean addIsPartOf(String e, String name)
 	{
 		isPartOfName.add(name);
 		return isPartOf.add(e);
 	}
 
-	public boolean addMedium(String e)
+	boolean addMedium(String e)
 	{
 		return medium.add(e);
 	}
 
-	public boolean addPid(String e)
+	boolean addPid(String e)
 	{
 		return pid.add(e);
 	}
 
-	public boolean addDoi(String e)
+	boolean addDoi(String e)
 	{
 		return doi.add(e);
 	}
 
-	public boolean addUrn(String e)
+	boolean addUrn(String e)
 	{
 		return urn.add(e);
 	}
 
-	public boolean addUrl(String e)
+	boolean addUrl(String e)
 	{
 		return url.add(e);
 	}
 
-	public boolean addPdfUrl(String e)
+	boolean addPdfUrl(String e)
 	{
 		return pdfUrl.add(e);
 	}
 
-	public boolean addThumbnailUrl(String e)
+	boolean addThumbnailUrl(String e)
 	{
 		return thumbnailUrl.add(e);
 	}
 
-	public boolean addLobidUrl(String e)
+	boolean addLobidUrl(String e)
 	{
 		return lobidUrl.add(e);
 	}
 
-	public boolean addCulturegraphUrl(String e)
+	boolean addCulturegraphUrl(String e)
 	{
 		return culturegraphUrl.add(e);
 	}
 
-	public boolean addVerbundUrl(String e)
+	boolean addVerbundUrl(String e)
 	{
 		return verbundUrl.add(e);
 	}
 
-	public boolean addDdc(String e)
+	boolean addDdc(String e)
 	{
 		return ddc.add(e);
 	}
 
-	public boolean addDataciteUrl(String e)
+	boolean addDataciteUrl(String e)
 	{
 		return dataciteUrl.add(e);
 	}
 
-	public boolean addBaseUrl(String e)
+	boolean addBaseUrl(String e)
 	{
 		return baseUrl.add(e);
 	}
 
-	public boolean addHasPart(String e, String name)
+	boolean addHasPart(String e, String name)
 	{
 		hasPartName.add(name);
 		return hasPart.add(e);
 	}
 
-	public boolean addZipUrl(String e)
+	boolean addZipUrl(String e)
 	{
 		return zipUrl.add(e);
 	}
 
-	public boolean addFedoraUrl(String e)
+	boolean addFedoraUrl(String e)
 	{
 		return fedoraUrl.add(e);
 	}
 
-	public boolean addCacheUrl(String e)
+	boolean addCacheUrl(String e)
 	{
 		return cacheUrl.add(e);
 	}
 
-	public boolean addRisearchUrl(String e)
+	boolean addRisearchUrl(String e)
 	{
 		return risearchUrl.add(e);
 	}
 
-	public boolean addDigitoolUrl(String e)
+	boolean addDigitoolUrl(String e)
 	{
 		return digitoolUrl.add(e);
 	}
 
-	public boolean addDescription(String e)
+	boolean addDescription(String e)
 	{
 		return description.add(e);
 	}
 
-	public boolean addRights(String e)
+	boolean addRights(String e)
 	{
 		return rights.add(e);
 	}
 
-	// public boolean addQdcUrl(String e)
+	// boolean addQdcUrl(String e)
 	// {
 	// return qdcUrl.add(e);
 	// }
 	//
-	// public boolean addOaiOreUrl(String e)
+	// boolean addOaiOreUrl(String e)
 	// {
 	// return oaioreUrl.add(e);
 	// }
 	//
-	// public boolean addHtmlUrl(String e)
+	// boolean addHtmlUrl(String e)
 	// {
 	// return htmlUrl.add(e);
 	// }
 	//
-	// public boolean addJsonUrl(String e)
+	// boolean addJsonUrl(String e)
 	// {
 	// return jsonUrl.add(e);
 	// }
 	//
-	// public Vector<String> getJsonUrl()
+	// Vector<String> getJsonUrl()
 	// {
 	// return jsonUrl;
 	// }
 	//
-	// public void setJsonUrl(Vector<String> jsonUrl)
+	// void setJsonUrl(Vector<String> jsonUrl)
 	// {
 	// this.jsonUrl = jsonUrl;
 	// }
 
-	public String getFirstAlephId()
+	String getFirstAlephId()
 	{
 		if (alephid.isEmpty())
 			return "";
@@ -757,7 +757,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstPdfUrl()
+	String getFirstPdfUrl()
 	{
 		if (pdfUrl.isEmpty())
 			return "";
@@ -767,7 +767,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstThumbnailUrl()
+	String getFirstThumbnailUrl()
 	{
 		if (thumbnailUrl.isEmpty())
 			return "";
@@ -777,7 +777,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstLobidUrl()
+	String getFirstLobidUrl()
 	{
 		if (lobidUrl.isEmpty())
 			return "";
@@ -787,7 +787,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstPid()
+	String getFirstPid()
 	{
 		if (pid.isEmpty())
 			return "";
@@ -797,7 +797,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstVerbundUrl()
+	String getFirstVerbundUrl()
 	{
 		if (verbundUrl.isEmpty())
 			return "";
@@ -807,47 +807,47 @@ public class View
 		return str;
 	}
 
-	public Vector<String> getOcrUrl()
+	Vector<String> getOcrUrl()
 	{
 		return ocrUrl;
 	}
 
-	public void setOcrUrl(Vector<String> ocrUrl)
+	void setOcrUrl(Vector<String> ocrUrl)
 	{
 		this.ocrUrl = ocrUrl;
 	}
 
-	public String getUri()
+	String getUri()
 	{
 		return uri;
 	}
 
-	public void setUri(String uri)
+	void setUri(String uri)
 	{
 		this.uri = uri;
 	}
 
-	public Vector<String> getMessage()
+	Vector<String> getMessage()
 	{
 		return message;
 	}
 
-	public void setMessage(Vector<String> message)
+	void setMessage(Vector<String> message)
 	{
 		this.message = message;
 	}
 
-	public boolean addMessage(String e)
+	boolean addMessage(String e)
 	{
 		return message.add(e);
 	}
 
-	public Vector<String> getVerbundUrl()
+	Vector<String> getVerbundUrl()
 	{
 		return verbundUrl;
 	}
 
-	public String getFirstDoi()
+	String getFirstDoi()
 	{
 		if (doi.isEmpty())
 			return "";
@@ -857,7 +857,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstZipUrl()
+	String getFirstZipUrl()
 	{
 		if (zipUrl.isEmpty())
 			return "";
@@ -867,7 +867,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstFedoraUrl()
+	String getFirstFedoraUrl()
 	{
 		if (fedoraUrl.isEmpty())
 			return "";
@@ -877,7 +877,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstCacheUrl()
+	String getFirstCacheUrl()
 	{
 		if (cacheUrl.isEmpty())
 			return "";
@@ -887,7 +887,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstDigitoolUrl()
+	String getFirstDigitoolUrl()
 	{
 		if (digitoolUrl.isEmpty())
 			return "";
@@ -897,7 +897,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstRisearchUrl()
+	String getFirstRisearchUrl()
 	{
 		if (risearchUrl.isEmpty())
 			return "";
@@ -907,7 +907,7 @@ public class View
 		return str;
 	}
 
-	public String getFirstDescription()
+	String getFirstDescription()
 	{
 		if (description.isEmpty())
 			return "";
@@ -916,7 +916,7 @@ public class View
 			str = "";
 		return str;
 	}
-	// public String getFirstQdcUrl()
+	// String getFirstQdcUrl()
 	// {
 	// String str = qdcUrl.firstElement();
 	// if (str == null)
@@ -924,7 +924,7 @@ public class View
 	// return str;
 	// }
 	//
-	// public String getFirstOaiOreUrl()
+	// String getFirstOaiOreUrl()
 	// {
 	// String str = oaioreUrl.firstElement();
 	// if (str == null)
@@ -932,7 +932,7 @@ public class View
 	// return str;
 	// }
 	//
-	// public String getFirstHtmlUrl()
+	// String getFirstHtmlUrl()
 	// {
 	// String str = htmlUrl.firstElement();
 	// if (str == null)
@@ -940,7 +940,7 @@ public class View
 	// return str;
 	// }
 	//
-	// public String getFirstJsonUrl()
+	// String getFirstJsonUrl()
 	// {
 	// String str = jsonUrl.firstElement();
 	// if (str == null)

@@ -24,6 +24,13 @@ import de.nrw.hbz.edoweb2.datatypes.ContentModel;
  */
 public class ContentModelFactory
 {
+	/**
+	 * @param namespace
+	 *            namespace in which the content model object will be created
+	 * @param type
+	 *            the type of object
+	 * @return a ContentModel object
+	 */
 	public static ContentModel createMonographCM(String namespace,
 			ObjectType type)
 	{
@@ -34,8 +41,8 @@ public class ContentModelFactory
 		cm.setServiceDeploymentPID(namespace + ":" + type.toString()
 				+ "ServiceDeployment");
 
-		cm.addMethod("oai_dc", "http://localhost/edowebAdmin/oaidc/(pid)");
-		cm.addMethod("lobid", "http://localhost/objects/(pid)/metadata");
+		cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
+		cm.addMethod("lobid", "http://localhost/resources/(pid)/metadata");
 
 		return cm;
 	}

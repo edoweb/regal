@@ -34,18 +34,18 @@ import org.marc4j.marc.Subfield;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CacheSurvey
+class CacheSurvey
 {
 	final static Logger logger = LoggerFactory.getLogger(CacheSurvey.class);
 	String cacheDir = "/opt/edoweb/edobase/";
 	String uriBase = "http://orthos.hbz-nrw.de/objects";
 
-	public CacheSurvey()
+	CacheSurvey()
 	{
 
 	}
 
-	public List<View> survey()
+	List<View> survey()
 	{
 		List<View> rows = new Vector<View>();
 		File cacheDirFile = new File(cacheDir);

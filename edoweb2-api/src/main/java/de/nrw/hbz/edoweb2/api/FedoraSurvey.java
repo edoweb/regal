@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public class FedoraSurvey
+class FedoraSurvey
 {
 	final static Logger logger = LoggerFactory.getLogger(FedoraSurvey.class);
 	String cacheDir = "/opt/edoweb/edobase/";
@@ -35,12 +35,12 @@ public class FedoraSurvey
 
 	Actions actions = null;
 
-	public FedoraSurvey() throws IOException
+	FedoraSurvey() throws IOException
 	{
 		actions = new Actions();
 	}
 
-	public List<View> survey()
+	List<View> survey()
 	{
 		System.out.println("Hole alle pids");
 		List<String> pids = actions.getAll();

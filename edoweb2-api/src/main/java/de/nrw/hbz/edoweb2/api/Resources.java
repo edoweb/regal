@@ -229,7 +229,7 @@ public class Resources
 	 * @return a list of pids
 	 */
 	@GET
-	@Path("/{pid}/type/{type}")
+	@Path("/type/{type}")
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllOfType(@PathParam("type") String type)
 	{

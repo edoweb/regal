@@ -117,6 +117,7 @@ public class Utils
 		}
 		catch (ArchiveException e)
 		{
+
 			throw new HttpArchiveException(
 					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
 					e.getMessage());

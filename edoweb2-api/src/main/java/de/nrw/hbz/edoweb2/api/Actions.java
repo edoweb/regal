@@ -84,7 +84,7 @@ import de.nrw.hbz.edoweb2.fedora.FedoraVocabulary;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class Actions
+class Actions
 {
 	final static Logger logger = LoggerFactory.getLogger(Actions.class);
 	ArchiveInterface archive = null;
@@ -100,7 +100,7 @@ public class Actions
 	 * @throws IOException
 	 *             if properties can not be loaded.
 	 */
-	public Actions() throws IOException
+	Actions() throws IOException
 	{
 		Properties properties = new Properties();
 
@@ -130,13 +130,20 @@ public class Actions
 	 *            workaround.
 	 * @return A short message.
 	 */
-	public String deleteAll(List<String> pids, boolean wait)
+	String deleteAll(List<String> pids, boolean wait)
 	{
 		logger.info("Delete All");
 		StringBuffer msg = new StringBuffer();
 		for (String pid : pids)
 		{
-			msg.append(delete(pid, wait) + "\n");
+			try
+			{
+				msg.append(delete(pid, wait) + "\n");
+			}
+			catch (Exception e)
+			{
+				logger.warn(pid + " " + e.getMessage());
+			}
 		}
 
 		return msg.toString();
@@ -152,7 +159,7 @@ public class Actions
 	 *            workaround.
 	 * @return a short message
 	 */
-	public String create(ComplexObject object, boolean wait)
+	String create(ComplexObject object, boolean wait)
 	{
 		archive.createComplexObject(object);
 		if (wait)
@@ -170,7 +177,7 @@ public class Actions
 	 *            workaround.
 	 * @return A short Message
 	 */
-	public String delete(String pid, boolean wait)
+	String delete(String pid, boolean wait)
 	{
 
 		String msg = "";
@@ -190,7 +197,7 @@ public class Actions
 		return pid + " successfully deleted! " + msg;
 	}
 
-	public String deleteMetadata(String pid)
+	String deleteMetadata(String pid)
 	{
 
 		archive.deleteDatastream(pid, "metadata");
@@ -198,7 +205,7 @@ public class Actions
 		return pid + ": metadata - datastream successfully deleted! ";
 	}
 
-	public String deleteData(String pid)
+	String deleteData(String pid)
 	{
 		archive.deleteDatastream(pid, "data");
 		return pid + ": data - datastream successfully deleted! ";
@@ -211,7 +218,7 @@ public class Actions
 	 *            The objectTyp
 	 * @return A list of pids with type {@type}
 	 */
-	public Vector<String> findByType(String type)
+	Vector<String> findByType(String type)
 	{
 		Vector<String> pids = new Vector<String>();
 		String query = "* <http://purl.org/dc/elements/1.1/type> \"" + type
@@ -279,7 +286,7 @@ public class Actions
 	 * @throws URISyntaxException
 	 *             if the data url is not wellformed
 	 */
-	public Response readData(String pid) throws URISyntaxException
+	Response readData(String pid) throws URISyntaxException
 	{
 		Node node = null;
 
@@ -301,7 +308,7 @@ public class Actions
 	 *            The pid to read the dublin core stream from.
 	 * @return A DCBeanAnnotated java object.
 	 */
-	public DCBeanAnnotated readDC(String pid)
+	DCBeanAnnotated readDC(String pid)
 	{
 
 		logger.info("Read DC");
@@ -322,7 +329,7 @@ public class Actions
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 */
-	public String readMetadata(String pid) throws URISyntaxException,
+	String readMetadata(String pid) throws URISyntaxException,
 			MalformedURLException, IOException
 	{
 		String result = "";
@@ -359,7 +366,7 @@ public class Actions
 	 * @throws IOException
 	 *             if data can not be written to a tmp file
 	 */
-	public String updateData(String pid, byte[] content, String mimeType)
+	String updateData(String pid, byte[] content, String mimeType)
 			throws IOException
 	{
 
@@ -394,7 +401,7 @@ public class Actions
 	 * @throws IOException
 	 *             if data can not be written to a tmp file
 	 */
-	public String updateData(String pid, InputStream content, String mimeType)
+	String updateData(String pid, InputStream content, String mimeType)
 			throws IOException
 	{
 
@@ -464,7 +471,7 @@ public class Actions
 	 *            A dublin core object
 	 * @return a short message
 	 */
-	public String updateDC(String pid, DCBeanAnnotated content)
+	String updateDC(String pid, DCBeanAnnotated content)
 	{
 		logger.info("Update DC");
 
@@ -499,7 +506,7 @@ public class Actions
 	 * @throws IOException
 	 *             if the metadata can not be cached
 	 */
-	public String updateMetadata(String pid, String content) throws IOException
+	String updateMetadata(String pid, String content) throws IOException
 	{
 
 		if (content == null || content.isEmpty())
@@ -527,7 +534,7 @@ public class Actions
 	 *            A sparql query
 	 * @return a short message
 	 */
-	public String findSubject(String rdfQuery)
+	String findSubject(String rdfQuery)
 	{
 		String volumePid = null;
 		InputStream stream = archive.findTriples(rdfQuery,
@@ -596,7 +603,7 @@ public class Actions
 	 * @return A list of objects that are referenced by pid/predicate
 	 *         combination.
 	 */
-	public List<String> findObject(String pid, String pred)
+	List<String> findObject(String pid, String pred)
 	{
 		String query = "<info:fedora/" + pid + "> <" + pred + "> *";
 		logger.info(query);
@@ -661,7 +668,7 @@ public class Actions
 	 *            A pid
 	 * @return true if the pid exists and fals if not
 	 */
-	public boolean nodeExists(String pid)
+	boolean nodeExists(String pid)
 	{
 		return archive.nodeExists(pid);
 	}
@@ -671,7 +678,7 @@ public class Actions
 	 *            A pid
 	 * @return the pid prefixed with a certain namespace.
 	 */
-	public String addUriPrefix(String pid)
+	String addUriPrefix(String pid)
 	{
 		return archive.addUriPrefix(pid);
 	}
@@ -681,7 +688,7 @@ public class Actions
 	 *            the namespace of the pid
 	 * @return a new generated empty pid
 	 */
-	public String getPid(String namespace)
+	String getPid(String namespace)
 	{
 		return archive.getPids(namespace, 1)[0];
 	}
@@ -693,7 +700,7 @@ public class Actions
 	 *            list of links
 	 * @return a short message
 	 */
-	public String addLinks(String pid, List<Link> links)
+	String addLinks(String pid, List<Link> links)
 	{
 
 		Node node = archive.readNode(pid);
@@ -718,7 +725,7 @@ public class Actions
 	 *            a link
 	 * @return a short message
 	 */
-	public String addLink(String pid, Link link)
+	String addLink(String pid, Link link)
 	{
 		Vector<Link> v = new Vector<Link>();
 		v.add(link);
@@ -734,7 +741,7 @@ public class Actions
 	 *            link to be updated
 	 * @return a short message
 	 */
-	public String updateLink(String pid, Link link)
+	String updateLink(String pid, Link link)
 	{
 
 		Node node = archive.readNode(pid);
@@ -762,7 +769,7 @@ public class Actions
 	 *            the pid of a node that must be published on the oai interface
 	 * @return A short message.
 	 */
-	public String makeOAISet(String pid)
+	String makeOAISet(String pid)
 	{
 		Node node = archive.readNode(pid);
 		if (node.getSubject() != null)
@@ -967,7 +974,7 @@ public class Actions
 	 * 
 	 * @return a short message
 	 */
-	public String formatAll()
+	String formatAll()
 	{
 		StringBuffer result = new StringBuffer();
 
@@ -983,7 +990,7 @@ public class Actions
 	 *            The pid of an existing object
 	 * @return a view object
 	 */
-	public View getView(String pid)
+	View getView(String pid)
 	{
 
 		Node node = archive.readNode(pid);
@@ -1031,7 +1038,7 @@ public class Actions
 	 *            the type of the object.
 	 * @return the typed view of the object
 	 */
-	public View getView(String pid, ObjectType type)
+	View getView(String pid, ObjectType type)
 	{
 
 		// String host = "http://" + urlInfo.getBaseUri().getHost() + "/";
@@ -1052,7 +1059,7 @@ public class Actions
 	 *            The type
 	 * @return the view of the object of type type.
 	 */
-	public View getView(Node node, ObjectType type)
+	View getView(Node node, ObjectType type)
 	{
 		View view = new View();
 		String pid = node.getPID();
@@ -1087,16 +1094,17 @@ public class Actions
 		}
 
 		String mime = node.getMimeType();
-		view.addMedium(mime);
-		if (mime != null && !mime.isEmpty()
-				&& mime.compareTo("application/pdf") == 0)
+
+		if (mime != null && !mime.isEmpty())
 		{
-			view.addPdfUrl(uri + "/data");
-		}
-		if (mime != null && !mime.isEmpty()
-				&& mime.compareTo("application/zip") == 0)
-		{
-			view.addZipUrl(uri + "/data");
+			if (mime.compareTo("application/pdf") == 0)
+			{
+				view.addPdfUrl(uri + "/data");
+			}
+			if (mime.compareTo("application/zip") == 0)
+			{
+				view.addZipUrl(uri + "/data");
+			}
 		}
 		for (String date : node.getDate())
 		{
@@ -1195,7 +1203,7 @@ public class Actions
 	 *            The type of the node
 	 * @return a short message
 	 */
-	public String index(Node node)
+	String index(Node node)
 	{
 		String message = "";
 
@@ -1267,7 +1275,7 @@ public class Actions
 	 *            The pid to remove from index
 	 * @return A short message
 	 */
-	public String outdex(String pid)
+	String outdex(String pid)
 	{
 
 		ClientConfig cc = new DefaultClientConfig();
@@ -1294,7 +1302,7 @@ public class Actions
 	 *            The pid that must be indexed
 	 * @return a short message.
 	 */
-	public String index(String pid)
+	String index(String pid)
 	{
 		Node node = archive.readNode(pid);
 		return index(node);
@@ -1308,7 +1316,7 @@ public class Actions
 	/**
 	 * @return a list of all objects in namespace edoweb
 	 */
-	public List<String> getAll()
+	List<String> getAll()
 	{
 		return archive.findNodes("edoweb:*");
 	}
@@ -1318,7 +1326,7 @@ public class Actions
 	 *            The pid for which to load lobid rdf
 	 * @return a short message
 	 */
-	public String lobidify(String pid)
+	String lobidify(String pid)
 	{
 		Node node;
 
@@ -1382,7 +1390,7 @@ public class Actions
 	 *            The pid of an object
 	 * @return The metadata a oaidc-xml
 	 */
-	public String oaidc(String pid)
+	String oaidc(String pid)
 	{
 
 		File old = new File("oaidc.xml");

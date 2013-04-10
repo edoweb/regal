@@ -38,10 +38,10 @@ import org.w3c.dom.Text;
  * @author jan
  * 
  */
-public class HtmlAdapter
+class HtmlAdapter
 {
 
-	public static String getHtml(View view)
+	static String getHtml(View view)
 	{
 
 		String edowebStyle = "http://orthos.hbz-nrw.de/style.css";
@@ -487,7 +487,7 @@ public class HtmlAdapter
 		}
 
 	}
-	// public static String getDescription(String str)
+	// static String getDescription(String str)
 	// {
 	// String pid = str.substring(str.lastIndexOf('/') + 1);
 	//

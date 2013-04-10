@@ -54,14 +54,6 @@ public class Monograph
 
 	}
 
-	@DELETE
-	@Produces({ "application/json", "application/xml" })
-	public String deleteAll()
-	{
-		return resources.deleteResource(ObjectType.monograph.toString());
-
-	}
-
 	@PUT
 	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml" })
@@ -71,14 +63,6 @@ public class Monograph
 		input.type = ObjectType.monograph.toString();
 		return resources.createResource(pid, input);
 
-	}
-
-	@DELETE
-	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public String deleteMonograph(@PathParam("pid") String pid)
-	{
-		return resources.deleteResource(pid);
 	}
 
 	@Deprecated
@@ -102,16 +86,6 @@ public class Monograph
 		return resources.readData(pid);
 	}
 
-	@POST
-	@Path("/{pid}/data")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes("multipart/mixed")
-	public String updateMonographData(@PathParam("pid") String pid,
-			MultiPart multiPart)
-	{
-		return resources.updateResourceData(pid, multiPart);
-	}
-
 	@GET
 	@Path("/{pid}/metadata")
 	@Produces({ "text/plain" })
@@ -127,14 +101,6 @@ public class Monograph
 		return resources.getAllOfType(ObjectType.monograph.toString());
 
 	}
-
-	// @GET
-	// @Path("/{pid}")
-	// @Produces({ "application/json", "application/xml" })
-	// public StatusBean readMonograph(@PathParam("pid") String pid)
-	// {
-	// return actions.read(pid);
-	// }
 
 	@GET
 	@Path("/{pid}")
@@ -163,6 +129,16 @@ public class Monograph
 	}
 
 	@POST
+	@Path("/{pid}/data")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes("multipart/mixed")
+	public String updateMonographData(@PathParam("pid") String pid,
+			MultiPart multiPart)
+	{
+		return resources.updateResourceData(pid, multiPart);
+	}
+
+	@POST
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
 	@Produces({ "text/plain" })
@@ -170,6 +146,22 @@ public class Monograph
 			String content)
 	{
 		return resources.updateResourceMetadata(pid, content);
+	}
+
+	@DELETE
+	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml" })
+	public String deleteMonograph(@PathParam("pid") String pid)
+	{
+		return resources.deleteResource(pid);
+	}
+
+	@DELETE
+	@Produces({ "application/json", "application/xml" })
+	public String deleteAll()
+	{
+		return resources.deleteResource(ObjectType.monograph.toString());
+
 	}
 
 	// be it hot or be it not

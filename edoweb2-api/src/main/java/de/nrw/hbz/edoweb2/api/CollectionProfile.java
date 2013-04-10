@@ -25,28 +25,28 @@ import java.util.Vector;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class CollectionProfile
+class CollectionProfile
 {
-	public String message = "";
-	public List<View> all;
-	public List<String> restricted = new Vector<String>();
-	public List<String> unrestricted = new Vector<String>();
-	public List<String> noRight = new Vector<String>();
-	public List<String> noDDC = new Vector<String>();
-	public List<String> noUrn = new Vector<String>();
-	public List<String> noYear = new Vector<String>();
-	public List<String> noTitle = new Vector<String>();
-	public List<String> noCreator = new Vector<String>();
-	public List<String> noType = new Vector<String>();
-	public List<TypeObjectDictionary> types = new Vector<TypeObjectDictionary>();
+	String message = "";
+	List<View> all;
+	List<String> restricted = new Vector<String>();
+	List<String> unrestricted = new Vector<String>();
+	List<String> noRight = new Vector<String>();
+	List<String> noDDC = new Vector<String>();
+	List<String> noUrn = new Vector<String>();
+	List<String> noYear = new Vector<String>();
+	List<String> noTitle = new Vector<String>();
+	List<String> noCreator = new Vector<String>();
+	List<String> noType = new Vector<String>();
+	List<TypeObjectDictionary> types = new Vector<TypeObjectDictionary>();
 	private HashMap<String, List<String>> map = new HashMap<String, List<String>>();
 
-	public CollectionProfile()
+	CollectionProfile()
 	{
 
 	}
 
-	public CollectionProfile(List<View> all)
+	CollectionProfile(List<View> all)
 	{
 		this.all = all;
 
