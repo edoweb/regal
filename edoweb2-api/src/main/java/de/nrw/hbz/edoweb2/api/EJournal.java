@@ -181,9 +181,9 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
 	public String updateVolumeData(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid, MultiPart multiPart)
+			@PathParam("volumePid") String volumePid, MultiPart multiPart)
 	{
-		return resources.updateResourceData(versionPid, multiPart);
+		return resources.updateResourceData(volumePid, multiPart);
 	}
 
 	@GET
