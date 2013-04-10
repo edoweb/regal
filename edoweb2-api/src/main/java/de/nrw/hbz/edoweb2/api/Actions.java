@@ -1166,9 +1166,22 @@ public class Actions
 					"http://purl.org/dc/elements/1.1/description");
 
 			if (desc == null || desc.isEmpty())
+			{
 				view.addHasPart(relUrl, relPid);
-			else
+			}
+			else if (desc.size() == 1)
+			{
 				view.addHasPart(relUrl, desc.get(0));
+			}
+			else
+			{
+				StringBuffer buf = new StringBuffer();
+				for (String d : desc)
+				{
+					buf.append(d + " ");
+				}
+				view.addHasPart(relUrl, buf.toString());
+			}
 
 		}
 
