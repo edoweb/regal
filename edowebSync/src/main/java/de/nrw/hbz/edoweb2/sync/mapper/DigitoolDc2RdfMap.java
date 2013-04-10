@@ -32,6 +32,7 @@ import java.util.Hashtable;
  * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 20.06.2011
  * 
  */
+@SuppressWarnings("javadoc")
 public class DigitoolDc2RdfMap
 {
 	// Dublin Core XML

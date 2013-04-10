@@ -35,6 +35,7 @@ import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
  * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 21.06.2011
  * 
  */
+@SuppressWarnings("javadoc")
 public class DCBean extends de.nrw.hbz.edoweb2.datatypes.DCBean
 {
 	DigitalEntity dtlBean = null;

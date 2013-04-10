@@ -32,6 +32,7 @@ import java.util.Hashtable;
  * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 12.07.2011
  * 
  */
+@SuppressWarnings("javadoc")
 public class DigitoolJhove2RdfMap
 {
 
