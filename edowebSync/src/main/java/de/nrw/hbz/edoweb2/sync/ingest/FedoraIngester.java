@@ -18,7 +18,6 @@ package de.nrw.hbz.edoweb2.sync.ingest;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Vector;
 
@@ -80,7 +79,6 @@ public class FedoraIngester implements IngestInterface
 		user = usr;
 		password = pwd;
 		this.host = host;
-
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getClasses().add(MultiPartWriter.class);
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
@@ -88,26 +86,6 @@ public class FedoraIngester implements IngestInterface
 		cc.getProperties().put(
 				DefaultApacheHttpClientConfig.PROPERTY_CHUNKED_ENCODING_SIZE,
 				1024);
-
-		/*
-		 * ClientConfig cc = new DefaultClientConfig();
-		 * cc.getClasses().add(MultiPartWriter.class);
-		 * cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		 * cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
-		 * true); // Thanks to Tomasz Krzyżak //
-		 * http://stackoverflow.com/questions
-		 * /11584791/jersey-client-upload-progress URLConnectionClientHandler
-		 * clientHandler = new URLConnectionClientHandler( new
-		 * HttpURLConnectionFactory() {
-		 * 
-		 * @Override public HttpURLConnection getHttpURLConnection(URL url)
-		 * throws IOException { HttpURLConnection connection =
-		 * (HttpURLConnection) url .openConnection();
-		 * connection.setChunkedStreamingMode(1024); return connection; } });
-		 * Client c = new Client(clientHandler, cc); c.addFilter(new
-		 * HTTPBasicAuthFilter(user, password));
-		 */
-
 		webclient = Client.create(cc);
 		webclient.addFilter(new HTTPBasicAuthFilter(user, password));
 	}
@@ -151,7 +129,7 @@ public class FedoraIngester implements IngestInterface
 				else
 				{
 					logger.info(pid + ": start ingesting eJournal volume");
-					ingestEJournalPart(dtlBean);
+					updateEJournalPart(dtlBean);
 					logger.info(pid + ": end ingesting eJournal volume");
 				}
 			}
@@ -166,7 +144,7 @@ public class FedoraIngester implements IngestInterface
 			{
 
 				logger.info(pid + ": start updating monograph (wpd02)");
-				updateMonographsNewStyle(dtlBean);
+				updateMonographs(dtlBean);
 				logger.info(pid + ": end updating monograph (wpd02)");
 			}
 			else if (partitionC.compareTo("WSC01") == 0)
@@ -181,7 +159,7 @@ public class FedoraIngester implements IngestInterface
 				{
 					logger.info(pid
 							+ ": start ingesting webpage version (wsc01)");
-					ingestWebpagePart(dtlBean);
+					updateWebpagePart(dtlBean);
 					logger.info(pid + ": end ingesting webpage version (wsc01)");
 				}
 			}
@@ -259,7 +237,7 @@ public class FedoraIngester implements IngestInterface
 			{
 
 				logger.info(pid + ": start updating monograph (wpd02)");
-				updateMonographsNewStyle(dtlBean);
+				updateMonographs(dtlBean);
 				logger.info(pid + ": end updating monograph (wpd02)");
 			}
 			else if (partitionC.compareTo("WSC01") == 0)
@@ -303,128 +281,149 @@ public class FedoraIngester implements IngestInterface
 
 	}
 
-	private void ingestEJournalPart(DigitalEntity dtlBean)
+	@Override
+	public void delete(String p)
 	{
-		updateEJournalPart(dtlBean);
-	}
+		String pid = namespace + ":" + p;
 
-	private void ingestWebpagePart(DigitalEntity dtlBean)
-	{
-		updateWebpagePart(dtlBean);
+		WebResource delete = webclient.resource(host
+				+ ":8080/edoweb2-api/utils/delete/" + pid);
+		try
+		{
+			delete.delete();
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(pid + " Can't delete!");
+		}
+
 	}
 
 	private void updateEJournalPart(DigitalEntity dtlBean)
 	{
-
-		String volName = namespace + ":" + dtlBean.getPid();
-		logger.info(dtlBean.getPid() + " " + "Update eJournal volume: "
-				+ volName);
-		String ejournalVolume = host + ":8080/edoweb2-api/ejournal/"
-				+ namespace + ":" + dtlBean.getParentPid() + "/volume/"
-				+ volName;
-
-		String mimeType = dtlBean.getStreamMime();
-		if (mimeType.compareTo("application/pdf") != 0)
-		{
-			logger.warn(dtlBean.getPid() + " " + "Volume " + dtlBean.getPid()
-					+ " contains no pdf!");
-			return;
-		}
-
-		createResource(ejournalVolume, dtlBean);
-
-		String ejournalVolumeDC = ejournalVolume + "/dc";
-
-		updateData(ejournalVolume + "/data", dtlBean);
-
-		updateDC(ejournalVolumeDC, dtlBean);
-
+		String pid = namespace + ":" + dtlBean.getPid();
+		logger.info(pid + " " + "Found eJournal volume.");
+		String resource = host + ":8080/edoweb2-api/ejournal/" + namespace
+				+ ":" + dtlBean.getParentPid() + "/volume/" + pid;
+		createObject(resource, dtlBean, "application/pdf");
+		logger.info(pid + " " + "updated.\n");
 	}
 
 	private void updateWebpagePart(DigitalEntity dtlBean)
 	{
-
-		String versionName = namespace + ":" + dtlBean.getPid();
-		logger.info("Update webpage version: " + versionName);
-		String webpageVersion = host + ":8080/edoweb2-api/webpage/" + namespace
-				+ ":" + dtlBean.getParentPid() + "/version/" + versionName;
-
-		String mimeType = dtlBean.getStreamMime();
-		if (mimeType.compareTo("application/zip") != 0)
-		{
-			logger.info(dtlBean.getPid() + " " + "Version " + dtlBean.getPid()
-					+ " contains no zip!");
-			return;
-		}
-
-		createResource(webpageVersion, dtlBean);
-
-		String ejournalVolumeDC = webpageVersion + "/dc";
-
-		updateData(webpageVersion + "/data", dtlBean);
-
-		updateDC(ejournalVolumeDC, dtlBean);
-
+		String pid = namespace + ":" + dtlBean.getPid();
+		logger.info(pid + " Found webpage version.");
+		String resource = host + ":8080/edoweb2-api/webpage/" + namespace + ":"
+				+ dtlBean.getParentPid() + "/version/" + pid;
+		createObject(resource, dtlBean, "application/zip");
+		logger.info(pid + " " + "updated.\n");
 	}
 
 	private void updateMonographs(DigitalEntity dtlBean)
 	{
 
-		String monograph = host + ":8080/edoweb2-api/monograph/" + namespace
-				+ ":" + dtlBean.getPid();
-		createResource(monograph, dtlBean);
+		String pid = namespace + ":" + dtlBean.getPid();
+		logger.info(pid + " Found monograph.");
+		String resource = host + ":8080/edoweb2-api/monograph/" + pid;
+		createObject(resource, dtlBean, "application/pdf");
+		logger.info(pid + " " + "updated.\n");
+	}
 
+	private void updateEJournalParent(DigitalEntity dtlBean)
+	{
+		String pid = namespace + ":" + dtlBean.getPid();
 		try
 		{
-
-			String monographDC = monograph.toString() + "/dc";
-
-			updateData(monograph + "/data", dtlBean);
-
-			updateDC(monographDC, dtlBean);
-
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
+			logger.info(pid + " Found ejournal.");
+			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
+			String ejournalDC = ejournal.toString() + "/dc";
+			createResource(ejournal, dtlBean);
+			updateDC(ejournalDC, dtlBean);
+			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
+			int numOfVols = viewMainLinks.size();
+			logger.info(pid + " " + "Found " + numOfVols + " volumes.");
+			logger.info(pid + " " + "Will not update volumes.");
+			logger.info(pid + " " + "updated.\n");
 		}
 		catch (Exception e)
 		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
+			logger.error(pid + " " + e.getMessage());
 		}
+
 	}
 
-	private void updateMonographsNewStyle(DigitalEntity dtlBean)
+	private void updateWebpageParent(DigitalEntity dtlBean)
 	{
-
 		String pid = namespace + ":" + dtlBean.getPid();
-		String monograph = host + ":8080/edoweb2-api/monograph/" + namespace
-				+ ":" + dtlBean.getPid();
-		String monographDC = monograph + "/dc";
-		String monographData = monograph + "/data";
-
 		try
 		{
-			createResource(monograph, dtlBean);
-			DigitalEntity fulltextObject = null;
-			for (DigitalEntity view : dtlBean.getViewLinks())
+			logger.info(pid + " Found webpage.");
+			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
+			createResource(webpage, dtlBean);
+			String webpageDC = webpage + "/dc";
+			updateDC(webpageDC, dtlBean);
+			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
+			int numOfVersions = viewLinks.size();
+			logger.info(pid + " " + "Found " + numOfVersions + " versions.");
+			logger.info(pid + " " + "Will not update versions.");
+			logger.info(pid + " " + "updated.\n");
+		}
+		catch (Exception e)
+		{
+			logger.info(pid + " " + e.getMessage());
+		}
+
+	}
+
+	private void updateSingleWebpage(DigitalEntity dtlBean)
+	{
+		String pid = namespace + ":" + dtlBean.getPid();
+		try
+		{
+			logger.info(pid + " Found webpage.");
+			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
+			createResource(webpage, dtlBean);
+			updateDC(webpage + "/dc", dtlBean);
+
+			for (DigitalEntity b : dtlBean.getArchiveLinks())
 			{
-				if (view.getStreamMime().compareTo("application/pdf") == 0)
+				String versionPid = namespace + ":" + b.getPid();
+				if (b.getStreamMime().compareTo("application/zip") == 0)
 				{
-					fulltextObject = view;
+					createObject(webpage + "/version/" + versionPid, b,
+							"application/zip");
 					break;
 				}
 			}
-			if (fulltextObject != null)
-			{
-				updateData(monograph.toString() + "/data", fulltextObject);
-			}
-			else
-			{
-				logger.warn(pid + " no fulltext found!");
-			}
+			logger.info(pid + " " + "updated.\n");
+		}
+		catch (Exception e)
+		{
+			logger.error(pid + " " + e.getMessage());
+		}
 
-			updateDC(monographDC, dtlBean);
+	}
+
+	private void ingestEJournalComplete(DigitalEntity dtlBean)
+	{
+		String pid = namespace + ":" + dtlBean.getPid();
+		try
+		{
+			logger.info(pid + " Found ejournal.");
+			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
+			String ejournalDC = ejournal + "/dc";
+			createResource(ejournal, dtlBean);
+			updateDC(ejournalDC, dtlBean);
+			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
+			int numOfVols = viewMainLinks.size();
+			int count = 1;
+			logger.info(pid + " Found " + numOfVols + " volumes.");
+			for (DigitalEntity b : viewMainLinks)
+			{
+				logger.info("Part: " + (count++) + "/" + numOfVols);
+				updateEJournalPart(b);
+			}
+			logger.info(pid + " " + "and all volumes updated.\n");
 		}
 		catch (Exception e)
 		{
@@ -432,162 +431,74 @@ public class FedoraIngester implements IngestInterface
 		}
 	}
 
-	private void ingestEJournalComplete(DigitalEntity dtlBean)
-	{
-		try
-		{
-			String ejournal = host + ":8080/edoweb2-api/ejournal/" + namespace
-					+ ":" + dtlBean.getPid();
-			String ejournalDC = ejournal + "/dc";
-			createResource(ejournal, dtlBean);
-			updateDC(ejournalDC, dtlBean);
-			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
-			int numOfVols = viewMainLinks.size();
-			logger.info("Found " + numOfVols + " volumes.");
-			for (DigitalEntity b : viewMainLinks)
-			{
-				updateEJournalPart(b);
-			}
-		}
-		catch (Exception e)
-		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
-		}
-	}
-
-	private void updateEJournalParent(DigitalEntity dtlBean)
-	{
-		try
-		{
-			String ejournal = host + ":8080/edoweb2-api/ejournal/" + namespace
-					+ ":" + dtlBean.getPid();
-			String ejournalDC = ejournal.toString() + "/dc";
-			createResource(ejournal, dtlBean);
-
-			updateDC(ejournalDC, dtlBean);
-			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
-			int numOfVols = viewMainLinks.size();
-			logger.info(dtlBean.getPid() + " " + "Found " + numOfVols
-					+ " volumes.");
-			logger.info(dtlBean.getPid() + " " + "Will not update volumes.");
-		}
-		catch (Exception e)
-		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
-		}
-	}
-
 	private void ingestWebpageComplete(DigitalEntity dtlBean)
 	{
-
+		String pid = namespace + ":" + dtlBean.getPid();
 		try
 		{
-			String webpage = host + ":8080/edoweb2-api/webpage/" + namespace
-					+ ":" + dtlBean.getPid();
+			logger.info(pid + " Found webpage.");
+			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
 			String webpageDC = webpage + "/dc";
 			createResource(webpage, dtlBean);
 			updateDC(webpageDC, dtlBean);
-
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
-			logger.info("Found " + numOfVersions + " versions.");
+			logger.info(pid + " Found " + numOfVersions + " versions.");
+			int count = 1;
 			for (DigitalEntity b : viewLinks)
 			{
+				logger.info("Part: " + (count++) + "/" + numOfVersions);
 				updateWebpagePart(b);
 			}
+			logger.info(pid + " " + "and all versions updated.\n");
 		}
 		catch (Exception e)
 		{
-			logger.info(dtlBean.getPid() + " " + e.getMessage());
+			logger.info(pid + " " + e.getMessage());
 		}
 
 	}
 
-	private void updateWebpageParent(DigitalEntity dtlBean)
+	private void createObject(String resource, DigitalEntity dtlBean,
+			String expectedMime)
 	{
+		String pid = namespace + ":" + dtlBean.getPid();
+		String dc = resource + "/dc";
+		String data = resource + "/data";
 
-		try
+		createResource(resource, dtlBean);
+
+		if (dtlBean.getStreamMime().compareTo(expectedMime) != 0)
 		{
-			String webpage = host + ":8080/edoweb2-api/webpage/" + namespace
-					+ ":" + dtlBean.getPid();
-			createResource(webpage, dtlBean);
-			String webpageDC = webpage + "/dc";
-			updateDC(webpageDC, dtlBean);
-			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
-			int numOfVersions = viewLinks.size();
-			logger.info(dtlBean.getPid() + " " + "Found " + numOfVersions
-					+ " versions.");
-			logger.info(dtlBean.getPid() + " " + "Will not update versions.");
-		}
-		catch (Exception e)
-		{
-			logger.info(dtlBean.getPid() + " " + e.getMessage());
-		}
-
-	}
-
-	private void updateSingleWebpage(DigitalEntity dtlBean)
-	{
-
-		try
-		{
-			String webpage = host + ":8080/edoweb2-api/webpage/" + namespace
-					+ ":" + dtlBean.getPid();
-			createResource(webpage, dtlBean);
-			updateDC(webpage + "/dc", dtlBean);
-
-			for (DigitalEntity b : dtlBean.getArchiveLinks())
+			DigitalEntity fulltextObject = null;
+			for (DigitalEntity view : dtlBean.getViewMainLinks())
 			{
-				String version = namespace + ":" + b.getPid();
-				logger.info(version + " : has a Archive");
-				String mimeType = b.getStreamMime();
-				logger.debug(version + " " + mimeType);
-				if (mimeType.compareTo("application/zip") != 0)
+				if (view.getStreamMime().compareTo(expectedMime) == 0)
 				{
-					logger.warn(version
-							+ " : has not expected mimeType application/zip! ->"
-							+ mimeType);
-					continue;
+					fulltextObject = view;
+					break;
 				}
-
-				logger.info(version + " " + "Create webpage version.");
-				createResource(webpage + "/version/" + version, b);
-				updateData(webpage + "/version/" + version + "/data", b);
-				updateDC(webpage + "/version/" + version + "/dc", b);
+			}
+			if (fulltextObject != null)
+			{
+				updateData(data, fulltextObject);
+			}
+			else
+			{
+				logger.warn(pid + " found no valid data.");
 			}
 		}
-		catch (Exception e)
+		else
 		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
+			updateData(data, dtlBean);
 		}
 
-	}
-
-	@Override
-	public void delete(String pid)
-	{
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		Client c = Client.create(cc);
-		c.addFilter(new HTTPBasicAuthFilter(user, password));
-
-		WebResource delete = c.resource(host
-				+ ":8080/edoweb2-api/edowebAdmin/delete/" + namespace + ":"
-				+ pid);
-		try
-		{
-			delete.delete();
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.info(pid + "Can't delete!");
-		}
-
+		updateDC(dc, dtlBean);
 	}
 
 	private void createResource(String endpoint, DigitalEntity dtlBean)
 	{
+		String pid = namespace + ":" + dtlBean.getPid();
 		WebResource resource = webclient.resource(endpoint);
 		try
 		{
@@ -595,12 +506,13 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (UniformInterfaceException e)
 		{
-			logger.info(dtlBean.getPid() + " will be updated!");
+			logger.info(pid + " already exists - will be updated!");
 		}
 	}
 
 	private void updateDC(String endpoint, DigitalEntity dtlBean)
 	{
+		String pid = namespace + ":" + dtlBean.getPid();
 		WebResource webpageDC = webclient.resource(endpoint);
 
 		DCBeanAnnotated dc = new DCBeanAnnotated();
@@ -615,22 +527,22 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (UniformInterfaceException e)
 		{
-			logger.info(dtlBean.getPid() + " ");
+			logger.info(pid + " " + e.getMessage());
 		}
 		catch (Exception e)
 		{
-			logger.debug(dtlBean.getPid() + " " + e.getMessage());
+			logger.debug(pid + " " + e.getMessage());
 		}
 	}
 
 	private void updateData(String endpoint, DigitalEntity dtlBean)
 	{
-
+		String pid = namespace + ":" + dtlBean.getPid();
 		WebResource data = webclient.resource(endpoint);
 
 		try
 		{
-			logger.info(dtlBean.getPid() + " " + dtlBean.getStreamMime());
+			logger.info(pid + " Updata data: " + dtlBean.getStreamMime());
 			MultiPart multiPart = new MultiPart();
 			multiPart.bodyPart(new StreamDataBodyPart("InputStream",
 					new FileInputStream(dtlBean.getStream()), dtlBean
@@ -642,24 +554,23 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (UniformInterfaceException e)
 		{
-			logger.error(dtlBean.getPid() + " ");
+			logger.error(pid + " " + e.getMessage());
 		}
-		catch (FileNotFoundException e1)
+		catch (FileNotFoundException e)
 		{
-			logger.error(dtlBean.getPid() + " " + "FileNotFound "
+			logger.error(pid + " " + "FileNotFound "
 					+ dtlBean.getStream().getAbsolutePath());
 		}
-		catch (IOException e1)
+		catch (Exception e)
 		{
-			logger.error(dtlBean.getPid() + " " + "Problem "
-					+ dtlBean.getStream().getAbsolutePath());
+			logger.error(pid + " " + e.getMessage());
 		}
 
 	}
 
 	private void lobidify(DigitalEntity dtlBean)
 	{
-
+		String pid = namespace + ":" + dtlBean.getPid();
 		WebResource lobid = webclient.resource(host
 				+ ":8080/edoweb2-api/utils/lobidify/" + namespace + ":"
 				+ dtlBean.getPid());
@@ -670,7 +581,7 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (UniformInterfaceException e)
 		{
-			logger.warn(dtlBean.getPid() + " fetching lobid-data failed");
+			logger.warn(pid + " fetching lobid-data failed");
 		}
 	}
 
@@ -693,14 +604,23 @@ public class FedoraIngester implements IngestInterface
 
 	private void oaiProvide(DigitalEntity dtlBean)
 	{
+		String pid = namespace + ":" + dtlBean.getPid();
 		WebResource oaiSet = webclient.resource(host
 				+ ":8080/edoweb2-api/utils/makeOaiSet/" + namespace + ":"
 				+ dtlBean.getPid());
-		oaiSet.post();
+		try
+		{
+			oaiSet.post();
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.warn(pid + " " + "Not oai provided! " + e.getMessage());
+		}
 	}
 
 	private DCBeanAnnotated marc2dc(DigitalEntity dtlBean)
 	{
+		String pid = namespace + ":" + dtlBean.getPid();
 		try
 		{
 			StringWriter str = new StringWriter();
@@ -724,7 +644,7 @@ public class FedoraIngester implements IngestInterface
 		}
 		catch (Throwable t)
 		{
-			t.printStackTrace();
+			logger.warn(pid + " " + t.getMessage());
 		}
 		return null;
 	}
