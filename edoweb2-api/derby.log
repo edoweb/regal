@@ -1,0 +1,30 @@
+----------------------------------------------------------------
+Thu Apr 11 15:43:52 CEST 2013:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-013d-f956-8dde-0000572675d8 
+on database directory /opt/fedora-3.6/derby/fedora3  with class loader WebappClassLoader
+  context: /fedora
+  delegate: false
+  repositories:
+    /WEB-INF/classes/
+----------> Parent Classloader:
+org.apache.catalina.loader.StandardClassLoader@5b7ee8b8
+ 
+Loaded from file:/opt/fedora-3.6/tomcat/webapps/fedora/WEB-INF/lib/derby-10.8.2.2.jar
+java.vendor=Sun Microsystems Inc.
+java.runtime.version=1.6.0_26-b03
+user.dir=/home/jan/jan/arbeit/hbz/development/edoweb2/edoweb2-api
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Thu Apr 11 16:14:47 CEST 2013: Shutting down Derby engine
+----------------------------------------------------------------
+Thu Apr 11 16:14:48 CEST 2013:
+Shutting down instance a816c00e-013d-f956-8dde-0000572675d8 on database directory /opt/fedora-3.6/derby/fedora3 with class loader WebappClassLoader
+  context: /fedora
+  delegate: false
+  repositories:
+    /WEB-INF/classes/
+----------> Parent Classloader:
+org.apache.catalina.loader.StandardClassLoader@5b7ee8b8
+ 
+----------------------------------------------------------------

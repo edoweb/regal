@@ -185,9 +185,6 @@ public class EdowebIngester implements IngestInterface
 		}
 		try
 		{
-			index(dtlBean);
-			oaiProvide(dtlBean);
-			lobidify(dtlBean);
 
 		}
 
@@ -278,9 +275,7 @@ public class EdowebIngester implements IngestInterface
 		}
 		try
 		{
-			index(dtlBean);
-			oaiProvide(dtlBean);
-			lobidify(dtlBean);
+
 		}
 		catch (Exception e)
 		{
@@ -336,6 +331,7 @@ public class EdowebIngester implements IngestInterface
 		logger.info(pid + " Found monograph.");
 		String resource = host + ":8080/edoweb2-api/monograph/" + pid;
 		createObject(resource, dtlBean, "application/pdf", ObjectType.monograph);
+		metadata(resource, dtlBean, ObjectType.monograph);
 		logger.info(pid + " " + "updated.\n");
 	}
 
@@ -348,7 +344,7 @@ public class EdowebIngester implements IngestInterface
 			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
 			String ejournalDC = ejournal.toString() + "/dc";
 			createResource(ejournal, dtlBean);
-			updateDC(ejournalDC, dtlBean, ObjectType.ejournal);
+			metadata(ejournal, dtlBean, ObjectType.ejournal);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
 			logger.info(pid + " " + "Found " + numOfVols + " volumes.");
@@ -370,8 +366,7 @@ public class EdowebIngester implements IngestInterface
 			logger.info(pid + " Found webpage.");
 			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
 			createResource(webpage, dtlBean);
-			String webpageDC = webpage + "/dc";
-			updateDC(webpageDC, dtlBean, ObjectType.webpage);
+			metadata(webpage, dtlBean, ObjectType.webpage);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
 			logger.info(pid + " " + "Found " + numOfVersions + " versions.");
@@ -393,8 +388,7 @@ public class EdowebIngester implements IngestInterface
 			logger.info(pid + " Found webpage.");
 			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
 			createResource(webpage, dtlBean);
-			updateDC(webpage + "/dc", dtlBean, ObjectType.webpage);
-
+			metadata(webpage, dtlBean, ObjectType.webpage);
 			for (DigitalEntity b : dtlBean.getArchiveLinks())
 			{
 				String versionPid = namespace + ":" + b.getPid();
@@ -421,9 +415,8 @@ public class EdowebIngester implements IngestInterface
 		{
 			logger.info(pid + " Found ejournal.");
 			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
-			String ejournalDC = ejournal + "/dc";
 			createResource(ejournal, dtlBean);
-			updateDC(ejournalDC, dtlBean, ObjectType.ejournal);
+			metadata(ejournal, dtlBean, ObjectType.ejournal);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
 			int count = 1;
@@ -448,9 +441,8 @@ public class EdowebIngester implements IngestInterface
 		{
 			logger.info(pid + " Found webpage.");
 			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
-			String webpageDC = webpage + "/dc";
 			createResource(webpage, dtlBean);
-			updateDC(webpageDC, dtlBean, ObjectType.webpage);
+			metadata(webpage, dtlBean, ObjectType.webpage);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
 			logger.info(pid + " Found " + numOfVersions + " versions.");
@@ -467,6 +459,15 @@ public class EdowebIngester implements IngestInterface
 			logger.info(pid + " " + e.getMessage());
 		}
 
+	}
+
+	private void metadata(String resource, DigitalEntity dtlBean,
+			ObjectType type)
+	{
+		updateDC(resource + "/dc", dtlBean, type);
+		lobidify(dtlBean);
+		index(dtlBean);
+		oaiProvide(dtlBean);
 	}
 
 	private void createObject(String resource, DigitalEntity dtlBean,
@@ -492,7 +493,6 @@ public class EdowebIngester implements IngestInterface
 			if (fulltextObject != null)
 			{
 				updateData(data, fulltextObject);
-				updateDC(dc, fulltextObject, type);
 			}
 			else
 			{
@@ -502,7 +502,6 @@ public class EdowebIngester implements IngestInterface
 		else
 		{
 			updateData(data, dtlBean);
-			updateDC(dc, dtlBean, type);
 		}
 
 	}
