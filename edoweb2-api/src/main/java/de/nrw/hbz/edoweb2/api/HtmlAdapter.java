@@ -18,6 +18,7 @@ package de.nrw.hbz.edoweb2.api;
 
 import java.io.StringWriter;
 import java.net.URLDecoder;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Vector;
 
@@ -156,6 +157,11 @@ class HtmlAdapter
 		addToTable(doc, table, "DOI", view.getDoi());
 
 		addToTable(doc, table, "URN", view.getUrn());
+		for (SimpleEntry entry : view.getPredicates())
+		{
+			addToTable(doc, table, entry.getKey().toString(), entry.getValue()
+					.toString());
+		}
 
 		addToTable(doc, table, "Related Url", view.getUrl());
 
@@ -269,7 +275,7 @@ class HtmlAdapter
 		String doiResolver = "http://dx.doi.org/";
 		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
 		String zipLogo = "http://orthos.hbz-nrw.de/zip.png";
-		if (fieldName == "DOI")
+		if (fieldName == "http://purl.org/ontology/bibo/doi")
 		{
 
 			for (String str : values)

@@ -58,6 +58,7 @@ public class Node
 	private String contentURL = null;
 	private String mimeType = null;
 	private String namespace = null;
+	private String contentType = null;
 	DCBean bean = new DCBean();
 
 	public Node()
@@ -707,5 +708,15 @@ public class Node
 	public DCBean getBean()
 	{
 		return bean;
+	}
+
+	public void setContentType(String type)
+	{
+		contentType = type;
+	}
+
+	public String getContentType()
+	{
+		return contentType;
 	}
 }

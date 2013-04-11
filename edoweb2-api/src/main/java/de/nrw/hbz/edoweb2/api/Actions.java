@@ -17,6 +17,7 @@
 package de.nrw.hbz.edoweb2.api;
 
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
+import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_CONTENT_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.ITEM_ID;
@@ -221,8 +222,7 @@ class Actions
 	Vector<String> findByType(String type)
 	{
 		Vector<String> pids = new Vector<String>();
-		String query = "* <http://purl.org/dc/elements/1.1/type> \"" + type
-				+ "\"";
+		String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
 		InputStream stream = archive.findTriples(query, FedoraVocabulary.SPO,
 				FedoraVocabulary.N3);
 		String findpid = null;
@@ -277,6 +277,140 @@ class Actions
 			}
 		}
 		return pids;
+	}
+
+	/**
+	 * @param rdfQuery
+	 *            A sparql query
+	 * @return a short message
+	 */
+	String findSubject(String rdfQuery)
+	{
+		String volumePid = null;
+		InputStream stream = archive.findTriples(rdfQuery,
+				FedoraVocabulary.SPARQL, FedoraVocabulary.N3);
+
+		RepositoryConnection con = null;
+		Repository myRepository = new SailRepository(new MemoryStore());
+		try
+		{
+			myRepository.initialize();
+			con = myRepository.getConnection();
+			String baseURI = "";
+
+			con.add(stream, baseURI, RDFFormat.N3);
+
+			RepositoryResult<Statement> statements = con.getStatements(null,
+					null, null, true);
+
+			while (statements.hasNext())
+			{
+				Statement st = statements.next();
+				volumePid = st.getSubject().stringValue()
+						.replace("info:fedora/", "");
+				break;
+			}
+		}
+		catch (RepositoryException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (RDFParseException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (con != null)
+			{
+				try
+				{
+					con.close();
+				}
+				catch (RepositoryException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return volumePid;
+	}
+
+	/**
+	 * 
+	 * @param pid
+	 *            The pid
+	 * @param pred
+	 *            the predicate
+	 * @return A list of objects that are referenced by pid/predicate
+	 *         combination.
+	 */
+	List<String> findObject(String pid, String pred)
+	{
+		String query = "<info:fedora/" + pid + "> <" + pred + "> *";
+		logger.info(query);
+		InputStream stream = archive.findTriples(query, FedoraVocabulary.SPO,
+				FedoraVocabulary.N3);
+		Vector<String> findpids = new Vector<String>();
+		RepositoryConnection con = null;
+		Repository myRepository = new SailRepository(new MemoryStore());
+		try
+		{
+			myRepository.initialize();
+			con = myRepository.getConnection();
+			String baseURI = "";
+
+			con.add(stream, baseURI, RDFFormat.N3);
+
+			RepositoryResult<Statement> statements = con.getStatements(null,
+					null, null, true);
+
+			while (statements.hasNext())
+			{
+				Statement st = statements.next();
+				findpids.add(st.getObject().stringValue()
+						.replace("info:fedora/", ""));
+
+			}
+		}
+		catch (RepositoryException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (RDFParseException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (con != null)
+			{
+				try
+				{
+					con.close();
+				}
+				catch (RepositoryException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+		return findpids;
 	}
 
 	/**
@@ -529,140 +663,6 @@ class Actions
 	}
 
 	/**
-	 * @param rdfQuery
-	 *            A sparql query
-	 * @return a short message
-	 */
-	String findSubject(String rdfQuery)
-	{
-		String volumePid = null;
-		InputStream stream = archive.findTriples(rdfQuery,
-				FedoraVocabulary.SPARQL, FedoraVocabulary.N3);
-
-		RepositoryConnection con = null;
-		Repository myRepository = new SailRepository(new MemoryStore());
-		try
-		{
-			myRepository.initialize();
-			con = myRepository.getConnection();
-			String baseURI = "";
-
-			con.add(stream, baseURI, RDFFormat.N3);
-
-			RepositoryResult<Statement> statements = con.getStatements(null,
-					null, null, true);
-
-			while (statements.hasNext())
-			{
-				Statement st = statements.next();
-				volumePid = st.getSubject().stringValue()
-						.replace("info:fedora/", "");
-				break;
-			}
-		}
-		catch (RepositoryException e)
-		{
-
-			e.printStackTrace();
-		}
-		catch (RDFParseException e)
-		{
-
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-
-			e.printStackTrace();
-		}
-		finally
-		{
-			if (con != null)
-			{
-				try
-				{
-					con.close();
-				}
-				catch (RepositoryException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-
-		return volumePid;
-	}
-
-	/**
-	 * 
-	 * @param pid
-	 *            The pid
-	 * @param pred
-	 *            the predicate
-	 * @return A list of objects that are referenced by pid/predicate
-	 *         combination.
-	 */
-	List<String> findObject(String pid, String pred)
-	{
-		String query = "<info:fedora/" + pid + "> <" + pred + "> *";
-		logger.info(query);
-		InputStream stream = archive.findTriples(query, FedoraVocabulary.SPO,
-				FedoraVocabulary.N3);
-		Vector<String> findpids = new Vector<String>();
-		RepositoryConnection con = null;
-		Repository myRepository = new SailRepository(new MemoryStore());
-		try
-		{
-			myRepository.initialize();
-			con = myRepository.getConnection();
-			String baseURI = "";
-
-			con.add(stream, baseURI, RDFFormat.N3);
-
-			RepositoryResult<Statement> statements = con.getStatements(null,
-					null, null, true);
-
-			while (statements.hasNext())
-			{
-				Statement st = statements.next();
-				findpids.add(st.getObject().stringValue()
-						.replace("info:fedora/", ""));
-
-			}
-		}
-		catch (RepositoryException e)
-		{
-
-			e.printStackTrace();
-		}
-		catch (RDFParseException e)
-		{
-
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-
-			e.printStackTrace();
-		}
-		finally
-		{
-			if (con != null)
-			{
-				try
-				{
-					con.close();
-				}
-				catch (RepositoryException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-		return findpids;
-	}
-
-	/**
 	 * @param pid
 	 *            A pid
 	 * @return true if the pid exists and fals if not
@@ -899,9 +899,9 @@ class Actions
 	 */
 	View getView(Node node)
 	{
-		View view = new View();
 		String pid = node.getPID();
 		String uri = getURI(node);
+		View view = new View();
 		view.setCreator(node.getCreator());
 		view.setTitle(node.getTitle());
 		view.setLanguage(node.getLanguage());
@@ -911,9 +911,76 @@ class Actions
 		view.setPublisher(node.getPublisher());
 		view.setDescription(node.getDescription());
 		String label = node.getLabel();
+
 		if (label != null && !label.isEmpty())
 			view.addDescription(label);
 		view.setUri(uri);
+
+		URL metdata = node.getMetadataUrl();
+		InputStream in = null;
+		try
+		{
+			in = metdata.openStream();
+
+			RepositoryConnection con = null;
+			Repository myRepository = new SailRepository(new MemoryStore());
+			try
+			{
+				myRepository.initialize();
+				con = myRepository.getConnection();
+				String baseURI = "";
+
+				con.add(in, baseURI, RDFFormat.N3);
+
+				RepositoryResult<Statement> statements = con.getStatements(
+						null, null, null, true);
+
+				while (statements.hasNext())
+				{
+					Statement st = statements.next();
+					view.addPredicate(st.getPredicate().stringValue(), st
+							.getObject().stringValue());
+				}
+			}
+			catch (RepositoryException e)
+			{
+
+				e.printStackTrace();
+			}
+			catch (RDFParseException e)
+			{
+
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+
+				e.printStackTrace();
+			}
+			finally
+			{
+				if (con != null)
+				{
+					try
+					{
+						con.close();
+					}
+					catch (RepositoryException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		catch (IOException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		finally
+		{
+			IOUtils.closeQuietly(in);
+		}
 
 		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
 		view.addCacheUrl(this.serverName + "/edobase/" + pidWithoutNamespace);
@@ -957,43 +1024,38 @@ class Actions
 			}
 		}
 
-		for (String doi : node.getIdentifier())
+		for (String id : node.getIdentifier())
 		{
-			if (doi.startsWith("doi"))
+			if (id.startsWith("doi"))
 			{
-				view.addDoi(doi);
-				view.addDataciteUrl(dataciteUrl + doi);
-				view.addBaseUrl(baseUrl + doi);
+				view.addDoi(id);
+				view.addDataciteUrl(dataciteUrl + id);
+				view.addBaseUrl(baseUrl + id);
+			}
+			else if (id.startsWith("urn"))
+			{
+				view.addUrn(id);
 				break;
 			}
-		}
-
-		for (String urn : node.getIdentifier())
-		{
-			if (urn.startsWith("urn"))
+			else if (id.startsWith("HT"))
 			{
-				view.addUrn(urn);
+				view.addAlephId(id);
+				view.addCulturegraphUrl(culturegraphUrl + id);
+				view.addLobidUrl(lobidUrl + id);
+				view.addVerbundUrl(verbundUrl + id);
 				break;
 			}
-		}
-
-		for (String alephid : node.getIdentifier())
-		{
-			if (alephid.startsWith("HT"))
+			else if (id.startsWith("TT"))
 			{
-				view.addAlephId(alephid);
-				view.addCulturegraphUrl(culturegraphUrl + alephid);
-				view.addLobidUrl(lobidUrl + alephid);
-				view.addVerbundUrl(verbundUrl + alephid);
+				view.addAlephId(id);
+				view.addCulturegraphUrl(culturegraphUrl + id);
+				view.addLobidUrl(lobidUrl + id);
+				view.addVerbundUrl(verbundUrl + id);
 				break;
 			}
-			else if (alephid.startsWith("TT"))
+			else
 			{
-				view.addAlephId(alephid);
-				view.addCulturegraphUrl(culturegraphUrl + alephid);
-				view.addLobidUrl(lobidUrl + alephid);
-				view.addVerbundUrl(verbundUrl + alephid);
-				break;
+				view.addIdentifier(id);
 			}
 		}
 
@@ -1030,7 +1092,6 @@ class Actions
 			}
 
 		}
-
 		return view;
 	}
 
@@ -1081,7 +1142,7 @@ class Actions
 			WebResource index = c
 					.resource("http://localhost:9200/edoweb/titel/" + pid);
 			index.accept(MediaType.APPLICATION_JSON);
-			URL url = new URL("http://localhost/resources/" + pid);
+			URL url = new URL("http://localhost/resources/" + pid + "/about");
 			URLConnection con = url.openConnection();
 			con.setRequestProperty("Accept", "application/json");
 			con.connect();
@@ -1186,22 +1247,8 @@ class Actions
 		Node node = archive.readNode(pid);
 		if (node == null)
 			return "No node with pid " + pid + " found";
-		List<String> identifier = node.getIdentifier();
-		String alephid = "";
-		for (String id : identifier)
-		{
-			if (id.startsWith("TT") || id.startsWith("HT"))
-			{
-				alephid = id;
-				break;
-			}
-		}
-		if (alephid.isEmpty())
-		{
 
-			throw new ArchiveException(pid + " no Catalog-Id found.");
-		}
-		String lobidUrl = " http://lobid.org/resource/" + alephid + "/about";
+		String metadata = "http://localhost/resources/" + pid + "/metadata";
 		try
 		{
 			File outfile = File.createTempFile("oaidc", "xml");
@@ -1210,7 +1257,7 @@ class Actions
 					.getContextClassLoader()
 					.getResource("morph-lobid-to-oaidc.flux").toURI());
 			Flux.main(new String[] { fluxFile.getAbsolutePath(),
-					"url=" + lobidUrl, "out=" + outfile.getAbsolutePath() });
+					"url=" + metadata, "out=" + outfile.getAbsolutePath() });
 			return FileUtils.readFileToString(outfile);
 		}
 		catch (IOException e)

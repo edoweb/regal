@@ -17,6 +17,7 @@
 package de.nrw.hbz.edoweb2.api;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -26,6 +27,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
@@ -165,6 +167,30 @@ public class EJournal
 		input.type = ObjectType.ejournalVolume.toString();
 		input.parentPid = pid;
 		return resources.createResource(volumePid, input);
+	}
+
+	@GET
+	@Path("/{pid}/about")
+	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
+	public View getView(@PathParam("pid") String pid)
+	{
+		return resources.getView(pid);
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 * @throws URISyntaxException
+	 */
+	@GET
+	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml", "text/html" })
+	public Response getResource(@PathParam("pid") String pid)
+			throws URISyntaxException
+	{
+		return Response.temporaryRedirect(
+				new java.net.URI("/ejournal/" + pid + "/about")).build();
 	}
 
 	@GET

@@ -147,4 +147,124 @@ public class CollectionProfile
 		message = strwrt.getBuffer().toString();
 	}
 
+	public String getMessage()
+	{
+		return message;
+	}
+
+	public void setMessage(String message)
+	{
+		this.message = message;
+	}
+
+	public List<View> getAll()
+	{
+		return all;
+	}
+
+	public void setAll(List<View> all)
+	{
+		this.all = all;
+	}
+
+	public List<String> getRestricted()
+	{
+		return restricted;
+	}
+
+	public void setRestricted(List<String> restricted)
+	{
+		this.restricted = restricted;
+	}
+
+	public List<String> getUnrestricted()
+	{
+		return unrestricted;
+	}
+
+	public void setUnrestricted(List<String> unrestricted)
+	{
+		this.unrestricted = unrestricted;
+	}
+
+	public List<String> getNoRight()
+	{
+		return noRight;
+	}
+
+	public void setNoRight(List<String> noRight)
+	{
+		this.noRight = noRight;
+	}
+
+	public List<String> getNoDDC()
+	{
+		return noDDC;
+	}
+
+	public void setNoDDC(List<String> noDDC)
+	{
+		this.noDDC = noDDC;
+	}
+
+	public List<String> getNoUrn()
+	{
+		return noUrn;
+	}
+
+	public void setNoUrn(List<String> noUrn)
+	{
+		this.noUrn = noUrn;
+	}
+
+	public List<String> getNoYear()
+	{
+		return noYear;
+	}
+
+	public void setNoYear(List<String> noYear)
+	{
+		this.noYear = noYear;
+	}
+
+	public List<String> getNoTitle()
+	{
+		return noTitle;
+	}
+
+	public void setNoTitle(List<String> noTitle)
+	{
+		this.noTitle = noTitle;
+	}
+
+	public List<String> getNoCreator()
+	{
+		return noCreator;
+	}
+
+	public void setNoCreator(List<String> noCreator)
+	{
+		this.noCreator = noCreator;
+	}
+
+	public List<String> getNoType()
+	{
+		return noType;
+	}
+
+	public void setNoType(List<String> noType)
+	{
+		this.noType = noType;
+	}
+
+	public List<TypeObjectDictionary> getTypes()
+	{
+		return types;
+	}
+
+	public void setTypes(List<TypeObjectDictionary> types)
+	{
+		this.types = types;
+	}
+
 }

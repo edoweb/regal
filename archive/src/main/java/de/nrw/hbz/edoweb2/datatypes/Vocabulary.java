@@ -76,6 +76,9 @@ public abstract class Vocabulary
 	public final static String REL_REPRESENTATION_TYPE = HBZ_MODEL_NAMESPACE
 			+ "representationType";
 
+	public final static String REL_CONTENT_TYPE = HBZ_MODEL_NAMESPACE
+			+ "contentType";
+
 	public final static String TYPE_THUMBNAIL = HBZ_MODEL_NAMESPACE
 			+ "thumbnail";
 

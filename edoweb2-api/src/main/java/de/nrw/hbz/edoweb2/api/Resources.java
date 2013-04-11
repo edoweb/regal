@@ -127,11 +127,27 @@ public class Resources
 	 * @return an aggregated representation of the resource
 	 */
 	@GET
-	@Path("/{pid}")
+	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", "text/html" })
 	public View getView(@PathParam("pid") String pid)
 	{
 		return actions.getView(pid);
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 * @throws URISyntaxException
+	 */
+	@GET
+	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml", "text/html" })
+	public Response getResource(@PathParam("pid") String pid)
+			throws URISyntaxException
+	{
+		return Response.temporaryRedirect(
+				new java.net.URI("/resources/" + pid + "/about")).build();
 	}
 
 	/**
@@ -235,8 +251,7 @@ public class Resources
 	{
 		try
 		{
-			return new ObjectList(actions.findByType(TypeType.contentType
-					.toString() + ":" + type));
+			return new ObjectList(actions.findByType(type));
 		}
 		catch (ArchiveException e)
 		{
@@ -266,7 +281,16 @@ public class Resources
 	public String createResource(@PathParam("pid") String pid,
 			CreateObjectBean input)
 	{
-
+		if (input == null)
+		{
+			throw new HttpArchiveException(Status.BAD_REQUEST.getStatusCode(),
+					"You've posted no input: NULL. You must provide at least a type");
+		}
+		else if (input.type == null || input.type.isEmpty())
+		{
+			throw new HttpArchiveException(Status.BAD_REQUEST.getStatusCode(),
+					"The type you've provided is NULL or empty.");
+		}
 		if (input.type.compareTo(ObjectType.monograph.toString()) == 0)
 			return createMonograph(pid);
 		else if (input.type.compareTo(ObjectType.ejournal.toString()) == 0)
@@ -372,226 +396,6 @@ public class Resources
 					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
 					e.getMessage());
 		}
-	}
-
-	private String createWebpage(String pid)
-	{
-		try
-		{
-			logger.info("create Webpage");
-
-			if (actions.nodeExists(pid))
-			{
-				throw new HttpArchiveException(
-						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-						"Node already exists. I do nothing!");
-			}
-			Node rootObject = new Node();
-			rootObject.setNodeType(TYPE_OBJECT);
-			Link link = new Link();
-			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
-			rootObject.addRelation(link);
-			rootObject.setNamespace(namespace).setPID(pid);
-
-			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.webpage));
-
-			ComplexObject object = new ComplexObject(rootObject);
-			return actions.create(object, true);
-
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
-	private String createMonograph(String pid)
-	{
-		logger.info("create Monograph");
-		try
-		{
-			if (actions.nodeExists(pid))
-			{
-				throw new HttpArchiveException(
-						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-						"Node already exists. I do nothing!");
-			}
-			Node rootObject = new Node();
-			rootObject.setNodeType(TYPE_OBJECT);
-			Link link = new Link();
-			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
-			rootObject.addRelation(link);
-			rootObject.setNamespace(namespace).setPID(pid);
-
-			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.monograph));
-
-			ComplexObject object = new ComplexObject(rootObject);
-			return actions.create(object, true);
-
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
-	private String createEJournal(String pid)
-	{
-		logger.info("create EJournal");
-		try
-		{
-			if (actions.nodeExists(namespace + ":" + pid))
-			{
-				throw new HttpArchiveException(
-						Status.INTERNAL_SERVER_ERROR.getStatusCode(), namespace
-								+ ":" + pid
-								+ " node already exists. I do nothing!");
-			}
-
-			Node rootObject = new Node();
-			rootObject.setNodeType(TYPE_OBJECT);
-			Link link = new Link();
-			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
-			rootObject.addRelation(link);
-			rootObject.setNamespace(namespace).setPID(namespace + ":" + pid);
-
-			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.ejournal));
-
-			ComplexObject object = new ComplexObject(rootObject);
-			return actions.create(object, true);
-
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
-	private String createWebpageVersion(String parentPid, String versionPid)
-	{
-		try
-		{
-			logger.info("create Webpage Version");
-
-			Node rootObject = new Node();
-			rootObject.setNodeType(TYPE_OBJECT);
-			Link link = new Link();
-			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, true);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(IS_VERSION);
-			link.setObject(parentPid, false);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(HAS_VERSION_NAME);
-			link.setObject(versionPid, true);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(REL_BELONGS_TO_OBJECT);
-			link.setObject(parentPid, false);
-			rootObject.addRelation(link);
-
-			rootObject.setNamespace(namespace).setPID(versionPid);
-
-			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.webpageVersion));
-
-			ComplexObject object = new ComplexObject(rootObject);
-
-			link = new Link();
-			link.setPredicate(HAS_VERSION);
-			link.setObject(versionPid, false);
-
-			actions.addLink(parentPid, link);
-
-			link = new Link();
-			link.setPredicate(REL_IS_RELATED);
-			link.setObject(versionPid, false);
-
-			actions.addLink(parentPid, link);
-
-			return actions.create(object, true);
-
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
-	private String createEJournalVolume(String parentPid, String volumePid)
-	{
-
-		logger.info("create EJournal Volume");
-		try
-		{
-			Node rootObject = new Node();
-			rootObject.setNodeType(TYPE_OBJECT);
-			Link link = new Link();
-			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(IS_VOLUME);
-			link.setObject(parentPid, false);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(REL_BELONGS_TO_OBJECT);
-			link.setObject(parentPid, false);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(HAS_VOLUME_NAME);
-			link.setObject(volumePid, true);
-			rootObject.addRelation(link);
-
-			rootObject.setNamespace(namespace).setPID(volumePid);
-
-			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.ejournalVolume));
-
-			ComplexObject object = new ComplexObject(rootObject);
-
-			link = new Link();
-			link.setPredicate(HAS_VOLUME);
-			link.setObject(volumePid, false);
-			actions.addLink(parentPid, link);
-
-			link = new Link();
-			link.setPredicate(REL_IS_RELATED);
-			link.setObject(volumePid, false);
-			actions.addLink(parentPid, link);
-
-			return actions.create(object, true);
-
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-
 	}
 
 	/**
@@ -764,4 +568,223 @@ public class Resources
 		}
 	}
 
+	private String createWebpage(String pid)
+	{
+		try
+		{
+			logger.info("create Webpage");
+
+			if (actions.nodeExists(pid))
+			{
+				throw new HttpArchiveException(
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+						"Node already exists. I do nothing!");
+			}
+			Node rootObject = new Node();
+			rootObject.setNodeType(TYPE_OBJECT);
+			Link link = new Link();
+			link.setPredicate(REL_IS_NODE_TYPE);
+			link.setObject(TYPE_OBJECT, false);
+			rootObject.addRelation(link);
+			rootObject.setNamespace(namespace).setPID(pid);
+			rootObject.setContentType(ObjectType.webpage.toString());
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					ObjectType.webpage));
+
+			ComplexObject object = new ComplexObject(rootObject);
+			return actions.create(object, true);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	private String createMonograph(String pid)
+	{
+		logger.info("create Monograph");
+		try
+		{
+			if (actions.nodeExists(pid))
+			{
+				throw new HttpArchiveException(
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+						"Node already exists. I do nothing!");
+			}
+			Node rootObject = new Node();
+			rootObject.setNodeType(TYPE_OBJECT);
+			Link link = new Link();
+			link.setPredicate(REL_IS_NODE_TYPE);
+			link.setObject(TYPE_OBJECT, false);
+			rootObject.addRelation(link);
+			rootObject.setNamespace(namespace).setPID(pid);
+			rootObject.setContentType(ObjectType.monograph.toString());
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					ObjectType.monograph));
+
+			ComplexObject object = new ComplexObject(rootObject);
+			return actions.create(object, true);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	private String createEJournal(String pid)
+	{
+		logger.info("create EJournal");
+		try
+		{
+			if (actions.nodeExists(namespace + ":" + pid))
+			{
+				throw new HttpArchiveException(
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(), namespace
+								+ ":" + pid
+								+ " node already exists. I do nothing!");
+			}
+
+			Node rootObject = new Node();
+			rootObject.setNodeType(TYPE_OBJECT);
+			Link link = new Link();
+			link.setPredicate(REL_IS_NODE_TYPE);
+			link.setObject(TYPE_OBJECT, false);
+			rootObject.addRelation(link);
+			rootObject.setNamespace(namespace).setPID(namespace + ":" + pid);
+			rootObject.setContentType(ObjectType.ejournal.toString());
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					ObjectType.ejournal));
+
+			ComplexObject object = new ComplexObject(rootObject);
+			return actions.create(object, true);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	private String createWebpageVersion(String parentPid, String versionPid)
+	{
+		try
+		{
+			logger.info("create Webpage Version");
+
+			Node rootObject = new Node();
+			rootObject.setNodeType(TYPE_OBJECT);
+			Link link = new Link();
+			link.setPredicate(REL_IS_NODE_TYPE);
+			link.setObject(TYPE_OBJECT, true);
+			rootObject.addRelation(link);
+
+			link = new Link();
+			link.setPredicate(IS_VERSION);
+			link.setObject(parentPid, false);
+			rootObject.addRelation(link);
+
+			link = new Link();
+			link.setPredicate(HAS_VERSION_NAME);
+			link.setObject(versionPid, true);
+			rootObject.addRelation(link);
+
+			link = new Link();
+			link.setPredicate(REL_BELONGS_TO_OBJECT);
+			link.setObject(parentPid, false);
+			rootObject.addRelation(link);
+
+			rootObject.setNamespace(namespace).setPID(versionPid);
+			rootObject.setContentType(ObjectType.webpageVersion.toString());
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					ObjectType.webpageVersion));
+
+			ComplexObject object = new ComplexObject(rootObject);
+
+			link = new Link();
+			link.setPredicate(HAS_VERSION);
+			link.setObject(versionPid, false);
+
+			actions.addLink(parentPid, link);
+
+			link = new Link();
+			link.setPredicate(REL_IS_RELATED);
+			link.setObject(versionPid, false);
+
+			actions.addLink(parentPid, link);
+
+			return actions.create(object, true);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	private String createEJournalVolume(String parentPid, String volumePid)
+	{
+
+		logger.info("create EJournal Volume");
+		try
+		{
+			Node rootObject = new Node();
+			rootObject.setNodeType(TYPE_OBJECT);
+			Link link = new Link();
+			link.setPredicate(REL_IS_NODE_TYPE);
+			link.setObject(TYPE_OBJECT, false);
+			rootObject.addRelation(link);
+
+			link = new Link();
+			link.setPredicate(IS_VOLUME);
+			link.setObject(parentPid, false);
+			rootObject.addRelation(link);
+
+			link = new Link();
+			link.setPredicate(REL_BELONGS_TO_OBJECT);
+			link.setObject(parentPid, false);
+			rootObject.addRelation(link);
+
+			link = new Link();
+			link.setPredicate(HAS_VOLUME_NAME);
+			link.setObject(volumePid, true);
+			rootObject.addRelation(link);
+
+			rootObject.setNamespace(namespace).setPID(volumePid);
+			rootObject.setContentType(ObjectType.ejournalVolume.toString());
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					ObjectType.ejournalVolume));
+
+			ComplexObject object = new ComplexObject(rootObject);
+
+			link = new Link();
+			link.setPredicate(HAS_VOLUME);
+			link.setObject(volumePid, false);
+			actions.addLink(parentPid, link);
+
+			link = new Link();
+			link.setPredicate(REL_IS_RELATED);
+			link.setObject(volumePid, false);
+			actions.addLink(parentPid, link);
+
+			return actions.create(object, true);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+
+	}
 }

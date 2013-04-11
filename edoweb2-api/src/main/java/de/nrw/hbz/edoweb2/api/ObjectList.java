@@ -31,17 +31,17 @@ public class ObjectList
 		list = new Vector<String>();
 	}
 
-	ObjectList(List<String> v)
+	public ObjectList(List<String> v)
 	{
 		list = v;
 	}
 
-	List<String> getList()
+	public List<String> getList()
 	{
 		return list;
 	}
 
-	void setList(List<String> list)
+	public void setList(List<String> list)
 	{
 		this.list = list;
 	}

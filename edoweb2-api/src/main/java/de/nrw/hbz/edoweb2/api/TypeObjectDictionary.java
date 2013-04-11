@@ -37,4 +37,25 @@ public class TypeObjectDictionary
 		this.type = type;
 		this.uris = uris;
 	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setType(String type)
+	{
+		this.type = type;
+	}
+
+	public List<String> getUris()
+	{
+		return uris;
+	}
+
+	public void setUris(List<String> uris)
+	{
+		this.uris = uris;
+	}
+
 }

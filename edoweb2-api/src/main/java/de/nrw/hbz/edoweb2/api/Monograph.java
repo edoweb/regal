@@ -17,6 +17,7 @@
 package de.nrw.hbz.edoweb2.api;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -103,11 +104,27 @@ public class Monograph
 	}
 
 	@GET
-	@Path("/{pid}")
+	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid)
 	{
 		return resources.getView(pid);
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 * @throws URISyntaxException
+	 */
+	@GET
+	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml", "text/html" })
+	public Response getResource(@PathParam("pid") String pid)
+			throws URISyntaxException
+	{
+		return Response.temporaryRedirect(
+				new java.net.URI("/monograph/" + pid + "/about")).build();
 	}
 
 	@GET

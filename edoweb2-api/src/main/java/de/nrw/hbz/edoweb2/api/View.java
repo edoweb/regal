@@ -16,6 +16,7 @@
  */
 package de.nrw.hbz.edoweb2.api;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -46,6 +47,8 @@ public class View
 	Vector<String> url = null;
 	Vector<String> alephid = null;
 	Vector<String> rights = null;
+	Vector<String> identifier = null;
+	Vector<SimpleEntry> predicates = null;
 
 	// TODO refactor names
 	Vector<String> pdfUrl = null;
@@ -116,6 +119,8 @@ public class View
 		message = new Vector<String>();
 		isPartOfName = new Vector<String>();
 		hasPartName = new Vector<String>();
+		identifier = new Vector<String>();
+		predicates = new Vector<SimpleEntry>();
 		// Not Implemented yet: First make Cool URIs!
 		// metsUrl = new Vector<String>();
 		// oaioreUrl = new Vector<String>();
@@ -916,6 +921,7 @@ public class View
 			str = "";
 		return str;
 	}
+
 	// public String getFirstQdcUrl()
 	// {
 	// String str = qdcUrl.firstElement();
@@ -948,4 +954,33 @@ public class View
 	// return str;
 	// }
 
+	public void addIdentifier(String id)
+	{
+		identifier.add(id);
+	}
+
+	public Vector<String> getIdentifier()
+	{
+		return identifier;
+	}
+
+	public void setIdentifier(Vector<String> identifier)
+	{
+		this.identifier = identifier;
+	}
+
+	public Vector<SimpleEntry> getPredicates()
+	{
+		return predicates;
+	}
+
+	public void setPredicates(Vector<SimpleEntry> predicates)
+	{
+		this.predicates = predicates;
+	}
+
+	public void addPredicate(String pred, String object)
+	{
+		predicates.add(new SimpleEntry(pred, object));
+	}
 }
