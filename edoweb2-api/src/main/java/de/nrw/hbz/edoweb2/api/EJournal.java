@@ -189,8 +189,10 @@ public class EJournal
 	public Response getResource(@PathParam("pid") String pid)
 			throws URISyntaxException
 	{
-		return Response.temporaryRedirect(
-				new java.net.URI("/ejournal/" + pid + "/about")).build();
+		return Response
+				.temporaryRedirect(
+						new java.net.URI("/resources/" + pid + "/about"))
+				.status(303).build();
 	}
 
 	@GET

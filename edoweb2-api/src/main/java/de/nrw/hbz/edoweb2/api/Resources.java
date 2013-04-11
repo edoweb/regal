@@ -146,8 +146,10 @@ public class Resources
 	public Response getResource(@PathParam("pid") String pid)
 			throws URISyntaxException
 	{
-		return Response.temporaryRedirect(
-				new java.net.URI("/resources/" + pid + "/about")).build();
+		return Response
+				.temporaryRedirect(
+						new java.net.URI("/resources/" + pid + "/about"))
+				.status(303).build();
 	}
 
 	/**

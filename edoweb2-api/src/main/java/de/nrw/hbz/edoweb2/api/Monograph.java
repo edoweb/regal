@@ -123,8 +123,10 @@ public class Monograph
 	public Response getResource(@PathParam("pid") String pid)
 			throws URISyntaxException
 	{
-		return Response.temporaryRedirect(
-				new java.net.URI("/monograph/" + pid + "/about")).build();
+		return Response
+				.temporaryRedirect(
+						new java.net.URI("/resources/" + pid + "/about"))
+				.status(303).build();
 	}
 
 	@GET
