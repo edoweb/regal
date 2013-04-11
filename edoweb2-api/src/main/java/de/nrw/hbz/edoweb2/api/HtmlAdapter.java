@@ -45,7 +45,7 @@ class HtmlAdapter
 	static String getHtml(View view)
 	{
 
-		String edowebStyle = "http://orthos.hbz-nrw.de/style.css";
+		String edowebStyle = "http://orthos.hbz-nrw.de/css/style.css";
 		String edowebLogo = "http://orthos.hbz-nrw.de/logo.gif";
 
 		try
@@ -113,10 +113,10 @@ class HtmlAdapter
 
 		Element tr = doc.createElement("tr");
 		Element td = doc.createElement("td");
-		td.setAttribute("class", "rlabel");
-		td.setAttribute("colspan", "3");
+		td.setAttribute("class", "tablelabel");
+		td.setAttribute("colspan", "4");
 		Element a = doc.createElement("h1");
-		a.setAttribute("class", "titleHeading");
+		a.setAttribute("class", "tableheading");
 		Text text = doc.createTextNode(view.getFirstPid());
 		a.appendChild(text);
 		td.appendChild(a);
@@ -124,7 +124,13 @@ class HtmlAdapter
 		table.appendChild(tr);
 
 		tr = doc.createElement("tr");
-		Element td1 = doc.createElement("td");
+		td = doc.createElement("td");
+		td.setAttribute("class", "tablelabel");
+		td.setAttribute("colspan", "4");
+		text = doc.createTextNode("Dublin Core");
+		td.appendChild(text);
+		tr.appendChild(td);
+		table.appendChild(tr);
 
 		addToTable(doc, table, "Fulltext", view.getPdfUrl());
 
@@ -157,20 +163,41 @@ class HtmlAdapter
 		addToTable(doc, table, "DOI", view.getDoi());
 
 		addToTable(doc, table, "URN", view.getUrn());
+
+		addToTable(doc, table, "Related Identifier", view.getIdentifier());
+
+		addToTable(doc, table, "Related Url", view.getUrl());
+
+		tr = doc.createElement("tr");
+		td = doc.createElement("td");
+		td.setAttribute("class", "tablelabel");
+		td.setAttribute("colspan", "4");
+		text = doc.createTextNode("Lobid");
+		td.appendChild(text);
+		tr.appendChild(td);
+		table.appendChild(tr);
+
 		for (SimpleEntry entry : view.getPredicates())
 		{
 			addToTable(doc, table, entry.getKey().toString(), entry.getValue()
 					.toString());
 		}
 
-		addToTable(doc, table, "Related Url", view.getUrl());
+		tr = doc.createElement("tr");
+		td = doc.createElement("td");
+		td.setAttribute("class", "tablelabel");
+		td.setAttribute("colspan", "4");
+		text = doc.createTextNode("Relations");
+		td.appendChild(text);
+		tr.appendChild(td);
+		table.appendChild(tr);
 
 		addHasPart(doc, table, "hasPart", view);
 
 		addIsPartOf(doc, table, "isPartOf", view);
 
 		tr = doc.createElement("tr");
-		td1 = doc.createElement("td");
+		td = doc.createElement("td");
 		Element td0 = doc.createElement("td");
 
 		td0.setAttribute("class", "plabel");
@@ -180,27 +207,27 @@ class HtmlAdapter
 		a.setAttribute("href", view.getFirstLobidUrl());
 		a.setAttribute("id", "lobidLink");
 		a.appendChild(doc.createTextNode("@ lobid.org"));
-		td1.appendChild(a);
+		td.appendChild(a);
 
 		a = doc.createElement("a");
 		a.setAttribute("href", view.getFirstVerbundUrl());
 		a.setAttribute("id", "verbundLink");
 		a.appendChild(doc.createTextNode("@ hbz-nrw.de"));
-		td1.appendChild(a);
+		td.appendChild(a);
 
 		a = doc.createElement("a");
 		a.setAttribute("href", view.getFirstDigitoolUrl());
 		a.setAttribute("id", "digitoolLink");
 		a.appendChild(doc.createTextNode("@ digitool.hbz-nrw.de"));
-		td1.appendChild(a);
+		td.appendChild(a);
 
 		tr.appendChild(td0);
-		tr.appendChild(td1);
+		tr.appendChild(td);
 
 		table.appendChild(tr);
 
 		tr = doc.createElement("tr");
-		td1 = doc.createElement("td");
+		td = doc.createElement("td");
 		td0 = doc.createElement("td");
 
 		td0.setAttribute("class", "plabel");
@@ -210,47 +237,37 @@ class HtmlAdapter
 		a.setAttribute("href", view.getFirstFedoraUrl());
 		a.setAttribute("id", "fedoraLink");
 		a.appendChild(doc.createTextNode("@ fedora"));
-		td1.appendChild(a);
+		td.appendChild(a);
 
 		a = doc.createElement("a");
 		a.setAttribute("href", view.getFirstRisearchUrl());
 		a.setAttribute("id", "risearchLink");
 		a.appendChild(doc.createTextNode("@ risearch"));
-		td1.appendChild(a);
+		td.appendChild(a);
 
 		a = doc.createElement("a");
 		a.setAttribute("href", view.getFirstCacheUrl());
 		a.setAttribute("id", "cacheLink");
 		a.appendChild(doc.createTextNode("@ cache"));
-		td1.appendChild(a);
+		td.appendChild(a);
 
 		tr.appendChild(td0);
-		tr.appendChild(td1);
+		tr.appendChild(td);
 
 		table.appendChild(tr);
 
 		tr = doc.createElement("tr");
 		td0 = doc.createElement("td");
-		td1 = doc.createElement("td");
+		td = doc.createElement("td");
 		doc.createElement("img");
 
 		td0.setAttribute("class", "editIcon");
-		// a = doc.createElement("a");
-		// a.setAttribute("href", pideditor);
-		// image = doc.createElement("img");
-		// image.setAttribute("src", editIcon);
-		// a.appendChild(image);
-		// td0.appendChild(a);
+
 		tr.appendChild(td0);
 
-		td1.setAttribute("class", "fedoraLogo");
-		// a = doc.createElement("a");
-		// a.setAttribute("href", view.getFirstObjectUrl());
-		// image = doc.createElement("img");
-		// image.setAttribute("src", this.fedoraLogo);
-		// a.appendChild(image);
-		// td1.appendChild(a);
-		tr.appendChild(td1);
+		td.setAttribute("class", "fedoraLogo");
+
+		tr.appendChild(td);
 
 		table.appendChild(tr);
 

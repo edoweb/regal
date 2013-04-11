@@ -44,22 +44,12 @@ import com.sun.jersey.multipart.impl.MultiPartWriter;
 
 import de.nrw.hbz.edoweb2.api.DCBeanAnnotated;
 import de.nrw.hbz.edoweb2.api.ObjectType;
-import de.nrw.hbz.edoweb2.api.TypeType;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.mapper.ControlBean;
 import de.nrw.hbz.edoweb2.sync.mapper.DCBean;
 
 /**
- * Class FedoraIngester
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
- * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
@@ -183,15 +173,6 @@ public class EdowebIngester implements IngestInterface
 			e.printStackTrace();
 			logger.info(dtlBean.getPid() + " " + e.getMessage());
 		}
-		try
-		{
-
-		}
-
-		catch (Exception e)
-		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
-		}
 
 		logger.info(dtlBean.getPid() + " " + "Thanx and goodbye!\n");
 	}
@@ -273,14 +254,6 @@ public class EdowebIngester implements IngestInterface
 			e.printStackTrace();
 			logger.info(dtlBean.getPid() + " " + e.getMessage());
 		}
-		try
-		{
-
-		}
-		catch (Exception e)
-		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
-		}
 
 	}
 
@@ -342,7 +315,6 @@ public class EdowebIngester implements IngestInterface
 		{
 			logger.info(pid + " Found ejournal.");
 			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
-			String ejournalDC = ejournal.toString() + "/dc";
 			createResource(ejournal, dtlBean);
 			metadata(ejournal, dtlBean, ObjectType.ejournal);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
@@ -464,17 +436,45 @@ public class EdowebIngester implements IngestInterface
 	private void metadata(String resource, DigitalEntity dtlBean,
 			ObjectType type)
 	{
-		updateDC(resource + "/dc", dtlBean, type);
-		lobidify(dtlBean);
-		index(dtlBean);
-		oaiProvide(dtlBean);
+		try
+		{
+			updateDC(resource + "/dc", dtlBean, type);
+		}
+		catch (Exception e)
+		{
+			logger.error(dtlBean.getPid() + " " + e.getMessage());
+		}
+		try
+		{
+			lobidify(dtlBean);
+		}
+		catch (Exception e)
+		{
+			logger.error(dtlBean.getPid() + " " + e.getMessage());
+		}
+		try
+		{
+			index(dtlBean);
+		}
+		catch (Exception e)
+		{
+			logger.error(dtlBean.getPid() + " " + e.getMessage());
+		}
+		try
+		{
+			oaiProvide(dtlBean);
+		}
+		catch (Exception e)
+		{
+			logger.error(dtlBean.getPid() + " " + e.getMessage());
+		}
+
 	}
 
 	private void createObject(String resource, DigitalEntity dtlBean,
 			String expectedMime, ObjectType type)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
-		String dc = resource + "/dc";
 		String data = resource + "/data";
 
 		createResource(resource, dtlBean);
@@ -503,7 +503,7 @@ public class EdowebIngester implements IngestInterface
 		{
 			updateData(data, dtlBean);
 		}
-
+		updateLabel(resource, dtlBean, type);
 	}
 
 	private void createResource(String endpoint, DigitalEntity dtlBean)
@@ -532,7 +532,32 @@ public class EdowebIngester implements IngestInterface
 		{
 			dc.add(marc2dc(dtlBean));
 			dc.addDescription(dtlBean.getLabel());
-			dc.addType(TypeType.contentType + ":" + type);
+			// dc.addType(TypeType.contentType + ":" + type);
+			webpageDC.post(dc);
+
+		}
+		catch (UniformInterfaceException e)
+		{
+			logger.info(pid + " " + e.getMessage());
+		}
+		catch (Exception e)
+		{
+			logger.debug(pid + " " + e.getMessage());
+		}
+	}
+
+	private void updateLabel(String endpoint, DigitalEntity dtlBean,
+			ObjectType type)
+	{
+		String pid = namespace + ":" + dtlBean.getPid();
+		WebResource webpageDC = webclient.resource(endpoint + "/dc");
+
+		DCBeanAnnotated dc = new DCBeanAnnotated();
+
+		try
+		{
+			dc.addTitle("Version of: " + pid);
+			dc.addDescription(dtlBean.getLabel());
 			webpageDC.post(dc);
 
 		}
@@ -641,19 +666,12 @@ public class EdowebIngester implements IngestInterface
 		{
 			StringWriter str = new StringWriter();
 			TransformerFactory tFactory = TransformerFactory.newInstance();
-
-			// String xslFile = ClassLoader.getSystemResource(
-			// "MARC21slim2OAIDC.xsl").getPath();
-
-			// TODO jar path
 			Transformer transformer = tFactory
 					.newTransformer(new StreamSource(ClassLoader
 							.getSystemResourceAsStream("MARC21slim2OAIDC.xsl")));
 			transformer.transform(new StreamSource(dtlBean.getMarcFile()),
 					new StreamResult(str));
-
 			String xmlStr = str.getBuffer().toString();
-			// logger.info(xmlStr);
 			DCBeanAnnotated dc = new DCBeanAnnotated(new DCBean(xmlStr));
 			return dc;
 

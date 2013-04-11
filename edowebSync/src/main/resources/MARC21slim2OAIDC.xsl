@@ -200,11 +200,11 @@
 				</xsl:call-template>
 			</dc:relation>
 		</xsl:for-each>
-<!-- 		<xsl:for-each select="marc:datafield[@tag=856]"> -->
-<!-- 			<dc:identifier> -->
-<!-- 				http://nbn-resolving.de/<xsl:value-of select="marc:subfield[@code='u']"/> -->
-<!-- 			</dc:identifier> -->
-<!-- 		</xsl:for-each> -->
+		<xsl:for-each select="marc:datafield[@tag=856]">
+			<dc:identifier>
+				<xsl:value-of select="marc:subfield[@code='u']"/>
+			</dc:identifier>
+		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag=856]">
 			<dc:identifier>
 				<xsl:value-of select="marc:subfield[@code='u']"/>

@@ -912,15 +912,15 @@ class Actions
 		view.setDescription(node.getDescription());
 		String label = node.getLabel();
 
-		view.addType(TypeType.contentType + ":" + node.getContentType());
 		if (label != null && !label.isEmpty())
 			view.addDescription(label);
 		view.setUri(uri);
-
+		view.addType(TypeType.contentType + ":" + node.getContentType());
 		URL metadata = node.getMetadataUrl();
 		InputStream in = null;
 		if (metadata != null)
 		{
+
 			try
 			{
 				in = metadata.openStream();
