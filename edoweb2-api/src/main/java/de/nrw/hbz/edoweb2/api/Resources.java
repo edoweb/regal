@@ -591,7 +591,9 @@ public class Resources
 			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.webpage.toString());
 			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.webpage));
+					ObjectType.webpage.toString()));
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					"edoweb"));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -625,7 +627,9 @@ public class Resources
 			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.monograph.toString());
 			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.monograph));
+					ObjectType.monograph.toString()));
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					"edoweb"));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -661,7 +665,9 @@ public class Resources
 			rootObject.setNamespace(namespace).setPID(namespace + ":" + pid);
 			rootObject.setContentType(ObjectType.ejournal.toString());
 			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.ejournal));
+					ObjectType.ejournal.toString()));
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					"edoweb"));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -706,7 +712,9 @@ public class Resources
 			rootObject.setNamespace(namespace).setPID(versionPid);
 			rootObject.setContentType(ObjectType.webpageVersion.toString());
 			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.webpageVersion));
+					ObjectType.webpageVersion.toString()));
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					"edoweb"));
 
 			ComplexObject object = new ComplexObject(rootObject);
 
@@ -764,7 +772,9 @@ public class Resources
 			rootObject.setNamespace(namespace).setPID(volumePid);
 			rootObject.setContentType(ObjectType.ejournalVolume.toString());
 			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.ejournalVolume));
+					ObjectType.ejournalVolume.toString()));
+			rootObject.addContentModel(ContentModelFactory.create(namespace,
+					"edoweb"));
 
 			ComplexObject object = new ComplexObject(rootObject);
 

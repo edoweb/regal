@@ -31,15 +31,12 @@ public class ContentModelFactory
 	 *            the type of object
 	 * @return a ContentModel object
 	 */
-	public static ContentModel create(String namespace,
-			ObjectType type)
+	public static ContentModel create(String namespace, String type)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + ":" + type.toString() + "ObjectModel");
-		cm.setServiceDefinitionPID(namespace + ":" + type.toString()
-				+ "ServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + ":" + type.toString()
-				+ "ServiceDeployment");
+		cm.setContentModelPID(namespace + ":" + type + "ObjectModel");
+		cm.setServiceDefinitionPID(namespace + ":" + type + "ServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + ":" + type + "ServiceDeployment");
 
 		cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
 		cm.addMethod("lobid", "http://localhost/resources/(pid)/metadata");
