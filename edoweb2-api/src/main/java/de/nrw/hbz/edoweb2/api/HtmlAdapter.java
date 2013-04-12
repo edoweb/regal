@@ -127,7 +127,7 @@ class HtmlAdapter
 		td = doc.createElement("td");
 		td.setAttribute("class", "tablelabel");
 		td.setAttribute("colspan", "4");
-		text = doc.createTextNode("Dublin Core");
+		text = doc.createTextNode("Digitool");
 		td.appendChild(text);
 		tr.appendChild(td);
 		table.appendChild(tr);
@@ -214,12 +214,15 @@ class HtmlAdapter
 		a.setAttribute("id", "verbundLink");
 		a.appendChild(doc.createTextNode("@ hbz-nrw.de"));
 		td.appendChild(a);
-
-		a = doc.createElement("a");
-		a.setAttribute("href", view.getFirstDigitoolUrl());
-		a.setAttribute("id", "digitoolLink");
-		a.appendChild(doc.createTextNode("@ digitool.hbz-nrw.de"));
-		td.appendChild(a);
+		// TODO only if synced Resource
+		if (view.getFirstDigitoolUrl() != null)
+		{
+			a = doc.createElement("a");
+			a.setAttribute("href", view.getFirstDigitoolUrl());
+			a.setAttribute("id", "digitoolLink");
+			a.appendChild(doc.createTextNode("@ digitool.hbz-nrw.de"));
+			td.appendChild(a);
+		}
 
 		tr.appendChild(td0);
 		tr.appendChild(td);
@@ -244,12 +247,15 @@ class HtmlAdapter
 		a.setAttribute("id", "risearchLink");
 		a.appendChild(doc.createTextNode("@ risearch"));
 		td.appendChild(a);
-
-		a = doc.createElement("a");
-		a.setAttribute("href", view.getFirstCacheUrl());
-		a.setAttribute("id", "cacheLink");
-		a.appendChild(doc.createTextNode("@ cache"));
-		td.appendChild(a);
+		// TODO only if synced resource
+		if (view.getFirstCacheUrl() != null)
+		{
+			a = doc.createElement("a");
+			a.setAttribute("href", view.getFirstCacheUrl());
+			a.setAttribute("id", "cacheLink");
+			a.appendChild(doc.createTextNode("@ cache"));
+			td.appendChild(a);
+		}
 
 		tr.appendChild(td0);
 		tr.appendChild(td);

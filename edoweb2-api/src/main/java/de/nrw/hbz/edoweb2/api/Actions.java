@@ -899,6 +899,7 @@ class Actions
 	 */
 	View getView(Node node)
 	{
+
 		String pid = node.getPID();
 		String uri = getURI(node);
 		View view = new View();
@@ -987,10 +988,18 @@ class Actions
 		}
 
 		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
-		view.addCacheUrl(this.serverName + "/edobase/" + pidWithoutNamespace);
+
+		// TODO only if synced Resource
+		if (pid.length() == 14)
+			view.addCacheUrl(this.serverName + "/edobase/"
+					+ pidWithoutNamespace);
+
 		view.addFedoraUrl(this.fedoraExtern + "/objects/" + pid);
-		view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
-				+ pidWithoutNamespace);
+		// TODO only if synced resource
+		if (pid.length() == 14)
+			view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
+					+ pidWithoutNamespace);
+
 		String query = "<info:fedora/" + pid + "> * *";
 		try
 		{
