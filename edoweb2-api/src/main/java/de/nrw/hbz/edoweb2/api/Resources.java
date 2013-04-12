@@ -558,9 +558,7 @@ public class Resources
 	{
 		try
 		{
-			return actions.deleteAll(
-					actions.findByType(TypeType.contentType.toString() + ":"
-							+ type), false);
+			return actions.deleteAll(actions.findByType(type), false);
 		}
 		catch (ArchiveException e)
 		{

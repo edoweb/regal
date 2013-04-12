@@ -179,7 +179,7 @@ public class Monograph
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return resources.deleteResource(ObjectType.monograph.toString());
+		return resources.deleteResourceOfType(ObjectType.monograph.toString());
 
 	}
 
