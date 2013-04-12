@@ -76,7 +76,7 @@
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<data source="*.http://iflastandards.info/ns/isbd/elements/P1006"
-			name="description">
+			name="dc:description">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<!-- foaf to dc -->
