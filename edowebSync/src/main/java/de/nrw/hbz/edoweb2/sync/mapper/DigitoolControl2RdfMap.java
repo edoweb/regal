@@ -29,6 +29,7 @@ package de.nrw.hbz.edoweb2.sync.mapper;
  * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 12.07.2011
  * 
  */
+@SuppressWarnings("javadoc")
 public class DigitoolControl2RdfMap
 {
 	final static public String rdfLabel = "http://www.hbz-nrw.de/dtl/label";

@@ -17,7 +17,6 @@
 package de.nrw.hbz.edoweb2.archive;
 
 import java.io.InputStream;
-import java.rmi.RemoteException;
 import java.util.List;
 
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
@@ -29,45 +28,151 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
 public interface ArchiveInterface
 {
 
-	public Node createRootObject(String namespace) throws RemoteException;
+	/**
+	 * @param namespace
+	 *            The namespace of the new object
+	 * @return The new created object.
+	 */
+	public Node createRootObject(String namespace);
 
-	public Node createComplexObject(ComplexObject tree) throws RemoteException;
+	/**
+	 * @param object
+	 *            A complex object
+	 * @return the root of the newly created complex object
+	 */
+	public Node createComplexObject(ComplexObject object);
 
-	public Node createNode(Node parent, Node node) throws RemoteException;
+	/**
+	 * Adds a new node as child of the parent.
+	 * 
+	 * @param parent
+	 *            the parent of the new node
+	 * @param node
+	 *            the new node
+	 * @return The new created object.
+	 */
+	public Node createNode(Node parent, Node node);
 
-	public Node createNode(String parentPid) throws RemoteException;
+	/**
+	 * @param parentPid
+	 *            the pid of an existing node
+	 * @return the new node
+	 */
+	public Node createNode(String parentPid);
 
-	public Node readObject(String rootPID) throws RemoteException;
+	/**
+	 * @param pid
+	 *            the pid of the node to read
+	 * @return the node
+	 */
+	public Node readObject(String pid);
 
-	public ComplexObject readComplexObject(String rootPID)
-			throws RemoteException;
+	/**
+	 * @param pid
+	 *            the pid of the object to read
+	 * @return A tree-like complex object
+	 */
+	public ComplexObject readComplexObject(String pid);
 
-	public Node readNode(String rootPID) throws RemoteException;
+	/**
+	 * @param pid
+	 *            of the node
+	 * @return the node
+	 */
+	public Node readNode(String pid);
 
-	public void updateObject(String nodePid, Node object)
-			throws RemoteException;
+	/**
+	 * @param pid
+	 *            of the node to update
+	 * @param node
+	 *            the new version of the node
+	 */
+	public void updateObject(String pid, Node node);
 
-	public void updateComplexObject(ComplexObject object)
-			throws RemoteException;
+	/**
+	 * @param object
+	 *            The new verions of the object
+	 */
+	public void updateComplexObject(ComplexObject object);
 
-	public void updateNode(String nodePid, Node node) throws RemoteException;
+	/**
+	 * @param pid
+	 *            The pid of the node to update
+	 * @param node
+	 *            The new version of the node
+	 */
+	public void updateNode(String pid, Node node);
 
-	public String deleteComplexObject(String rootPID) throws RemoteException;
+	/**
+	 * @param pid
+	 *            The pid that must be deleted
+	 * @return The pid that has been deleted
+	 */
+	public String deleteComplexObject(String pid);
 
+	/**
+	 * @param pid
+	 *            The node that must be deleted
+	 * @return the pid that has been deleted
+	 */
 	public String deleteNode(String pid);
 
+	/**
+	 * @param pid
+	 *            the pid of the object
+	 * @param datastreamName
+	 *            the name of the datastream that must be deleted
+	 * @return the pid:datastream that has been deleted
+	 */
+	public String deleteDatastream(String pid, String datastreamName);
+
+	/**
+	 * @param searchTerm
+	 *            A search term
+	 * @return A list of pids
+	 */
 	public List<String> findNodes(String searchTerm);
 
+	/**
+	 * @param rdfQuery
+	 *            An rdf query
+	 * @param queryType
+	 *            The type of the query
+	 * @param outputFormat
+	 *            the type of the result
+	 * @return the result as stream
+	 */
 	public InputStream findTriples(String rdfQuery, String queryType,
 			String outputFormat);
 
-	public String[] getPids(String namespace, int number)
-			throws RemoteException;
+	/**
+	 * @param namespace
+	 *            pids from this namespace will be returned
+	 * @param number
+	 *            number of pids
+	 * @return A Array of pids.
+	 */
+	public String[] getPids(String namespace, int number);
 
+	/**
+	 * @param pid
+	 *            the pid of the node
+	 * @return true if the node exists false if not
+	 */
 	public boolean nodeExists(String pid);
 
+	/**
+	 * @param pid
+	 *            A pid.
+	 * @return the pid prfixed with a certain namespace, e.g info:fedora.
+	 */
 	public String addUriPrefix(String pid);
 
+	/**
+	 * @param pred
+	 *            the predicate
+	 * @return the predicate prfixed with a certain namespace, e.g info:fedora.
+	 */
 	public String removeUriPrefix(String pred);
 
 }

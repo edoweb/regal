@@ -1,5 +1,3 @@
-package de.nrw.hbz.edoweb2.sync;
-
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -16,6 +14,8 @@ package de.nrw.hbz.edoweb2.sync;
  * limitations under the License.
  *
  */
+package de.nrw.hbz.edoweb2.sync;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,23 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
-import de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber;
+import de.nrw.hbz.edoweb2.digitool.pidreporter.PIDReporter;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBuilder;
-import de.nrw.hbz.edoweb2.sync.ingest.FedoraIngester;
+import de.nrw.hbz.edoweb2.sync.ingest.EdowebIngester;
 import de.nrw.hbz.edoweb2.sync.ingest.IngestInterface;
 
 /**
- * Class Main
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
- * 
- * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 03.06.2011
+ * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
 public class Main
@@ -56,13 +47,8 @@ public class Main
 	final static Logger logger = LoggerFactory.getLogger(Main.class);
 
 	IngestInterface ingester = null;
-	OaiPidGrabber harvester = null;
+	PIDReporter harvester = null;
 	DigitoolDownloader downloader = null;
-
-	public Main()
-	{
-
-	}
 
 	/*
 	 * DigitoolIngester
@@ -71,6 +57,10 @@ public class Main
 	 * --generate-html-browsing
 	 */
 
+	/**
+	 * @param args
+	 *            an argument vector
+	 */
 	public static void main(String[] args)
 	{
 		Options options = new Options();
@@ -161,7 +151,7 @@ public class Main
 		help.printHelp(" ", options);
 	}
 
-	public void run(String mode, String user, String password, String dtl,
+	void run(String mode, String user, String password, String dtl,
 			String cache, String oai, String set, String timestamp,
 			String fedoraBase, String host, String pidListFile)
 	{
@@ -172,10 +162,10 @@ public class Main
 		String oaiServer = oai;
 		String timestampFile = timestamp;
 
-		harvester = new OaiPidGrabber(oaiServer, timestampFile);
+		harvester = new PIDReporter(oaiServer, timestampFile);
 		downloader = new DigitoolDownloader(server, downloadLocation);
 
-		ingester = new FedoraIngester(user, password, host);
+		ingester = new EdowebIngester(user, password, host);
 
 		if (mode.compareTo("INIT") == 0)
 		{

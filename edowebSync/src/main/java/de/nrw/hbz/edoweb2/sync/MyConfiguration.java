@@ -1,5 +1,3 @@
-package de.nrw.hbz.edoweb2.sync;
-
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -16,6 +14,8 @@ package de.nrw.hbz.edoweb2.sync;
  * limitations under the License.
  *
  */
+package de.nrw.hbz.edoweb2.sync;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -24,7 +24,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.configuration.BaseConfiguration;
 
-public class MyConfiguration extends BaseConfiguration
+class MyConfiguration extends BaseConfiguration
 {
 	/**
 	 * 
@@ -40,8 +40,7 @@ public class MyConfiguration extends BaseConfiguration
 	 * @author Jan Schnasse, schnasse@hbz-nrw.de
 	 * 
 	 */
-	public MyConfiguration(String[] args, Options options)
-			throws ParseException
+	MyConfiguration(String[] args, Options options) throws ParseException
 	{
 		CommandLineParser parser = new BasicParser();
 		CommandLine commandLine = parser.parse(options, args);

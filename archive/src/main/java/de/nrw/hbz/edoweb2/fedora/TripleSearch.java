@@ -39,7 +39,7 @@ import org.apache.commons.httpclient.util.URIUtil;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class TripleSearch
+class TripleSearch
 {
 	/*
 	 * 
@@ -54,15 +54,15 @@ public class TripleSearch
 	private final String passwd;
 
 	//
-	public TripleSearch(String host, String user, String passwd)
+	TripleSearch(String host, String user, String passwd)
 	{
 		this.host = host + "/risearch";
 		this.user = user;
 		this.passwd = passwd;
 	}
 
-	public InputStream find(String query, String queryFormat,
-			String outputformat) throws IOException
+	InputStream find(String query, String queryFormat, String outputformat)
+			throws IOException
 	{
 		HttpClient httpClient = new HttpClient();
 		httpClient.getState().setCredentials(

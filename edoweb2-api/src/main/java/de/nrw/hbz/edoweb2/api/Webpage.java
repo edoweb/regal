@@ -16,16 +16,8 @@
  */
 package de.nrw.hbz.edoweb2.api;
 
-import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION;
-import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VERSION_NAME;
-import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_CURRENT_VERSION;
-import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VERSION;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
-
-import java.rmi.RemoteException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -41,9 +33,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
-import de.nrw.hbz.edoweb2.datatypes.Link;
-import de.nrw.hbz.edoweb2.datatypes.Node;
+import com.sun.jersey.multipart.MultiPart;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -54,212 +44,134 @@ public class Webpage
 {
 	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
 
-	ObjectType webpageType = ObjectType.webpage;
-	ObjectType webpageVersionType = ObjectType.webpageVersion;
-	String namespace = "edoweb";
-	String subnamespace = "edoweb";
+	Resources resources = null;
 
-	Actions actions = new Actions();
-
-	public Webpage()
+	public Webpage() throws IOException
 	{
+
+		resources = new Resources();
 
 	}
 
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
-	public MessageBean deleteAll()
+	public String deleteAll()
 	{
-		String eJournal = actions.deleteAll(
-				actions.findByType(TypeType.contentType.toString() + ":"
-						+ webpageType.toString()), false);
-		String eJournalVolume = actions.deleteAll(
-				actions.findByType(webpageVersionType.toString()), false);
-		return new MessageBean(eJournal + "\n" + eJournalVolume);
+		return resources.deleteResourceOfType(ObjectType.webpage.toString());
 	}
 
 	@PUT
 	@Path("/{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public Response createWebpage(@PathParam("pid") String pid)
+	public String createWebpage(@PathParam("pid") String pid)
 	{
-		logger.info("create Webpage");
-		try
-		{
-			if (actions.nodeExists(pid))
-			{
-				MessageBean msg = new MessageBean(
-						"Node already exists. I do nothing!");
-				Response response = Response.status(409)
-						.type(MediaType.APPLICATION_JSON).entity(msg).build();
-				logger.warn("Node exists: " + pid);
-				return response;
-			}
-			Node rootObject = new Node();
-			rootObject.setNodeType(TYPE_OBJECT);
-			Link link = new Link();
-			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
-			rootObject.addRelation(link);
-			rootObject
-					.setNamespace(namespace)
-					.setPID(pid)
-					.addType(
-							TypeType.contentType + ":" + webpageType.toString());
-
-			rootObject.addContentModel(ContentModelFactory.createMonographCM(
-					namespace, webpageType));
-
-			ComplexObject object = new ComplexObject(rootObject);
-			MessageBean msg = new MessageBean(actions.create(object, true));
-			return Response.ok().type(MediaType.APPLICATION_JSON).entity(msg)
-					.build();
-
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		MessageBean msg = new MessageBean("Create Failed");
-		return Response.serverError().type(MediaType.APPLICATION_JSON)
-				.entity(msg).build();
+		CreateObjectBean input = new CreateObjectBean();
+		input.type = ObjectType.webpage.toString();
+		return resources.createResource(pid, input);
 	}
 
 	@DELETE
 	@Path("/{pid}")
-	public MessageBean deleteWebpage(@PathParam("pid") String pid)
+	@Produces({ "application/json", "application/xml" })
+	public String deleteWebpage(@PathParam("pid") String pid)
 	{
-		actions.delete(pid, false);
-		return new MessageBean(pid + " DELETED!");
+		return resources.deleteResource(pid);
 	}
 
 	@POST
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public MessageBean updateWebpageDC(@PathParam("pid") String pid,
+	public String updateWebpageDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return new MessageBean(actions.updateDC(pid, content));
+		return resources.updateResourceDC(pid, content);
 	}
 
+	@PUT
+	@Path("/{pid}/metadata")
+	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
+	public String updateWebpageMetadata(@PathParam("pid") String pid,
+			String content)
+	{
+		return resources.updateResourceMetadata(pid, content);
+	}
+
+	@Deprecated
 	@POST
 	@Path("/{pid}/metadata")
-	public MessageBean updateWebpageMetadata(@PathParam("pid") String pid,
-			UploadDataBean content)
+	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
+	public String updateWebpageMetadataPost(@PathParam("pid") String pid,
+			String content)
 	{
-		return new MessageBean(actions.updateMetadata(pid, content));
+		return resources.updateResourceMetadata(pid, content);
 	}
 
 	@PUT
 	@Path("/{pid}/version/{versionPid}")
 	@Produces({ "application/json", "application/xml" })
-	public MessageBean createWebpageVersion(@PathParam("pid") String pid,
+	public String createWebpageVersion(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		logger.info("create Webpage Version");
-		try
-		{
-			Node rootObject = new Node();
-			rootObject.setNodeType(TYPE_OBJECT);
-			Link link = new Link();
-			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, true);
-			rootObject.addRelation(link);
+		CreateObjectBean input = new CreateObjectBean();
+		input.type = ObjectType.webpageVersion.toString();
+		input.parentPid = pid;
+		return resources.createResource(versionPid, input);
 
-			link = new Link();
-			link.setPredicate(IS_VERSION);
-			link.setObject(pid, false);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(HAS_VERSION_NAME);
-			link.setObject(versionPid, true);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(REL_BELONGS_TO_OBJECT);
-			link.setObject(pid, false);
-			rootObject.addRelation(link);
-
-			rootObject
-					.setNamespace(namespace)
-					.setPID(versionPid)
-					.addType(
-							TypeType.contentType + ":"
-									+ ObjectType.webpageVersion.toString());
-
-			rootObject.addContentModel(ContentModelFactory.createMonographCM(
-					namespace, webpageType));
-
-			ComplexObject object = new ComplexObject(rootObject);
-
-			link = new Link();
-			link.setPredicate(HAS_VERSION);
-			link.setObject(versionPid, false);
-
-			actions.addLink(pid, link);
-
-			link = new Link();
-			link.setPredicate(REL_IS_RELATED);
-			link.setObject(versionPid, false);
-
-			actions.addLink(pid, link);
-
-			return new MessageBean(actions.create(object, true));
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-		}
-		return new MessageBean("create WebpageVersion Failed");
 	}
 
 	@POST
 	@Path("/{pid}/version/{versionPid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public MessageBean updateWebpageVersionDC(@PathParam("pid") String pid,
+	public String updateWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, DCBeanAnnotated content)
 	{
-		return new MessageBean(actions.updateDC(versionPid, content));
+		return resources.updateResourceDC(versionPid, content);
 	}
 
 	@POST
 	@Path("/{pid}/version/{versionPid}/data")
-	public MessageBean updateWebpageVersionData(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid, UploadDataBean content)
+	@Produces({ "application/json", "application/xml" })
+	@Consumes("multipart/mixed")
+	public String updateWebpageVersionData(@PathParam("pid") String pid,
+			@PathParam("versionPid") String versionPid, MultiPart multiPart)
 	{
-		return new MessageBean(actions.updateData(versionPid, content));
+		return resources.updateResourceData(versionPid, multiPart);
 	}
 
+	@PUT
+	@Path("/{pid}/version/{versionPid}/metadata")
+	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
+	public String updateWebpageVersionMetadata(@PathParam("pid") String pid,
+			@PathParam("versionPid") String versionPid, String content)
+	{
+		return resources.updateResourceMetadata(versionPid, content);
+	}
+
+	@Deprecated
 	@POST
 	@Path("/{pid}/version/{versionPid}/metadata")
-	public MessageBean updateWebpageVersionMetadata(
+	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
+	public String updateWebpageVersionMetadataPost(
 			@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid, UploadDataBean content)
+			@PathParam("versionPid") String versionPid, String content)
 	{
-		return new MessageBean(actions.updateMetadata(versionPid, content));
-	}
-
-	@POST
-	@Path("/{pid}/current/{versionPid}")
-	public MessageBean setCurrentVersion(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid)
-	{
-		Link link = new Link();
-		link.setPredicate(IS_CURRENT_VERSION);
-		link.setObject(versionPid);
-		return new MessageBean(actions.updateLink(pid, link));
+		return resources.updateResourceMetadata(versionPid, content);
 	}
 
 	@GET
 	@Path("/{pid}/version/{versionPid}/metadata")
 	@Produces({ "application/*" })
-	public Response readWebpageVersionMetadata(@PathParam("pid") String pid,
+	public String readWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		return actions.readMetadata(versionPid);
+		return resources.readMetadata(versionPid);
+
 	}
 
 	@GET
@@ -268,7 +180,8 @@ public class Webpage
 	public DCBeanAnnotated readWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		return actions.readDC(versionPid);
+		return resources.readDC(versionPid);
+
 	}
 
 	@GET
@@ -277,16 +190,8 @@ public class Webpage
 	public Response readWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid)
 	{
-		return actions.readData(versionPid);
-	}
+		return resources.readData(versionPid);
 
-	@GET
-	@Path("/{pid}/version/{versionPid}")
-	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getVersionView(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid)
-	{
-		return actions.getView(versionPid, ObjectType.webpageVersion);
 	}
 
 	@GET
@@ -294,30 +199,49 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVersions(@PathParam("pid") String pid)
 	{
-		return new ObjectList(actions.findObject(pid, HAS_VERSION));
+		return resources.getAllVersions(pid);
+
 	}
 
 	@GET
 	@Path("/{pid}/metadata")
-	public Response readWebpageMetadata(@PathParam("pid") String pid)
+	@Produces({ "text/plain" })
+	public String readWebpageMetadata(@PathParam("pid") String pid)
 	{
-		return actions.readMetadata(pid);
+		return resources.readMetadata(pid);
 	}
 
 	@GET
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return new ObjectList(actions.findByType(TypeType.contentType
-				.toString() + ":" + webpageType.toString()));
+		return resources.getAllOfType(ObjectType.webpage.toString());
 	}
 
 	@GET
-	@Path("/{pid}")
+	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public View getView(@PathParam("pid") String pid)
 	{
-		return actions.getView(pid, ObjectType.webpage);
+		return resources.getView(pid);
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 * @throws URISyntaxException
+	 */
+	@GET
+	@Path("/{pid}")
+	@Produces({ "application/json", "application/xml", "text/html" })
+	public Response getResource(@PathParam("pid") String pid)
+			throws URISyntaxException
+	{
+		return Response
+				.temporaryRedirect(
+						new java.net.URI("/resources/" + pid + "/about"))
+				.status(303).build();
 	}
 
 	@GET
@@ -325,6 +249,6 @@ public class Webpage
 	@Produces({ "application/xml", "application/json" })
 	public DCBeanAnnotated readWebpageDC(@PathParam("pid") String pid)
 	{
-		return actions.readDC(pid);
+		return resources.readDC(pid);
 	}
 }

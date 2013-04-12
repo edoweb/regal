@@ -1,3 +1,19 @@
+/*
+ * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package de.nrw.hbz.edoweb2.api;
 
 import java.io.PrintWriter;
@@ -11,18 +27,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class CollectionProfile
 {
-	public String message = "";
-	public List<View> all;
-	public List<String> restricted = new Vector<String>();
-	public List<String> unrestricted = new Vector<String>();
-	public List<String> noRight = new Vector<String>();
-	public List<String> noDDC = new Vector<String>();
-	public List<String> noUrn = new Vector<String>();
-	public List<String> noYear = new Vector<String>();
-	public List<String> noTitle = new Vector<String>();
-	public List<String> noCreator = new Vector<String>();
-	public List<String> noType = new Vector<String>();
-	public List<TypeObjectDictionary> types = new Vector<TypeObjectDictionary>();
+	String message = "";
+	List<View> all;
+	List<String> restricted = new Vector<String>();
+	List<String> unrestricted = new Vector<String>();
+	List<String> noRight = new Vector<String>();
+	List<String> noDDC = new Vector<String>();
+	List<String> noUrn = new Vector<String>();
+	List<String> noYear = new Vector<String>();
+	List<String> noTitle = new Vector<String>();
+	List<String> noCreator = new Vector<String>();
+	List<String> noType = new Vector<String>();
+	List<TypeObjectDictionary> types = new Vector<TypeObjectDictionary>();
 	private HashMap<String, List<String>> map = new HashMap<String, List<String>>();
 
 	public CollectionProfile()
@@ -30,7 +46,7 @@ public class CollectionProfile
 
 	}
 
-	public CollectionProfile(List<View> all)
+	CollectionProfile(List<View> all)
 	{
 		this.all = all;
 
@@ -129,6 +145,126 @@ public class CollectionProfile
 		}
 		out.close();
 		message = strwrt.getBuffer().toString();
+	}
+
+	public String getMessage()
+	{
+		return message;
+	}
+
+	public void setMessage(String message)
+	{
+		this.message = message;
+	}
+
+	public List<View> getAll()
+	{
+		return all;
+	}
+
+	public void setAll(List<View> all)
+	{
+		this.all = all;
+	}
+
+	public List<String> getRestricted()
+	{
+		return restricted;
+	}
+
+	public void setRestricted(List<String> restricted)
+	{
+		this.restricted = restricted;
+	}
+
+	public List<String> getUnrestricted()
+	{
+		return unrestricted;
+	}
+
+	public void setUnrestricted(List<String> unrestricted)
+	{
+		this.unrestricted = unrestricted;
+	}
+
+	public List<String> getNoRight()
+	{
+		return noRight;
+	}
+
+	public void setNoRight(List<String> noRight)
+	{
+		this.noRight = noRight;
+	}
+
+	public List<String> getNoDDC()
+	{
+		return noDDC;
+	}
+
+	public void setNoDDC(List<String> noDDC)
+	{
+		this.noDDC = noDDC;
+	}
+
+	public List<String> getNoUrn()
+	{
+		return noUrn;
+	}
+
+	public void setNoUrn(List<String> noUrn)
+	{
+		this.noUrn = noUrn;
+	}
+
+	public List<String> getNoYear()
+	{
+		return noYear;
+	}
+
+	public void setNoYear(List<String> noYear)
+	{
+		this.noYear = noYear;
+	}
+
+	public List<String> getNoTitle()
+	{
+		return noTitle;
+	}
+
+	public void setNoTitle(List<String> noTitle)
+	{
+		this.noTitle = noTitle;
+	}
+
+	public List<String> getNoCreator()
+	{
+		return noCreator;
+	}
+
+	public void setNoCreator(List<String> noCreator)
+	{
+		this.noCreator = noCreator;
+	}
+
+	public List<String> getNoType()
+	{
+		return noType;
+	}
+
+	public void setNoType(List<String> noType)
+	{
+		this.noType = noType;
+	}
+
+	public List<TypeObjectDictionary> getTypes()
+	{
+		return types;
+	}
+
+	public void setTypes(List<TypeObjectDictionary> types)
+	{
+		this.types = types;
 	}
 
 }

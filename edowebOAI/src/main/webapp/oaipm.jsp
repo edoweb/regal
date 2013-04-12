@@ -1,10 +1,8 @@
-
 <%@ page language="java" contentType="text/xml; charset=UTF-8"
 	pageEncoding="UTF-8"%><%@ page import="org.xml.sax.*"%><%@ page
 	import="javax.xml.transform.*"%><%@ page import="java.io.*"%><%@ page
 	import="java.net.*"%><%@ page import="java.util.*"%><%@ page
-	import="java.text.*"%>
-<%
+	import="java.text.*"%><%
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -52,14 +50,25 @@
 
 		String[] originalSets = new String[] {
 				"edoweb-oai_dc-pubType-wpd",
-				"edoweb-oai_dc-pubType-ws",
+				"edoweb-oai_dc-pubType-ws", 
+				"edoweb-oai_dc-pubType-ws_zip",
 				"edoweb-oai_dc-pubType-ejo01_mets",
-				"edoweb-oai_dc-pubType-ejo01_pdf", "edoweb-oai_dc-all" };
-		String[] displayedSets = new String[] { "doc-type:report",
-				"doc-type:website", "doc-type:periodical",
-				"doc-type:periodicalPart", "edoweb-oai_dc-all" };
-		String[] namedSets = new String[] { "report", "Website",
-				"Periodical", "PeriodicalPart", "All" };
+				"edoweb-oai_dc-pubType-ejo01_pdf", 
+				"edoweb-oai_dc-all" };
+		String[] displayedSets = new String[] { 
+				"doc-type:report",
+				"doc-type:website",
+				"doc-type:webVersion", 
+				"doc-type:periodical",
+				"doc-type:periodicalPart", 
+				"edoweb-oai_dc-all" };
+		String[] namedSets = new String[] { 
+				"report", 
+				"Website",
+				"Version of a Website",
+				"Periodical", 
+				"PeriodicalPart", 
+				"All" };
 		//-----------------------------------
 		//-----------------------------------
 
@@ -225,14 +234,13 @@
 								+ "</setSpec>");
 			}
 		}
-
+		
 		byte[] bArray = stream.getBytes("UTF-8");
 		bos = new ByteArrayOutputStream();
 		for (int j = 0; j < bArray.length; j++)
 		{
 			bos.write(bArray[j]);
 		}
-
 		out.print(bos);
 	} catch (Exception e)
 	{

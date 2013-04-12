@@ -153,9 +153,10 @@ public abstract class FedoraVocabulary
 	public static final String SPARQL = "sparql";
 	public static final String TSV = "TSV";
 	public static final String N_TRIPLES = "N-Triples";
-	public static final String NOTATION_3 = "Notation 3";
+	public static final String N3 = "N3";
 	public static final String RDF_XML = "RDF/XML";
 	public static final String TURTLE = "Turtle";
 	public static final String ON = "on";
 	public static final String OFF = "off";
+
 }

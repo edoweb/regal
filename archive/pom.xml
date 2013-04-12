@@ -192,5 +192,6 @@
 			<artifactId>fedora-client-core</artifactId>
 			<version>0.5</version>
 		</dependency>
+		
 		</dependencies>
 </project>

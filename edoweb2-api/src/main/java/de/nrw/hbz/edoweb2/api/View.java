@@ -1,5 +1,22 @@
+/*
+ * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package de.nrw.hbz.edoweb2.api;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,6 +47,8 @@ public class View
 	Vector<String> url = null;
 	Vector<String> alephid = null;
 	Vector<String> rights = null;
+	Vector<String> identifier = null;
+	Vector<SimpleEntry> predicates = null;
 
 	// TODO refactor names
 	Vector<String> pdfUrl = null;
@@ -100,6 +119,8 @@ public class View
 		message = new Vector<String>();
 		isPartOfName = new Vector<String>();
 		hasPartName = new Vector<String>();
+		identifier = new Vector<String>();
+		predicates = new Vector<SimpleEntry>();
 		// Not Implemented yet: First make Cool URIs!
 		// metsUrl = new Vector<String>();
 		// oaioreUrl = new Vector<String>();
@@ -226,7 +247,7 @@ public class View
 
 	public void setHasPartName(Vector<String> hasPart)
 	{
-		this.hasPartName = hasPartName;
+		this.hasPartName = hasPart;
 	}
 
 	public Vector<String> getDescription()
@@ -900,6 +921,7 @@ public class View
 			str = "";
 		return str;
 	}
+
 	// public String getFirstQdcUrl()
 	// {
 	// String str = qdcUrl.firstElement();
@@ -932,4 +954,33 @@ public class View
 	// return str;
 	// }
 
+	public void addIdentifier(String id)
+	{
+		identifier.add(id);
+	}
+
+	public Vector<String> getIdentifier()
+	{
+		return identifier;
+	}
+
+	public void setIdentifier(Vector<String> identifier)
+	{
+		this.identifier = identifier;
+	}
+
+	public Vector<SimpleEntry> getPredicates()
+	{
+		return predicates;
+	}
+
+	public void setPredicates(Vector<SimpleEntry> predicates)
+	{
+		this.predicates = predicates;
+	}
+
+	public void addPredicate(String pred, String object)
+	{
+		predicates.add(new SimpleEntry(pred, object));
+	}
 }

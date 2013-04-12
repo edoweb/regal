@@ -26,14 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class Main
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * 
- * </p>
  * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
@@ -45,13 +37,46 @@ public class PIDReporter
 
 	String pidFile = null;
 
-	public Vector<String> split(String set)
-	{
-		Vector<String> sets = new Vector<String>();
+	OaiPidGrabber mygrabber = null;
 
-		return sets;
+	public PIDReporter()
+	{
+
 	}
 
+	/**
+	 * @param oaiServer
+	 *            enpoint of a oai interface
+	 * @param timestampFile
+	 *            a file which contains a timestamp
+	 */
+	public PIDReporter(String oaiServer, String timestampFile)
+	{
+		mygrabber = new OaiPidGrabber(oaiServer, timestampFile);
+	}
+
+	/**
+	 * @param sets
+	 *            sets to harvest
+	 * @param harvestFromScratch
+	 *            if true timestamp will be ignored.
+	 * @return a list of pids
+	 */
+	public Vector<String> harvest(String sets, boolean harvestFromScratch)
+	{
+		return mygrabber.harvest(sets, harvestFromScratch);
+	}
+
+	/**
+	 * Returns a list of pids which are provided over an oai interface. The
+	 * exact configuration is provided by a properties file
+	 * 
+	 * @param propFile
+	 *            a properties file
+	 * @return a list of pids
+	 * @throws IOException
+	 *             if something goes wrong
+	 */
 	public Vector<String> getPids(String propFile) throws IOException
 	{
 		Properties properties = new Properties();
@@ -88,12 +113,16 @@ public class PIDReporter
 		return grabber.harvest(sets, harvestFromScratch);
 	}
 
-	public void run(String propFile) throws IOException
+	private void run(String propFile) throws IOException
 	{
 		PIDWriter writer = new PIDWriter();
 		writer.print(getPids(propFile), pidFile);
 	}
 
+	/**
+	 * @param argv
+	 *            must contain one item which points to a property file
+	 */
 	public static void main(String[] argv)
 	{
 		if (argv.length != 1)
@@ -117,4 +146,5 @@ public class PIDReporter
 			System.exit(2);
 		}
 	}
+
 }

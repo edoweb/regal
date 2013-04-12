@@ -48,6 +48,7 @@ import de.nrw.hbz.edoweb2.sync.util.XMLUtils;
  * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 12.07.2011
  * 
  */
+@SuppressWarnings("javadoc")
 public class JhoveBean
 {
 	DigitalEntity dtlBean = null;

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Vector;
 
 /**
+ * A ComplexObjectNode is Node with list of child nodes.
+ * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
 public class ComplexObjectNode
@@ -28,12 +30,22 @@ public class ComplexObjectNode
 	Node me = null;
 	List<ComplexObjectNode> children = null;
 
+	/**
+	 * @param node
+	 *            The actual node.
+	 */
 	public ComplexObjectNode(Node node)
 	{
 		children = new Vector<ComplexObjectNode>();
 		me = node;
 	}
 
+	/**
+	 * @param node
+	 *            the actual node.
+	 * @param pid
+	 *            the pid of the actual node.
+	 */
 	public ComplexObjectNode(Node node, String pid)
 	{
 		children = new Vector<ComplexObjectNode>();
@@ -41,6 +53,10 @@ public class ComplexObjectNode
 		me.setPID(pid);
 	}
 
+	/**
+	 * @param pid
+	 *            The pid of the actual node. The actual node will be created.
+	 */
 	public ComplexObjectNode(String pid)
 	{
 		children = new Vector<ComplexObjectNode>();
@@ -48,16 +64,28 @@ public class ComplexObjectNode
 		me.setPID(pid);
 	}
 
+	/**
+	 * @return the actual node
+	 */
 	public Node getMe()
 	{
 		return me;
 	}
 
+	/**
+	 * @param me
+	 *            the actual node.
+	 */
 	public void setMe(Node me)
 	{
 		this.me = me;
 	}
 
+	/**
+	 * @param child
+	 *            new child of this ComplexObjectNode
+	 * @return true if success, false if not. TODO: exceptions!
+	 */
 	public boolean addChild(ComplexObjectNode child)
 	{
 		if (child == null)
@@ -68,11 +96,19 @@ public class ComplexObjectNode
 		return children.add(child);
 	}
 
+	/**
+	 * @param index
+	 *            index of the child
+	 * @return a child at index index
+	 */
 	public ComplexObjectNode getChild(int index)
 	{
 		return children.get(index);
 	}
 
+	/**
+	 * @return number of childs
+	 */
 	public int sizeOfChildren()
 	{
 		return children.size();

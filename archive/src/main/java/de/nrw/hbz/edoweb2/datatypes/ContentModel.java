@@ -35,6 +35,9 @@ public class ContentModel
 	private Vector<String> methodNames = null;
 	private Vector<String> methodLocations = null;
 
+	/**
+	 * Creates a new ContentModel.
+	 */
 	public ContentModel()
 	{
 		prescribedDSIds = new Vector<String>();
@@ -45,42 +48,77 @@ public class ContentModel
 		methodLocations = new Vector<String>();
 	}
 
+	/**
+	 * @param methodName
+	 *            The name of the method.
+	 * @param methodLocation
+	 *            The webaddress of the method.
+	 */
 	public void addMethod(String methodName, String methodLocation)
 	{
 		methodNames.add(methodName);
 		methodLocations.add(methodLocation);
 	}
 
+	/**
+	 * @return the pid of the contentModel
+	 */
 	public String getContentModelPID()
 	{
 		return contentModelPID;
 	}
 
+	/**
+	 * @return the pid of the service definition object
+	 */
 	public String getServiceDefinitionPID()
 	{
 		return serviceDefinitionPID;
 	}
 
+	/**
+	 * @return the pid of the service deployment object.
+	 */
 	public String getServiceDeploymentPID()
 	{
 		return serviceDeploymentPID;
 	}
 
+	/**
+	 * @param contentModelPID
+	 *            the pid of the content model.
+	 */
 	public void setContentModelPID(String contentModelPID)
 	{
 		this.contentModelPID = contentModelPID;
 	}
 
+	/**
+	 * @param serviceDefinitionPID
+	 *            The pid of the service definition.
+	 */
 	public void setServiceDefinitionPID(String serviceDefinitionPID)
 	{
 		this.serviceDefinitionPID = serviceDefinitionPID;
 	}
 
+	/**
+	 * @param serviceDeploymentPID
+	 *            the pid of the service deployment pid.
+	 */
 	public void setServiceDeploymentPID(String serviceDeploymentPID)
 	{
 		this.serviceDeploymentPID = serviceDeploymentPID;
 	}
 
+	/**
+	 * @param dsid
+	 *            required data stream id
+	 * @param formatUri
+	 *            the format of the required datastream
+	 * @param mimeType
+	 *            the mime of the datastream
+	 */
 	public void addPrescribedDs(String dsid, String formatUri, String mimeType)
 	{
 		prescribedDSIds.add(dsid);

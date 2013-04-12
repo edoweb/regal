@@ -1,7 +1,24 @@
+/*
+ * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package de.nrw.hbz.edoweb2.api;
 
 import java.io.StringWriter;
 import java.net.URLDecoder;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Vector;
 
@@ -18,14 +35,17 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-public class HtmlAdapter
+/**
+ * @author jan
+ * 
+ */
+class HtmlAdapter
 {
 
-	public static String getHtml(View view)
+	static String getHtml(View view)
 	{
 
-		String fedoraLogo = "http://www.fedora-commons.org/site-images/logo_vertical_white_200_251";
-		String edowebStyle = "http://orthos.hbz-nrw.de/style.css";
+		String edowebStyle = "http://orthos.hbz-nrw.de/css/style.css";
 		String edowebLogo = "http://orthos.hbz-nrw.de/logo.gif";
 
 		try
@@ -93,10 +113,10 @@ public class HtmlAdapter
 
 		Element tr = doc.createElement("tr");
 		Element td = doc.createElement("td");
-		td.setAttribute("class", "rlabel");
-		td.setAttribute("colspan", "3");
+		td.setAttribute("class", "tablelabel");
+		td.setAttribute("colspan", "4");
 		Element a = doc.createElement("h1");
-		a.setAttribute("class", "titleHeading");
+		a.setAttribute("class", "tableheading");
 		Text text = doc.createTextNode(view.getFirstPid());
 		a.appendChild(text);
 		td.appendChild(a);
@@ -104,7 +124,13 @@ public class HtmlAdapter
 		table.appendChild(tr);
 
 		tr = doc.createElement("tr");
-		Element td1 = doc.createElement("td");
+		td = doc.createElement("td");
+		td.setAttribute("class", "tablelabel");
+		td.setAttribute("colspan", "4");
+		text = doc.createTextNode("Digitool");
+		td.appendChild(text);
+		tr.appendChild(td);
+		table.appendChild(tr);
 
 		addToTable(doc, table, "Fulltext", view.getPdfUrl());
 
@@ -138,14 +164,40 @@ public class HtmlAdapter
 
 		addToTable(doc, table, "URN", view.getUrn());
 
+		addToTable(doc, table, "Related Identifier", view.getIdentifier());
+
 		addToTable(doc, table, "Related Url", view.getUrl());
+
+		tr = doc.createElement("tr");
+		td = doc.createElement("td");
+		td.setAttribute("class", "tablelabel");
+		td.setAttribute("colspan", "4");
+		text = doc.createTextNode("Lobid");
+		td.appendChild(text);
+		tr.appendChild(td);
+		table.appendChild(tr);
+
+		for (SimpleEntry entry : view.getPredicates())
+		{
+			addToTable(doc, table, entry.getKey().toString(), entry.getValue()
+					.toString());
+		}
+
+		tr = doc.createElement("tr");
+		td = doc.createElement("td");
+		td.setAttribute("class", "tablelabel");
+		td.setAttribute("colspan", "4");
+		text = doc.createTextNode("Relations");
+		td.appendChild(text);
+		tr.appendChild(td);
+		table.appendChild(tr);
 
 		addHasPart(doc, table, "hasPart", view);
 
 		addIsPartOf(doc, table, "isPartOf", view);
 
 		tr = doc.createElement("tr");
-		td1 = doc.createElement("td");
+		td = doc.createElement("td");
 		Element td0 = doc.createElement("td");
 
 		td0.setAttribute("class", "plabel");
@@ -155,27 +207,30 @@ public class HtmlAdapter
 		a.setAttribute("href", view.getFirstLobidUrl());
 		a.setAttribute("id", "lobidLink");
 		a.appendChild(doc.createTextNode("@ lobid.org"));
-		td1.appendChild(a);
+		td.appendChild(a);
 
 		a = doc.createElement("a");
 		a.setAttribute("href", view.getFirstVerbundUrl());
 		a.setAttribute("id", "verbundLink");
 		a.appendChild(doc.createTextNode("@ hbz-nrw.de"));
-		td1.appendChild(a);
-
-		a = doc.createElement("a");
-		a.setAttribute("href", view.getFirstDigitoolUrl());
-		a.setAttribute("id", "digitoolLink");
-		a.appendChild(doc.createTextNode("@ digitool.hbz-nrw.de"));
-		td1.appendChild(a);
+		td.appendChild(a);
+		// TODO only if synced Resource
+		if (view.getFirstDigitoolUrl() != null)
+		{
+			a = doc.createElement("a");
+			a.setAttribute("href", view.getFirstDigitoolUrl());
+			a.setAttribute("id", "digitoolLink");
+			a.appendChild(doc.createTextNode("@ digitool.hbz-nrw.de"));
+			td.appendChild(a);
+		}
 
 		tr.appendChild(td0);
-		tr.appendChild(td1);
+		tr.appendChild(td);
 
 		table.appendChild(tr);
 
 		tr = doc.createElement("tr");
-		td1 = doc.createElement("td");
+		td = doc.createElement("td");
 		td0 = doc.createElement("td");
 
 		td0.setAttribute("class", "plabel");
@@ -185,47 +240,40 @@ public class HtmlAdapter
 		a.setAttribute("href", view.getFirstFedoraUrl());
 		a.setAttribute("id", "fedoraLink");
 		a.appendChild(doc.createTextNode("@ fedora"));
-		td1.appendChild(a);
+		td.appendChild(a);
 
 		a = doc.createElement("a");
 		a.setAttribute("href", view.getFirstRisearchUrl());
 		a.setAttribute("id", "risearchLink");
 		a.appendChild(doc.createTextNode("@ risearch"));
-		td1.appendChild(a);
-
-		a = doc.createElement("a");
-		a.setAttribute("href", view.getFirstCacheUrl());
-		a.setAttribute("id", "cacheLink");
-		a.appendChild(doc.createTextNode("@ cache"));
-		td1.appendChild(a);
+		td.appendChild(a);
+		// TODO only if synced resource
+		if (view.getFirstCacheUrl() != null)
+		{
+			a = doc.createElement("a");
+			a.setAttribute("href", view.getFirstCacheUrl());
+			a.setAttribute("id", "cacheLink");
+			a.appendChild(doc.createTextNode("@ cache"));
+			td.appendChild(a);
+		}
 
 		tr.appendChild(td0);
-		tr.appendChild(td1);
+		tr.appendChild(td);
 
 		table.appendChild(tr);
 
 		tr = doc.createElement("tr");
 		td0 = doc.createElement("td");
-		td1 = doc.createElement("td");
-		Element image = doc.createElement("img");
+		td = doc.createElement("td");
+		doc.createElement("img");
 
 		td0.setAttribute("class", "editIcon");
-		// a = doc.createElement("a");
-		// a.setAttribute("href", pideditor);
-		// image = doc.createElement("img");
-		// image.setAttribute("src", editIcon);
-		// a.appendChild(image);
-		// td0.appendChild(a);
+
 		tr.appendChild(td0);
 
-		td1.setAttribute("class", "fedoraLogo");
-		// a = doc.createElement("a");
-		// a.setAttribute("href", view.getFirstObjectUrl());
-		// image = doc.createElement("img");
-		// image.setAttribute("src", this.fedoraLogo);
-		// a.appendChild(image);
-		// td1.appendChild(a);
-		tr.appendChild(td1);
+		td.setAttribute("class", "fedoraLogo");
+
+		tr.appendChild(td);
 
 		table.appendChild(tr);
 
@@ -250,7 +298,7 @@ public class HtmlAdapter
 		String doiResolver = "http://dx.doi.org/";
 		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
 		String zipLogo = "http://orthos.hbz-nrw.de/zip.png";
-		if (fieldName == "DOI")
+		if (fieldName == "http://purl.org/ontology/bibo/doi")
 		{
 
 			for (String str : values)
@@ -404,10 +452,6 @@ public class HtmlAdapter
 	static void addIsPartOf(Document doc, Element table, String fieldName,
 			View view)
 	{
-		String urnResolver = "http://nbn-resolving.de/";
-		String doiResolver = "http://dx.doi.org/";
-		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
-		String zipLogo = "http://orthos.hbz-nrw.de/zip.png";
 
 		List<String> isPartOf = view.getIsPartOf();
 		List<String> isPartOfName = view.getIsPartOfName();
@@ -442,10 +486,6 @@ public class HtmlAdapter
 	static void addHasPart(Document doc, Element table, String fieldName,
 			View view)
 	{
-		String urnResolver = "http://nbn-resolving.de/";
-		String doiResolver = "http://dx.doi.org/";
-		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
-		String zipLogo = "http://orthos.hbz-nrw.de/zip.png";
 
 		List<String> hasPart = view.getHasPart();
 		List<String> hasPartName = view.getHasPartName();
@@ -476,7 +516,7 @@ public class HtmlAdapter
 		}
 
 	}
-	// public static String getDescription(String str)
+	// static String getDescription(String str)
 	// {
 	// String pid = str.substring(str.lastIndexOf('/') + 1);
 	//

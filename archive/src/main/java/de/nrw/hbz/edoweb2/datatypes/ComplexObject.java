@@ -20,6 +20,8 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
 
 /**
+ * A Complex object is a tree of ComplexObjectNode.
+ * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
 public class ComplexObject
@@ -27,6 +29,10 @@ public class ComplexObject
 
 	ComplexObjectNode root = null;
 
+	/**
+	 * Creates a object with type TYPE_OBJECT
+	 * 
+	 */
 	public ComplexObject()
 	{
 		root = new ComplexObjectNode(new Node());
@@ -37,11 +43,19 @@ public class ComplexObject
 		root.getMe().addRelation(link);
 	}
 
+	/**
+	 * @param root
+	 *            the root node of the complex object
+	 */
 	public ComplexObject(Node root)
 	{
 		this.root = new ComplexObjectNode(root);
 	}
 
+	/**
+	 * @param namespace
+	 *            create the object in a certain namespace
+	 */
 	public ComplexObject(String namespace)
 	{
 		Node rootObject = new Node();
@@ -55,6 +69,12 @@ public class ComplexObject
 
 	}
 
+	/**
+	 * @param namespace
+	 *            The intended namespace of the object.
+	 * @param pid
+	 *            The pid (with namespace prefix) of the new node.
+	 */
 	public ComplexObject(String namespace, String pid)
 	{
 		Node rootObject = new Node();
@@ -69,28 +89,47 @@ public class ComplexObject
 
 	}
 
+	/**
+	 * @return the root node of the complex object
+	 */
 	public Node getRoot()
 	{
 		return root.getMe();
 	}
 
+	/**
+	 * @param root
+	 *            the root node of the complex object
+	 */
 	public void setRoot(ComplexObjectNode root)
 	{
 		this.root = root;
 
 	}
 
-	public boolean addChild(ComplexObjectNode arg0)
+	/**
+	 * @param node
+	 *            Add a new child to the root node.
+	 * @return true if success, false if not. TODO: Exceptions!
+	 */
+	public boolean addChild(ComplexObjectNode node)
 	{
-
-		return root.addChild(arg0);
+		return root.addChild(node);
 	}
 
+	/**
+	 * @param index
+	 *            The index of the child do be returned
+	 * @return a node
+	 */
 	public ComplexObjectNode getChild(int index)
 	{
 		return root.getChild(index);
 	}
 
+	/**
+	 * @return the number of childs.
+	 */
 	public int sizeOfChildren()
 	{
 		return root.sizeOfChildren();

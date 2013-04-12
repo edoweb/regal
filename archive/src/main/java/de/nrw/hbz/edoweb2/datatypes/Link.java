@@ -29,6 +29,7 @@ package de.nrw.hbz.edoweb2.datatypes;
  * @author Jan Schnasse, schnasse@hbz-nrw.de TODO Replace by a standard
  *         implementation
  */
+@SuppressWarnings("javadoc")
 public class Link
 {
 	boolean isLiteral = false;

@@ -30,21 +30,21 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
- * Class XMLUtils
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
- * 
- * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 13.07.2011
+ * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
 public class XMLUtils
 {
 
+	/**
+	 * converts a string to an dom element
+	 * 
+	 * @param xmlString
+	 *            the xmlstring
+	 * @return the root element
+	 * @throws NullPointerException
+	 *             if string is empty or null
+	 */
 	public static Element getDocument(String xmlString)
 			throws NullPointerException
 	{

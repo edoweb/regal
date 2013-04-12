@@ -16,11 +16,8 @@
  */
 package de.nrw.hbz.edoweb2.fedora;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -33,7 +30,6 @@ import org.junit.Test;
 
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.datatypes.Node;
-import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
 
 /**
  * Class TestUsersInit
@@ -63,10 +59,6 @@ public class FedoraFacadeIntegrationTest
 		{
 			properties = new Properties();
 			properties.load(getClass().getResourceAsStream("/test.properties"));
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
@@ -166,64 +158,38 @@ public class FedoraFacadeIntegrationTest
 	@Test
 	public void updateNode()
 	{
-		try
-		{
-			if (facade.nodeExists(object.getPID()))
-				facade.deleteNode(object.getPID());
 
-			facade.createNode(object);
-			Vector<String> newTitle = new Vector<String>();
-			newTitle.add("Neuer Titel");
-			object.setTitle(newTitle);
-			URL url = this.getClass().getResource("/logback.xml");
-			object.setUploadData(url.getPath(), "test", "text/xml");
-			facade.updateNode(object);
-			Node readObject = facade.readNode(object.getPID());
-			System.out.println("DataUrl:" + readObject.getDataUrl().toString());
-			Assert.assertEquals(0,
-					"Neuer Titel".compareTo(readObject.getFirstTitle()));
+		if (facade.nodeExists(object.getPID()))
+			facade.deleteNode(object.getPID());
 
-		}
-		catch (RemoteException e)
-		{
-			Assert.fail(e.getMessage());
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			Assert.fail(e.getMessage());
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		facade.createNode(object);
+		Vector<String> newTitle = new Vector<String>();
+		newTitle.add("Neuer Titel");
+		object.setTitle(newTitle);
+		URL url = this.getClass().getResource("/logback.xml");
+		object.setUploadData(url.getPath(), "test", "text/xml");
+		facade.updateNode(object);
+		Node readObject = facade.readNode(object.getPID());
+		System.out.println("DataUrl:" + readObject.getDataUrl().toString());
+		Assert.assertEquals(0,
+				"Neuer Titel".compareTo(readObject.getFirstTitle()));
+
 	}
 
 	@Test
 	public void findObjects()
 	{
-		List<String> result = facade.findPids("test:*",
-				FedoraFacade.TYPE_SIMPLE);
+		List<String> result = facade
+				.findPids("test:*", FedoraVocabulary.SIMPLE);
 		for (String pid : result)
 			facade.deleteNode(pid);
 		Assert.assertEquals(0,
-				facade.findPids("test:*", FedoraFacade.TYPE_SIMPLE).size());
+				facade.findPids("test:*", FedoraVocabulary.SIMPLE).size());
 		if (!facade.nodeExists(object.getPID()))
-			try
-			{
-				facade.createNode(object);
-			}
-			catch (RemoteException e)
-			{
 
-				e.printStackTrace();
-			}
-			catch (IOException e)
-			{
+			facade.createNode(object);
 
-				e.printStackTrace();
-			}
-		result = facade.findPids("test:*", FedoraFacade.TYPE_SIMPLE);
+		result = facade.findPids("test:*", FedoraVocabulary.SIMPLE);
 		Assert.assertEquals(4, result.size());
 	}
 
@@ -231,20 +197,9 @@ public class FedoraFacadeIntegrationTest
 	public void deleteNode()
 	{
 		if (!facade.nodeExists(object.getPID()))
-			try
-			{
-				facade.createNode(object);
-			}
-			catch (RemoteException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			facade.createNode(object);
+
 		facade.deleteNode(object.getPID());
 		Assert.assertFalse(facade.nodeExists(object.getPID()));
 	}
@@ -252,23 +207,10 @@ public class FedoraFacadeIntegrationTest
 	@After
 	public void tearDown()
 	{
-		List<String> result = facade.findPids("test:*",
-				FedoraFacade.TYPE_SIMPLE);
+		List<String> result = facade
+				.findPids("test:*", FedoraVocabulary.SIMPLE);
 		for (String pid : result)
 			facade.deleteNode(pid);
-
-		// result = facade.findPids("dtl:*", FedoraFacade.TYPE_SIMPLE);
-		// for (String pid : result)
-		// facade.deleteNode(pid);
-		//
-		// result = facade.findPids("default:*", FedoraFacade.TYPE_SIMPLE);
-		// for (String pid : result)
-		// facade.deleteNode(pid);
-		//
-		// result = facade.findPids("edoweb:*", FedoraFacade.TYPE_SIMPLE);
-		// for (String pid : result)
-		// facade.deleteNode(pid);
-
 	}
 
 }

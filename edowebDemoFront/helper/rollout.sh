@@ -6,18 +6,22 @@ echo "OK?"
 
 echo "Compile..."
 cd /opt/edoweb/edoweb2
-mvn clean install -o
+mvn clean install --settings /opt/edoweb/edoweb2/settings.xml
 cd /opt/edoweb/edoweb2/edowebSync
-mvn assembly:assembly -o
+mvn assembly:assembly -o --settings /opt/edoweb/edoweb2/settings.xml
 cd /opt/edoweb/edoweb2/edoweb2-api
 echo "Compile end ..."
 
 echo "Install Webapi"
 
-mvn war:war -o
+mvn war:war --settings /opt/edoweb/edoweb2/settings.xml
 echo "Rollout..."
 rm -rf /opt/fedora/tomcat/webapps/edoweb2-api*
 cp /opt/edoweb/edoweb2/edoweb2-api/target/edoweb2-api.war /opt/fedora/tomcat/webapps/
 cp /opt/edoweb/edoweb2/edowebSync/target/edowebSync-0.0.1-SNAPSHOT-jar-with-dependencies.jar /opt/edoweb/edosync/edosync.jar
 /opt/fedora/tomcat/bin/startup.sh
 echo "FINISHED!"
+echo install htdocs
+cp -r /opt/edoweb/edoweb2/edowebDemoFront/htdocs/* /opt/edoweb/edohtml/
+
+tail -f /opt/fedora/tomcat/logs/catalina.out

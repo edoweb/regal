@@ -30,8 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import se.kb.oai.OAIException;
+import se.kb.oai.pmh.IdentifiersList;
 import se.kb.oai.pmh.OaiPmhServer;
-import se.kb.oai.pmh.RecordsList;
 import se.kb.oai.pmh.ResumptionToken;
 
 /**
@@ -47,23 +47,20 @@ import se.kb.oai.pmh.ResumptionToken;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class OaiPidGrabber
+class OaiPidGrabber
 {
 	String server = null;
 	String timestampfile = null;
 
 	final Logger logger = LoggerFactory.getLogger(OaiPidGrabber.class);
 
-	/**
-	 * @param harvestLocation
-	 */
-	public OaiPidGrabber(String server, String timestampFile)
+	OaiPidGrabber(String server, String timestampFile)
 	{
 		this.server = server;
 		this.timestampfile = timestampFile;
 	}
 
-	public Vector<String> harvest(String set, boolean harvestFromScratch)
+	Vector<String> harvest(String set, boolean harvestFromScratch)
 	{
 
 		String[] sets = null;
@@ -85,7 +82,7 @@ public class OaiPidGrabber
 	 * @param setSpec
 	 * @return
 	 */
-	public Vector<String> harvest(String[] sets, boolean harvestFromScratch)
+	Vector<String> harvest(String[] sets, boolean harvestFromScratch)
 	{
 
 		logger.info("Start harvesting " + server + " !");
@@ -148,8 +145,8 @@ public class OaiPidGrabber
 			if (sets == null)
 			{
 				logger.info("Set spec is null  !");
-				RecordsList reclist = oaiserver.listRecords("oai_dc", fromStr,
-						until, null);
+				IdentifiersList reclist = oaiserver.listIdentifiers("oai_dc",
+						fromStr, until, null);
 				String dateString = reclist.getResponseDate();
 				logger.info("Harvest Date " + dateString + " !");
 				BufferedWriter writer = null;
@@ -188,7 +185,7 @@ public class OaiPidGrabber
 					{
 						break;
 					}
-					reclist = oaiserver.listRecords(token);
+					reclist = oaiserver.listIdentifiers(token);
 
 				}
 				while (true);
@@ -198,8 +195,8 @@ public class OaiPidGrabber
 				for (int i = 0; i < sets.length; i++)
 				{
 					logger.info("Set spec is " + sets[i].trim() + " !");
-					RecordsList reclist = oaiserver.listRecords("oai_dc",
-							fromStr, until, sets[i].trim());
+					IdentifiersList reclist = oaiserver.listIdentifiers(
+							"oai_dc", fromStr, until, sets[i].trim());
 					if (i == 0)
 					{
 						String dateString = reclist.getResponseDate();
@@ -240,7 +237,7 @@ public class OaiPidGrabber
 						{
 							break;
 						}
-						reclist = oaiserver.listRecords(token);
+						reclist = oaiserver.listIdentifiers(token);
 
 					}
 					while (true);
@@ -267,17 +264,19 @@ public class OaiPidGrabber
 	 * @param reclist
 	 * @return
 	 */
-	private Vector<String> collectPids(RecordsList reclist)
+	private Vector<String> collectPids(IdentifiersList reclist)
 	{
 		String stream = reclist.getResponse().asXML();
+
 		Vector<String> result = new Vector<String>();
 		int start = 0;
 		// int i = 0;
-		Pattern pattern = Pattern.compile("pid=([0-9]*)");
+		Pattern pattern = Pattern.compile("<identifier>oai:[^:]*:([0-9]*)");
 		Matcher matcher = pattern.matcher(stream);
 		while (matcher.find(start))
 		{
 			String pid = stream.substring(matcher.start(1), matcher.end(1));
+
 			result.add(pid);
 			start = matcher.end();
 		}

@@ -1,4 +1,3 @@
-package de.nrw.hbz.edoweb2.sync;
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -15,6 +14,8 @@ package de.nrw.hbz.edoweb2.sync;
  * limitations under the License.
  *
  */
+package de.nrw.hbz.edoweb2.sync;
+
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -24,9 +25,9 @@ import org.apache.commons.configuration.BaseConfiguration;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class MyPreferences extends BaseConfiguration
+class MyPreferences extends BaseConfiguration
 {
-	public MyPreferences(Class<?> cl)
+	MyPreferences(Class<?> cl)
 	{
 		try
 		{

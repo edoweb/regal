@@ -88,7 +88,9 @@ public class DigitoolDownloader
 
 	/**
 	 * @param server
+	 *            the digitool server to download from
 	 * @param downloadLocation
+	 *            a local directory to store the downloaded data
 	 */
 	public DigitoolDownloader(String server, String downloadLocation)
 	{
@@ -97,20 +99,27 @@ public class DigitoolDownloader
 		// beanBuilder = new DigitalEntityBeanBuilder();
 	}
 
+	/**
+	 * @param pid
+	 *            the digitool pid
+	 * @return a message for the user
+	 * @throws IOException
+	 *             if something goes wrong
+	 */
 	public String download(String pid) throws IOException
 	{
 		return download(pid, true);
 	}
 
 	/**
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description:
-	 * </p>
-	 * 
-	 * @param string
+	 * @param pid
+	 *            a valid digitool pid
+	 * @param forceDownload
+	 *            if true the data will be downloaded. if false the data will
+	 *            only be downloaded if isn't there yet
+	 * @return a message for the user
+	 * @throws IOException
+	 *             if something goes wrong
 	 */
 	public String download(String pid, boolean forceDownload)
 			throws IOException
@@ -127,7 +136,14 @@ public class DigitoolDownloader
 			dir.mkdir();
 			digitalEntityFile = getView(pid);
 			getRelated(digitalEntityFile, pid);
-			getStream(digitalEntityFile, pid);
+			try
+			{
+				getStream(digitalEntityFile, pid);
+			}
+			catch (Exception e)
+			{
+				logger.error(e.getMessage());
+			}
 			// beanBuilder.buildComplexBean(objectDirectory, pid);
 			setUpdated(false);
 			setDownloaded(true);
@@ -140,7 +156,14 @@ public class DigitoolDownloader
 			dir.mkdir();
 			digitalEntityFile = getView(pid);
 			getRelated(digitalEntityFile, pid);
-			getStream(digitalEntityFile, pid);
+			try
+			{
+				getStream(digitalEntityFile, pid);
+			}
+			catch (Exception e)
+			{
+				logger.error(e.getMessage());
+			}
 			// beanBuilder.buildComplexBean(objectDirectory, pid);
 			setUpdated(true);
 			setDownloaded(true);
@@ -240,6 +263,32 @@ public class DigitoolDownloader
 	}
 
 	/**
+	 * @return true if the downloader has updated an existing dataset
+	 */
+	public boolean hasUpdated()
+	{
+		return updated;
+	}
+
+	/**
+	 * @return true if data has been downloaded
+	 */
+	public boolean hasDownloaded()
+	{
+		return downloaded;
+	}
+
+	private void setDownloaded(boolean downloaded)
+	{
+		this.downloaded = downloaded;
+	}
+
+	private void setUpdated(boolean updated)
+	{
+		this.updated = updated;
+	}
+
+	/**
 	 * <p>
 	 * <em>Title: </em>
 	 * </p>
@@ -265,8 +314,7 @@ public class DigitoolDownloader
 
 		String filename = ((Element) streamRef)
 				.getElementsByTagName("file_name").item(0).getTextContent();
-		// DIFF between pdfs and zips here! Make different DeliveryRule in
-		// Digitoo
+
 		if (filename == null || filename.isEmpty())
 			return;
 		File streamDir = new File(objectDirectory + File.separator + pid);
@@ -275,6 +323,7 @@ public class DigitoolDownloader
 			streamDir.mkdir();
 		}
 		String path = streamDir.getAbsolutePath() + File.separator + filename;
+
 		String fileExtension = path.substring(path.lastIndexOf('.'));
 		File streamFile = new File(path);
 		URL url = null;
@@ -558,26 +607,6 @@ public class DigitoolDownloader
 		return null;
 	}
 
-	public boolean hasUpdated()
-	{
-		return updated;
-	}
-
-	public void setUpdated(boolean updated)
-	{
-		this.updated = updated;
-	}
-
-	public boolean hasDownloaded()
-	{
-		return downloaded;
-	}
-
-	public void setDownloaded(boolean downloaded)
-	{
-		this.downloaded = downloaded;
-	}
-
 	private void run(String propFile) throws IOException
 	{
 		Properties properties = new Properties();
@@ -600,12 +629,17 @@ public class DigitoolDownloader
 		for (int i = 0; i < pids.size(); i++)
 		{
 			String pid = pids.elementAt(i);
-			logger.info("Download " + pid + " !");
+			logger.info((i + 1) + "/" + pids.size() + " Download " + pid + " !");
 			download(pid);
 		}
 
 	}
 
+	/**
+	 * @param argv
+	 *            the argument vector must contain exactly one item which points
+	 *            to a valid property file
+	 */
 	public static void main(String[] argv)
 	{
 		if (argv.length != 1)

@@ -20,6 +20,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.DATASTREAM_MIME;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.HAS_DATASTREAM;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.HAS_METADATASTREAM;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.METADATASTREAM_MIME;
+import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_CONTENT_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_IN_NAMESPACE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.CM_CONTENTMODEL;
@@ -104,6 +105,8 @@ import com.yourmediashelf.fedora.client.FedoraCredentials;
 import com.yourmediashelf.fedora.client.request.FedoraRequest;
 import com.yourmediashelf.fedora.client.response.FindObjectsResponse;
 
+import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
+import de.nrw.hbz.edoweb2.archive.exceptions.NodeNotFoundException;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
@@ -115,6 +118,7 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
  * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
+@SuppressWarnings("static-access")
 public class FedoraFacade implements FedoraInterface, Constants
 {
 
@@ -127,10 +131,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 	/**
 	 * TODO Use the mediashelf client for all operations
 	 */
-	public final static String TYPE_SIMPLE = "simple";
-	public static final String TYPE_SPO = "spo";
-	public static final String TYPE_SPARQL = "sparql";
-	public static final String FORMAT_N3 = "N3";
+
 	private FedoraAPIAMTOM fedoraAccess;
 	private FedoraAPIMMTOM fedoraManager;
 	private FedoraClient fedoraClient;
@@ -140,6 +141,14 @@ public class FedoraFacade implements FedoraInterface, Constants
 	private final String passwd;
 	String objecUrl = "info:fedora";
 
+	/**
+	 * @param host
+	 *            The url of the fedora web endpoint
+	 * @param aUser
+	 *            A valid fedora user
+	 * @param aPassword
+	 *            The password of the fedora user
+	 */
 	public FedoraFacade(String host, String aUser, String aPassword)
 	{
 		this.user = aUser;
@@ -157,90 +166,85 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (MalformedURLException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("The variable host: " + host
+					+ " may contain a malformed url.", e);
 		}
-
+		catch (ServiceException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 
 	}
 
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: Creates a FedoraObject with properties of node
-	 * </p>
-	 * 
-	 * @param node
-	 *            the local POJO which is serialized as Fedora object
-	 * @throws IOException
-	 * @throws RemoteException
-	 */
 	@Override
-	public void createNode(Node node) throws RemoteException, IOException
+	public void createNode(Node node)
 	{
 
-		byte[] foxmlObject = serializeNode(node.getPID(), node.getLabel(),
-				new XMLBuilder(fedoraManager),
-				XMLBuilder.OBJECT_TYPE.dataObject);
-		AutoIngestor.ingestAndCommit(this.fedoraAccess, fedoraManager,
-				new ByteArrayInputStream(foxmlObject), FOXML1_1.uri,
-				"Created with HBZ Webservice");
-
-		updateDc(node);
-		createContentModels(node);
-
-		if (node.getUploadFile() != null)
-		{
-			createManagedStream(node);
-
-		}
-		if (node.getMetadataFile() != null)
-		{
-			createMetadataStream(node);
-
-		}
-		Link link = new Link();
-		link.setObject(node.getNamespace(), true);
-		link.setPredicate(REL_IS_IN_NAMESPACE);
-		node.addRelation(link);
-		createRelsExt(node);
-	}
-
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: The corresponding fedora object will be read into a new node
-	 * </p>
-	 * 
-	 * @param node
-	 *            It is assumed that node has the correct PID of an existing
-	 *            Node which will be replaced by this method
-	 * @throws RemoteException
-	 */
-	@SuppressWarnings("static-access")
-	@Override
-	public Node readNode(String nodePid) throws RemoteException
-	{
-		if (!nodeExists(nodePid))
-			return null;
-		Node node = new Node();
-		node.setPID(nodePid);
 		try
 		{
+			byte[] foxmlObject = serializeNode(node.getPID(), node.getLabel(),
+					new XMLBuilder(fedoraManager),
+					XMLBuilder.OBJECT_TYPE.dataObject);
+			AutoIngestor.ingestAndCommit(this.fedoraAccess, fedoraManager,
+					new ByteArrayInputStream(foxmlObject), FOXML1_1.uri,
+					"Created with HBZ Webservice");
 
+			updateDc(node);
+			createContentModels(node);
+
+			if (node.getUploadFile() != null)
+			{
+				createManagedStream(node);
+
+			}
+			if (node.getMetadataFile() != null)
+			{
+				createMetadataStream(node);
+
+			}
+			Link link = new Link();
+			link.setObject(node.getNamespace(), true);
+			link.setPredicate(REL_IS_IN_NAMESPACE);
+
+			node.addRelation(link);
+
+			link = new Link();
+			link.setObject(node.getContentType(), true);
+			link.setPredicate(REL_CONTENT_TYPE);
+
+			node.addRelation(link);
+
+			createRelsExt(node);
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+		catch (RemoteException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+		catch (IOException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+
+	}
+
+	@Override
+	public Node readNode(String pid)
+	{
+		if (!nodeExists(pid))
+			throw new NodeNotFoundException(pid + " does not exist!");
+		Node node = new Node();
+		node.setPID(pid);
+
+		try
+		{
 			readDcToNode(node);
 			readRelsExt(node);
 			readContentModels(node);
@@ -252,34 +256,27 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 			FedoraRequest.setDefaultClient(fedora);
 
-			node.setLabel(fedora.getObjectProfile(nodePid).execute().getLabel());
-
+			node.setLabel(fedora.getObjectProfile(pid).execute().getLabel());
 		}
-		catch (Exception e)
+		catch (FedoraClientException e)
 		{
-			// e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
+		catch (java.net.MalformedURLException e)
+		{
+			throw new ArchiveException("The variable host: " + host
+					+ " may contain a malformed url.", e);
+		}
+		catch (RemoteException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+
 		return node;
 	}
 
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: The corresponding fedora object will be updated
-	 * (overwritten)
-	 * </p>
-	 * 
-	 * @param node
-	 *            It is assumed that node has the correct PID of an existing
-	 *            Node which will be replaced by this method
-	 * @throws UnsupportedEncodingException
-	 */
 	@Override
-	public void updateNode(Node node) throws RemoteException,
-			UnsupportedEncodingException
+	public void updateNode(Node node)
 	{
 		updateDc(node);
 		// updateContentModels(node);
@@ -295,6 +292,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			updateMetadataStream(node);
 		}
 		updateRelsExt(node);
+
 	}
 
 	@Override
@@ -309,16 +307,16 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
-		return null;
+
 	}
 
 	@Override
 	public List<String> findPids(String rdfQuery, String queryFormat)
 	{
 
-		if (queryFormat.compareTo(TYPE_SIMPLE) == 0)
+		if (queryFormat.compareTo(FedoraVocabulary.SIMPLE) == 0)
 		{
 
 			return findPidsSimple(rdfQuery);
@@ -331,129 +329,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 	}
 
-	private List<String> findPidsRdf(String rdfQuery, String queryFormat)
-	{
-		InputStream stream = findTriples(rdfQuery, FedoraFacade.TYPE_SPO,
-				FedoraFacade.FORMAT_N3);
-
-		List<String> resultVector = new Vector<String>();
-		RepositoryConnection con = null;
-		Repository myRepository = new SailRepository(new MemoryStore());
-
-		try
-		{
-
-			myRepository.initialize();
-
-			con = myRepository.getConnection();
-			String baseURI = "";
-
-			con.add(stream, baseURI, RDFFormat.N3);
-
-			RepositoryResult<Statement> statements = con.getStatements(null,
-					null, null, true);
-
-			while (statements.hasNext())
-			{
-				Statement st = statements.next();
-				String str = removeUriPrefix(st.getSubject().stringValue());
-
-				resultVector.add(str);
-
-			}
-			return resultVector;
-
-		}
-		catch (RepositoryException e)
-		{
-
-			e.printStackTrace();
-		}
-		catch (RDFParseException e)
-		{
-
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-
-			e.printStackTrace();
-		}
-		finally
-		{
-			if (con != null)
-			{
-				try
-				{
-					con.close();
-				}
-				catch (RepositoryException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
-	}
-
-	@SuppressWarnings("static-access")
-	private List<String> findPidsSimple(String rdfQuery)
-	{
-		FedoraCredentials credentials;
-		try
-		{
-
-			credentials = new FedoraCredentials(host, user, passwd);
-			com.yourmediashelf.fedora.client.FedoraClient fedora = new com.yourmediashelf.fedora.client.FedoraClient(
-					credentials);
-
-			FedoraRequest.setDefaultClient(fedora);
-
-			FindObjectsResponse response = fedora.findObjects().maxResults(50)
-					.resultFormat("xml").pid().terms(rdfQuery).execute();
-			if (!response.hasNext())
-				return response.getPids();
-			List<String> result = response.getPids();
-			while (response.hasNext())
-			{
-
-				response = fedora.findObjects().pid()
-						.sessionToken(response.getToken()).maxResults(50)
-						.resultFormat("xml").execute();
-				result.addAll(response.getPids());
-
-			}
-
-			return result;
-		}
-		catch (MalformedURLException e)
-		{
-			e.printStackTrace();
-		}
-		catch (FedoraClientException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
-
-	}
-
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: If the object 'pid' has a datastream with 'datastreamId' the
-	 * method returns true.
-	 * </p>
-	 * 
-	 * @param pid
-	 *            of the object
-	 * @param datastreamId
-	 *            of the objects datastream
-	 * @return true ig datastream exists
-	 */
 	@Override
 	public boolean dataStreamExists(String pid, String datastreamId)
 	{
@@ -464,58 +339,8 @@ public class FedoraFacade implements FedoraInterface, Constants
 		return true;
 	}
 
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: Delete all relations from object with 'pid' to object with
-	 * 'rootPID'
-	 * </p>
-	 * 
-	 * @param pid
-	 *            the relations of this one will be deleted
-	 * @param rootPID
-	 *            will no longer be referenced
-	 * @throws Exception
-	 */
-	// @Override
-	// public void deleteRelationsByObjects(String pid, String rootPID)
-	// throws Exception
-	// {
-	// String[] predicates = null;
-	// try
-	// {
-	// predicates = findPredicates(pid, rootPID);
-	// }
-	// catch (Exception e)
-	// {
-	// return;
-	// }
-	// for (String pred : predicates)
-	// {
-	// fedoraManager.purgeRelationship(pid2pred(pid), pred,
-	// pid2pred(rootPID), false, null);
-	//
-	// }
-	//
-	// }
-
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: A new pid in the "test" namespace is generated
-	 * </p>
-	 * 
-	 * @return
-	 * @throws RemoteException
-	 */
 	@Override
-	public String getPid(String namespace) throws RemoteException
+	public String getPid(String namespace)
 	{
 		List<String> pids = fedoraManager.getNextPID(new BigInteger("1"),
 				namespace);
@@ -524,7 +349,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 	@Override
 	public String[] getPids(String namespace, int number)
-			throws RemoteException
 	{
 		List<String> pids = fedoraManager.getNextPID(
 				new BigInteger("" + number), namespace);
@@ -532,50 +356,37 @@ public class FedoraFacade implements FedoraInterface, Constants
 		return pids.toArray(arr);
 	}
 
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description: The fedora object will be deleted
-	 * </p>
-	 * 
-	 * @param rootPID
-	 *            identifier of a fedora object
-	 */
 	@Override
 	public void deleteNode(String rootPID)
 	{
-
-		AutoPurger purger;
 		try
 		{
-			purger = new AutoPurger(fedoraManager);
-			purger.purge(rootPID, "delete"); // Change: delete "false" as third
-												// param
+			AutoPurger purger = new AutoPurger(fedoraManager);
+			purger.purge(rootPID, "delete");
 		}
 		catch (MalformedURLException e)
 		{
-			// e.printStackTrace();
-		}
-		catch (ServiceException e)
-		{
-			// e.printStackTrace();
-		}
-		catch (RemoteException e)
-		{
-			// e.printStackTrace();
+
+			throw new ArchiveException(rootPID
+					+ " an unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
-			// e.printStackTrace();
+			throw new ArchiveException(rootPID
+					+ " an unknown exception occured.", e);
 		}
-		catch (Exception e)
+		catch (ServiceException e)
 		{
-			// e.printStackTrace();
+			throw new ArchiveException(rootPID
+					+ " an unknown exception occured.", e);
 		}
+	}
 
+	@Override
+	public void deleteDatastream(String pid, String datastream)
+	{
+		fedoraManager.setDatastreamState(pid, datastream, "D",
+				"marked as deleted");
 	}
 
 	@Override
@@ -590,6 +401,186 @@ public class FedoraFacade implements FedoraInterface, Constants
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String addUriPrefix(String pid)
+	{
+
+		if (pid.contains(objecUrl.toString()))
+			return pid;
+		String pred = objecUrl.toString() + "/" + pid;
+		return pred;
+	}
+
+	@Override
+	public String removeUriPrefix(String pred)
+	{
+		String pid = pred.replace(this.objecUrl.toString() + "/", "");
+
+		return pid;
+	}
+
+	/**
+	 * @param cm
+	 *            A fedora-like content model
+	 * @return The fedora-ready content model as String.
+	 */
+	public String getDsCompositeModel(ContentModel cm)
+	{
+		String start = " <dsCompositeModel xmlns=\"info:fedora/fedora-system:def/dsCompositeModel#\">";
+
+		StringBuffer middle = new StringBuffer();
+		Vector<String> prescribedDSIds = cm.getPrescribedDSIds();
+
+		for (int i = 0; i < prescribedDSIds.size(); i++)
+		{
+			String dsid = prescribedDSIds.get(i);
+			String furi = cm.getPrescribedDSformatURIs().get(i);
+			String mtype = cm.getPrescribedDSMimeTypes().get(i);
+
+			middle.append("<dsTypeModel ID=\"" + dsid + "\">"
+					+ "<form FORMAT_URI=\"" + furi + "\" MIME=\"" + mtype
+					+ "\"/>" + "</dsTypeModel>");
+		}
+
+		String end = "</dsCompositeModel>";
+
+		return start + middle.toString() + end;
+	}
+
+	/**
+	 * @param cm
+	 *            A fedora-like content model
+	 * @return A fedora-like methodmap as string
+	 */
+	public String getMethodMap(ContentModel cm)
+	{
+		String start = "<fmm:MethodMap name=\"MethodMap\" xmlns:fmm=\"http://fedora.comm.nsdlib.org/service/methodmap\">";
+
+		StringBuffer middle = new StringBuffer();
+		for (int i = 0; i < cm.getMethodNames().size(); i++)
+		{
+			String methodName = cm.getMethodNames().get(i);
+			middle.append("<fmm:Method label=\"" + methodName
+					+ "\" operationName=\"" + methodName + "\"/>");
+		}
+
+		String end = "</fmm:MethodMap>";
+
+		return start + middle.toString() + end;
+	}
+
+	/**
+	 * @param cm
+	 *            a fedora-like content model
+	 * @return the fedora-like method map to wsdl mapping as string
+	 */
+	public String getMethodMapToWsdl(ContentModel cm)
+	{
+
+		String start = "<fmm:MethodMap name=\"MethodMap\" xmlns:fmm=\"http://fedora.comm.nsdlib.org/service/methodmap\">";
+
+		StringBuffer middle = new StringBuffer();
+		for (int i = 0; i < cm.getMethodNames().size(); i++)
+		{
+			String methodName = cm.getMethodNames().get(i);
+			middle.append("    <fmm:Method operationLabel=\""
+					+ methodName
+					+ "\" operationName=\""
+					+ methodName
+					+ "\" wsdlMsgName=\""
+					+ methodName
+					+ "Request\" wsdlMsgOutput=\"dissemResponse\">"
+					+ "        <fmm:DatastreamInputParm defaultValue=\"\" label=\""
+					+ methodName
+					+ "\" parmName=\"DC\" passBy=\"URL_REF\" required=\"false\"/>"
+					+ "<fmm:DefaultInputParm defaultValue=\"$pid\" parmName=\"pid\" passBy=\"VALUE\" required=\"true\"/>"
+					+ "    </fmm:Method>");
+		}
+
+		String end = "</fmm:MethodMap>";
+
+		return start + middle.toString() + end;
+	}
+
+	/**
+	 * @return the fedora-like input-spec as string
+	 */
+	public String getDSInputSpec()
+	{
+		return "<fbs:DSInputSpec label=\"Undefined\" xmlns:fbs=\"http://fedora.comm.nsdlib.org/service/bindspec\">"
+				+ "<fbs:DSInput DSMax=\"1\" DSMin=\"1\" DSOrdinality=\"false\" wsdlMsgPartName=\"DC\">"
+				+ "	    <fbs:DSInputLabel>DC Binding</fbs:DSInputLabel>"
+				+ "	    <fbs:DSMIME>text/xml</fbs:DSMIME>"
+				+ "	    <fbs:DSInputInstruction/>"
+				+ "	  </fbs:DSInput>"
+				+ "	</fbs:DSInputSpec>";
+
+	}
+
+	/**
+	 * @param cm
+	 *            a fedora-like content model
+	 * @return the fedora-like wsdl as string
+	 */
+	public String getWsdl(ContentModel cm)
+	{
+		String start = "<wsdl:definitions name=\"Undefined\" targetNamespace=\"bmech\""
+				+ "	    xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\""
+				+ "	    xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap\" xmlns:soapenc=\"http://schemas.xmlsoap.org/wsdl/soap/encoding\""
+				+ "	    xmlns:this=\"bmech\" xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">";
+
+		StringBuffer middle = new StringBuffer();
+		for (int i = 0; i < cm.getMethodNames().size(); i++)
+		{
+			String methodName = cm.getMethodNames().get(i);
+			middle.append("<wsdl:message name=\"" + methodName + "Request\">"
+					+ "	    </wsdl:message>");
+		}
+
+		middle.append("	    <wsdl:message name=\"dissemResponse\">"
+				+ "	      <wsdl:part name=\"dissem\" type=\"xsd:base64Binary\"/>"
+				+ "	    </wsdl:message>");
+
+		middle.append("<wsdl:portType name=\"HBZContentModelPortType\">");
+		for (int i = 0; i < cm.getMethodNames().size(); i++)
+		{
+			String methodName = cm.getMethodNames().get(i);
+			middle.append("<wsdl:operation name=\"" + methodName + "\">"
+					+ "	        <wsdl:input message=\"this:" + methodName
+					+ "Request\"/>"
+					+ "	        <wsdl:output message=\"this:dissemResponse\"/>"
+					+ "	      </wsdl:operation>");
+		}
+		middle.append("</wsdl:portType>");
+		middle.append("<wsdl:service name=\"HBZContentModelImpl\">");
+		for (int i = 0; i < cm.getMethodNames().size(); i++)
+		{
+			// String methodName =
+			cm.getMethodNames().get(i);
+			middle.append("<wsdl:port binding=\"this:HBZContentModelImpl_http\" name=\"HBZContentModelImpl_port\">"
+					+ "	        <http:address location=\"LOCAL\"/>"
+					+ "	      </wsdl:port>");
+		}
+		middle.append("</wsdl:service>");
+		middle.append(" <wsdl:binding name=\"HBZContentModelImpl_http\" type=\"this:HBZContentModelPortType\">"
+				+ "	      <http:binding verb=\"GET\"/>");
+
+		for (int i = 0; i < cm.getMethodNames().size(); i++)
+		{
+			String methodName = cm.getMethodNames().get(i);
+			String methodLocation = cm.getMethodLocations().get(i);
+			middle.append("<wsdl:operation name=\"" + methodName + "\">"
+					+ "	        <http:operation location=\"" + methodLocation
+					+ "\"/>" + "	        <wsdl:input>"
+					+ "	          <http:urlReplacement/>"
+					+ "	        </wsdl:input>" + "	        <wsdl:output>"
+					+ "	          <mime:content type=\"text/xml\"/>"
+					+ "	        </wsdl:output>" + "	      </wsdl:operation>");
+		}
+		String end = " </wsdl:binding>" + "	  </wsdl:definitions>";
+		return start + middle.toString() + end;
 	}
 
 	private void createRelsExt(Node node)
@@ -699,11 +690,13 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (RemoteException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 	}
 
@@ -726,7 +719,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			String newID = fedoraManager.addDatastream(node.getPID(),
 					"metadata", altIDs, "metadata",
 					versionable, // DEFAULT_VERSIONABLE
-					"text/turtle", formatURI, location, "M", state,
+					"text/plain", formatURI, location, "M", state,
 					checksumType, null, // checksum type and checksum
 					"metadata");
 			node.setMetadataUrl(new URL(this.host + "/objects/" + node.getPID()
@@ -737,18 +730,20 @@ public class FedoraFacade implements FedoraInterface, Constants
 			node.addRelation(link);
 
 			link = new Link();
-			link.setObject("text/turtle", true);
+			link.setObject("text/plain", true);
 			link.setPredicate(METADATASTREAM_MIME);
 			node.addRelation(link);
 
 		}
 		catch (RemoteException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 	}
 
@@ -800,11 +795,13 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (RemoteException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 	}
 
@@ -827,7 +824,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			{
 				newID = fedoraManager.modifyDatastreamByReference(
 						node.getPID(), "metadata", altIDs, "metadata",
-						"text/turtle", formatURI, location, checksumType, null,
+						"text/plain", formatURI, location, checksumType, null,
 						"", true);
 			}
 			else
@@ -836,7 +833,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 				newID = fedoraManager.addDatastream(node.getPID(), "metadata",
 						altIDs, "metadata",
 						versionable, // DEFAULT_VERSIONABLE
-						"text/turtle", formatURI, location, "M", state,
+						"text/plain", formatURI, location, "M", state,
 						checksumType, null, // checksum type and checksum
 						"metadata");
 			}
@@ -848,17 +845,19 @@ public class FedoraFacade implements FedoraInterface, Constants
 			node.addRelation(link);
 
 			link = new Link();
-			link.setObject("text/turtle", true);
+			link.setObject("text/plain", true);
 			link.setPredicate(METADATASTREAM_MIME);
 			node.addRelation(link);
 		}
 		catch (RemoteException e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 	}
 
@@ -1181,17 +1180,17 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (ParserConfigurationException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (SAXException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 
 	}
@@ -1274,12 +1273,17 @@ public class FedoraFacade implements FedoraInterface, Constants
 									+ node.getPID()
 									+ "/datastreams/metadata/content"));
 						}
+						else if (link.getPredicate()
+								.compareTo(REL_CONTENT_TYPE) == 0)
+						{
+							node.setContentType(link.getObject());
+						}
 
 						String object = link.getObject();
 						try
 						{
 							if (object == null)
-								throw new URISyntaxException(" ", "Is an Null",
+								throw new URISyntaxException(" ", "Is a Null",
 										0);
 							if (object.isEmpty())
 								throw new URISyntaxException(" ",
@@ -1305,7 +1309,8 @@ public class FedoraFacade implements FedoraInterface, Constants
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
+					throw new ArchiveException(node.getPID()
+							+ " an unknown exception occured.", e);
 				}
 
 				finally
@@ -1324,22 +1329,26 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (RepositoryException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (RemoteException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (RDFParseException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 
 	}
@@ -1420,17 +1429,20 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (ParserConfigurationException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (SAXException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 		catch (IOException e)
 		{
 
-			e.printStackTrace();
+			throw new ArchiveException(node.getPID()
+					+ " an unknown exception occured.", e);
 		}
 
 	}
@@ -1514,21 +1526,15 @@ public class FedoraFacade implements FedoraInterface, Constants
 			createFedoraXmlForRelsExt(pid);
 		}
 		Vector<Link> links = node.getRelsExt();
-		try
-		{
-			Node old = readNode(pid);
-			links.removeAll(old.getRelsExt());
-		}
-		catch (RemoteException e)
-		{
 
-		}
+		Node old = readNode(pid);
+		links.removeAll(old.getRelsExt());
+
 		updateRelsExt(pid, links);
 
 	}
 
-	private void updateDc(Node node) throws RemoteException,
-			UnsupportedEncodingException
+	private void updateDc(Node node)
 	{
 		String preamble = ""
 				+ "<oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" "
@@ -1709,13 +1715,21 @@ public class FedoraFacade implements FedoraInterface, Constants
 			}
 		}
 
-		String result = preamble + update.toString() + fazit;
-		DataHandler dh = new DataHandler(new ByteArrayDataSource(
-				result.getBytes("UTF-8"), "text/xml"));
-		fedoraManager.modifyDatastreamByValue(node.getPID(), "DC", null,
-				"Dublin Core Record for this object", "text/xml",
-				"http://www.openarchives.org/OAI/2.0/oai_dc/", dh, "DISABLED",
-				null, "UPDATE OF DC STREAM", false);
+		try
+		{
+			String result = preamble + update.toString() + fazit;
+			DataHandler dh = new DataHandler(new ByteArrayDataSource(
+					result.getBytes("UTF-8"), "text/xml"));
+			fedoraManager.modifyDatastreamByValue(node.getPID(), "DC", null,
+					"Dublin Core Record for this object", "text/xml",
+					"http://www.openarchives.org/OAI/2.0/oai_dc/", dh,
+					"DISABLED", null, "UPDATE OF DC STREAM", false);
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			throw new ArchiveException(node.getPID()
+					+ " UTF-8 encoding not supported.", e);
+		}
 	}
 
 	/**
@@ -2071,160 +2085,107 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 	}
 
-	@Override
-	public String addUriPrefix(String pid)
+	private List<String> findPidsRdf(String rdfQuery, String queryFormat)
 	{
+		InputStream stream = findTriples(rdfQuery, FedoraVocabulary.SPO,
+				FedoraVocabulary.N3);
 
-		if (pid.contains(objecUrl.toString()))
-			return pid;
-		String pred = objecUrl.toString() + "/" + pid;
-		return pred;
+		List<String> resultVector = new Vector<String>();
+		RepositoryConnection con = null;
+		Repository myRepository = new SailRepository(new MemoryStore());
+
+		try
+		{
+
+			myRepository.initialize();
+
+			con = myRepository.getConnection();
+			String baseURI = "";
+
+			con.add(stream, baseURI, RDFFormat.N3);
+
+			RepositoryResult<Statement> statements = con.getStatements(null,
+					null, null, true);
+
+			while (statements.hasNext())
+			{
+				Statement st = statements.next();
+				String str = removeUriPrefix(st.getSubject().stringValue());
+
+				resultVector.add(str);
+
+			}
+			return resultVector;
+
+		}
+		catch (RepositoryException e)
+		{
+
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+		catch (RDFParseException e)
+		{
+
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+		catch (IOException e)
+		{
+
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+		finally
+		{
+			if (con != null)
+			{
+				try
+				{
+					con.close();
+				}
+				catch (RepositoryException e)
+				{
+					throw new ArchiveException("Can not close stream.", e);
+				}
+			}
+		}
 	}
 
-	@Override
-	public String removeUriPrefix(String pred)
+	private List<String> findPidsSimple(String rdfQuery)
 	{
-		String pid = pred.replace(this.objecUrl.toString() + "/", "");
-
-		return pid;
-	}
-
-	public String getDsCompositeModel(ContentModel cm)
-	{
-		String start = " <dsCompositeModel xmlns=\"info:fedora/fedora-system:def/dsCompositeModel#\">";
-
-		StringBuffer middle = new StringBuffer();
-		Vector<String> prescribedDSIds = cm.getPrescribedDSIds();
-
-		for (int i = 0; i < prescribedDSIds.size(); i++)
+		FedoraCredentials credentials;
+		try
 		{
-			String dsid = prescribedDSIds.get(i);
-			String furi = cm.getPrescribedDSformatURIs().get(i);
-			String mtype = cm.getPrescribedDSMimeTypes().get(i);
 
-			middle.append("<dsTypeModel ID=\"" + dsid + "\">"
-					+ "<form FORMAT_URI=\"" + furi + "\" MIME=\"" + mtype
-					+ "\"/>" + "</dsTypeModel>");
+			credentials = new FedoraCredentials(host, user, passwd);
+			com.yourmediashelf.fedora.client.FedoraClient fedora = new com.yourmediashelf.fedora.client.FedoraClient(
+					credentials);
+
+			FedoraRequest.setDefaultClient(fedora);
+
+			FindObjectsResponse response = fedora.findObjects().maxResults(50)
+					.resultFormat("xml").pid().terms(rdfQuery).execute();
+			if (!response.hasNext())
+				return response.getPids();
+			List<String> result = response.getPids();
+			while (response.hasNext())
+			{
+
+				response = fedora.findObjects().pid()
+						.sessionToken(response.getToken()).maxResults(50)
+						.resultFormat("xml").execute();
+				result.addAll(response.getPids());
+
+			}
+
+			return result;
+		}
+		catch (MalformedURLException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
+		}
+		catch (FedoraClientException e)
+		{
+			throw new ArchiveException("An unknown exception occured.", e);
 		}
 
-		String end = "</dsCompositeModel>";
-
-		return start + middle.toString() + end;
-	}
-
-	public String getMethodMap(ContentModel cm)
-	{
-		String start = "<fmm:MethodMap name=\"MethodMap\" xmlns:fmm=\"http://fedora.comm.nsdlib.org/service/methodmap\">";
-
-		StringBuffer middle = new StringBuffer();
-		for (int i = 0; i < cm.getMethodNames().size(); i++)
-		{
-			String methodName = cm.getMethodNames().get(i);
-			middle.append("<fmm:Method label=\"" + methodName
-					+ "\" operationName=\"" + methodName + "\"/>");
-		}
-
-		String end = "</fmm:MethodMap>";
-
-		return start + middle.toString() + end;
-	}
-
-	public String getMethodMapToWsdl(ContentModel cm)
-	{
-
-		String start = "<fmm:MethodMap name=\"MethodMap\" xmlns:fmm=\"http://fedora.comm.nsdlib.org/service/methodmap\">";
-
-		StringBuffer middle = new StringBuffer();
-		for (int i = 0; i < cm.getMethodNames().size(); i++)
-		{
-			String methodName = cm.getMethodNames().get(i);
-			middle.append("    <fmm:Method operationLabel=\""
-					+ methodName
-					+ "\" operationName=\""
-					+ methodName
-					+ "\" wsdlMsgName=\""
-					+ methodName
-					+ "Request\" wsdlMsgOutput=\"dissemResponse\">"
-					+ "        <fmm:DatastreamInputParm defaultValue=\"\" label=\""
-					+ methodName
-					+ "\" parmName=\"DC\" passBy=\"URL_REF\" required=\"false\"/>"
-					+ "<fmm:DefaultInputParm defaultValue=\"$pid\" parmName=\"pid\" passBy=\"VALUE\" required=\"true\"/>"
-					+ "    </fmm:Method>");
-		}
-
-		String end = "</fmm:MethodMap>";
-
-		return start + middle.toString() + end;
-	}
-
-	public String getDSInputSpec()
-	{
-		return "<fbs:DSInputSpec label=\"Undefined\" xmlns:fbs=\"http://fedora.comm.nsdlib.org/service/bindspec\">"
-				+ "<fbs:DSInput DSMax=\"1\" DSMin=\"1\" DSOrdinality=\"false\" wsdlMsgPartName=\"DC\">"
-				+ "	    <fbs:DSInputLabel>DC Binding</fbs:DSInputLabel>"
-				+ "	    <fbs:DSMIME>text/xml</fbs:DSMIME>"
-				+ "	    <fbs:DSInputInstruction/>"
-				+ "	  </fbs:DSInput>"
-				+ "	</fbs:DSInputSpec>";
-
-	}
-
-	public String getWsdl(ContentModel cm)
-	{
-		String start = "<wsdl:definitions name=\"Undefined\" targetNamespace=\"bmech\""
-				+ "	    xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\""
-				+ "	    xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap\" xmlns:soapenc=\"http://schemas.xmlsoap.org/wsdl/soap/encoding\""
-				+ "	    xmlns:this=\"bmech\" xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">";
-
-		StringBuffer middle = new StringBuffer();
-		for (int i = 0; i < cm.getMethodNames().size(); i++)
-		{
-			String methodName = cm.getMethodNames().get(i);
-			middle.append("<wsdl:message name=\"" + methodName + "Request\">"
-					+ "	    </wsdl:message>");
-		}
-
-		middle.append("	    <wsdl:message name=\"dissemResponse\">"
-				+ "	      <wsdl:part name=\"dissem\" type=\"xsd:base64Binary\"/>"
-				+ "	    </wsdl:message>");
-
-		middle.append("<wsdl:portType name=\"HBZContentModelPortType\">");
-		for (int i = 0; i < cm.getMethodNames().size(); i++)
-		{
-			String methodName = cm.getMethodNames().get(i);
-			middle.append("<wsdl:operation name=\"" + methodName + "\">"
-					+ "	        <wsdl:input message=\"this:" + methodName
-					+ "Request\"/>"
-					+ "	        <wsdl:output message=\"this:dissemResponse\"/>"
-					+ "	      </wsdl:operation>");
-		}
-		middle.append("</wsdl:portType>");
-		middle.append("<wsdl:service name=\"HBZContentModelImpl\">");
-		for (int i = 0; i < cm.getMethodNames().size(); i++)
-		{
-			// String methodName =
-			cm.getMethodNames().get(i);
-			middle.append("<wsdl:port binding=\"this:HBZContentModelImpl_http\" name=\"HBZContentModelImpl_port\">"
-					+ "	        <http:address location=\"LOCAL\"/>"
-					+ "	      </wsdl:port>");
-		}
-		middle.append("</wsdl:service>");
-		middle.append(" <wsdl:binding name=\"HBZContentModelImpl_http\" type=\"this:HBZContentModelPortType\">"
-				+ "	      <http:binding verb=\"GET\"/>");
-
-		for (int i = 0; i < cm.getMethodNames().size(); i++)
-		{
-			String methodName = cm.getMethodNames().get(i);
-			String methodLocation = cm.getMethodLocations().get(i);
-			middle.append("<wsdl:operation name=\"" + methodName + "\">"
-					+ "	        <http:operation location=\"" + methodLocation
-					+ "\"/>" + "	        <wsdl:input>"
-					+ "	          <http:urlReplacement/>"
-					+ "	        </wsdl:input>" + "	        <wsdl:output>"
-					+ "	          <mime:content type=\"text/xml\"/>"
-					+ "	        </wsdl:output>" + "	      </wsdl:operation>");
-		}
-		String end = " </wsdl:binding>" + "	  </wsdl:definitions>";
-		return start + middle.toString() + end;
 	}
 }
