@@ -1066,7 +1066,7 @@ class Actions
 						{
 							Statement st = statements.next();
 							String rdfSubject = st.getSubject().stringValue();
-
+							System.out.println(rdfSubject);
 							if (rdfSubject.compareTo(lobidUri) == 0)
 							{
 								view.addPredicate(st.getPredicate()

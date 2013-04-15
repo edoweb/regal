@@ -484,10 +484,23 @@ public class EdowebIngester implements IngestInterface
 			DigitalEntity fulltextObject = null;
 			for (DigitalEntity view : dtlBean.getViewMainLinks())
 			{
+
 				if (view.getStreamMime().compareTo(expectedMime) == 0)
 				{
 					fulltextObject = view;
 					break;
+				}
+			}
+			if (fulltextObject == null)
+			{
+				for (DigitalEntity view : dtlBean.getViewLinks())
+				{
+
+					if (view.getStreamMime().compareTo(expectedMime) == 0)
+					{
+						fulltextObject = view;
+						break;
+					}
 				}
 			}
 			if (fulltextObject != null)
