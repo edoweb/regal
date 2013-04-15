@@ -917,75 +917,6 @@ class Actions
 			view.addDescription(label);
 		view.setUri(uri);
 		view.addType(TypeType.contentType + ":" + node.getContentType());
-		URL metadata = node.getMetadataUrl();
-		InputStream in = null;
-		if (metadata != null)
-		{
-
-			try
-			{
-				in = metadata.openStream();
-
-				RepositoryConnection con = null;
-				Repository myRepository = new SailRepository(new MemoryStore());
-				try
-				{
-					myRepository.initialize();
-					con = myRepository.getConnection();
-					String baseURI = "";
-
-					con.add(in, baseURI, RDFFormat.N3);
-
-					RepositoryResult<Statement> statements = con.getStatements(
-							null, null, null, true);
-
-					while (statements.hasNext())
-					{
-						Statement st = statements.next();
-						view.addPredicate(st.getPredicate().stringValue(), st
-								.getObject().stringValue());
-					}
-				}
-				catch (RepositoryException e)
-				{
-
-					e.printStackTrace();
-				}
-				catch (RDFParseException e)
-				{
-
-					e.printStackTrace();
-				}
-				catch (IOException e)
-				{
-
-					e.printStackTrace();
-				}
-				finally
-				{
-					if (con != null)
-					{
-						try
-						{
-							con.close();
-						}
-						catch (RepositoryException e)
-						{
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-			catch (IOException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			finally
-			{
-				IOUtils.closeQuietly(in);
-			}
-		}
 
 		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
 
@@ -1104,6 +1035,86 @@ class Actions
 				view.addHasPart(relUrl, buf.toString());
 			}
 
+		}
+
+		URL metadata = node.getMetadataUrl();
+		InputStream in = null;
+		if (metadata != null)
+		{
+
+			try
+			{
+				in = metadata.openStream();
+
+				RepositoryConnection con = null;
+				Repository myRepository = new SailRepository(new MemoryStore());
+				try
+				{
+					myRepository.initialize();
+					con = myRepository.getConnection();
+					String baseURI = "";
+
+					con.add(in, baseURI, RDFFormat.N3);
+
+					RepositoryResult<Statement> statements = con.getStatements(
+							null, null, null, true);
+					if (view.getLobidUrl() != null
+							&& !view.getLobidUrl().isEmpty())
+					{
+						String lobidUri = view.getLobidUrl().firstElement();
+						while (statements.hasNext())
+						{
+							Statement st = statements.next();
+							String rdfSubject = st.getSubject().stringValue();
+
+							if (rdfSubject.compareTo(lobidUri) == 0)
+							{
+								view.addPredicate(st.getPredicate()
+										.stringValue(), st.getObject()
+										.stringValue());
+							}
+						}
+					}
+				}
+				catch (RepositoryException e)
+				{
+
+					e.printStackTrace();
+				}
+				catch (RDFParseException e)
+				{
+
+					e.printStackTrace();
+				}
+				catch (IOException e)
+				{
+
+					e.printStackTrace();
+				}
+				finally
+				{
+					if (con != null)
+					{
+						try
+						{
+							con.close();
+						}
+						catch (RepositoryException e)
+						{
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+			catch (IOException e1)
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			finally
+			{
+				IOUtils.closeQuietly(in);
+			}
 		}
 		return view;
 	}
