@@ -40,6 +40,7 @@ public class ContentModelFactory
 
 		cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
 		cm.addMethod("lobid", "http://localhost/resources/(pid)/metadata");
+		cm.addMethod("epicur", "http://localhost/utils/epicur/(pid)");
 
 		return cm;
 	}

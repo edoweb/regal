@@ -203,4 +203,21 @@ public class Utils
 		}
 	}
 
+	@POST
+	@Path("/urn/{pid}")
+	@Produces({ "application/json", "application/xml" })
+	public String epicur(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.epicur(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
 }

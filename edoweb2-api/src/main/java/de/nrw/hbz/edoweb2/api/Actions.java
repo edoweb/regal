@@ -96,6 +96,7 @@ class Actions
 	String dataciteUrl = null;
 	String baseUrl = null;
 	String serverName = null;
+	String uriPrefix = null;
 
 	/**
 	 * @throws IOException
@@ -119,6 +120,7 @@ class Actions
 				properties.getProperty("user"),
 				properties.getProperty("password"),
 				properties.getProperty("sesameStore"));
+		uriPrefix = serverName + "/" + "resources" + "/";
 
 	}
 
@@ -770,8 +772,105 @@ class Actions
 	 */
 	String makeOAISet(String pid)
 	{
+		String ddc = null;
 		Node node = archive.readNode(pid);
-		if (node.getSubject() != null)
+
+		URL metadata = node.getMetadataUrl();
+		InputStream in = null;
+		if (metadata != null)
+		{
+
+			try
+			{
+				in = metadata.openStream();
+
+				RepositoryConnection con = null;
+				Repository myRepository = new SailRepository(new MemoryStore());
+				try
+				{
+					myRepository.initialize();
+					con = myRepository.getConnection();
+					String baseURI = "";
+
+					con.add(in, baseURI, RDFFormat.N3);
+
+					RepositoryResult<Statement> statements = con.getStatements(
+							null, null, null, true);
+
+					while (statements.hasNext())
+					{
+						Statement st = statements.next();
+
+						String rdfPredicate = st.getPredicate().stringValue();
+						if (rdfPredicate
+								.compareTo("http://purl.org/dc/terms/subject") == 0)
+						{
+							String rdfObject = st.getObject().stringValue();
+							if (rdfObject
+									.startsWith("http://dewey.info/class/"))
+							{
+								ddc = rdfObject.subSequence(
+										rdfObject.lastIndexOf("/"),
+										rdfObject.length() - 1).toString();
+								logger.info("Found rdf ddc: " + ddc);
+
+								String name = ddcmap(ddc);
+								String spec = "ddc:" + ddc;
+								String namespace = "oai";
+								String oaipid = namespace + ":" + ddc;
+								if (!this.nodeExists(oaipid))
+								{
+									createOAISet(name, spec, oaipid);
+								}
+								linkObjectToOaiSet(node, spec, oaipid);
+							}
+						}
+
+					}
+
+				}
+				catch (RepositoryException e)
+				{
+
+					e.printStackTrace();
+				}
+				catch (RDFParseException e)
+				{
+
+					e.printStackTrace();
+				}
+				catch (IOException e)
+				{
+
+					e.printStackTrace();
+				}
+				finally
+				{
+					if (con != null)
+					{
+						try
+						{
+							con.close();
+						}
+						catch (RepositoryException e)
+						{
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+			catch (IOException e1)
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			finally
+			{
+				IOUtils.closeQuietly(in);
+			}
+		}
+		// TODO this block is deprecated as soon as lobid works like expected
+		if (ddc == null && node.getSubject() != null)
 			for (String subject : node.getSubject())
 			{
 				if (subject.startsWith("ddc"))
@@ -779,7 +878,7 @@ class Actions
 					int end = 7;
 					if (subject.length() < 7)
 						end = subject.length();
-					String ddc = subject.subSequence(4, end).toString();
+					ddc = subject.subSequence(4, end).toString();
 					logger.info("Found ddc: " + ddc);
 
 					String name = ddcmap(ddc);
@@ -794,6 +893,24 @@ class Actions
 				}
 
 			}
+		if (node.getContentType() != null)
+		{
+			String docType = node.getContentType();
+
+			logger.info("Found contentType: " + docType);
+
+			String name = docmap(docType);
+			String spec = TypeType.contentType.toString() + ":" + docType;
+			String namespace = "oai";
+			String oaipid = namespace + ":" + docType;
+			if (!this.nodeExists(oaipid))
+			{
+				createOAISet(name, spec, oaipid);
+			}
+			linkObjectToOaiSet(node, spec, oaipid);
+		}
+		else
+		// TODO this block is deprecated as soon as lobid works like expected
 		if (node.getType() != null)
 			for (String type : node.getType())
 			{
@@ -852,7 +969,7 @@ class Actions
 
 		link = new Link();
 		link.setPredicate(ITEM_ID);
-		link.setObject(getURI(node), false);
+		link.setObject(uriPrefix + pid, false);
 		relations.add(link);
 
 		node.setRelsExt(relations);
@@ -901,7 +1018,7 @@ class Actions
 	{
 
 		String pid = node.getPID();
-		String uri = getURI(node);
+		String uri = uriPrefix + pid;
 		View view = new View();
 		view.setCreator(node.getCreator());
 		view.setTitle(node.getTitle());
@@ -1066,7 +1183,7 @@ class Actions
 						{
 							Statement st = statements.next();
 							String rdfSubject = st.getSubject().stringValue();
-							System.out.println(rdfSubject);
+
 							if (rdfSubject.compareTo(lobidUri) == 0)
 							{
 								view.addPredicate(st.getPredicate()
@@ -1263,11 +1380,6 @@ class Actions
 	 */
 	String oaidc(String pid)
 	{
-
-		File old = new File("oaidc.xml");
-		if (old.exists())
-			old.delete();
-
 		Node node = archive.readNode(pid);
 		if (node == null)
 			return "No node with pid " + pid + " found";
@@ -1297,6 +1409,162 @@ class Actions
 			throw new ArchiveException(pid + " " + e.getMessage(), e);
 		}
 
+	}
+
+	String epicur(String pid)
+	{
+		String status = "urn_new";
+		String result = "<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xmlns:xsi=\"http://www.w3.com/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://nbn-resolving.de/urn/resolver.pl?urn=urn:nbn:de:1111-2004033116\">"
+				+ "<administrative_data>"
+				+ "	    <delivery>"
+				+ "<update_status type=\""
+				+ status
+				+ "\"></update_status>"
+				+ "		      <transfer type=\"oai\"></transfer>"
+				+ "		    </delivery>"
+				+ "		  </administrative_data>"
+				+ "		  <record>"
+				+ "		    <identifier scheme=\"urn:nbn:de\">"
+				+ generateUrn(pid)
+				+ "</identifier>"
+				+ "		    <resource>"
+				+ "		      <identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
+				+ uriPrefix
+				+ ""
+				+ pid
+				+ "</identifier>"
+				+ "		      <format scheme=\"imt\">text/html</format>"
+				+ "		    </resource>" + "		  </record>" + "		</epicur> ";
+		return result;
+	}
+
+	String generateUrn(String pid)
+	{
+		String result = null;
+		String raw = null;
+		String urn = "urn";
+		String nbn = "nbn";
+		String de = "de";
+		String snid = "edoweb";
+		String niss = pid;
+
+		raw = urn + ":" + nbn + ":" + de + ":" + snid + "-" + niss;
+
+		String checksum = getUrnChecksum(raw);
+		result = raw + "" + checksum;
+
+		return result;
+	}
+
+	private String getUrnChecksum(String rawUrn)
+	{
+		String checksum = "";
+		int ps = 0;
+		char[] urnArray = urnMap(rawUrn);
+		for (int i = 1; i <= urnArray.length; i++)
+		{
+			ps = ps + i * Integer.parseInt(String.valueOf(urnArray[i - 1]));
+		}
+		int q = ps
+				/ Integer.parseInt(String
+						.valueOf(urnArray[urnArray.length - 1]));
+		checksum = String.valueOf(q);
+		return String.valueOf(checksum.charAt(checksum.length() - 1));
+	}
+
+	private char[] urnMap(String urn)
+	{
+		Properties mKonkordanz = new Properties();
+		mKonkordanz.setProperty("0", "1");
+
+		mKonkordanz.setProperty("1", "2");
+
+		mKonkordanz.setProperty("2", "3");
+
+		mKonkordanz.setProperty("3", "4");
+
+		mKonkordanz.setProperty("4", "5");
+
+		mKonkordanz.setProperty("5", "6");
+
+		mKonkordanz.setProperty("6", "7");
+
+		mKonkordanz.setProperty("7", "8");
+
+		mKonkordanz.setProperty("8", "9");
+
+		mKonkordanz.setProperty("9", "41");
+
+		mKonkordanz.setProperty("a", "18");
+
+		mKonkordanz.setProperty("b", "14");
+
+		mKonkordanz.setProperty("c", "19");
+
+		mKonkordanz.setProperty("d", "15");
+
+		mKonkordanz.setProperty("e", "16");
+
+		mKonkordanz.setProperty("f", "21");
+
+		mKonkordanz.setProperty("g", "22");
+
+		mKonkordanz.setProperty("h", "23");
+
+		mKonkordanz.setProperty("i", "24");
+
+		mKonkordanz.setProperty("j", "25");
+
+		mKonkordanz.setProperty("k", "42");
+
+		mKonkordanz.setProperty("l", "26");
+
+		mKonkordanz.setProperty("m", "27");
+
+		mKonkordanz.setProperty("n", "13");
+
+		mKonkordanz.setProperty("o", "28");
+
+		mKonkordanz.setProperty("p", "29");
+
+		mKonkordanz.setProperty("q", "31");
+
+		mKonkordanz.setProperty("r", "12");
+
+		mKonkordanz.setProperty("s", "32");
+
+		mKonkordanz.setProperty("t", "33");
+
+		mKonkordanz.setProperty("u", "11");
+
+		mKonkordanz.setProperty("v", "34");
+
+		mKonkordanz.setProperty("w", "35");
+
+		mKonkordanz.setProperty("x", "36");
+
+		mKonkordanz.setProperty("y", "37");
+
+		mKonkordanz.setProperty("z", "38");
+
+		mKonkordanz.setProperty("-", "39");
+
+		mKonkordanz.setProperty(":", "17");
+
+		char[] urnArray = urn.toLowerCase().toCharArray();
+
+		StringBuffer strBuf = new StringBuffer();
+
+		for (int i = 0; i < urnArray.length; i++)
+		{
+
+			strBuf.append(Integer.parseInt(mKonkordanz.getProperty(String
+					.valueOf(urnArray[i]))));
+
+		}
+
+		urnArray = strBuf.toString().toCharArray();
+		return urnArray;
 	}
 
 	private void createOAISet(String name, String spec, String pid)
@@ -1425,11 +1693,6 @@ class Actions
 		/*
 		 * Workaround END
 		 */
-	}
-
-	private String getURI(Node node)
-	{
-		return serverName + "/" + "resources" + "/" + node.getPID();
 	}
 
 }
