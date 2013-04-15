@@ -203,8 +203,8 @@ public class Utils
 		}
 	}
 
-	@POST
-	@Path("/urn/{pid}")
+	@GET
+	@Path("/epicur/{pid}")
 	@Produces({ "application/json", "application/xml" })
 	public String epicur(@PathParam("pid") String pid)
 	{

@@ -31,16 +31,33 @@ public class ContentModelFactory
 	 *            the type of object
 	 * @return a ContentModel object
 	 */
-	public static ContentModel create(String namespace, String type)
+	public static ContentModel createHeadModel(String namespace)
+	{
+		ContentModel cm = new ContentModel();
+		cm.setContentModelPID(namespace + ":edowebObjectModel");
+		cm.setServiceDefinitionPID(namespace + ":edowebServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + ":edowebServiceDeployment");
+
+		cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
+		cm.addMethod("lobid", "http://localhost/resources/(pid)/metadata");
+		cm.addMethod("epicur", "http://localhost/utils/epicur/(pid)");
+
+		return cm;
+	}
+
+	/**
+	 * @param namespace
+	 *            namespace in which the content model object will be created
+	 * @param type
+	 *            the type of object
+	 * @return a ContentModel object
+	 */
+	public static ContentModel createTypedModel(String namespace, String type)
 	{
 		ContentModel cm = new ContentModel();
 		cm.setContentModelPID(namespace + ":" + type + "ObjectModel");
 		cm.setServiceDefinitionPID(namespace + ":" + type + "ServiceDefinition");
 		cm.setServiceDeploymentPID(namespace + ":" + type + "ServiceDeployment");
-
-		cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
-		cm.addMethod("lobid", "http://localhost/resources/(pid)/metadata");
-		cm.addMethod("epicur", "http://localhost/utils/epicur/(pid)");
 
 		return cm;
 	}
