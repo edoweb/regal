@@ -29,6 +29,10 @@ import javax.ws.rs.core.Response.Status;
 
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 
+/**
+ * @author Jan Schnasse schnasse@hbz-nrw.de
+ * 
+ */
 @Path("/utils")
 public class Utils
 {
@@ -211,6 +215,23 @@ public class Utils
 		try
 		{
 			return actions.epicur(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	@GET
+	@Path("/ocr/{pid}")
+	@Produces({ "text/plain" })
+	public String ocr(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.ocr(pid);
 		}
 		catch (ArchiveException e)
 		{

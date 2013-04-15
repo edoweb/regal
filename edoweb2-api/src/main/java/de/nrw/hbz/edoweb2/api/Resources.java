@@ -628,6 +628,8 @@ public class Resources
 					namespace, ObjectType.monograph.toString()));
 			rootObject.addContentModel(ContentModelFactory
 					.createHeadModel(namespace));
+			rootObject.addContentModel(ContentModelFactory
+					.createPdfModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -772,6 +774,8 @@ public class Resources
 					namespace, ObjectType.ejournalVolume.toString()));
 			rootObject.addContentModel(ContentModelFactory
 					.createHeadModel(namespace));
+			rootObject.addContentModel(ContentModelFactory
+					.createPdfModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
 

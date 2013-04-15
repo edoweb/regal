@@ -52,6 +52,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.util.PDFTextStripper;
 import org.culturegraph.mf.Flux;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
@@ -1693,6 +1695,96 @@ class Actions
 		/*
 		 * Workaround END
 		 */
+	}
+
+	public String ocr(String pid)
+	{
+		Node node = archive.readNode(pid);
+		URL content = node.getDataUrl();
+		String mimeType = node.getMimeType();
+		if (mimeType == null)
+			throw new HttpArchiveException(
+					404,
+					"The node "
+							+ pid
+							+ " does not provide a mime type. It may not even contain data at all!");
+		if (mimeType.compareTo("application/pdf") != 0)
+			throw new HttpArchiveException(406,
+					"Wrong mime type. Cannot extract text from " + mimeType);
+		File pdfFile = null;
+		InputStream in = null;
+		try
+		{
+
+			pdfFile = File.createTempFile("pdfedoweb", "pdf");
+			pdfFile.deleteOnExit();
+			URL url = new URL(lobidUrl);
+
+			URLConnection uc = content.openConnection();
+			uc.connect();
+			in = uc.getInputStream();
+			FileOutputStream out = new FileOutputStream(pdfFile);
+
+			byte[] buffer = new byte[1024];
+			int bytesRead = -1;
+			while ((bytesRead = in.read(buffer)) > -1)
+			{
+				out.write(buffer, 0, bytesRead);
+			}
+			in.close();
+
+		}
+		catch (IOException e)
+		{
+			throw new ArchiveException(pid
+					+ " IOException happens during copy operation.", e);
+		}
+		finally
+		{
+			try
+			{
+				if (in != null)
+					in.close();
+			}
+			catch (IOException e)
+			{
+				throw new ArchiveException(pid
+						+ " wasn't able to close stream.", e);
+			}
+		}
+
+		PDDocument doc = null;
+
+		try
+		{
+			doc = PDDocument.load(pdfFile);
+			PDFTextStripper stripper = new PDFTextStripper();
+			String text = stripper.getText(doc);
+			return text;
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(500, "Didn't find  pdf file.");
+		}
+		catch (Exception e)
+		{
+			throw new HttpArchiveException(500, e.getMessage());
+		}
+		finally
+		{
+			if (doc != null)
+			{
+				try
+				{
+					if (doc != null)
+						doc.close();
+				}
+				catch (IOException e)
+				{
+
+				}
+			}
+		}
 	}
 
 }

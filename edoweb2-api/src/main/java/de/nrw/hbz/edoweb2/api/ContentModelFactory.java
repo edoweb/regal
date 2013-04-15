@@ -39,7 +39,6 @@ public class ContentModelFactory
 		cm.setServiceDeploymentPID(namespace + ":edowebServiceDeployment");
 
 		cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
-		cm.addMethod("lobid", "http://localhost/resources/(pid)/metadata");
 		cm.addMethod("epicur", "http://localhost/utils/epicur/(pid)");
 
 		return cm;
@@ -58,6 +57,25 @@ public class ContentModelFactory
 		cm.setContentModelPID(namespace + ":" + type + "ObjectModel");
 		cm.setServiceDefinitionPID(namespace + ":" + type + "ServiceDefinition");
 		cm.setServiceDeploymentPID(namespace + ":" + type + "ServiceDeployment");
+
+		return cm;
+	}
+
+	/**
+	 * @param namespace
+	 *            namespace in which the content model object will be created
+	 * @param type
+	 *            the type of object
+	 * @return a ContentModel object
+	 */
+	public static ContentModel createPdfModel(String namespace)
+	{
+		ContentModel cm = new ContentModel();
+		cm.setContentModelPID(namespace + ":pdfObjectModel");
+		cm.setServiceDefinitionPID(namespace + ":pdfServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + ":pdfServiceDeployment");
+
+		cm.addMethod("ocr", "http://localhost/utils/ocr/(pid)");
 
 		return cm;
 	}
