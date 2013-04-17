@@ -971,7 +971,7 @@ class Actions
 
 		link = new Link();
 		link.setPredicate(ITEM_ID);
-		link.setObject(uriPrefix + pid, false);
+		link.setObject(uriPrefix + node.getPID(), false);
 		relations.add(link);
 
 		node.setRelsExt(relations);
