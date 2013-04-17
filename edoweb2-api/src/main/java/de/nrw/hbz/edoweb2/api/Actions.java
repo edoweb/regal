@@ -70,6 +70,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
+import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
+import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
@@ -1697,7 +1701,7 @@ class Actions
 		 */
 	}
 
-	public String ocr(String pid)
+	public String pdfbox(String pid)
 	{
 		Node node = archive.readNode(pid);
 		URL content = node.getDataUrl();
@@ -1784,6 +1788,113 @@ class Actions
 
 				}
 			}
+		}
+	}
+
+	public String itext(String pid)
+	{
+		Node node = archive.readNode(pid);
+		URL content = node.getDataUrl();
+		String mimeType = node.getMimeType();
+		if (mimeType == null)
+			throw new HttpArchiveException(
+					404,
+					"The node "
+							+ pid
+							+ " does not provide a mime type. It may not even contain data at all!");
+		if (mimeType.compareTo("application/pdf") != 0)
+			throw new HttpArchiveException(406,
+					"Wrong mime type. Cannot extract text from " + mimeType);
+		File pdfFile = null;
+		InputStream in = null;
+		try
+		{
+
+			pdfFile = File.createTempFile("pdfedoweb", "pdf");
+			pdfFile.deleteOnExit();
+			URL url = new URL(lobidUrl);
+
+			URLConnection uc = content.openConnection();
+			uc.connect();
+			in = uc.getInputStream();
+			FileOutputStream out = new FileOutputStream(pdfFile);
+
+			byte[] buffer = new byte[1024];
+			int bytesRead = -1;
+			while ((bytesRead = in.read(buffer)) > -1)
+			{
+				out.write(buffer, 0, bytesRead);
+			}
+			in.close();
+
+		}
+		catch (IOException e)
+		{
+			throw new ArchiveException(pid
+					+ " IOException happens during copy operation.", e);
+		}
+		finally
+		{
+			try
+			{
+				if (in != null)
+					in.close();
+			}
+			catch (IOException e)
+			{
+				throw new ArchiveException(pid
+						+ " wasn't able to close stream.", e);
+			}
+		}
+		PdfReader reader;
+		try
+		{
+			reader = new PdfReader(pdfFile.getAbsolutePath());
+			PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+			StringBuffer out = new StringBuffer();
+			TextExtractionStrategy strategy;
+			for (int i = 1; i <= reader.getNumberOfPages(); i++)
+			{
+				strategy = parser.processContent(i,
+						new SimpleTextExtractionStrategy());
+				out.append(strategy.getResultantText());
+			}
+
+			return out.toString();
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(500, "itext problem");
+		}
+
+	}
+
+	public String contentModelsInit()
+	{
+		try
+		{
+			archive.updateContentModel(ContentModelFactory
+					.createEdowebHeadModel());
+
+			archive.updateContentModel(ContentModelFactory
+					.createEdowebEJournalModel());
+			archive.updateContentModel(ContentModelFactory
+					.createEdowebMonographModel());
+			archive.updateContentModel(ContentModelFactory
+					.createEdowebWebpageModel());
+			archive.updateContentModel(ContentModelFactory
+					.createEdowebVersionModel());
+			archive.updateContentModel(ContentModelFactory
+					.createEdowebVolumeModel());
+
+			archive.updateContentModel(ContentModelFactory
+					.createEdowebPdfModel());
+
+			return "Success!";
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(500, e.getMessage());
 		}
 	}
 

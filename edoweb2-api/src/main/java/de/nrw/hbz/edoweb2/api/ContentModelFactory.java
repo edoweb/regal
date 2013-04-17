@@ -25,18 +25,14 @@ import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 public class ContentModelFactory
 {
 	/**
-	 * @param namespace
-	 *            namespace in which the content model object will be created
-	 * @param type
-	 *            the type of object
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createHeadModel(String namespace)
+	public static ContentModel createEdowebHeadModel()
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + ":edowebObjectModel");
-		cm.setServiceDefinitionPID(namespace + ":edowebServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + ":edowebServiceDeployment");
+		cm.setContentModelPID("edowebCM:edowebObjectModel");
+		cm.setServiceDefinitionPID("edowebCM:edowebServiceDefinition");
+		cm.setServiceDeploymentPID("edowebCM:edowebServiceDeployment");
 
 		cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
 		cm.addMethod("epicur", "http://localhost/utils/epicur/(pid)");
@@ -45,37 +41,82 @@ public class ContentModelFactory
 	}
 
 	/**
-	 * @param namespace
-	 *            namespace in which the content model object will be created
-	 * @param type
-	 *            the type of object
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createTypedModel(String namespace, String type)
+	public static ContentModel createEdowebPdfModel()
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + ":" + type + "ObjectModel");
-		cm.setServiceDefinitionPID(namespace + ":" + type + "ServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + ":" + type + "ServiceDeployment");
+		cm.setContentModelPID("edowebCM:pdfObjectModel");
+		cm.setServiceDefinitionPID("edowebCM:pdfServiceDefinition");
+		cm.setServiceDeploymentPID("edowebCM:pdfServiceDeployment");
+
+		cm.addMethod("pdfbox", "http://localhost/utils/pdfbox/(pid)");
+		cm.addMethod("itext", "http://localhost/utils/itext/(pid)");
 
 		return cm;
 	}
 
 	/**
-	 * @param namespace
-	 *            namespace in which the content model object will be created
-	 * @param type
-	 *            the type of object
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createPdfModel(String namespace)
+	public static ContentModel createEdowebMonographModel()
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + ":pdfObjectModel");
-		cm.setServiceDefinitionPID(namespace + ":pdfServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + ":pdfServiceDeployment");
+		cm.setContentModelPID("edowebCM:edowebMonographObjectModel");
+		cm.setServiceDefinitionPID("edowebCM:edowebMonographServiceDefinition");
+		cm.setServiceDeploymentPID("edowebCM:edowebMonographServiceDeployment");
 
-		cm.addMethod("ocr", "http://localhost/utils/ocr/(pid)");
+		return cm;
+	}
+
+	/**
+	 * @return a ContentModel object
+	 */
+	public static ContentModel createEdowebWebpageModel()
+	{
+		ContentModel cm = new ContentModel();
+		cm.setContentModelPID("edowebCM:edowebWebpageObjectModel");
+		cm.setServiceDefinitionPID("edowebCM:edowebWebpageServiceDefinition");
+		cm.setServiceDeploymentPID("edowebCM:edowebWebpageServiceDeployment");
+
+		return cm;
+	}
+
+	/**
+	 * @return a ContentModel object
+	 */
+	public static ContentModel createEdowebEJournalModel()
+	{
+		ContentModel cm = new ContentModel();
+		cm.setContentModelPID("edowebCM:edowebEJournalObjectModel");
+		cm.setServiceDefinitionPID("edowebCM:edowebEJournalServiceDefinition");
+		cm.setServiceDeploymentPID("edowebCM:edowebEJournalServiceDeployment");
+
+		return cm;
+	}
+
+	/**
+	 * @return a ContentModel object
+	 */
+	public static ContentModel createEdowebVolumeModel()
+	{
+		ContentModel cm = new ContentModel();
+		cm.setContentModelPID("edowebCM:edowebVolumeObjectModel");
+		cm.setServiceDefinitionPID("edowebCM:edowebVolumeServiceDefinition");
+		cm.setServiceDeploymentPID("edowebCM:edowebVolumeServiceDeployment");
+
+		return cm;
+	}
+
+	/**
+	 * @return a ContentModel object
+	 */
+	public static ContentModel createEdowebVersionModel()
+	{
+		ContentModel cm = new ContentModel();
+		cm.setContentModelPID("edowebCM:edowebVersionObjectModel");
+		cm.setServiceDefinitionPID("edowebCM:edowebVersionServiceDefinition");
+		cm.setServiceDeploymentPID("edowebCM:edowebVersionServiceDeployment");
 
 		return cm;
 	}

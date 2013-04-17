@@ -583,6 +583,32 @@ public class FedoraFacade implements FedoraInterface, Constants
 		return start + middle.toString() + end;
 	}
 
+	@Override
+	public void updateContentModel(ContentModel cm)
+	{
+		deleteNode(cm.getContentModelPID());
+		deleteNode(cm.getServiceDefinitionPID());
+		deleteNode(cm.getServiceDeploymentPID());
+		try
+		{
+			createContentModel(cm);
+		}
+		catch (RemoteException e)
+		{
+			throw new ArchiveException(
+					"Problem during update of ContentModel: "
+							+ cm.getContentModelPID(), e);
+		}
+		catch (IOException e)
+		{
+			throw new ArchiveException(
+					"Problem during update of ContentModel: "
+							+ cm.getContentModelPID(), e);
+
+		}
+
+	}
+
 	private void createRelsExt(Node node)
 	{
 

@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
+import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 
 /**
@@ -174,5 +175,13 @@ public interface ArchiveInterface
 	 * @return the predicate prfixed with a certain namespace, e.g info:fedora.
 	 */
 	public String removeUriPrefix(String pred);
+
+	/**
+	 * Update of the contenModel object.
+	 * 
+	 * @param createEdowebMonographModel
+	 *            a contentModel
+	 */
+	public void updateContentModel(ContentModel createEdowebMonographModel);
 
 }

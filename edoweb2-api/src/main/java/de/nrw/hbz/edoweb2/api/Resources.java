@@ -588,10 +588,10 @@ public class Resources
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.webpage.toString());
-			rootObject.addContentModel(ContentModelFactory.createTypedModel(
-					namespace, ObjectType.webpage.toString()));
 			rootObject.addContentModel(ContentModelFactory
-					.createHeadModel(namespace));
+					.createEdowebWebpageModel());
+			rootObject.addContentModel(ContentModelFactory
+					.createEdowebHeadModel());
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -624,12 +624,12 @@ public class Resources
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.monograph.toString());
-			rootObject.addContentModel(ContentModelFactory.createTypedModel(
-					namespace, ObjectType.monograph.toString()));
 			rootObject.addContentModel(ContentModelFactory
-					.createHeadModel(namespace));
+					.createEdowebMonographModel());
 			rootObject.addContentModel(ContentModelFactory
-					.createPdfModel(namespace));
+					.createEdowebHeadModel());
+			rootObject.addContentModel(ContentModelFactory
+					.createEdowebPdfModel());
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -664,10 +664,10 @@ public class Resources
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(namespace + ":" + pid);
 			rootObject.setContentType(ObjectType.ejournal.toString());
-			rootObject.addContentModel(ContentModelFactory.createTypedModel(
-					namespace, ObjectType.ejournal.toString()));
 			rootObject.addContentModel(ContentModelFactory
-					.createHeadModel(namespace));
+					.createEdowebEJournalModel());
+			rootObject.addContentModel(ContentModelFactory
+					.createEdowebHeadModel());
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -711,9 +711,8 @@ public class Resources
 
 			rootObject.setNamespace(namespace).setPID(versionPid);
 			rootObject.setContentType(ObjectType.webpageVersion.toString());
-			rootObject.addContentModel(ContentModelFactory.createTypedModel(
-					namespace, ObjectType.webpageVersion.toString()));
-			// rootObject.addContentModel(ContentModelFactory.createHeadModel(namespace));
+			rootObject.addContentModel(ContentModelFactory
+					.createEdowebVersionModel());
 
 			ComplexObject object = new ComplexObject(rootObject);
 
@@ -770,12 +769,10 @@ public class Resources
 
 			rootObject.setNamespace(namespace).setPID(volumePid);
 			rootObject.setContentType(ObjectType.ejournalVolume.toString());
-			rootObject.addContentModel(ContentModelFactory.createTypedModel(
-					namespace, ObjectType.ejournalVolume.toString()));
 			rootObject.addContentModel(ContentModelFactory
-					.createHeadModel(namespace));
+					.createEdowebVolumeModel());
 			rootObject.addContentModel(ContentModelFactory
-					.createPdfModel(namespace));
+					.createEdowebPdfModel());
 
 			ComplexObject object = new ComplexObject(rootObject);
 

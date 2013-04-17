@@ -225,13 +225,47 @@ public class Utils
 	}
 
 	@GET
-	@Path("/ocr/{pid}")
+	@Path("/pdfbox/{pid}")
 	@Produces({ "text/plain" })
-	public String ocr(@PathParam("pid") String pid)
+	public String pdfbox(@PathParam("pid") String pid)
 	{
 		try
 		{
-			return actions.ocr(pid);
+			return actions.pdfbox(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	@GET
+	@Path("/itext/{pid}")
+	@Produces({ "text/plain" })
+	public String itext(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.itext(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	@POST
+	@Path("/contentModels/init")
+	@Produces({ "text/plain" })
+	public String contentModelsInit()
+	{
+		try
+		{
+			return actions.contentModelsInit();
 		}
 		catch (ArchiveException e)
 		{

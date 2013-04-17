@@ -5,24 +5,16 @@
 		<groupId>de.nrw.hbz.edoweb2</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-
-
 	<modelVersion>4.0.0</modelVersion>
-
 	<artifactId>edoweb2-api</artifactId>
 	<packaging>jar</packaging>
-
 	<name>edoweb2-api</name>
-
-
 	<dependencies>
-
 		<dependency>
 			<groupId>org.marc4j</groupId>
 			<artifactId>marc4j</artifactId>
 			<version>2.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>de.nrw.hbz.edoweb2</groupId>
 			<artifactId>archive</artifactId>
@@ -126,7 +118,12 @@
 			<artifactId>icu4j</artifactId>
 			<version>3.8</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.4.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>edoweb2-api</finalName>
