@@ -473,7 +473,6 @@ class Archive implements ArchiveInterface
 	public void updateContentModel(ContentModel createEdowebMonographModel)
 	{
 		fedoraInterface.updateContentModel(createEdowebMonographModel);
-
 	}
 
 	/*
