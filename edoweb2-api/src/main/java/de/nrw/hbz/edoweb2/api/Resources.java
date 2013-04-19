@@ -65,7 +65,7 @@ public class Resources
 
 	final static Logger logger = LoggerFactory.getLogger(Resources.class);
 
-	String namespace = "edoweb";
+	// String namespace = "edoweb";
 
 	Actions actions = null;
 
@@ -277,11 +277,11 @@ public class Resources
 	 *         400 if not
 	 */
 	@PUT
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("application/json")
 	public String createResource(@PathParam("pid") String pid,
-			CreateObjectBean input)
+			@PathParam("namespace") String namespace, CreateObjectBean input)
 	{
 		if (input == null)
 		{
@@ -294,15 +294,15 @@ public class Resources
 					"The type you've provided is NULL or empty.");
 		}
 		if (input.type.compareTo(ObjectType.monograph.toString()) == 0)
-			return createMonograph(pid);
+			return createMonograph(pid, namespace);
 		else if (input.type.compareTo(ObjectType.ejournal.toString()) == 0)
-			return createEJournal(pid);
+			return createEJournal(pid, namespace);
 		else if (input.type.compareTo(ObjectType.webpage.toString()) == 0)
-			return createWebpage(pid);
+			return createWebpage(pid, namespace);
 		else if (input.type.compareTo(ObjectType.webpageVersion.toString()) == 0)
-			return createWebpageVersion(input.parentPid, pid);
+			return createWebpageVersion(input.parentPid, pid, namespace);
 		else if (input.type.compareTo(ObjectType.ejournalVolume.toString()) == 0)
-			return createEJournalVolume(input.parentPid, pid);
+			return createEJournalVolume(input.parentPid, pid, namespace);
 
 		throw new HttpArchiveException(Status.BAD_REQUEST.getStatusCode(),
 				"The type you've provided " + input.type
@@ -414,13 +414,14 @@ public class Resources
 	 *         400 if not
 	 */
 	@POST
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("application/json")
 	public String createResourcePost(@PathParam("pid") String pid,
+			@PathParam("namepsace") String namespace,
 			final CreateObjectBean input)
 	{
-		return createResource(pid, input);
+		return createResource(pid, namespace, input);
 	}
 
 	/**
@@ -568,7 +569,7 @@ public class Resources
 		}
 	}
 
-	private String createWebpage(String pid)
+	private String createWebpage(String pid, String namespace)
 	{
 		try
 		{
@@ -605,7 +606,7 @@ public class Resources
 		}
 	}
 
-	private String createMonograph(String pid)
+	private String createMonograph(String pid, String namespace)
 	{
 		logger.info("create Monograph");
 		try
@@ -643,7 +644,7 @@ public class Resources
 		}
 	}
 
-	private String createEJournal(String pid)
+	private String createEJournal(String pid, String namespace)
 	{
 		logger.info("create EJournal");
 		try
@@ -681,7 +682,8 @@ public class Resources
 		}
 	}
 
-	private String createWebpageVersion(String parentPid, String versionPid)
+	private String createWebpageVersion(String parentPid, String versionPid,
+			String namespace)
 	{
 		try
 		{
@@ -739,7 +741,8 @@ public class Resources
 		}
 	}
 
-	private String createEJournalVolume(String parentPid, String volumePid)
+	private String createEJournalVolume(String parentPid, String volumePid,
+			String namespace)
 	{
 
 		logger.info("create EJournal Volume");

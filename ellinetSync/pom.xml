@@ -72,7 +72,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>edowebSync</artifactId>
+			<artifactId>sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

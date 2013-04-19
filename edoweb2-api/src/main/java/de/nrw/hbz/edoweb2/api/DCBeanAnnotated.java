@@ -16,9 +16,21 @@
  */
 package de.nrw.hbz.edoweb2.api;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import de.nrw.hbz.edoweb2.datatypes.DCBean;
 import de.nrw.hbz.edoweb2.datatypes.Node;
@@ -58,6 +70,11 @@ public class DCBeanAnnotated
 	public DCBeanAnnotated()
 	{
 
+	}
+
+	public DCBeanAnnotated(String xmlString)
+	{
+		parse(xmlString);
 	}
 
 	public DCBeanAnnotated(DCBean node)
@@ -617,4 +634,195 @@ public class DCBeanAnnotated
 			;
 	}
 
+	private void parse(String str)
+	{
+		if (str == null || str.isEmpty())
+			return;
+		Element root = getDocument(str);
+
+		String tagName = DigitoolDc2RdfMap.xmlDcContributer;
+		NodeList nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addContributer(element.getTextContent());
+		}
+
+		tagName = DigitoolDc2RdfMap.xmlDcCoverage;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addCoverage(element.getTextContent());
+		}
+
+		tagName = DigitoolDc2RdfMap.xmlDcCreator;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addCreator(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcDate;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addDate(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcDescription;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addDescription(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcFormat;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addFormat(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcIdentifier;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			String curId = element.getTextContent();
+			if (curId.contains("HT"))
+			{
+				if (curId.startsWith("HBZ"))
+				{
+					addIdentifier(curId.substring(3));
+				}
+				else
+				{
+					addIdentifier(curId);
+				}
+			}
+			else
+			{
+				addIdentifier(curId);
+			}
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcLanguage;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addLanguage(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcPublisher;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addPublisher(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcRelation;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addRelation(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcRights;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addRights(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcSource;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addSource(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcSubject;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addSubject(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcTitle;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addTitle(element.getTextContent());
+		}
+		tagName = DigitoolDc2RdfMap.xmlDcType;
+		nodes = root.getElementsByTagName(tagName);
+		for (int j = 0; j < nodes.getLength(); j++)
+		{
+			Element element = ((Element) nodes.item(j));
+			addType(element.getTextContent());
+		}
+
+	}
+
+	/**
+	 * converts a string to an dom element
+	 * 
+	 * @param xmlString
+	 *            the xmlstring
+	 * @return the root element
+	 * @throws NullPointerException
+	 *             if string is empty or null
+	 */
+	public static Element getDocument(String xmlString)
+			throws NullPointerException
+	{
+		if (xmlString.isEmpty() || xmlString == null)
+			throw new NullPointerException("XMLUtils: XMLString is null!");
+		try
+		{
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder docBuilder;
+			factory.setNamespaceAware(true);
+			factory.setExpandEntityReferences(false);
+			docBuilder = factory.newDocumentBuilder();
+
+			Document doc;
+
+			doc = docBuilder.parse(new BufferedInputStream(
+					new ByteArrayInputStream(xmlString.getBytes())));
+			Element root = doc.getDocumentElement();
+			root.normalize();
+			return root;
+
+		}
+		catch (FileNotFoundException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (SAXException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (ParserConfigurationException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (Exception e)
+		{
+
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 }

@@ -56,13 +56,14 @@ public class Monograph
 	}
 
 	@PUT
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String createMonograph(@PathParam("pid") String pid)
+	public String createMonograph(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.monograph.toString();
-		return resources.createResource(pid, input);
+		return resources.createResource(pid, namespace, input);
 
 	}
 

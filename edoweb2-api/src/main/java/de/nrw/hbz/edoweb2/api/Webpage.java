@@ -61,13 +61,14 @@ public class Webpage
 	}
 
 	@PUT
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String createWebpage(@PathParam("pid") String pid)
+	public String createWebpage(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.webpage.toString();
-		return resources.createResource(pid, input);
+		return resources.createResource(pid, namespace, input);
 	}
 
 	@DELETE
@@ -110,15 +111,15 @@ public class Webpage
 	}
 
 	@PUT
-	@Path("/{pid}/version/{versionPid}")
+	@Path("/{pid}/version/{namespace}:{versionPid}")
 	@Produces({ "application/json", "application/xml" })
 	public String createWebpageVersion(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid)
+			@PathParam("versionPid") String versionPid,@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.webpageVersion.toString();
 		input.parentPid = pid;
-		return resources.createResource(versionPid, input);
+		return resources.createResource(versionPid,namespace, input);
 
 	}
 

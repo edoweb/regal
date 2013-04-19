@@ -170,6 +170,7 @@
 		<module>archive</module>
 		<module>pidReporter</module>
 		<module>digitoolDownloader</module>
+		<module>sync</module>
 		<module>edowebSync</module>
 		<module>edoweb2-api</module>
 		<module>edowebOAI</module>

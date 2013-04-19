@@ -86,7 +86,7 @@ public class EJournal
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.ejournal.toString();
-		return resources.createResource(pid, input);
+		return resources.createResource(pid, userNamespace, input);
 
 	}
 
@@ -158,15 +158,16 @@ public class EJournal
 	}
 
 	@PUT
-	@Path("/{pid}/volume/{volumePid}")
+	@Path("/{pid}/volume/{namespace}:{volumePid}")
 	@Produces({ "application/json", "application/xml" })
 	public String createEJournalVolume(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace,
 			@PathParam("volumePid") String volumePid)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.ejournalVolume.toString();
 		input.parentPid = pid;
-		return resources.createResource(volumePid, input);
+		return resources.createResource(volumePid, namespace, input);
 	}
 
 	@GET
