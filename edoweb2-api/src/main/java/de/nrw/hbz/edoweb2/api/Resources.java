@@ -141,15 +141,15 @@ public class Resources
 	 * @throws URISyntaxException
 	 */
 	@GET
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid)
-			throws URISyntaxException
+	public Response getResource(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + pid + "/about"))
-				.status(303).build();
+						new java.net.URI("/resources/" + namespace + ":" + pid
+								+ "/about")).status(303).build();
 	}
 
 	/**
@@ -480,13 +480,14 @@ public class Resources
 	 *         or a 500 if not.
 	 */
 	@DELETE
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteResource(@PathParam("pid") String pid)
+	public String deleteResource(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		try
 		{
-			return actions.delete(pid, false);
+			return actions.delete(namespace + ":" + pid, false);
 
 		}
 		catch (ArchiveException e)
@@ -569,12 +570,12 @@ public class Resources
 		}
 	}
 
-	private String createWebpage(String pid, String namespace)
+	private String createWebpage(String p, String namespace)
 	{
 		try
 		{
 			logger.info("create Webpage");
-
+			String pid = namespace + ":" + p;
 			if (actions.nodeExists(pid))
 			{
 				throw new HttpArchiveException(
@@ -606,9 +607,10 @@ public class Resources
 		}
 	}
 
-	private String createMonograph(String pid, String namespace)
+	private String createMonograph(String p, String namespace)
 	{
 		logger.info("create Monograph");
+		String pid = namespace + ":" + p;
 		try
 		{
 			if (actions.nodeExists(pid))
@@ -644,8 +646,9 @@ public class Resources
 		}
 	}
 
-	private String createEJournal(String pid, String namespace)
+	private String createEJournal(String p, String namespace)
 	{
+		String pid = namespace + ":" + p;
 		logger.info("create EJournal");
 		try
 		{
@@ -682,9 +685,10 @@ public class Resources
 		}
 	}
 
-	private String createWebpageVersion(String parentPid, String versionPid,
+	private String createWebpageVersion(String parentPid, String p,
 			String namespace)
 	{
+		String versionPid = namespace + ":" + p;
 		try
 		{
 			logger.info("create Webpage Version");
@@ -741,10 +745,11 @@ public class Resources
 		}
 	}
 
-	private String createEJournalVolume(String parentPid, String volumePid,
+	private String createEJournalVolume(String parentPid, String p,
 			String namespace)
 	{
 
+		String volumePid = namespace + ":" + p;
 		logger.info("create EJournal Volume");
 		try
 		{

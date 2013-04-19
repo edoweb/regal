@@ -70,23 +70,23 @@ public class EJournal
 	}
 
 	@DELETE
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
 	public String deleteEJournal(@PathParam("pid") String pid,
-			@PathParam("userNamespace") String userNamespace)
+			@PathParam("namespace") String namespace)
 	{
-		return resources.deleteResource(pid);
+		return resources.deleteResource(pid, namespace);
 	}
 
 	@PUT
-	@Path("/{userNamespace}:{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
 	public String createEJournal(@PathParam("pid") String pid,
-			@PathParam("userNamespace") String userNamespace)
+			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.ejournal.toString();
-		return resources.createResource(pid, userNamespace, input);
+		return resources.createResource(pid, namespace, input);
 
 	}
 
@@ -185,15 +185,15 @@ public class EJournal
 	 * @throws URISyntaxException
 	 */
 	@GET
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid)
-			throws URISyntaxException
+	public Response getResource(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + pid + "/about"))
-				.status(303).build();
+						new java.net.URI("/resources/" + namespace + ":" + pid
+								+ "/about")).status(303).build();
 	}
 
 	@GET

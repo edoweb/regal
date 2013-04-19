@@ -221,7 +221,7 @@ public class Webclient
 
 		try
 		{
-			logger.info(pid + " Updata data: " + dtlBean.getStreamMime());
+			logger.info(pid + " Update data: " + dtlBean.getStreamMime());
 			MultiPart multiPart = new MultiPart();
 			multiPart.bodyPart(new StreamDataBodyPart("InputStream",
 					new FileInputStream(dtlBean.getStream()), dtlBean

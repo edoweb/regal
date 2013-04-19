@@ -72,11 +72,12 @@ public class Webpage
 	}
 
 	@DELETE
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteWebpage(@PathParam("pid") String pid)
+	public String deleteWebpage(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
-		return resources.deleteResource(pid);
+		return resources.deleteResource(pid, namespace);
 	}
 
 	@POST
@@ -114,12 +115,13 @@ public class Webpage
 	@Path("/{pid}/version/{namespace}:{versionPid}")
 	@Produces({ "application/json", "application/xml" })
 	public String createWebpageVersion(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid,@PathParam("namespace") String namespace)
+			@PathParam("versionPid") String versionPid,
+			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.webpageVersion.toString();
 		input.parentPid = pid;
-		return resources.createResource(versionPid,namespace, input);
+		return resources.createResource(versionPid, namespace, input);
 
 	}
 
@@ -234,15 +236,15 @@ public class Webpage
 	 * @throws URISyntaxException
 	 */
 	@GET
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid)
-			throws URISyntaxException
+	public Response getResource(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + pid + "/about"))
-				.status(303).build();
+						new java.net.URI("/resources/" + namespace + ":" + pid
+								+ "/about")).status(303).build();
 	}
 
 	@GET

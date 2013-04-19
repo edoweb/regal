@@ -119,15 +119,15 @@ public class Monograph
 	 * @throws URISyntaxException
 	 */
 	@GET
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid)
-			throws URISyntaxException
+	public Response getResource(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + pid + "/about"))
-				.status(303).build();
+						new java.net.URI("/resources/" + namespace + ":" + pid
+								+ "/about")).status(303).build();
 	}
 
 	@GET
@@ -169,11 +169,12 @@ public class Monograph
 	}
 
 	@DELETE
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteMonograph(@PathParam("pid") String pid)
+	public String deleteMonograph(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
-		return resources.deleteResource(pid);
+		return resources.deleteResource(pid, namespace);
 	}
 
 	@DELETE

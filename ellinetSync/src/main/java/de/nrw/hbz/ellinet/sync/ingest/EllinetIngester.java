@@ -87,7 +87,7 @@ public class EllinetIngester implements IngestInterface
 			}
 			else
 			{
-				logger.info("Unknown type: " + partitionC
+				logger.warn("Unknown type: " + partitionC
 						+ ". No further actions performed.");
 			}
 		}

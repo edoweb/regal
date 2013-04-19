@@ -816,9 +816,9 @@ class Actions
 									.startsWith("http://dewey.info/class/"))
 							{
 								ddc = rdfObject.subSequence(
-										rdfObject.lastIndexOf("/"),
+										rdfObject.length() - 4,
 										rdfObject.length() - 1).toString();
-								logger.info("Found rdf ddc: " + ddc);
+								System.out.println("Found rdf ddc: " + ddc);
 
 								String name = ddcmap(ddc);
 								String spec = "ddc:" + ddc;
