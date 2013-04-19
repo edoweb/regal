@@ -75,9 +75,15 @@
 
 	<repositories>
 		<repository>
-			<id>aduna</id>
-			<name>Aduna Releases Maven Repository</name>
-			<url>http://repo.aduna-software.org/maven2/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>ontotext-aduna-releases</id>
+			<name>Ontotext mirror of Aduna releases</name>
+			<url>http://maven.ontotext.com/content/repositories/aduna/</url>
 		</repository>
 		<repository>
 			<id>duraspace-thirdparty</id>
@@ -90,6 +96,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+
 
 		<repository>
 			<id>edoweb.github.com</id>
@@ -104,7 +111,7 @@
 			</snapshots>
 			<url>http://edoweb.github.com/releases</url>
 		</repository>
-		
+
 		<repository>
 			<id>edoweb.github.com-snapshots</id>
 			<name>edoweb.github.com-snapshots</name>
@@ -118,16 +125,16 @@
 			</snapshots>
 			<url>http://edoweb.github.com/snapshots</url>
 		</repository>
-		
+
 		<repository>
-		 <id>jboss-nonssl</id>
-      	<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+			<id>jboss-nonssl</id>
+			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
-	
-	
-	
-	
-</repositories>
+
+
+
+
+	</repositories>
 
 	<build>
 		<plugins>

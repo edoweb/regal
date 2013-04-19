@@ -7,7 +7,7 @@
       </mirror>
     <mirror>
       <id>aduna-to-central</id>
-      <url>http://repo1.maven.org/</url>
+      <url>http://maven.ontotext.com/content/repositories/aduna/</url>
       <mirrorOf>aduna</mirrorOf>
       </mirror>
 
