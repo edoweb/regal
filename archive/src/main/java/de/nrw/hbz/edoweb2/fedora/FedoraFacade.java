@@ -257,6 +257,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			FedoraRequest.setDefaultClient(fedora);
 
 			node.setLabel(fedora.getObjectProfile(pid).execute().getLabel());
+			node.setLastModified(fedora.getLastModifiedDate(pid));
 		}
 		catch (FedoraClientException e)
 		{

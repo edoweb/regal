@@ -25,9 +25,16 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
+import de.nrw.hbz.edoweb2.datatypes.Node;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -227,11 +234,32 @@ public class Utils
 	@GET
 	@Path("/pdfbox/{pid}")
 	@Produces({ "text/plain" })
-	public String pdfbox(@PathParam("pid") String pid)
+	public Response pdfbox(@PathParam("pid") String pid,
+			@Context Request request)
 	{
 		try
 		{
-			return actions.pdfbox(pid);
+			Node node = actions.readNode(pid);
+
+			final EntityTag eTag = new EntityTag(node.getPID() + "_"
+					+ node.getLastModified().getTime());
+
+			final CacheControl cacheControl = new CacheControl();
+			cacheControl.setMaxAge(-1);
+
+			ResponseBuilder builder = request.evaluatePreconditions(
+					node.getLastModified(), eTag);
+
+			// the user's information was modified, return it
+			if (builder == null)
+			{
+				builder = Response.ok(actions.pdfbox(node));
+			}
+
+			// the user's information was not modified, return a 304
+			return builder.cacheControl(cacheControl)
+					.lastModified(node.getLastModified()).tag(eTag).build();
+
 		}
 		catch (ArchiveException e)
 		{

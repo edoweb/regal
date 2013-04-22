@@ -1704,9 +1704,9 @@ class Actions
 		 */
 	}
 
-	public String pdfbox(String pid)
+	public String pdfbox(Node node)
 	{
-		Node node = archive.readNode(pid);
+		String pid = node.getPID();
 		URL content = node.getDataUrl();
 		String mimeType = node.getMimeType();
 		if (mimeType == null)
@@ -1899,6 +1899,11 @@ class Actions
 		{
 			throw new HttpArchiveException(500, e.getMessage());
 		}
+	}
+
+	public Node readNode(String pid)
+	{
+		return archive.readNode(pid);
 	}
 
 }
