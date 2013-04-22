@@ -172,7 +172,7 @@ class HtmlAdapter
 		td = doc.createElement("td");
 		td.setAttribute("class", "tablelabel");
 		td.setAttribute("colspan", "4");
-		text = doc.createTextNode("Lobid");
+		text = doc.createTextNode("Catalog");
 		td.appendChild(text);
 		tr.appendChild(td);
 		table.appendChild(tr);
