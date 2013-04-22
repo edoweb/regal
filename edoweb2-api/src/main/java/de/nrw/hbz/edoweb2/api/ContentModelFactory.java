@@ -27,12 +27,12 @@ public class ContentModelFactory
 	/**
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createEdowebHeadModel()
+	public static ContentModel createHeadModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID("edowebCM:edowebObjectModel");
-		cm.setServiceDefinitionPID("edowebCM:edowebServiceDefinition");
-		cm.setServiceDeploymentPID("edowebCM:edowebServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:edowebObjectModel");
+		cm.setServiceDefinitionPID(namespace + "CM:edowebServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + "CM:edowebServiceDeployment");
 
 		cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
 		cm.addMethod("epicur", "http://localhost/utils/epicur/(pid)");
@@ -43,12 +43,12 @@ public class ContentModelFactory
 	/**
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createEdowebPdfModel()
+	public static ContentModel createPdfModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID("edowebCM:pdfObjectModel");
-		cm.setServiceDefinitionPID("edowebCM:pdfServiceDefinition");
-		cm.setServiceDeploymentPID("edowebCM:pdfServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:pdfObjectModel");
+		cm.setServiceDefinitionPID(namespace + "CM:pdfServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + "CM:pdfServiceDeployment");
 
 		cm.addMethod("pdfbox", "http://localhost/utils/pdfbox/(pid)");
 		cm.addMethod("itext", "http://localhost/utils/itext/(pid)");
@@ -59,12 +59,14 @@ public class ContentModelFactory
 	/**
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createEdowebMonographModel()
+	public static ContentModel createMonographModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID("edowebCM:edowebMonographObjectModel");
-		cm.setServiceDefinitionPID("edowebCM:edowebMonographServiceDefinition");
-		cm.setServiceDeploymentPID("edowebCM:edowebMonographServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:edowebMonographObjectModel");
+		cm.setServiceDefinitionPID(namespace
+				+ "CM:edowebMonographServiceDefinition");
+		cm.setServiceDeploymentPID(namespace
+				+ "CM:edowebMonographServiceDeployment");
 
 		return cm;
 	}
@@ -72,12 +74,14 @@ public class ContentModelFactory
 	/**
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createEdowebWebpageModel()
+	public static ContentModel createWebpageModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID("edowebCM:edowebWebpageObjectModel");
-		cm.setServiceDefinitionPID("edowebCM:edowebWebpageServiceDefinition");
-		cm.setServiceDeploymentPID("edowebCM:edowebWebpageServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:edowebWebpageObjectModel");
+		cm.setServiceDefinitionPID(namespace
+				+ "CM:edowebWebpageServiceDefinition");
+		cm.setServiceDeploymentPID(namespace
+				+ "CM:edowebWebpageServiceDeployment");
 
 		return cm;
 	}
@@ -85,12 +89,14 @@ public class ContentModelFactory
 	/**
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createEdowebEJournalModel()
+	public static ContentModel createEJournalModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID("edowebCM:edowebEJournalObjectModel");
-		cm.setServiceDefinitionPID("edowebCM:edowebEJournalServiceDefinition");
-		cm.setServiceDeploymentPID("edowebCM:edowebEJournalServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:edowebEJournalObjectModel");
+		cm.setServiceDefinitionPID(namespace
+				+ "CM:edowebEJournalServiceDefinition");
+		cm.setServiceDeploymentPID(namespace
+				+ "CM:edowebEJournalServiceDeployment");
 
 		return cm;
 	}
@@ -98,12 +104,14 @@ public class ContentModelFactory
 	/**
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createEdowebVolumeModel()
+	public static ContentModel createVolumeModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID("edowebCM:edowebVolumeObjectModel");
-		cm.setServiceDefinitionPID("edowebCM:edowebVolumeServiceDefinition");
-		cm.setServiceDeploymentPID("edowebCM:edowebVolumeServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:edowebVolumeObjectModel");
+		cm.setServiceDefinitionPID(namespace
+				+ "CM:edowebVolumeServiceDefinition");
+		cm.setServiceDeploymentPID(namespace
+				+ "CM:edowebVolumeServiceDeployment");
 
 		return cm;
 	}
@@ -111,12 +119,14 @@ public class ContentModelFactory
 	/**
 	 * @return a ContentModel object
 	 */
-	public static ContentModel createEdowebVersionModel()
+	public static ContentModel createVersionModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID("edowebCM:edowebVersionObjectModel");
-		cm.setServiceDefinitionPID("edowebCM:edowebVersionServiceDefinition");
-		cm.setServiceDeploymentPID("edowebCM:edowebVersionServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:edowebVersionObjectModel");
+		cm.setServiceDefinitionPID(namespace
+				+ "CM:edowebVersionServiceDefinition");
+		cm.setServiceDeploymentPID(namespace
+				+ "CM:edowebVersionServiceDeployment");
 
 		return cm;
 	}

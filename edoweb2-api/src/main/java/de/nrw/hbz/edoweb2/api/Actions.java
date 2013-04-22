@@ -1877,21 +1877,21 @@ class Actions
 		try
 		{
 			archive.updateContentModel(ContentModelFactory
-					.createEdowebHeadModel());
+					.createHeadModel(namespace));
 
 			archive.updateContentModel(ContentModelFactory
-					.createEdowebEJournalModel());
+					.createEJournalModel(namespace));
 			archive.updateContentModel(ContentModelFactory
-					.createEdowebMonographModel());
+					.createMonographModel(namespace));
 			archive.updateContentModel(ContentModelFactory
-					.createEdowebWebpageModel());
+					.createWebpageModel(namespace));
 			archive.updateContentModel(ContentModelFactory
-					.createEdowebVersionModel());
+					.createVersionModel(namespace));
 			archive.updateContentModel(ContentModelFactory
-					.createEdowebVolumeModel());
+					.createVolumeModel(namespace));
 
 			archive.updateContentModel(ContentModelFactory
-					.createEdowebPdfModel());
+					.createPdfModel(namespace));
 
 			return "Success!";
 		}
