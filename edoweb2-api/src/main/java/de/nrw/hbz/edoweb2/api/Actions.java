@@ -103,6 +103,7 @@ class Actions
 	String baseUrl = null;
 	String serverName = null;
 	String uriPrefix = null;
+	String namespace = null;
 
 	/**
 	 * @throws IOException
@@ -121,6 +122,7 @@ class Actions
 		dataciteUrl = properties.getProperty("dataciteUrl");
 		baseUrl = properties.getProperty("baseUrl");
 		serverName = properties.getProperty("serverName");
+		namespace = properties.getProperty("namespace");
 		archive = ArchiveFactory.getArchiveImpl(
 				properties.getProperty("fedoraIntern"),
 				properties.getProperty("user"),
@@ -517,7 +519,7 @@ class Actions
 					+ " you've tried to upload an empty byte array."
 					+ " This action is not supported. Use HTTP DELETE instead.");
 		}
-		File tmp = File.createTempFile("edowebDatafile", "tmp");
+		File tmp = File.createTempFile("Datafile", "tmp");
 		tmp.deleteOnExit();
 
 		FileUtils.writeByteArrayToFile(tmp, content);
@@ -552,7 +554,7 @@ class Actions
 					+ " you've tried to upload an empty stream."
 					+ " This action is not supported. Use HTTP DELETE instead.");
 		}
-		File tmp = File.createTempFile("edowebDatafile", "tmp");
+		File tmp = File.createTempFile("Datafile", "tmp");
 		tmp.deleteOnExit();
 
 		// File tmp = new File("/tmp/edoweb.zip");
@@ -657,7 +659,7 @@ class Actions
 					+ " This action is not supported."
 					+ " Use HTTP DELETE instead.");
 		}
-		File file = File.createTempFile("edowebtmpmetadata", "tmp");
+		File file = File.createTempFile("tmpmetadata", "tmp");
 		file.deleteOnExit();
 		FileUtils.writeStringToFile(file, content);
 		Node node = archive.readNode(pid);
@@ -994,7 +996,8 @@ class Actions
 		StringBuffer result = new StringBuffer();
 
 		result.append(deleteAll(archive.findNodes("test:*"), false) + "\n");
-		result.append(deleteAll(archive.findNodes("edoweb:*"), false) + "\n");
+		result.append(deleteAll(archive.findNodes(namespace + ":*"), false)
+				+ "\n");
 		result.append(deleteAll(archive.findNodes("oai:*"), false) + "\n");
 
 		return result.toString();
@@ -1256,8 +1259,8 @@ class Actions
 		Client c = Client.create(cc);
 		try
 		{
-			WebResource index = c
-					.resource("http://localhost:9200/edoweb/titel/" + pid);
+			WebResource index = c.resource("http://localhost:9200/" + namespace
+					+ "/titel/" + pid);
 			index.accept(MediaType.APPLICATION_JSON);
 
 			index.delete();
@@ -1286,8 +1289,8 @@ class Actions
 		Client c = Client.create(cc);
 		try
 		{
-			WebResource index = c
-					.resource("http://localhost:9200/edoweb/titel/" + pid);
+			WebResource index = c.resource("http://localhost:9200/" + namespace
+					+ "/titel/" + pid);
 			index.accept(MediaType.APPLICATION_JSON);
 			URL url = new URL("http://localhost/resources/" + pid + "/about");
 			URLConnection con = url.openConnection();
@@ -1308,11 +1311,11 @@ class Actions
 	}
 
 	/**
-	 * @return a list of all objects in namespace edoweb
+	 * @return a list of all objects in namespace
 	 */
 	List<String> getAll()
 	{
-		return archive.findNodes("edoweb:*");
+		return archive.findNodes(namespace + ":*");
 	}
 
 	/**
@@ -1451,7 +1454,7 @@ class Actions
 		String urn = "urn";
 		String nbn = "nbn";
 		String de = "de";
-		String snid = "edoweb";
+		String snid = namespace;
 		String niss = pid;
 
 		raw = urn + ":" + nbn + ":" + de + ":" + snid + "-" + niss;
@@ -1720,7 +1723,7 @@ class Actions
 		try
 		{
 
-			pdfFile = File.createTempFile("pdfedoweb", "pdf");
+			pdfFile = File.createTempFile("pdf", "pdf");
 			pdfFile.deleteOnExit();
 			URL url = new URL(lobidUrl);
 
@@ -1810,7 +1813,7 @@ class Actions
 		try
 		{
 
-			pdfFile = File.createTempFile("pdfedoweb", "pdf");
+			pdfFile = File.createTempFile("pdf", "pdf");
 			pdfFile.deleteOnExit();
 			URL url = new URL(lobidUrl);
 
