@@ -1029,6 +1029,7 @@ class Actions
 		String pid = node.getPID();
 		String uri = uriPrefix + pid;
 		View view = new View();
+		view.setLastModified(node.getLastModified());
 		view.setCreator(node.getCreator());
 		view.setTitle(node.getTitle());
 		view.setLanguage(node.getLanguage());

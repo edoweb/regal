@@ -224,7 +224,7 @@ public class Webpage
 	@GET
 	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getView(@PathParam("pid") String pid)
+	public Response getView(@PathParam("pid") String pid)
 	{
 		return resources.getView(pid);
 	}

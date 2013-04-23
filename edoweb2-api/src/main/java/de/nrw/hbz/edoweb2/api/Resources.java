@@ -41,6 +41,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
@@ -129,9 +130,13 @@ public class Resources
 	@GET
 	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public View getView(@PathParam("pid") String pid)
+	public Response getView(@PathParam("pid") String pid)
 	{
-		return actions.getView(pid);
+		View view = actions.getView(pid);
+		ResponseBuilder res = Response.ok()
+				.lastModified(view.getLastModified()).entity(view);
+
+		return res.build();
 	}
 
 	/**
