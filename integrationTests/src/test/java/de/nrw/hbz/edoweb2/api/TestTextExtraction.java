@@ -23,7 +23,7 @@ public class TestTextExtraction
 			System.out.println(pid);
 			try
 			{
-				String pdfBox = actions.pdfbox(pid);
+				String pdfBox = actions.pdfbox(actions.readNode(pid));
 
 				String itext = actions.itext(pid);
 
