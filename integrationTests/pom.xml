@@ -150,5 +150,10 @@
 			<type>pom</type>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>de.nrw.hbz.edoweb2</groupId>
+			<artifactId>dippDownloader</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project> 
