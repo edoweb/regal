@@ -111,6 +111,7 @@ public class DippIngester implements IngestInterface
 				dtlBean.setPid(pp);
 
 				updateEJournalPart(b);
+				webclient.metadata(b);
 			}
 			logger.info(pid + " " + "and all volumes updated.\n");
 		}

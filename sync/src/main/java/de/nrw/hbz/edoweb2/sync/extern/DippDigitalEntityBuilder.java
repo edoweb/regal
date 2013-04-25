@@ -39,8 +39,13 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 		dtlDe.setPid(pid);
 		try
 		{
-			dtlDe.setDc(IOUtils
-					.readStringFromStream(new FileInputStream(dcFile)));
+			String dcString = IOUtils.readStringFromStream(new FileInputStream(
+					dcFile));
+			dcString = dcString.replaceAll("<ns:", "<dc:");
+			dcString = dcString.replaceAll("</ns:", "</dc:");
+			dcString = dcString.replaceAll("xmlns:ns", "xmlns:dc");
+
+			dtlDe.setDc(dcString);
 		}
 		catch (FileNotFoundException e)
 		{

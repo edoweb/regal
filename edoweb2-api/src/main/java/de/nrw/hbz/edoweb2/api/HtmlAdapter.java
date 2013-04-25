@@ -127,7 +127,7 @@ class HtmlAdapter
 		td = doc.createElement("td");
 		td.setAttribute("class", "tablelabel");
 		td.setAttribute("colspan", "4");
-		text = doc.createTextNode("Digitool");
+		text = doc.createTextNode("Repository");
 		td.appendChild(text);
 		tr.appendChild(td);
 		table.appendChild(tr);

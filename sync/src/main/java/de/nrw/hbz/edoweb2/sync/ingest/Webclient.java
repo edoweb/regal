@@ -190,7 +190,7 @@ public class Webclient
 			}
 
 			dc.addDescription(dtlBean.getLabel());
-			webpageDC.post(dc);
+			webpageDC.put(dc);
 
 		}
 		catch (UniformInterfaceException e)
@@ -214,7 +214,7 @@ public class Webclient
 		{
 			dc.addTitle("Version of: " + pid);
 			dc.addDescription(dtlBean.getLabel());
-			webpageDC.post(dc);
+			webpageDC.put(dc);
 
 		}
 		catch (UniformInterfaceException e)
