@@ -87,14 +87,16 @@ public class DippIngester implements IngestInterface
 
 	private void updateJournal(DigitalEntity dtlBean)
 	{
-		String pid = dtlBean.getPid().substring(
+		String pid = dtlBean.getPid();
+		String ppid = dtlBean.getPid().substring(
 				dtlBean.getPid().lastIndexOf(':') + 1);
+		dtlBean.setPid(ppid);
 		try
 		{
 			logger.info(pid + " Found ejournal.");
 
 			webclient.createResource(ObjectType.ejournal, dtlBean);
-			webclient.metadata(dtlBean, ObjectType.ejournal);
+			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVols = viewLinks.size();
 			int count = 1;
@@ -103,6 +105,11 @@ public class DippIngester implements IngestInterface
 			{
 				b.setParentPid(pid);
 				logger.info("Part: " + (count++) + "/" + numOfVols);
+				String p = b.getPid();
+				String pp = b.getPid().substring(
+						b.getPid().lastIndexOf(':') + 1);
+				dtlBean.setPid(pp);
+
 				updateEJournalPart(b);
 			}
 			logger.info(pid + " " + "and all volumes updated.\n");
@@ -115,8 +122,10 @@ public class DippIngester implements IngestInterface
 
 	private void updateEJournalPart(DigitalEntity dtlBean)
 	{
-		String pid = dtlBean.getPid().substring(
+		String pid = dtlBean.getPid();
+		String ppid = dtlBean.getPid().substring(
 				dtlBean.getPid().lastIndexOf(':') + 1);
+		dtlBean.setPid(ppid);
 		logger.info(pid + " " + "Found eJournal article.");
 		webclient.createObject(dtlBean, "application/zip", ObjectType.article);
 		logger.info(pid + " " + "updated.\n");

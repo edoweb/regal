@@ -638,9 +638,9 @@ public class FedoraFacade implements FedoraInterface, Constants
 			{
 				if (curHBZLink == null)
 					return;
-				System.out.println(" CREATE: <" + pid + "> <"
-						+ curHBZLink.getPredicate() + "> <"
-						+ curHBZLink.getObject() + ">");
+				// System.out.println(" CREATE: <" + pid + "> <"
+				// + curHBZLink.getPredicate() + "> <"
+				// + curHBZLink.getObject() + ">");
 
 				if (curHBZLink.isLiteral())
 				{

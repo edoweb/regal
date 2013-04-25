@@ -55,13 +55,13 @@ public class Webclient
 		endpoint = host + ":8080/edoweb2-api/resources/";
 	}
 
-	public void metadata(DigitalEntity dtlBean, ObjectType type)
+	public void metadata(DigitalEntity dtlBean)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
 		String resource = endpoint + pid;
 		try
 		{
-			updateDC(resource + "/dc", dtlBean, type);
+			updateDC(resource + "/dc", dtlBean);
 		}
 		catch (Exception e)
 		{
@@ -142,7 +142,7 @@ public class Webclient
 		{
 			updateData(data, dtlBean);
 		}
-		updateLabel(resource, dtlBean, type);
+		updateLabel(resource, dtlBean);
 	}
 
 	public void createResource(ObjectType type, DigitalEntity dtlBean)
@@ -154,6 +154,7 @@ public class Webclient
 		CreateObjectBean input = new CreateObjectBean();
 		input.setType(type.toString());
 		input.setParentPid(dtlBean.getParentPid());
+
 		try
 		{
 			resource.put(input);
@@ -162,11 +163,11 @@ public class Webclient
 		{
 			logger.info(pid + " already exists - will be updated!");
 			logger.info(pid + " resourceUrl: " + resourceUrl);
+			e.printStackTrace();
 		}
 	}
 
-	private void updateDC(String endpoint, DigitalEntity dtlBean,
-			ObjectType type)
+	private void updateDC(String endpoint, DigitalEntity dtlBean)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
 		WebResource webpageDC = webclient.resource(endpoint);
@@ -202,8 +203,7 @@ public class Webclient
 		}
 	}
 
-	private void updateLabel(String endpoint, DigitalEntity dtlBean,
-			ObjectType type)
+	private void updateLabel(String endpoint, DigitalEntity dtlBean)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
 		WebResource webpageDC = webclient.resource(endpoint + "/dc");
@@ -220,10 +220,12 @@ public class Webclient
 		catch (UniformInterfaceException e)
 		{
 			logger.info(pid + " " + e.getMessage());
+			e.printStackTrace();
 		}
 		catch (Exception e)
 		{
 			logger.debug(pid + " " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

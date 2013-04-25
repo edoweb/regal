@@ -258,7 +258,7 @@ public class EdowebIngester implements IngestInterface
 		String resource = host + ":8080/edoweb2-api/monograph/" + pid;
 		webclient
 				.createObject(dtlBean, "application/pdf", ObjectType.monograph);
-		webclient.metadata(dtlBean, ObjectType.monograph);
+		webclient.metadata(dtlBean);
 		logger.info(pid + " " + "updated.\n");
 	}
 
@@ -270,7 +270,7 @@ public class EdowebIngester implements IngestInterface
 			logger.info(pid + " Found ejournal.");
 
 			webclient.createResource(ObjectType.ejournal, dtlBean);
-			webclient.metadata(dtlBean, ObjectType.ejournal);
+			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
 			logger.info(pid + " " + "Found " + numOfVols + " volumes.");
@@ -292,7 +292,7 @@ public class EdowebIngester implements IngestInterface
 			logger.info(pid + " Found webpage.");
 			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
 			webclient.createResource(ObjectType.webpage, dtlBean);
-			webclient.metadata(dtlBean, ObjectType.webpage);
+			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
 			logger.info(pid + " " + "Found " + numOfVersions + " versions.");
@@ -313,7 +313,7 @@ public class EdowebIngester implements IngestInterface
 		{
 			logger.info(pid + " Found webpage.");
 			webclient.createResource(ObjectType.webpage, dtlBean);
-			webclient.metadata(dtlBean, ObjectType.webpage);
+			webclient.metadata(dtlBean);
 			for (DigitalEntity b : dtlBean.getArchiveLinks())
 			{
 				String versionPid = namespace + ":" + b.getPid();
@@ -341,7 +341,7 @@ public class EdowebIngester implements IngestInterface
 			logger.info(pid + " Found ejournal.");
 
 			webclient.createResource(ObjectType.ejournal, dtlBean);
-			webclient.metadata(dtlBean, ObjectType.ejournal);
+			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
 			int count = 1;
@@ -367,7 +367,7 @@ public class EdowebIngester implements IngestInterface
 			logger.info(pid + " Found webpage.");
 
 			webclient.createResource(ObjectType.webpage, dtlBean);
-			webclient.metadata(dtlBean, ObjectType.webpage);
+			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
 			logger.info(pid + " Found " + numOfVersions + " versions.");

@@ -316,7 +316,7 @@ public class DippDownloader
 	{
 		try
 		{
-			logger.info(pid + " start download!");
+			logger.debug(pid + " start download!");
 			URL url = new URL(server + "get/" + pid + "?xml=true");
 			File file = new File(dir.getAbsolutePath() + File.separator
 					+ URLEncoder.encode(pid) + ".xml");
@@ -384,7 +384,7 @@ public class DippDownloader
 	{
 		try
 		{
-			logger.info(pid + " search for members!");
+			logger.debug(pid + " search for members!");
 			URL url = new URL(server + "get/" + pid + "/RELS-EXT");
 			String data = null;
 			StringWriter writer = new StringWriter();
@@ -401,7 +401,7 @@ public class DippDownloader
 						"info:fedora/", "");
 				if (cPid.contains("temp"))
 				{
-					logger.info(cPid + " skip temporary object.");
+					logger.debug(cPid + " skip temporary object.");
 
 				}
 				else

@@ -248,7 +248,7 @@ public class Resources
 	@PUT
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	@Consumes("application/json")
+	@Consumes({ "application/json", "application/xml" })
 	public String create(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace, CreateObjectBean input)
 	{
@@ -294,7 +294,7 @@ public class Resources
 	@POST
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	@Consumes("application/json")
+	@Consumes({ "application/json", "application/xml" })
 	public String createPost(@PathParam("pid") String pid,
 			@PathParam("namepsace") String namespace,
 			final CreateObjectBean input)
@@ -605,6 +605,7 @@ public class Resources
 		}
 		catch (ArchiveException e)
 		{
+			e.printStackTrace();
 			throw new HttpArchiveException(
 					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
 					e.getMessage());

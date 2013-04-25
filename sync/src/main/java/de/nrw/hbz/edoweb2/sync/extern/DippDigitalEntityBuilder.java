@@ -90,7 +90,7 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 
 		try
 		{
-			logger.info(pid + " search for members!");
+			// logger.debug(pid + " search for members!");
 
 			Element root = getDocument(relsExtFile);
 			NodeList constituents = root
@@ -102,7 +102,7 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 						"info:fedora/", "");
 				if (cPid.contains("temp"))
 				{
-					logger.info(cPid + " skip temporary object.");
+					// logger.debug(cPid + " skip temporary object.");
 
 				}
 				else
