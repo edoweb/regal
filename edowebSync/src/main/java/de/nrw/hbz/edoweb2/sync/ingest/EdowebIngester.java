@@ -234,7 +234,7 @@ public class EdowebIngester implements IngestInterface
 		logger.info(pid + " " + "Found eJournal volume.");
 		String resource = host + ":8080/edoweb2-api/ejournal/" + namespace
 				+ ":" + dtlBean.getParentPid() + "/volume/" + pid;
-		webclient.createObject(resource, dtlBean, "application/pdf",
+		webclient.createObject(dtlBean, "application/pdf",
 				ObjectType.ejournalVolume);
 		logger.info(pid + " " + "updated.\n");
 	}
@@ -245,7 +245,7 @@ public class EdowebIngester implements IngestInterface
 		logger.info(pid + " Found webpage version.");
 		String resource = host + ":8080/edoweb2-api/webpage/" + namespace + ":"
 				+ dtlBean.getParentPid() + "/version/" + pid;
-		webclient.createObject(resource, dtlBean, "application/zip",
+		webclient.createObject(dtlBean, "application/zip",
 				ObjectType.webpageVersion);
 		logger.info(pid + " " + "updated.\n");
 	}
@@ -256,9 +256,9 @@ public class EdowebIngester implements IngestInterface
 		String pid = namespace + ":" + dtlBean.getPid();
 		logger.info(pid + " Found monograph.");
 		String resource = host + ":8080/edoweb2-api/monograph/" + pid;
-		webclient.createObject(resource, dtlBean, "application/pdf",
-				ObjectType.monograph);
-		webclient.metadata(resource, dtlBean, ObjectType.monograph);
+		webclient
+				.createObject(dtlBean, "application/pdf", ObjectType.monograph);
+		webclient.metadata(dtlBean, ObjectType.monograph);
 		logger.info(pid + " " + "updated.\n");
 	}
 
@@ -268,9 +268,9 @@ public class EdowebIngester implements IngestInterface
 		try
 		{
 			logger.info(pid + " Found ejournal.");
-			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
-			webclient.createResource(ejournal, dtlBean);
-			webclient.metadata(ejournal, dtlBean, ObjectType.ejournal);
+
+			webclient.createResource(ObjectType.ejournal, dtlBean);
+			webclient.metadata(dtlBean, ObjectType.ejournal);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
 			logger.info(pid + " " + "Found " + numOfVols + " volumes.");
@@ -291,8 +291,8 @@ public class EdowebIngester implements IngestInterface
 		{
 			logger.info(pid + " Found webpage.");
 			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
-			webclient.createResource(webpage, dtlBean);
-			webclient.metadata(webpage, dtlBean, ObjectType.webpage);
+			webclient.createResource(ObjectType.webpage, dtlBean);
+			webclient.metadata(dtlBean, ObjectType.webpage);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
 			logger.info(pid + " " + "Found " + numOfVersions + " versions.");
@@ -312,16 +312,15 @@ public class EdowebIngester implements IngestInterface
 		try
 		{
 			logger.info(pid + " Found webpage.");
-			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
-			webclient.createResource(webpage, dtlBean);
-			webclient.metadata(webpage, dtlBean, ObjectType.webpage);
+			webclient.createResource(ObjectType.webpage, dtlBean);
+			webclient.metadata(dtlBean, ObjectType.webpage);
 			for (DigitalEntity b : dtlBean.getArchiveLinks())
 			{
 				String versionPid = namespace + ":" + b.getPid();
 				if (b.getStreamMime().compareTo("application/zip") == 0)
 				{
-					webclient.createObject(webpage + "/version/" + versionPid,
-							b, "application/zip", ObjectType.webpageVersion);
+					webclient.createObject(b, "application/zip",
+							ObjectType.webpageVersion);
 					break;
 				}
 			}
@@ -340,9 +339,9 @@ public class EdowebIngester implements IngestInterface
 		try
 		{
 			logger.info(pid + " Found ejournal.");
-			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
-			webclient.createResource(ejournal, dtlBean);
-			webclient.metadata(ejournal, dtlBean, ObjectType.ejournal);
+
+			webclient.createResource(ObjectType.ejournal, dtlBean);
+			webclient.metadata(dtlBean, ObjectType.ejournal);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
 			int count = 1;
@@ -366,9 +365,9 @@ public class EdowebIngester implements IngestInterface
 		try
 		{
 			logger.info(pid + " Found webpage.");
-			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
-			webclient.createResource(webpage, dtlBean);
-			webclient.metadata(webpage, dtlBean, ObjectType.webpage);
+
+			webclient.createResource(ObjectType.webpage, dtlBean);
+			webclient.metadata(dtlBean, ObjectType.webpage);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
 			logger.info(pid + " Found " + numOfVersions + " versions.");

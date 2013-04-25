@@ -109,10 +109,9 @@ public class EllinetIngester implements IngestInterface
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
 		logger.info(pid + " Found monograph.");
-		String resource = host + ":8080/edoweb2-api/monograph/" + pid;
-		webclient.createObject(resource, dtlBean, "application/pdf",
-				ObjectType.monograph);
-		webclient.metadata(resource, dtlBean, ObjectType.monograph);
+		webclient
+				.createObject(dtlBean, "application/pdf", ObjectType.monograph);
+		webclient.metadata(dtlBean, ObjectType.monograph);
 		logger.info(pid + " " + "updated.\n");
 	}
 

@@ -63,11 +63,12 @@ public class DippIngester implements IngestInterface
 	@Override
 	public void ingest(DigitalEntity dtlBean)
 	{
-		logger.info("Start ingest: " + namespace + ":" + dtlBean.getPid());
+		String pid = dtlBean.getPid().substring(
+				dtlBean.getPid().lastIndexOf(':') + 1);
+		logger.info("Start ingest: " + namespace + ":" + pid);
 
 		String partitionC = null;
-		String pid = null;
-		pid = dtlBean.getPid();
+
 		if (dtlBean.getType().compareTo("article") == 0)
 		{
 			updateEJournalPart(dtlBean);
@@ -86,13 +87,14 @@ public class DippIngester implements IngestInterface
 
 	private void updateJournal(DigitalEntity dtlBean)
 	{
-		String pid = dtlBean.getPid();
+		String pid = dtlBean.getPid().substring(
+				dtlBean.getPid().lastIndexOf(':') + 1);
 		try
 		{
 			logger.info(pid + " Found ejournal.");
-			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
-			webclient.createResource(ejournal, dtlBean);
-			webclient.metadata(ejournal, dtlBean, ObjectType.ejournal);
+
+			webclient.createResource(ObjectType.ejournal, dtlBean);
+			webclient.metadata(dtlBean, ObjectType.ejournal);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVols = viewLinks.size();
 			int count = 1;
@@ -113,12 +115,10 @@ public class DippIngester implements IngestInterface
 
 	private void updateEJournalPart(DigitalEntity dtlBean)
 	{
-		String pid = dtlBean.getPid();
-		logger.info(pid + " " + "Found eJournal volume.");
-		String resource = host + ":8080/edoweb2-api/ejournal/"
-				+ dtlBean.getParentPid() + "/volume/" + pid;
-		webclient.createObject(resource, dtlBean, "application/zip",
-				ObjectType.ejournalVolume);
+		String pid = dtlBean.getPid().substring(
+				dtlBean.getPid().lastIndexOf(':') + 1);
+		logger.info(pid + " " + "Found eJournal article.");
+		webclient.createObject(dtlBean, "application/zip", ObjectType.article);
 		logger.info(pid + " " + "updated.\n");
 
 	}

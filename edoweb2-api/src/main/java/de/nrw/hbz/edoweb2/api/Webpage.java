@@ -57,7 +57,7 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return resources.deleteResourceOfType(ObjectType.webpage.toString());
+		return resources.deleteAllOfType(ObjectType.webpage.toString());
 	}
 
 	@PUT
@@ -68,7 +68,7 @@ public class Webpage
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.webpage.toString();
-		return resources.createResource(pid, namespace, input);
+		return resources.create(pid, namespace, input);
 	}
 
 	@DELETE
@@ -77,7 +77,7 @@ public class Webpage
 	public String deleteWebpage(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace)
 	{
-		return resources.deleteResource(pid, namespace);
+		return resources.delete(pid, namespace);
 	}
 
 	@POST
@@ -87,7 +87,7 @@ public class Webpage
 	public String updateWebpageDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return resources.updateResourceDC(pid, content);
+		return resources.updateDC(pid, content);
 	}
 
 	@PUT
@@ -97,7 +97,7 @@ public class Webpage
 	public String updateWebpageMetadata(@PathParam("pid") String pid,
 			String content)
 	{
-		return resources.updateResourceMetadata(pid, content);
+		return resources.updateMetadata(pid, content);
 	}
 
 	@Deprecated
@@ -108,7 +108,7 @@ public class Webpage
 	public String updateWebpageMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
-		return resources.updateResourceMetadata(pid, content);
+		return resources.updateMetadata(pid, content);
 	}
 
 	@PUT
@@ -121,7 +121,7 @@ public class Webpage
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.webpageVersion.toString();
 		input.parentPid = pid;
-		return resources.createResource(versionPid, namespace, input);
+		return resources.create(versionPid, namespace, input);
 
 	}
 
@@ -132,7 +132,7 @@ public class Webpage
 	public String updateWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, DCBeanAnnotated content)
 	{
-		return resources.updateResourceDC(versionPid, content);
+		return resources.updateDC(versionPid, content);
 	}
 
 	@POST
@@ -142,7 +142,7 @@ public class Webpage
 	public String updateWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, MultiPart multiPart)
 	{
-		return resources.updateResourceData(versionPid, multiPart);
+		return resources.updateData(versionPid, multiPart);
 	}
 
 	@PUT
@@ -152,7 +152,7 @@ public class Webpage
 	public String updateWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
 	{
-		return resources.updateResourceMetadata(versionPid, content);
+		return resources.updateMetadata(versionPid, content);
 	}
 
 	@Deprecated
@@ -164,7 +164,7 @@ public class Webpage
 			@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
 	{
-		return resources.updateResourceMetadata(versionPid, content);
+		return resources.updateMetadata(versionPid, content);
 	}
 
 	@GET
@@ -226,7 +226,7 @@ public class Webpage
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
 	public Response getView(@PathParam("pid") String pid)
 	{
-		return resources.getView(pid);
+		return resources.about(pid);
 	}
 
 	/**

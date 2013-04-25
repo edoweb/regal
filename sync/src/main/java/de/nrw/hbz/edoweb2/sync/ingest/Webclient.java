@@ -25,6 +25,7 @@ import com.sun.jersey.multipart.MultiPart;
 import com.sun.jersey.multipart.file.StreamDataBodyPart;
 import com.sun.jersey.multipart.impl.MultiPartWriter;
 
+import de.nrw.hbz.edoweb2.api.CreateObjectBean;
 import de.nrw.hbz.edoweb2.api.DCBeanAnnotated;
 import de.nrw.hbz.edoweb2.api.ObjectType;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
@@ -34,6 +35,7 @@ public class Webclient
 	final static Logger logger = LoggerFactory.getLogger(Webclient.class);
 
 	String namespace = null;
+	String endpoint = null;
 	String host = null;
 	Client webclient = null;
 
@@ -50,11 +52,13 @@ public class Webclient
 				1024);
 		webclient = Client.create(cc);
 		webclient.addFilter(new HTTPBasicAuthFilter(user, password));
-
+		endpoint = host + ":8080/edoweb2-api/resources/";
 	}
 
-	public void metadata(String resource, DigitalEntity dtlBean, ObjectType type)
+	public void metadata(DigitalEntity dtlBean, ObjectType type)
 	{
+		String pid = namespace + ":" + dtlBean.getPid();
+		String resource = endpoint + pid;
 		try
 		{
 			updateDC(resource + "/dc", dtlBean, type);
@@ -90,13 +94,14 @@ public class Webclient
 
 	}
 
-	public void createObject(String resource, DigitalEntity dtlBean,
-			String expectedMime, ObjectType type)
+	public void createObject(DigitalEntity dtlBean, String expectedMime,
+			ObjectType type)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
+		String resource = endpoint + pid;
 		String data = resource + "/data";
 
-		createResource(resource, dtlBean);
+		createResource(type, dtlBean);
 
 		if (dtlBean.getStreamMime().compareTo(expectedMime) != 0)
 		{
@@ -140,18 +145,23 @@ public class Webclient
 		updateLabel(resource, dtlBean, type);
 	}
 
-	public void createResource(String endpoint, DigitalEntity dtlBean)
+	public void createResource(ObjectType type, DigitalEntity dtlBean)
 	{
+
 		String pid = namespace + ":" + dtlBean.getPid();
-		WebResource resource = webclient.resource(endpoint);
+		String resourceUrl = this.endpoint + pid;
+		WebResource resource = webclient.resource(resourceUrl);
+		CreateObjectBean input = new CreateObjectBean();
+		input.setType(type.toString());
+		input.setParentPid(dtlBean.getParentPid());
 		try
 		{
-			resource.put(String.class);
+			resource.put(input);
 		}
 		catch (UniformInterfaceException e)
 		{
 			logger.info(pid + " already exists - will be updated!");
-			logger.info(pid + " enpoint: " + endpoint);
+			logger.info(pid + " resourceUrl: " + resourceUrl);
 		}
 	}
 

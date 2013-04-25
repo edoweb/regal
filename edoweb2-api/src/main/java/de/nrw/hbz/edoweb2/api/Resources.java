@@ -130,7 +130,7 @@ public class Resources
 	@GET
 	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getView(@PathParam("pid") String pid)
+	public Response about(@PathParam("pid") String pid)
 	{
 		View view = actions.getView(pid);
 		ResponseBuilder res = Response.ok()
@@ -148,27 +148,13 @@ public class Resources
 	@GET
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid,
+	public Response get(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
 		return Response
 				.temporaryRedirect(
 						new java.net.URI("/resources/" + namespace + ":" + pid
 								+ "/about")).status(303).build();
-	}
-
-	/**
-	 * @param pid
-	 *            the pid of a resource containing multiple volumes
-	 * @return all volumes of the resource
-	 */
-	@GET
-	@Path("/{pid}/volume/")
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVolumes(@PathParam("pid") String pid)
-	{
-
-		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
 	}
 
 	/**
@@ -225,28 +211,6 @@ public class Resources
 	}
 
 	/**
-	 * @param pid
-	 *            the pid of the resource containing versions
-	 * @return a list with pids of each version
-	 */
-	@GET
-	@Path("/{pid}/version/")
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVersions(@PathParam("pid") String pid)
-	{
-		try
-		{
-			return new ObjectList(actions.findObject(pid, HAS_VERSION));
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
-	/**
 	 * @param type
 	 *            the type of the resources that must be returned
 	 * @return a list of pids
@@ -285,7 +249,7 @@ public class Resources
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("application/json")
-	public String createResource(@PathParam("pid") String pid,
+	public String create(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace, CreateObjectBean input)
 	{
 		if (input == null)
@@ -309,9 +273,33 @@ public class Resources
 		else if (input.type.compareTo(ObjectType.ejournalVolume.toString()) == 0)
 			return createEJournalVolume(input.parentPid, pid, namespace);
 
-		throw new HttpArchiveException(Status.BAD_REQUEST.getStatusCode(),
-				"The type you've provided " + input.type
-						+ " does not exist or hasn't yet been implemented.");
+		else
+			return createResource(input, pid, namespace);
+
+	}
+
+	/**
+	 * Creates a new Resource. The Resource has a certain type an can be
+	 * connected to a parent resource.
+	 * 
+	 * @param pid
+	 *            the pid of the new resource
+	 * @param input
+	 *            a json string of the form { "type" :
+	 *            "<monograph | ejournal | webpage | webpageVersion | ejournalVolume | monographPart >"
+	 *            , "parentPid" : "uuid" }
+	 * @return a human readable message and a status code 200 if successful or a
+	 *         400 if not
+	 */
+	@POST
+	@Path("/{namespace}:{pid}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes("application/json")
+	public String createPost(@PathParam("pid") String pid,
+			@PathParam("namepsace") String namespace,
+			final CreateObjectBean input)
+	{
+		return create(pid, namespace, input);
 	}
 
 	/**
@@ -327,8 +315,7 @@ public class Resources
 	@Path("/{pid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
-	public String updateResourceData(@PathParam("pid") String pid,
-			MultiPart multiPart)
+	public String updateData(@PathParam("pid") String pid, MultiPart multiPart)
 	{
 
 		try
@@ -354,6 +341,27 @@ public class Resources
 
 	/**
 	 * @param pid
+	 *            the pid of the resource
+	 * @param multiPart
+	 *            The data is transfered as multipart data in order to provide
+	 *            upload of large files
+	 * @return A human readable message and a status code of 200 if successful
+	 *         an of 500 if not.
+	 */
+	@POST
+	@Path("/{pid}/data")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes("multipart/mixed")
+	public String updateDataPost(@PathParam("pid") String pid,
+			MultiPart multiPart)
+	{
+
+		return updateData(pid, multiPart);
+
+	}
+
+	/**
+	 * @param pid
 	 *            The pid of the resource
 	 * @param content
 	 *            the metadata as n-triple rdf
@@ -364,8 +372,7 @@ public class Resources
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
 	@Produces({ "text/plain" })
-	public String updateResourceMetadata(@PathParam("pid") String pid,
-			String content)
+	public String updateMetadata(@PathParam("pid") String pid, String content)
 	{
 		try
 		{
@@ -385,13 +392,29 @@ public class Resources
 		}
 	}
 
-	@Deprecated
+	/**
+	 * @param pid
+	 *            The pid of the resource
+	 * @param content
+	 *            the metadata as n-triple rdf
+	 * @return a human readable message and a status code of 200 if successful
+	 *         and 500 if not.
+	 */
+	@POST
+	@Path("/{pid}/metadata")
+	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
+	public String updateMetadataPost(@PathParam("pid") String pid,
+			String content)
+	{
+		return updateMetadata(pid, content);
+	}
+
 	@PUT
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateResourceDC(@PathParam("pid") String pid,
-			DCBeanAnnotated content)
+	public String updateDC(@PathParam("pid") String pid, DCBeanAnnotated content)
 	{
 		try
 		{
@@ -405,77 +428,13 @@ public class Resources
 		}
 	}
 
-	/**
-	 * Creates a new Resource. The Resource has a certain type an can be
-	 * connected to a parent resource.
-	 * 
-	 * @param pid
-	 *            the pid of the new resource
-	 * @param input
-	 *            a json string of the form { "type" :
-	 *            "<monograph | ejournal | webpage | webpageVersion | ejournalVolume | monographPart >"
-	 *            , "parentPid" : "uuid" }
-	 * @return a human readable message and a status code 200 if successful or a
-	 *         400 if not
-	 */
-	@POST
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes("application/json")
-	public String createResourcePost(@PathParam("pid") String pid,
-			@PathParam("namepsace") String namespace,
-			final CreateObjectBean input)
-	{
-		return createResource(pid, namespace, input);
-	}
-
-	/**
-	 * @param pid
-	 *            the pid of the resource
-	 * @param multiPart
-	 *            The data is transfered as multipart data in order to provide
-	 *            upload of large files
-	 * @return A human readable message and a status code of 200 if successful
-	 *         an of 500 if not.
-	 */
-	@POST
-	@Path("/{pid}/data")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes("multipart/mixed")
-	public String updateResourceDataPost(@PathParam("pid") String pid,
-			MultiPart multiPart)
-	{
-
-		return updateResourceData(pid, multiPart);
-
-	}
-
-	/**
-	 * @param pid
-	 *            The pid of the resource
-	 * @param content
-	 *            the metadata as n-triple rdf
-	 * @return a human readable message and a status code of 200 if successful
-	 *         and 500 if not.
-	 */
-	@POST
-	@Path("/{pid}/metadata")
-	@Consumes({ "text/plain" })
-	@Produces({ "text/plain" })
-	public String updateResourceMetadataPost(@PathParam("pid") String pid,
-			String content)
-	{
-		return updateResourceMetadata(pid, content);
-	}
-
-	@Deprecated
 	@POST
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateResourceDCPost(String pid, DCBeanAnnotated content)
+	public String updateDCPost(String pid, DCBeanAnnotated content)
 	{
-		return updateResourceDC(pid, content);
+		return updateDC(pid, content);
 	}
 
 	/**
@@ -487,7 +446,7 @@ public class Resources
 	@DELETE
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteResource(@PathParam("pid") String pid,
+	public String delete(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace)
 	{
 		try
@@ -512,7 +471,7 @@ public class Resources
 	@DELETE
 	@Path("/{pid}/data")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteResourceData(@PathParam("pid") String pid)
+	public String deleteData(@PathParam("pid") String pid)
 	{
 		try
 		{
@@ -536,7 +495,7 @@ public class Resources
 	@DELETE
 	@Path("/{pid}/metadata")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteResourceMetadata(@PathParam("pid") String pid)
+	public String deleteMetadata(@PathParam("pid") String pid)
 	{
 		try
 		{
@@ -561,11 +520,126 @@ public class Resources
 	@DELETE
 	@Path("/type/{type}")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteResourceOfType(@PathParam("type") String type)
+	public String deleteAllOfType(@PathParam("type") String type)
 	{
 		try
 		{
 			return actions.deleteAll(actions.findByType(type), false);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of a resource containing multiple volumes
+	 * @return all volumes of the resource
+	 */
+	@GET
+	@Path("/{pid}/parts/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllParts(@PathParam("pid") String pid)
+	{
+
+		return new ObjectList(actions.findObject(pid, REL_IS_RELATED));
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of a resource containing multiple volumes
+	 * @return all volumes of the resource
+	 */
+	@GET
+	@Path("/{pid}/parents/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllParents(@PathParam("pid") String pid)
+	{
+
+		return new ObjectList(actions.findObject(pid, REL_BELONGS_TO_OBJECT));
+	}
+
+	private String createResource(CreateObjectBean input, String p,
+			String namespace)
+	{
+		logger.info("create " + input.type);
+		String pid = namespace + ":" + p;
+		try
+		{
+			if (actions.nodeExists(pid))
+			{
+				throw new HttpArchiveException(
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+						"Node already exists. I do nothing!");
+			}
+			Node rootObject = new Node();
+			rootObject.setNodeType(TYPE_OBJECT);
+			Link link = new Link();
+			link.setPredicate(REL_IS_NODE_TYPE);
+			link.setObject(TYPE_OBJECT, false);
+			rootObject.addRelation(link);
+			rootObject.setNamespace(namespace).setPID(pid);
+			rootObject.setContentType(input.getType());
+			rootObject.addContentModel(ContentModelFactory
+					.createHeadModel(namespace));
+			if (input.getParentPid() != null && !input.getParentPid().isEmpty())
+			{
+				String parentPid = input.getParentPid();
+				link = new Link();
+				link.setPredicate(REL_BELONGS_TO_OBJECT);
+				link.setObject(parentPid, false);
+				rootObject.addRelation(link);
+
+				link = new Link();
+				link.setPredicate(REL_IS_RELATED);
+				link.setObject(pid, false);
+				actions.addLink(parentPid, link);
+			}
+
+			ComplexObject object = new ComplexObject(rootObject);
+			return actions.create(object, true);
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	// --SPECIAL---
+
+	/**
+	 * @param pid
+	 *            the pid of a resource containing multiple volumes
+	 * @return all volumes of the resource
+	 */
+	@GET
+	@Path("/{pid}/volume/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllVolumes(@PathParam("pid") String pid)
+	{
+
+		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource containing versions
+	 * @return a list with pids of each version
+	 */
+	@GET
+	@Path("/{pid}/version/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllVersions(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return new ObjectList(actions.findObject(pid, HAS_VERSION));
 		}
 		catch (ArchiveException e)
 		{
@@ -810,4 +884,5 @@ public class Resources
 		}
 
 	}
+
 }

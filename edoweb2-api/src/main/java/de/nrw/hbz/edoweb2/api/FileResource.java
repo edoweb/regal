@@ -1,19 +1,3 @@
-/*
- * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
 package de.nrw.hbz.edoweb2.api;
 
 import java.io.IOException;
@@ -35,20 +19,14 @@ import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.multipart.MultiPart;
 
-/**
- * /monograph/{pid}/[dc|metadata|data]
- * 
- * @author Jan Schnasse, schnasse@hbz-nrw.de
- * 
- */
-@Path("/monograph")
-public class Monograph
+@Path("/file")
+public class FileResource
 {
 	final static Logger logger = LoggerFactory.getLogger(Monograph.class);
 
 	Resources resources = null;
 
-	public Monograph() throws IOException
+	public FileResource() throws IOException
 	{
 
 		resources = new Resources();
@@ -58,32 +36,18 @@ public class Monograph
 	@PUT
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String createMonograph(@PathParam("pid") String pid,
+	public String create(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
-		input.type = ObjectType.monograph.toString();
+		input.type = ObjectType.file.toString();
 		return resources.create(pid, namespace, input);
-
-	}
-
-	@Deprecated
-	@POST
-	@Path("/{pid}/dc")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
-	public String updateMonographDC(@PathParam("pid") String pid,
-			DCBeanAnnotated content)
-	{
-
-		return resources.updateDC(pid, content);
-
 	}
 
 	@GET
 	@Path("/{pid}/data")
 	@Produces({ "application/*", "application/json" })
-	public Response readMonographData(@PathParam("pid") String pid)
+	public Response readData(@PathParam("pid") String pid)
 	{
 		return resources.readData(pid);
 	}
@@ -91,7 +55,7 @@ public class Monograph
 	@GET
 	@Path("/{pid}/metadata")
 	@Produces({ "text/plain" })
-	public String readMonographMetadata(@PathParam("pid") String pid)
+	public String readMetadata(@PathParam("pid") String pid)
 	{
 		return resources.readMetadata(pid);
 	}
@@ -100,14 +64,14 @@ public class Monograph
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return resources.getAllOfType(ObjectType.monograph.toString());
+		return resources.getAllOfType(ObjectType.file.toString());
 
 	}
 
 	@GET
 	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public Response getView(@PathParam("pid") String pid)
+	public Response about(@PathParam("pid") String pid)
 	{
 		return resources.about(pid);
 	}
@@ -121,7 +85,7 @@ public class Monograph
 	@GET
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid,
+	public Response get(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
 		return Response
@@ -130,10 +94,21 @@ public class Monograph
 								+ "/about")).status(303).build();
 	}
 
+	@POST
+	@Path("/{pid}/dc")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public String updateDC(@PathParam("pid") String pid, DCBeanAnnotated content)
+	{
+
+		return resources.updateDC(pid, content);
+
+	}
+
 	@GET
 	@Path("/{pid}/dc")
 	@Produces({ "application/xml", "application/json" })
-	public DCBeanAnnotated readMonographDC(@PathParam("pid") String pid)
+	public DCBeanAnnotated readDC(@PathParam("pid") String pid)
 	{
 		return resources.readDC(pid);
 	}
@@ -142,8 +117,7 @@ public class Monograph
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
 	@Produces({ "text/plain" })
-	public String updateMonographMetadata(@PathParam("pid") String pid,
-			String content)
+	public String updateMetadata(@PathParam("pid") String pid, String content)
 	{
 		return resources.updateMetadata(pid, content);
 	}
@@ -152,8 +126,7 @@ public class Monograph
 	@Path("/{pid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
-	public String updateMonographData(@PathParam("pid") String pid,
-			MultiPart multiPart)
+	public String updateData(@PathParam("pid") String pid, MultiPart multiPart)
 	{
 		return resources.updateData(pid, multiPart);
 	}
@@ -162,7 +135,7 @@ public class Monograph
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
 	@Produces({ "text/plain" })
-	public String updateMonographMetadataPost(@PathParam("pid") String pid,
+	public String updateMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
 		return resources.updateMetadata(pid, content);
@@ -171,7 +144,7 @@ public class Monograph
 	@DELETE
 	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteMonograph(@PathParam("pid") String pid,
+	public String delete(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace)
 	{
 		return resources.delete(pid, namespace);
@@ -181,9 +154,7 @@ public class Monograph
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return resources.deleteAllOfType(ObjectType.monograph.toString());
+		return resources.deleteAllOfType(ObjectType.file.toString());
 
 	}
-
-	// be it hot or be it not
 }
