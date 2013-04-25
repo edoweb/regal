@@ -657,7 +657,7 @@ public class Resources
 		logger.info("create EJournal");
 		try
 		{
-			if (actions.nodeExists(namespace + ":" + pid))
+			if (actions.nodeExists(pid))
 			{
 				throw new HttpArchiveException(
 						Status.INTERNAL_SERVER_ERROR.getStatusCode(), namespace
@@ -671,7 +671,7 @@ public class Resources
 			link.setPredicate(REL_IS_NODE_TYPE);
 			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
-			rootObject.setNamespace(namespace).setPID(namespace + ":" + pid);
+			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.ejournal.toString());
 			rootObject.addContentModel(ContentModelFactory
 					.createEJournalModel(namespace));

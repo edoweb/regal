@@ -80,9 +80,15 @@ public class DigitalEntity
 	Vector<DigitalEntity> indexLinks = null;
 	Vector<DigitalEntity> viewLinks;
 	Vector<DigitalEntity> viewMainLinks = null;
+
 	private String label = null;
 	private String parentPid;
+	private String type;
 
+	/**
+	 * @param location
+	 *            the directory of the entity
+	 */
 	public DigitalEntity(String location)
 	{
 		this.location = location;
@@ -538,5 +544,15 @@ public class DigitalEntity
 	public String getParentPid()
 	{
 		return parentPid;
+	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setType(String type)
+	{
+		this.type = type;
 	}
 }

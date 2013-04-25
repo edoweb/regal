@@ -1,0 +1,183 @@
+body {
+	background-color: #e8e8e8;
+	font-family:"Verdana", "Arial", "Helvetica", sans-serif;
+	font-size: 1em;
+	margin-left: 60px;
+	margin-right: 60px;
+	background-image:url(img/background_gradient.jpg);
+	background-repeat: repeat-x;
+}
+.item {
+	border-style: solid;
+	border-width: 0px;
+	padding: 30px;
+	list-style: none;
+	background-color: #ffffff;
+	box-shadow: 5px 5px 7px #999999;
+	border-radius: 15px;
+}
+image {
+	width: 128px;
+	height: 128px;
+}
+ul a img {
+	display: block;
+	float: left;
+	width: 64px;
+	background-color: #ffffff;
+	line-height: 128px;
+	overflow: hidden;
+	position: relative;
+	z-index: 1;
+}
+.navigation:before {
+	display: block;
+	text-align: center;
+	white-space: pre;
+	content: "Navigation"
+}
+.navigation {
+	list-style: none;
+	border-style: solid;
+	border-width: 1px;
+	padding: 10px;
+	margin: 10px;
+	list-style: none;
+	background-color: #ffffff;
+	display: block;
+	width: 158px;
+	float: left;
+}
+.collection{
+	padding-left: 0px;
+}
+.navigation a {
+	text-decoration: none;
+}
+.logo {
+	
+}
+.fedoraLogo a img {
+	width: 32px;
+}
+.lobidLogo a img {
+	width: 64px;
+	background-color: #1e90ff;
+}
+.dcLogo a img {
+	width: 32px;
+	display: inline;
+}
+.oaioreLogo a img {
+	width: 64px;
+	display: inline;
+}
+.editIcon a img {
+	width: 64px;
+	display: inline;
+	float: right;
+}
+.footer {
+
+	border-style: solid;
+	border-width: 1px;
+	background-color: white;
+}
+.footer td {
+	background-color: yellow;
+	width: 64px;
+}
+#resultList li {
+	padding: 10px;
+	margin: 20px;
+	
+}
+a:link {
+	text-decoration: underline;
+	color: #871D33;    /*color: #FD9830;	color: black;*/
+	<!-- font-weight: bold; -->
+}
+a:visited {
+	text-decoration: none;
+	color: #FD9830;/*	color: #B87630;*/
+}
+#resultList a:hover {
+	text-decoration: none;
+}
+#resultList a:active {
+	text-decoration: none;
+}
+
+.searchform {
+	
+}
+#content{
+	
+}
+
+#outputDiv {
+	white-space: pre-wrap;
+//	font-family: monospace;
+	font-size: 0.9em;
+	background-color: #ffffff;
+	
+	box-shadow: 5px 5px 7px #999999;
+	
+}
+#queryDiv {
+	white-space: pre-wrap;
+	font-family: monospace;
+	font-size: 1em;
+}
+#debugDiv {
+	white-space: pre;
+	font-family: monospace;
+	font-size: 0.9em;
+//	visibility: hidden;
+}
+#queryForm {
+	visibility: hidden;
+}
+
+.metadata
+{
+	white-space: pre-wrap;
+	font-family: monospace;
+	font-size: 0.8em;
+}
+
+.links
+{
+	white-space: pre;
+	font-family: monospace;
+	font-size: 0.8em;
+}
+
+.plabel
+{
+	vertical-align: text-top;
+	font-size:1.5em;
+}
+.tablelabel
+{
+	background-color: grey;
+}
+table tr td
+{
+	font-size:0.9em;
+}
+table tr td a
+{
+	display:block;
+	color: black;
+	font-size: 0.9em;
+}
+td
+{
+	padding-right: 20;
+}
+/*table tr td a:visited{
+	color: #404040;
+
+}*/
+.highlight { background-color: yellow }

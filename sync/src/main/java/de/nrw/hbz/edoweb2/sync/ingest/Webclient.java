@@ -129,6 +129,8 @@ public class Webclient
 			else
 			{
 				logger.warn(pid + " found no valid data.");
+				logger.info(pid + " expected " + expectedMime + " , found "
+						+ dtlBean.getStreamMime());
 			}
 		}
 		else
@@ -149,6 +151,7 @@ public class Webclient
 		catch (UniformInterfaceException e)
 		{
 			logger.info(pid + " already exists - will be updated!");
+			logger.info(pid + " enpoint: " + endpoint);
 		}
 	}
 

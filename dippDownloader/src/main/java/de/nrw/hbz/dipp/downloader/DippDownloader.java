@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,14 +29,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -360,6 +367,9 @@ public class DippDownloader
 				cDir = new File(dir.getAbsolutePath() + File.separator
 						+ "content");
 				downloadObject(cDir, cPid);
+				File cFile = new File(dir.getAbsolutePath() + File.separator
+						+ "content.zip");
+				zip(cDir, cFile);
 
 			}
 		}
@@ -643,6 +653,84 @@ public class DippDownloader
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	void zip(File directory, File zipfile) throws IOException
+	{
+		URI base = directory.toURI();
+		Deque<File> queue = new LinkedList<File>();
+		queue.push(directory);
+		OutputStream out = new FileOutputStream(zipfile);
+		Closeable res = out;
+		try
+		{
+			ZipOutputStream zout = new ZipOutputStream(out);
+			res = zout;
+			while (!queue.isEmpty())
+			{
+				directory = queue.pop();
+				for (File kid : directory.listFiles())
+				{
+					String name = base.relativize(kid.toURI()).getPath();
+					if (kid.isDirectory())
+					{
+						queue.push(kid);
+						name = name.endsWith("/") ? name : name + "/";
+						zout.putNextEntry(new ZipEntry(name));
+					}
+					else
+					{
+						zout.putNextEntry(new ZipEntry(name));
+						copy(kid, zout);
+						zout.closeEntry();
+					}
+				}
+			}
+		}
+		finally
+		{
+			res.close();
+		}
+	}
+
+	void copy(InputStream in, OutputStream out) throws IOException
+	{
+		byte[] buffer = new byte[1024];
+		while (true)
+		{
+			int readCount = in.read(buffer);
+			if (readCount < 0)
+			{
+				break;
+			}
+			out.write(buffer, 0, readCount);
+		}
+	}
+
+	void copy(File file, OutputStream out) throws IOException
+	{
+		InputStream in = new FileInputStream(file);
+		try
+		{
+			copy(in, out);
+		}
+		finally
+		{
+			in.close();
+		}
+	}
+
+	void copy(InputStream in, File file) throws IOException
+	{
+		OutputStream out = new FileOutputStream(file);
+		try
+		{
+			copy(in, out);
+		}
+		finally
+		{
+			out.close();
+		}
 	}
 
 	private void run(String propFile) throws IOException
