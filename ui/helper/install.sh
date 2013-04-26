@@ -59,21 +59,21 @@ echo >> $ARCHIVE_HOME/conf/install.properties
 
 echo "write fedora-users.xml"
 
-echo -e "<?xml version='1.0' ?>" > fedora-users.xml
-echo -e "  <users>" >> fedora-users.xml
-echo -e "    <user name=\"$ARCHIVE_USER\" password=\"$ARCHIVE_PASSWORD\">" >> fedora-users.xml
-echo -e "      <attribute name=\"fedoraRole\">" >> fedora-users.xml
-echo -e "        <value>administrator</value>" >> fedora-users.xml
-echo -e "      </attribute>" >> fedora-users.xml
-echo -e "    </user>" >> fedora-users.xml
-echo -e "    <user name=\"fedoraIntCallUser\" password=\"changeme\">" >> fedora-users.xml
-echo -e "      <attribute name=\"fedoraRole\">" >> fedora-users.xml
-echo -e "        <value>fedoraInternalCall-1</value>" >> fedora-users.xml
-echo -e "        <value>fedoraInternalCall-2</value>" >> fedora-users.xml
-echo -e "      </attribute>" >> fedora-users.xml
-echo -e "    </user>" >> fedora-users.xml
-echo -e "  </users>" >> fedora-users.xml
-echo -e "" >> fedora-users.xml
+echo -e "<?xml version='1.0' ?>" > $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "  <users>" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "    <user name=\"$ARCHIVE_USER\" password=\"$ARCHIVE_PASSWORD\">" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "      <attribute name=\"fedoraRole\">" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "        <value>administrator</value>" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "      </attribute>" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "    </user>" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "    <user name=\"fedoraIntCallUser\" password=\"changeme\">" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "      <attribute name=\"fedoraRole\">" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "        <value>fedoraInternalCall-1</value>" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "        <value>fedoraInternalCall-2</value>" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "      </attribute>" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "    </user>" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "  </users>" >> $ARCHIVE_HOME/conf/fedora-users.xml
+echo -e "" >> $ARCHIVE_HOME/conf/fedora-users.xml
 
 
 echo "write api.properties"

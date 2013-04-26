@@ -19,6 +19,7 @@ export FEDORA_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_HOME=$FEDORA_HOME/tomcat
 
 mkdir -v $ARCHIVE_HOME/${PREFIX}base
+ln -s $ARCHIVE_HOME/${PREFIX}base $ARCHIVE_HOME/html/${PREFIX}base
 echo "Update src must be done manually!"
 echo "OK?"
 $ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh

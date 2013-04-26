@@ -287,13 +287,13 @@ public class Utils
 	}
 
 	@POST
-	@Path("/contentModels/init")
+	@Path("/contentModels/{namespace}/init")
 	@Produces({ "text/plain" })
-	public String contentModelsInit()
+	public String contentModelsInit(@PathParam("namespace") String namespace)
 	{
 		try
 		{
-			return actions.contentModelsInit();
+			return actions.contentModelsInit(namespace);
 		}
 		catch (ArchiveException e)
 		{

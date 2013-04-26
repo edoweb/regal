@@ -103,7 +103,8 @@ class Actions
 	String baseUrl = null;
 	String serverName = null;
 	String uriPrefix = null;
-	String namespace = null;
+
+	// String namespace = null;
 
 	/**
 	 * @throws IOException
@@ -122,7 +123,7 @@ class Actions
 		dataciteUrl = properties.getProperty("dataciteUrl");
 		baseUrl = properties.getProperty("baseUrl");
 		serverName = properties.getProperty("serverName");
-		namespace = properties.getProperty("namespace");
+
 		archive = ArchiveFactory.getArchiveImpl(
 				properties.getProperty("fedoraIntern"),
 				properties.getProperty("user"),
@@ -996,7 +997,7 @@ class Actions
 		StringBuffer result = new StringBuffer();
 
 		result.append(deleteAll(archive.findNodes("test:*"), false) + "\n");
-		result.append(deleteAll(archive.findNodes(namespace + ":*"), false)
+		result.append(deleteAll(archive.findNodes("edoweb" + ":*"), false)
 				+ "\n");
 		result.append(deleteAll(archive.findNodes("oai:*"), false) + "\n");
 
@@ -1049,8 +1050,8 @@ class Actions
 
 		// TODO only if synced Resource
 		if (pid.length() == 14)
-			view.addCacheUrl(this.serverName + "/edobase/"
-					+ pidWithoutNamespace);
+			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
+					+ "base/" + pidWithoutNamespace);
 
 		view.addFedoraUrl(this.fedoraExtern + "/objects/" + pid);
 		// TODO only if synced resource
@@ -1253,7 +1254,7 @@ class Actions
 	 */
 	String outdex(String pid)
 	{
-
+		String namespace = archive.readNode(pid).getNamespace();
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
@@ -1290,6 +1291,7 @@ class Actions
 		Client c = Client.create(cc);
 		try
 		{
+			String namespace = archive.readNode(pid).getNamespace();
 			// TODO configure port and host
 			WebResource index = c.resource("http://localhost:9200/" + namespace
 					+ "/titel/" + pid);
@@ -1317,7 +1319,7 @@ class Actions
 	 */
 	List<String> getAll()
 	{
-		return archive.findNodes(namespace + ":*");
+		return archive.findNodes(":*");
 	}
 
 	/**
@@ -1456,7 +1458,7 @@ class Actions
 		String urn = "urn";
 		String nbn = "nbn";
 		String de = "de";
-		String snid = namespace;
+		String snid = archive.readNode(pid).getNamespace();
 		String niss = pid;
 
 		raw = urn + ":" + nbn + ":" + de + ":" + snid + "-" + niss;
@@ -1874,10 +1876,11 @@ class Actions
 
 	}
 
-	public String contentModelsInit()
+	public String contentModelsInit(String namespace)
 	{
 		try
 		{
+
 			archive.updateContentModel(ContentModelFactory
 					.createHeadModel(namespace));
 
