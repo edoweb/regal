@@ -2,7 +2,8 @@
 
 PREFIX=$1
 ARCHIVE_HOME=$2
-
+ARCHIVE_USER=$3
+ARCHIVE_PASSWORD=$4
 
 SRC=$ARCHIVE_HOME/src
 WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
@@ -33,7 +34,7 @@ cp $API_SRC $API_DEST
 cp $SYNCER_SRC $SYNCER_DEST 
 
 rm -rf  $WEBAPPS/oai-pmh*
-cp $SRC/ui/compiled/oai-pmh.war $WEBAPPS
+cp $SRC/ui/bin/oai-pmh.war $WEBAPPS
 cp $SRC/ui/conf/proai.properties $WEBAPPS/oai-pmh/WEB-INF/classes
 
 $ARCHIVE_HOME/fedora/tomcat/bin/startup.sh
@@ -42,17 +43,17 @@ echo install htdocs
 cp -r $FRONTEND_SRC/* $FRONTEND_DEST
 
 
-echo -e"#! /bin/bash" > ${PREFIX}Sync.sh
-echo -e"" >> ${PREFIX}Sync.sh
-echo -e"export LANG=en_US.UTF-8" >> ${PREFIX}Sync.sh
-echo -e"" >> ${PREFIX}Sync.sh
-echo -e"cd $ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh
-echo -e"" >> ${PREFIX}Sync.sh
-echo -e"cp .oaitimestamp$PREFIX oaitimestamp$PREFIX`date +"%Y%m%d"`" >> ${PREFIX}Sync.sh
-echo -e"" >> ${PREFIX}Sync.sh
-echo -e"java -jar -Xms512m -Xmx512m $PREFIXsync.jar --mode SYNC -list $ARCHIVE_HOME/sync/pidlist.txt --user $USER --password $PWD --dtl http://themis.hbz-nrw.de:9280/fedora/ --cache $ARCHIVE_HOME/${PREFIX}base --oai  http://www.dipp.nrw.de/repository/ --set pub-type:journal --timestamp .oaitimestamp$PREFIX --fedoraBase http://$SERVER:$TOMCAT_PORT/fedora --host http://localhost >> ${PREFIX}log`date +"%Y%m%d"`.txt 2>&1" >> ${PREFIX}Sync.sh
-echo -e"" >> ${PREFIX}Sync.sh
-echo -e"cd -" >> ${PREFIX}Sync.sh
+echo -e "#! /bin/bash" > ${PREFIX}Sync.sh
+echo -e "" >> ${PREFIX}Sync.sh
+echo -e "export LANG=en_US.UTF-8" >> ${PREFIX}Sync.sh
+echo -e "" >> ${PREFIX}Sync.sh
+echo -e "cd $ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh
+echo -e "" >> ${PREFIX}Sync.sh
+echo -e "cp .oaitimestamp$PREFIX oaitimestamp$PREFIX`date +"%Y%m%d"`" >> ${PREFIX}Sync.sh
+echo -e "" >> ${PREFIX}Sync.sh
+echo -e "java -jar -Xms512m -Xmx512m $PREFIXsync.jar --mode SYNC -list $ARCHIVE_HOME/sync/pidlist.txt --user $ARCHIVE_USER --password $ARCHIVE_PWD --dtl http://themis.hbz-nrw.de:9280/fedora/ --cache $ARCHIVE_HOME/${PREFIX}base --oai  http://www.dipp.nrw.de/repository/ --set pub-type:journal --timestamp .oaitimestamp$PREFIX --fedoraBase http://$SERVER:$TOMCAT_PORT/fedora --host http://localhost >> ${PREFIX}log`date +"%Y%m%d"`.txt 2>&1" >> ${PREFIX}Sync.sh
+echo -e "" >> ${PREFIX}Sync.sh
+echo -e "cd -" >> ${PREFIX}Sync.sh
 
 mv ${PREFIX}Sync.sh $ARCHIVE_HOME/sync
 
