@@ -41,4 +41,19 @@ echo "FINISHED!"
 echo install htdocs
 cp -r $FRONTEND_SRC/* $FRONTEND_DEST
 
-tail -f $ARCHIVE_HOME/fedora/tomcat/logs/catalina.out
+
+echo -e"#! /bin/bash" > ${PREFIX}Sync.sh
+echo -e"" >> ${PREFIX}Sync.sh
+echo -e"export LANG=en_US.UTF-8" >> ${PREFIX}Sync.sh
+echo -e"" >> ${PREFIX}Sync.sh
+echo -e"cd $ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh
+echo -e"" >> ${PREFIX}Sync.sh
+echo -e"cp .oaitimestamp$PREFIX oaitimestamp$PREFIX`date +"%Y%m%d"`" >> ${PREFIX}Sync.sh
+echo -e"" >> ${PREFIX}Sync.sh
+echo -e"java -jar -Xms512m -Xmx512m $PREFIXsync.jar --mode SYNC -list $ARCHIVE_HOME/sync/pidlist.txt --user $USER --password $PWD --dtl http://themis.hbz-nrw.de:9280/fedora/ --cache $ARCHIVE_HOME/${PREFIX}base --oai  http://www.dipp.nrw.de/repository/ --set pub-type:journal --timestamp .oaitimestamp$PREFIX --fedoraBase http://$SERVER:$TOMCAT_PORT/fedora --host http://localhost >> ${PREFIX}log`date +"%Y%m%d"`.txt 2>&1" >> ${PREFIX}Sync.sh
+echo -e"" >> ${PREFIX}Sync.sh
+echo -e"cd -" >> ${PREFIX}Sync.sh
+
+mv ${PREFIX}Sync.sh $ARCHIVE_HOME/sync
+
+

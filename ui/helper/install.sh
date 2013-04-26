@@ -86,8 +86,8 @@ echo "write tomcat-users.xml"
 
 echo "<?xml version='1.0' encoding='utf-8'?>" > $ARCHIVE_HOME/conf/tomcat-users.xml
 echo "<tomcat-users>" >> $ARCHIVE_HOME/conf/tomcat-users.xml
-echo "<role rolename="manager"/>" >>$ARCHIVE_HOME/conf/tomcat-users.xml
-echo -e "<user username=\"$USER\" password=\"$PWD\" roles="manager"/>" >> $ARCHIVE_HOME/conf/tomcat-users.xml
+echo "<role rolename=\"manager\"/>" >>$ARCHIVE_HOME/conf/tomcat-users.xml
+echo -e "<user username=\"$USER\" password=\"$PWD\" roles=\"manager\"/>" >> $ARCHIVE_HOME/conf/tomcat-users.xml
 echo "</tomcat-users>" >> $ARCHIVE_HOME/conf/tomcat-users.xml
 echo >> $ARCHIVE_HOME/conf/tomcat-users.xml
 
@@ -123,7 +123,7 @@ echo "write elasticsearch.yml"
 echo "cluster.name: $PREFIX$SERVER" > $ARCHIVE_HOME/conf/elasticsearch.yml
 echo >> $ARCHIVE_HOME/conf/elasticsearch.yml
 
-echo "write apache conf"
+echo "write site.conf"
 
 echo -e "<VirtualHost *:80>" > $ARCHIVE_HOME/conf/site.conf
 echo -e "    ServerAdmin $EMAIL" >> $ARCHIVE_HOME/conf/site.conf
@@ -163,6 +163,7 @@ echo -e "RewriteRule /utils/(.*)  http://localhost:$TOMCAT_PORT/edoweb2-api/util
 echo -e "RewriteRule /oai-pmh/(.*) http://localhost:$TOMCAT_PORT/oai-pmh/$1 [P] " >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "</VirtualHost>" >> $ARCHIVE_HOME/conf/site.conf
+
 }
 
 function install()
@@ -188,12 +189,12 @@ cp $ARCHIVE_HOME/conf/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/conf/
 $ARCHIVE_HOME/elasticsearch/bin/elasticsearch
 
 echo "install apache"
-cp /etc/apache2/httpd.conf $ARCHIVE_HOME/conf/httpd.conf.bck
-echo "Include $ARCHIVE_HOME/conf/site.conf" >> /etc/apache2/httpd.conf
+cp /etc/apache2/httpd.conf $ARCHIVE_HOME/conf/httpd.conf
+echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
 
 echo "install archive"
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
-sh $ARCHIVE_HOME/src/ui/helper/$ROLLOUT $PREFIX $ARCHIVE_HOME
+./$ARCHIVE_HOME/src/ui/helper/rollout.sh
 }
 
 function cleanUp()
