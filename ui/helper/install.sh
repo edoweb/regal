@@ -84,21 +84,22 @@ echo >> $ARCHIVE_HOME/conf/tomcat-users.xml
 
 echo "write setenv.xml"
 
-echo -e "CATALINA_OPTS=\" \\"  > $ARCHIVE_HOME/conf/setenv.xml
-echo -e "-Xms1536m \\" >> $ARCHIVE_HOME/conf/setenv.xml
-echo -e "-Xmx1536m \\" >> $ARCHIVE_HOME/conf/setenv.xml
-echo -e "-XX:NewSize=256m \\" >> $ARCHIVE_HOME/conf/setenv.xml
-echo -e "-XX:MaxNewSize=256m \\" >> $ARCHIVE_HOME/conf/setenv.xml
-echo -e "-XX:PermSize=256m \\"  >> $ARCHIVE_HOME/conf/setenv.xml
-echo -e "-XX:MaxPermSize=256m \\" >> $ARCHIVE_HOME/conf/setenv.xml
-echo -e "-server \\" >> $ARCHIVE_HOME/conf/setenv.xml
-echo -e "-Djava.awt.headless=true \\" >> $ARCHIVE_HOME/conf/setenv.xml
-echo -e "-Dorg.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER=true\"" >> $ARCHIVE_HOME/conf/setenv.xml
-echo >> $ARCHIVE_HOME/conf/setenv.xml
-echo -e "export CATALINA_OPTS" >> $ARCHIVE_HOME/conf/setenv.xml
-echo >> $ARCHIVE_HOME/conf/setenv.xml
+echo -e "CATALINA_OPTS=\" \\"  > $ARCHIVE_HOME/conf/setenv.sh
+echo -e "-Xms1536m \\" >> $ARCHIVE_HOME/conf/setenv.sh
+echo -e "-Xmx1536m \\" >> $ARCHIVE_HOME/conf/setenv.sh
+echo -e "-XX:NewSize=256m \\" >> $ARCHIVE_HOME/conf/setenv.sh
+echo -e "-XX:MaxNewSize=256m \\" >> $ARCHIVE_HOME/conf/setenv.sh
+echo -e "-XX:PermSize=256m \\"  >> $ARCHIVE_HOME/conf/setenv.sh
+echo -e "-XX:MaxPermSize=256m \\" >> $ARCHIVE_HOME/conf/setenv.sh
+echo -e "-server \\" >> $ARCHIVE_HOME/conf/setenv.sh
+echo -e "-Djava.awt.headless=true \\" >> $ARCHIVE_HOME/conf/setenv.sh
+echo -e "-Dorg.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER=true\"" >> $ARCHIVE_HOME/conf/setenv.sh
+echo >> $ARCHIVE_HOME/conf/setenv.sh
+echo -e "export CATALINA_OPTS" >> $ARCHIVE_HOME/conf/setenv.sh
+echo >> $ARCHIVE_HOME/conf/setenv.sh
 
 echo "write web.properties"
+
 echo "security.ssl.api.management=REQUIRES_SECURE_CHANNEL" > $ARCHIVE_HOME/conf/web.properties
 echo "security.auth.filters=AuthFilterJAAS" >> $ARCHIVE_HOME/conf/web.properties
 echo "security.fesl.authN.jaas.apia.enabled=false" >> $ARCHIVE_HOME/conf/web.properties
