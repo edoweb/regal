@@ -52,11 +52,11 @@ echo -e "" >> ${PREFIX}Sync.sh
 echo -e "source variables.sh" >> ${PREFIX}Sync.sh
 echo -e "export LANG=en_US.UTF-8" >> ${PREFIX}Sync.sh
 echo -e "" >> ${PREFIX}Sync.sh
-echo -e "cd $ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh
+echo -e "cd \$ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh
 echo -e "" >> ${PREFIX}Sync.sh
-echo -e "cp .oaitimestamp$PREFIX oaitimestamp$PREFIX`date +"%Y%m%d"`" >> ${PREFIX}Sync.sh
+echo -e "cp .oaitimestamp\$PREFIX oaitimestamp\$PREFIX`date +"%Y%m%d"`" >> ${PREFIX}Sync.sh
 echo -e "" >> ${PREFIX}Sync.sh
-echo -e "java -jar -Xms512m -Xmx512m ${PREFIX}sync.jar --mode SYNC -list $ARCHIVE_HOME/sync/pidlist.txt --user $ARCHIVE_USER --password $ARCHIVE_PASSWORD --dtl $DOWNLOAD --cache $ARCHIVE_HOME/${PREFIX}base --oai  $OAI --set $SET --timestamp .oaitimestamp$PREFIX --fedoraBase http://$SERVER:$TOMCAT_PORT/fedora --host http://$SERVER >> ${PREFIX}log`date +"%Y%m%d"`.txt 2>&1" >> ${PREFIX}Sync.sh
+echo -e "java -jar -Xms512m -Xmx512m \${PREFIX}sync.jar --mode INIT -list \$ARCHIVE_HOME/sync/pidlist.txt --user \$ARCHIVE_USER --password \$ARCHIVE_PASSWORD --dtl \$DOWNLOAD --cache \$ARCHIVE_HOME/\${PREFIX}base --oai  \$OAI --set \$SET --timestamp .oaitimestamp\$PREFIX --fedoraBase http://\$SERVER:\$TOMCAT_PORT/fedora --host http://\$SERVER >> ${PREFIX}log`date +"%Y%m%d"`.txt 2>&1" >> ${PREFIX}Sync.sh
 echo -e "" >> ${PREFIX}Sync.sh
 echo -e "cd -" >> ${PREFIX}Sync.sh
 

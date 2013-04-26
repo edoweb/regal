@@ -142,14 +142,14 @@ echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteEngine on" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /fedora/(.*) http://localhost:$TOMCAT_PORT/fedora/$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /search/(.*) http://localhost:$ELASTICSEARCH_PORT/$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/resources/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/resources/$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /ejournal/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/ejournal/$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /monograph/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/monograph/$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /webpage/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/webpage/$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /utils/(.*)  http://localhost:$TOMCAT_PORT/edoweb2-api/utils/$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /oai-pmh/(.*) http://localhost:$TOMCAT_PORT/oai-pmh/$1 [P] " >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /fedora/(.*) http://localhost:$TOMCAT_PORT/fedora/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /search/(.*) http://localhost:$ELASTICSEARCH_PORT/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/resources/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/resources/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /ejournal/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/ejournal/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /monograph/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/monograph/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /webpage/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/webpage/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /utils/(.*)  http://localhost:$TOMCAT_PORT/edoweb2-api/utils/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /oai-pmh/(.*) http://localhost:$TOMCAT_PORT/oai-pmh/\$1 [P] " >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "</VirtualHost>" >> $ARCHIVE_HOME/conf/site.conf
 
@@ -183,6 +183,7 @@ echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
 
 echo "install archive"
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
+cp variables.sh $ARCHIVE_HOME/src/ui/helper/
 $ARCHIVE_HOME/src/ui/helper/rollout.sh
 }
 

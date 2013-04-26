@@ -11,6 +11,8 @@ ELASTICSEARCH_PORT=9200
 
 
 # Only needed when you want to mirror from a supported system (edoweb|ellinet|dipp)
-DOWNLOAD=http://themis.hbz-nrw.de:9280/fedora/
-OAI=http://www.dipp.nrw.de/repository/
-SET=pub-type:journal
+DOWNLOAD=http://klio.hbz-nrw.de:1801
+OAI=http://klio.hbz-nrw.de:1801/edowebOAI
+SET=doc-type:report
+
+
