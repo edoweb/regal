@@ -1290,6 +1290,7 @@ class Actions
 		Client c = Client.create(cc);
 		try
 		{
+			// TODO configure port and host
 			WebResource index = c.resource("http://localhost:9200/" + namespace
 					+ "/titel/" + pid);
 			index.accept(MediaType.APPLICATION_JSON);
