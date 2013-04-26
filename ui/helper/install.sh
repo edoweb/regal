@@ -44,7 +44,7 @@ echo "database.jdbcURL=jdbc\:derby\:$ARCHIVE_HOME/fedora/derby/fedora3;create\=t
 echo "messaging.uri=vm\:(broker\:(tcp\://localhost\:61616))" >> $ARCHIVE_HOME/conf/install.properties
 echo "database.password=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/install.properties
 echo "keystore.type=JKS" >> $ARCHIVE_HOME/conf/install.properties
-echo "database.ARCHIVE_USERname=$ARCHIVE_USER" >> $ARCHIVE_HOME/conf/install.properties
+echo "database.username=$ARCHIVE_USER" >> $ARCHIVE_HOME/conf/install.properties
 echo "fesl.authz.enabled=false" >> $ARCHIVE_HOME/conf/install.properties
 echo "tomcat.shutdown.port=8005" >> $ARCHIVE_HOME/conf/install.properties
 echo "deploy.local.services=false" >> $ARCHIVE_HOME/conf/install.properties
@@ -70,8 +70,8 @@ echo "write api.properties"
 
 echo "serverName=http://$SERVER"  > $ARCHIVE_HOME/conf/api.properties
 echo "fedoraExtern=http://$SERVER/fedora"  >> $ARCHIVE_HOME/conf/api.properties
-echo "fedoraIntern=http://$SERVER:8080/fedora" >> $ARCHIVE_HOME/conf/api.properties
-echo "ARCHIVE_USER=$ARCHIVE_USER" >> $ARCHIVE_HOME/conf/api.properties
+echo "fedoraIntern=http://$SERVER:$TOMCAT_PORT/fedora" >> $ARCHIVE_HOME/conf/api.properties
+echo "user=$ARCHIVE_USER" >> $ARCHIVE_HOME/conf/api.properties
 echo "password=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/api.properties
 echo "namespace=$PREFIX" >> $ARCHIVE_HOME/conf/api.properties
 echo "sesameStore=/tmp/myRepository" >> $ARCHIVE_HOME/conf/api.properties
@@ -82,14 +82,14 @@ echo "baseUrl=http://www.base-search.net/Search/Results?lookfor=" >> $ARCHIVE_HO
 echo "culturegraphUrl=http://www.culturegraph.org/about/" >> $ARCHIVE_HOME/conf/api.properties
 echo >> $ARCHIVE_HOME/conf/api.properties
 
-echo "write tomcat-ARCHIVE_USERs.xml"
+echo "write tomcat-users.xml"
 
-echo "<?xml version='1.0' encoding='utf-8'?>" > $ARCHIVE_HOME/conf/tomcat-ARCHIVE_USERs.xml
-echo "<tomcat-ARCHIVE_USERs>" >> $ARCHIVE_HOME/conf/tomcat-ARCHIVE_USERs.xml
-echo "<role rolename=\"manager\"/>" >>$ARCHIVE_HOME/conf/tomcat-ARCHIVE_USERs.xml
-echo -e "<ARCHIVE_USER ARCHIVE_USERname=\"$ARCHIVE_USER\" password=\"$ARCHIVE_PASSWORD\" roles=\"manager\"/>" >> $ARCHIVE_HOME/conf/tomcat-ARCHIVE_USERs.xml
-echo "</tomcat-ARCHIVE_USERs>" >> $ARCHIVE_HOME/conf/tomcat-ARCHIVE_USERs.xml
-echo >> $ARCHIVE_HOME/conf/tomcat-ARCHIVE_USERs.xml
+echo "<?xml version='1.0' encoding='utf-8'?>" > $ARCHIVE_HOME/conf/tomcat-users.xml
+echo "<tomcat-users>" >> $ARCHIVE_HOME/conf/tomcat-users.xml
+echo "<role rolename=\"manager\"/>" >>$ARCHIVE_HOME/conf/tomcat-users.xml
+echo -e "<user username=\"$ARCHIVE_USER\" password=\"$ARCHIVE_PASSWORD\" roles=\"manager\"/>" >> $ARCHIVE_HOME/conf/tomcat-users.xml
+echo "</tomcat-users>" >> $ARCHIVE_HOME/conf/tomcat-users.xml
+echo >> $ARCHIVE_HOME/conf/tomcat-users.xml
 
 echo "write setenv.xml"
 
@@ -177,7 +177,7 @@ echo "install fedora"
 export FEDORA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora/tomcat
 java -jar fcrepo-installer-3.6.1.jar  $ARCHIVE_HOME/conf/install.properties
-cp  $ARCHIVE_HOME/conf/tomcat-ARCHIVE_USERs.xml $ARCHIVE_HOME/fedora/tomcat/conf
+cp  $ARCHIVE_HOME/conf/tomcat-users.xml $ARCHIVE_HOME/fedora/tomcat/conf
 cp  $ARCHIVE_HOME/conf/setenv.xml $ARCHIVE_HOME/fedora/tomcat/bin
 cp  $ARCHIVE_HOME/conf/web.properties $ARCHIVE_HOME/fedora/server/config/spring/web/
 
