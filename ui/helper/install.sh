@@ -11,6 +11,7 @@ SERVER=localhost
 ARCHIVE_USER=jan
 ARCHIVE_PASSWORD=schnasse
 EMAIL=schnasse@hbz-nrw.de
+$APACHE_CONF=/etc/apache2/apache2.conf
 
 TOMCAT_PORT=8080
 ELASTICSEARCH_PORT=9200
@@ -127,14 +128,11 @@ echo "write site.conf"
 
 echo -e "<VirtualHost *:80>" > $ARCHIVE_HOME/conf/site.conf
 echo -e "    ServerAdmin $EMAIL" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    ServerName $SERVER" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    AddDefaultCharset UTF-8" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "    DocumentRoot $ARCHIVE_HOME/html" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    ErrorLog $ARCHIVE_HOME/logs/ellinet-error_log" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    CustomLog $ARCHIVE_HOME/logs/apache2/ellinet-access_log combined" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    HostnameLookups Off" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    UseCanonicalName Off" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    ServerSignature On" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "    <Directory />" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "	Options FollowSymLinks" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "	AllowOverride None" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "    </Directory>" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "    <Directory \"$ARCHIVE_HOME/html\">" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "    	       Options Indexes FollowSymLinks" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "    	       AllowOverride All" >> $ARCHIVE_HOME/conf/site.conf
@@ -189,7 +187,7 @@ cp $ARCHIVE_HOME/conf/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/
 $ARCHIVE_HOME/elasticsearch/bin/elasticsearch
 
 echo "install apache"
-cp /etc/apache2/httpd.conf $ARCHIVE_HOME/conf/httpd.conf
+cp $APACHE_CONF $ARCHIVE_HOME/conf/httpd.conf
 echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
 
 echo "install archive"

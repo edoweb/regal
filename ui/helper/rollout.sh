@@ -2,8 +2,14 @@
 
 PREFIX=$1
 ARCHIVE_HOME=$2
-ARCHIVE_USER=$3
-ARCHIVE_PASSWORD=$4
+
+ARCHIVE_USER=fedoraAdmin
+ARCHIVE_PASSWORD=fedoraAdmin
+SERVER=localhost
+TOMCAT_PORT=8080
+DOWNLOAD=http://themis.hbz-nrw.de:9280/fedora/
+OAI=http://www.dipp.nrw.de/repository/
+SET=pub-type:journal
 
 SRC=$ARCHIVE_HOME/src
 WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
@@ -14,12 +20,14 @@ SYNCER_DEST=$ARCHIVE_HOME/sync/${PREFIX}sync.jar
 FRONTEND_SRC=$SRC/ui/htdocs
 FRONTEND_DEST=$ARCHIVE_HOME/html
 
+
+mkdir -v $ARCHIVE_HOME/${PREFIX}base
 echo "Update src must be done manually!"
 echo "OK?"
 $ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh
 
 echo "Compile..."
-cd $SRC
+cd $SRC/
 mvn -q -e clean install
 cd $SRC/${PREFIX}Sync
 mvn -q -e assembly:assembly 
@@ -51,7 +59,7 @@ echo -e "cd $ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh
 echo -e "" >> ${PREFIX}Sync.sh
 echo -e "cp .oaitimestamp$PREFIX oaitimestamp$PREFIX`date +"%Y%m%d"`" >> ${PREFIX}Sync.sh
 echo -e "" >> ${PREFIX}Sync.sh
-echo -e "java -jar -Xms512m -Xmx512m $PREFIXsync.jar --mode SYNC -list $ARCHIVE_HOME/sync/pidlist.txt --user $ARCHIVE_USER --password $ARCHIVE_PWD --dtl http://themis.hbz-nrw.de:9280/fedora/ --cache $ARCHIVE_HOME/${PREFIX}base --oai  http://www.dipp.nrw.de/repository/ --set pub-type:journal --timestamp .oaitimestamp$PREFIX --fedoraBase http://$SERVER:$TOMCAT_PORT/fedora --host http://localhost >> ${PREFIX}log`date +"%Y%m%d"`.txt 2>&1" >> ${PREFIX}Sync.sh
+echo -e "java -jar -Xms512m -Xmx512m $PREFIXsync.jar --mode SYNC -list $ARCHIVE_HOME/sync/pidlist.txt --user $ARCHIVE_USER --password $ARCHIVE_PASSWORD --dtl $DOWNLOAD --cache $ARCHIVE_HOME/${PREFIX}base --oai  $OAI --set $SET --timestamp .oaitimestamp$PREFIX --fedoraBase http://$SERVER:$TOMCAT_PORT/fedora --host http://$SERVER >> ${PREFIX}log`date +"%Y%m%d"`.txt 2>&1" >> ${PREFIX}Sync.sh
 echo -e "" >> ${PREFIX}Sync.sh
 echo -e "cd -" >> ${PREFIX}Sync.sh
 
