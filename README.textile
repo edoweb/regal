@@ -2,6 +2,8 @@ h1. About
 
 Edoweb2 is the successor of edoweb http://www.hbz-nrw.de/angebote/hosting/edoweb/
 
+For more information visit the "wiki":https://github.com/edoweb/edoweb2/wiki
+
 h1. Releases
 
 Not released yet! The current status of this project is "in development". 
