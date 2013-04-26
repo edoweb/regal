@@ -3,7 +3,7 @@ zbmed=$1;
 for i in `ls $zbmed`;
 do 
 echo $i -------; 
-grep -o "<dc:alephsyncid>HT.*</dc:alephsyncid>" $zbmed/${i}/${i}_DC.xml; 
+grep -o "<dc:alephsyncid>HT.*</dc:alephsyncid>" $zbmed/${i}/.${i}_DC.xml; 
 done |grep -o "HT[^<]*" >alleHTNummerInDTL.log
 
 sort alleHTNummerInDTL.log > sort.ls

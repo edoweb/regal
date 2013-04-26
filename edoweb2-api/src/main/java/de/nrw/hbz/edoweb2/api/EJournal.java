@@ -65,28 +65,28 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return resources.deleteResourceOfType(ObjectType.ejournal.toString());
+		return resources.deleteAllOfType(ObjectType.ejournal.toString());
 
 	}
 
 	@DELETE
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
 	public String deleteEJournal(@PathParam("pid") String pid,
-			@PathParam("userNamespace") String userNamespace)
+			@PathParam("namespace") String namespace)
 	{
-		return resources.deleteResource(pid);
+		return resources.delete(pid, namespace);
 	}
 
 	@PUT
-	@Path("/{userNamespace}:{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
 	public String createEJournal(@PathParam("pid") String pid,
-			@PathParam("userNamespace") String userNamespace)
+			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.ejournal.toString();
-		return resources.createResource(pid, input);
+		return resources.create(pid, namespace, input);
 
 	}
 
@@ -106,7 +106,7 @@ public class EJournal
 	public String updateEJournalDCPost(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return resources.updateResourceDC(pid, content);
+		return resources.updateDC(pid, content);
 	}
 
 	@PUT
@@ -116,7 +116,7 @@ public class EJournal
 	public String updateEJournalDCPut(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return resources.updateResourceDC(pid, content);
+		return resources.updateDC(pid, content);
 	}
 
 	@GET
@@ -134,7 +134,7 @@ public class EJournal
 	public String updateEJournalMetadata(@PathParam("pid") String pid,
 			String content)
 	{
-		return resources.updateResourceMetadata(pid, content);
+		return resources.updateMetadata(pid, content);
 	}
 
 	@Deprecated
@@ -145,7 +145,7 @@ public class EJournal
 	public String updateEJournalMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
-		return resources.updateResourceMetadata(pid, content);
+		return resources.updateMetadata(pid, content);
 
 	}
 
@@ -158,23 +158,24 @@ public class EJournal
 	}
 
 	@PUT
-	@Path("/{pid}/volume/{volumePid}")
+	@Path("/{pid}/volume/{namespace}:{volumePid}")
 	@Produces({ "application/json", "application/xml" })
 	public String createEJournalVolume(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace,
 			@PathParam("volumePid") String volumePid)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.ejournalVolume.toString();
 		input.parentPid = pid;
-		return resources.createResource(volumePid, input);
+		return resources.create(volumePid, namespace, input);
 	}
 
 	@GET
 	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getView(@PathParam("pid") String pid)
+	public Response getView(@PathParam("pid") String pid)
 	{
-		return resources.getView(pid);
+		return resources.about(pid);
 	}
 
 	/**
@@ -184,15 +185,15 @@ public class EJournal
 	 * @throws URISyntaxException
 	 */
 	@GET
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid)
-			throws URISyntaxException
+	public Response getResource(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + pid + "/about"))
-				.status(303).build();
+						new java.net.URI("/resources/" + namespace + ":" + pid
+								+ "/about")).status(303).build();
 	}
 
 	@GET
@@ -211,7 +212,7 @@ public class EJournal
 	public String updateVolumeData(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, MultiPart multiPart)
 	{
-		return resources.updateResourceData(volumePid, multiPart);
+		return resources.updateData(volumePid, multiPart);
 	}
 
 	@GET
@@ -230,7 +231,7 @@ public class EJournal
 	public String updateVolumeDC(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, DCBeanAnnotated content)
 	{
-		return resources.updateResourceDC(volumePid, content);
+		return resources.updateDC(volumePid, content);
 	}
 
 	@GET
@@ -249,7 +250,7 @@ public class EJournal
 	public String updateVolumeMetadata(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, String content)
 	{
-		return resources.updateResourceMetadata(volumePid, content);
+		return resources.updateMetadata(volumePid, content);
 	}
 
 	@Deprecated
@@ -260,6 +261,6 @@ public class EJournal
 	public String updateVolumeMetadataPost(@PathParam("pid") String pid,
 			@PathParam("volumePid") String volumePid, String content)
 	{
-		return resources.updateResourceMetadata(volumePid, content);
+		return resources.updateMetadata(volumePid, content);
 	}
 }

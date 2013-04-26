@@ -57,25 +57,27 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return resources.deleteResourceOfType(ObjectType.webpage.toString());
+		return resources.deleteAllOfType(ObjectType.webpage.toString());
 	}
 
 	@PUT
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String createWebpage(@PathParam("pid") String pid)
+	public String createWebpage(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.webpage.toString();
-		return resources.createResource(pid, input);
+		return resources.create(pid, namespace, input);
 	}
 
 	@DELETE
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteWebpage(@PathParam("pid") String pid)
+	public String deleteWebpage(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
-		return resources.deleteResource(pid);
+		return resources.delete(pid, namespace);
 	}
 
 	@POST
@@ -85,7 +87,7 @@ public class Webpage
 	public String updateWebpageDC(@PathParam("pid") String pid,
 			DCBeanAnnotated content)
 	{
-		return resources.updateResourceDC(pid, content);
+		return resources.updateDC(pid, content);
 	}
 
 	@PUT
@@ -95,7 +97,7 @@ public class Webpage
 	public String updateWebpageMetadata(@PathParam("pid") String pid,
 			String content)
 	{
-		return resources.updateResourceMetadata(pid, content);
+		return resources.updateMetadata(pid, content);
 	}
 
 	@Deprecated
@@ -106,19 +108,20 @@ public class Webpage
 	public String updateWebpageMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
-		return resources.updateResourceMetadata(pid, content);
+		return resources.updateMetadata(pid, content);
 	}
 
 	@PUT
-	@Path("/{pid}/version/{versionPid}")
+	@Path("/{pid}/version/{namespace}:{versionPid}")
 	@Produces({ "application/json", "application/xml" })
 	public String createWebpageVersion(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid)
+			@PathParam("versionPid") String versionPid,
+			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.webpageVersion.toString();
 		input.parentPid = pid;
-		return resources.createResource(versionPid, input);
+		return resources.create(versionPid, namespace, input);
 
 	}
 
@@ -129,7 +132,7 @@ public class Webpage
 	public String updateWebpageVersionDC(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, DCBeanAnnotated content)
 	{
-		return resources.updateResourceDC(versionPid, content);
+		return resources.updateDC(versionPid, content);
 	}
 
 	@POST
@@ -139,7 +142,7 @@ public class Webpage
 	public String updateWebpageVersionData(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, MultiPart multiPart)
 	{
-		return resources.updateResourceData(versionPid, multiPart);
+		return resources.updateData(versionPid, multiPart);
 	}
 
 	@PUT
@@ -149,7 +152,7 @@ public class Webpage
 	public String updateWebpageVersionMetadata(@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
 	{
-		return resources.updateResourceMetadata(versionPid, content);
+		return resources.updateMetadata(versionPid, content);
 	}
 
 	@Deprecated
@@ -161,7 +164,7 @@ public class Webpage
 			@PathParam("pid") String pid,
 			@PathParam("versionPid") String versionPid, String content)
 	{
-		return resources.updateResourceMetadata(versionPid, content);
+		return resources.updateMetadata(versionPid, content);
 	}
 
 	@GET
@@ -221,9 +224,9 @@ public class Webpage
 	@GET
 	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getView(@PathParam("pid") String pid)
+	public Response getView(@PathParam("pid") String pid)
 	{
-		return resources.getView(pid);
+		return resources.about(pid);
 	}
 
 	/**
@@ -233,15 +236,15 @@ public class Webpage
 	 * @throws URISyntaxException
 	 */
 	@GET
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid)
-			throws URISyntaxException
+	public Response getResource(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + pid + "/about"))
-				.status(303).build();
+						new java.net.URI("/resources/" + namespace + ":" + pid
+								+ "/about")).status(303).build();
 	}
 
 	@GET

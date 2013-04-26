@@ -56,13 +56,14 @@ public class Monograph
 	}
 
 	@PUT
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String createMonograph(@PathParam("pid") String pid)
+	public String createMonograph(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = ObjectType.monograph.toString();
-		return resources.createResource(pid, input);
+		return resources.create(pid, namespace, input);
 
 	}
 
@@ -75,7 +76,7 @@ public class Monograph
 			DCBeanAnnotated content)
 	{
 
-		return resources.updateResourceDC(pid, content);
+		return resources.updateDC(pid, content);
 
 	}
 
@@ -106,9 +107,9 @@ public class Monograph
 	@GET
 	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public View getView(@PathParam("pid") String pid)
+	public Response getView(@PathParam("pid") String pid)
 	{
-		return resources.getView(pid);
+		return resources.about(pid);
 	}
 
 	/**
@@ -118,15 +119,15 @@ public class Monograph
 	 * @throws URISyntaxException
 	 */
 	@GET
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid)
-			throws URISyntaxException
+	public Response getResource(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + pid + "/about"))
-				.status(303).build();
+						new java.net.URI("/resources/" + namespace + ":" + pid
+								+ "/about")).status(303).build();
 	}
 
 	@GET
@@ -144,7 +145,7 @@ public class Monograph
 	public String updateMonographMetadata(@PathParam("pid") String pid,
 			String content)
 	{
-		return resources.updateResourceMetadata(pid, content);
+		return resources.updateMetadata(pid, content);
 	}
 
 	@POST
@@ -154,7 +155,7 @@ public class Monograph
 	public String updateMonographData(@PathParam("pid") String pid,
 			MultiPart multiPart)
 	{
-		return resources.updateResourceData(pid, multiPart);
+		return resources.updateData(pid, multiPart);
 	}
 
 	@POST
@@ -164,22 +165,23 @@ public class Monograph
 	public String updateMonographMetadataPost(@PathParam("pid") String pid,
 			String content)
 	{
-		return resources.updateResourceMetadata(pid, content);
+		return resources.updateMetadata(pid, content);
 	}
 
 	@DELETE
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteMonograph(@PathParam("pid") String pid)
+	public String deleteMonograph(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
-		return resources.deleteResource(pid);
+		return resources.delete(pid, namespace);
 	}
 
 	@DELETE
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return resources.deleteResource(ObjectType.monograph.toString());
+		return resources.deleteAllOfType(ObjectType.monograph.toString());
 
 	}
 

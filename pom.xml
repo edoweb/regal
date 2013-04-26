@@ -7,7 +7,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<axis.version>1.6.2</axis.version>
 		<junit.version>4.8.2</junit.version>
-		<sesame.version>2.6.9</sesame.version>
+		<sesame.version>2.7.0</sesame.version>
 		<unitTests>**/*Test.class</unitTests>
 		<integrationTests>**/*Integration*.class</integrationTests>
 		<instrumentedTests>**/*Test*__*.class</instrumentedTests>
@@ -75,9 +75,15 @@
 
 	<repositories>
 		<repository>
-			<id>aduna</id>
-			<name>Aduna Releases Maven Repository</name>
-			<url>http://repo.aduna-software.org/maven2/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>ontotext-aduna-releases</id>
+			<name>Ontotext mirror of Aduna releases</name>
+			<url>http://maven.ontotext.com/content/repositories/aduna/</url>
 		</repository>
 		<repository>
 			<id>duraspace-thirdparty</id>
@@ -90,6 +96,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+
 
 		<repository>
 			<id>edoweb.github.com</id>
@@ -104,7 +111,7 @@
 			</snapshots>
 			<url>http://edoweb.github.com/releases</url>
 		</repository>
-		
+
 		<repository>
 			<id>edoweb.github.com-snapshots</id>
 			<name>edoweb.github.com-snapshots</name>
@@ -118,16 +125,16 @@
 			</snapshots>
 			<url>http://edoweb.github.com/snapshots</url>
 		</repository>
-		
+
 		<repository>
-		 <id>jboss-nonssl</id>
-      	<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+			<id>jboss-nonssl</id>
+			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
-	
-	
-	
-	
-</repositories>
+
+
+
+
+	</repositories>
 
 	<build>
 		<plugins>
@@ -163,7 +170,11 @@
 		<module>archive</module>
 		<module>pidReporter</module>
 		<module>digitoolDownloader</module>
+		<module>dippDownloader</module>
+		<module>sync</module>
 		<module>edowebSync</module>
+		<module>ellinetSync</module>
+		<module>dippSync</module>
 		<module>edoweb2-api</module>
 		<module>edowebOAI</module>
 		<!-- <module>integrationTests</module> -->

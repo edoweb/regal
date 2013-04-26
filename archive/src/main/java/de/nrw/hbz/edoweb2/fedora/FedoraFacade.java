@@ -257,6 +257,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			FedoraRequest.setDefaultClient(fedora);
 
 			node.setLabel(fedora.getObjectProfile(pid).execute().getLabel());
+			node.setLastModified(fedora.getLastModifiedDate(pid));
 		}
 		catch (FedoraClientException e)
 		{
@@ -581,6 +582,32 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		String end = " </wsdl:binding>" + "	  </wsdl:definitions>";
 		return start + middle.toString() + end;
+	}
+
+	@Override
+	public void updateContentModel(ContentModel cm)
+	{
+		deleteNode(cm.getContentModelPID());
+		deleteNode(cm.getServiceDefinitionPID());
+		deleteNode(cm.getServiceDeploymentPID());
+		try
+		{
+			createContentModel(cm);
+		}
+		catch (RemoteException e)
+		{
+			throw new ArchiveException(
+					"Problem during update of ContentModel: "
+							+ cm.getContentModelPID(), e);
+		}
+		catch (IOException e)
+		{
+			throw new ArchiveException(
+					"Problem during update of ContentModel: "
+							+ cm.getContentModelPID(), e);
+
+		}
+
 	}
 
 	private void createRelsExt(Node node)

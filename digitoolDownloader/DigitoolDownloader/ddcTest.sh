@@ -3,7 +3,7 @@ downloadDir=$1;
 
 for i in `ls $downloadDir`
 do 
-file=$downloadDir/${i}/${i}_DC.xml; 
+file=$downloadDir/${i}/.${i}_DC.xml; 
 htnummer=`grep -o "dc:alephsyncid>HT[^<]*" $file|sed s"/.*\(HT.*\)/\1/"`; 
 type=`grep -o "<dc:subject xsi:type=\"dcterms:DDC\">\([^<]*\)" $file|sed s"/.*>\(.*\)/\1/"`; 
 pid=`echo $i|grep -o "[0-9]*"`; 

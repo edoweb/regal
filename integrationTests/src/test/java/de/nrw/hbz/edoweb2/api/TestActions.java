@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,5 +42,18 @@ public class TestActions
 			System.out.println(result);
 		}
 
+	}
+
+	@Test
+	public void epicur() throws IOException
+	{
+		Actions actions = new Actions();
+		Assert.assertEquals("urn:nbn:de:edoweb-12340",
+				actions.generateUrn("1234"));
+		Assert.assertEquals("urn:nbn:de:edoweb-12357",
+				actions.generateUrn("1235"));
+		Assert.assertEquals("urn:nbn:de:edoweb-123476",
+				actions.generateUrn("12347"));
+		System.out.println(actions.epicur("1234"));
 	}
 }

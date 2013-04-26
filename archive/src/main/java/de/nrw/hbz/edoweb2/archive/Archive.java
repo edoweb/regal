@@ -28,6 +28,7 @@ import java.util.Vector;
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObjectNode;
+import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
@@ -467,6 +468,13 @@ class Archive implements ArchiveInterface
 
 		return fedoraInterface.removeUriPrefix(pred);
 	}
+
+	@Override
+	public void updateContentModel(ContentModel createEdowebMonographModel)
+	{
+		fedoraInterface.updateContentModel(createEdowebMonographModel);
+	}
+
 	/*
 	 * #How is the #earth so #small. #elliptic #rider, #spaceegg, #transport of
 	 * my #soul. #ahouuuuu

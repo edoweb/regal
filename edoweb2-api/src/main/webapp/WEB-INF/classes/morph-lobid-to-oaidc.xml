@@ -5,7 +5,7 @@
 
 		<!-- DC to DC -->
 		<data source="*.http://purl.org/dc/elements/1.1/contributor"
-			name="dc:contributer">
+			name="dc:contributor">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<data source="*.http://purl.org/dc/elements/1.1/coverage" name="dc:coverage">
@@ -76,7 +76,7 @@
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<data source="*.http://iflastandards.info/ns/isbd/elements/P1006"
-			name="decription">
+			name="dc:description">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<!-- foaf to dc -->

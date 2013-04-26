@@ -19,6 +19,7 @@ package de.nrw.hbz.edoweb2.fedora;
 import java.io.InputStream;
 import java.util.List;
 
+import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 
 /**
@@ -181,5 +182,13 @@ public interface FedoraInterface
 	 * @return , e.g info:fedora.
 	 */
 	public String removeUriPrefix(String pred);
+
+	/**
+	 * Updates the ContentModel object
+	 * 
+	 * @param cm
+	 *            A ContentModel
+	 */
+	public void updateContentModel(ContentModel cm);
 
 }

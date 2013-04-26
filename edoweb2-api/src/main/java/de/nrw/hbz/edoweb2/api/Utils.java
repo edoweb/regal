@@ -25,10 +25,21 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
+import de.nrw.hbz.edoweb2.datatypes.Node;
 
+/**
+ * @author Jan Schnasse schnasse@hbz-nrw.de
+ * 
+ */
 @Path("/utils")
 public class Utils
 {
@@ -194,6 +205,95 @@ public class Utils
 		try
 		{
 			return actions.oaidc(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	@GET
+	@Path("/epicur/{pid}")
+	@Produces({ "application/json", "application/xml" })
+	public String epicur(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.epicur(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	@GET
+	@Path("/pdfbox/{pid}")
+	@Produces({ "text/plain" })
+	public Response pdfbox(@PathParam("pid") String pid,
+			@Context Request request)
+	{
+		try
+		{
+			Node node = actions.readNode(pid);
+
+			final EntityTag eTag = new EntityTag(node.getPID() + "_"
+					+ node.getLastModified().getTime());
+
+			final CacheControl cacheControl = new CacheControl();
+			cacheControl.setMaxAge(-1);
+
+			ResponseBuilder builder = request.evaluatePreconditions(
+					node.getLastModified(), eTag);
+
+			// the user's information was modified, return it
+			if (builder == null)
+			{
+				builder = Response.ok(actions.pdfbox(node));
+			}
+
+			// the user's information was not modified, return a 304
+			return builder.cacheControl(cacheControl)
+					.lastModified(node.getLastModified()).tag(eTag).build();
+
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	@GET
+	@Path("/itext/{pid}")
+	@Produces({ "text/plain" })
+	public String itext(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.itext(pid);
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	@POST
+	@Path("/contentModels/{namespace}/init")
+	@Produces({ "text/plain" })
+	public String contentModelsInit(@PathParam("namespace") String namespace)
+	{
+		try
+		{
+			return actions.contentModelsInit(namespace);
 		}
 		catch (ArchiveException e)
 		{

@@ -41,6 +41,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public class Resources
 
 	final static Logger logger = LoggerFactory.getLogger(Resources.class);
 
-	String namespace = "edoweb";
+	// String namespace = "edoweb";
 
 	Actions actions = null;
 
@@ -129,9 +130,13 @@ public class Resources
 	@GET
 	@Path("/{pid}/about")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public View getView(@PathParam("pid") String pid)
+	public Response about(@PathParam("pid") String pid)
 	{
-		return actions.getView(pid);
+		View view = actions.getView(pid);
+		ResponseBuilder res = Response.ok()
+				.lastModified(view.getLastModified()).entity(view);
+
+		return res.build();
 	}
 
 	/**
@@ -141,29 +146,15 @@ public class Resources
 	 * @throws URISyntaxException
 	 */
 	@GET
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid)
-			throws URISyntaxException
+	public Response get(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + pid + "/about"))
-				.status(303).build();
-	}
-
-	/**
-	 * @param pid
-	 *            the pid of a resource containing multiple volumes
-	 * @return all volumes of the resource
-	 */
-	@GET
-	@Path("/{pid}/volume/")
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVolumes(@PathParam("pid") String pid)
-	{
-
-		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
+						new java.net.URI("/resources/" + namespace + ":" + pid
+								+ "/about")).status(303).build();
 	}
 
 	/**
@@ -220,28 +211,6 @@ public class Resources
 	}
 
 	/**
-	 * @param pid
-	 *            the pid of the resource containing versions
-	 * @return a list with pids of each version
-	 */
-	@GET
-	@Path("/{pid}/version/")
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVersions(@PathParam("pid") String pid)
-	{
-		try
-		{
-			return new ObjectList(actions.findObject(pid, HAS_VERSION));
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
-	/**
 	 * @param type
 	 *            the type of the resources that must be returned
 	 * @return a list of pids
@@ -277,11 +246,11 @@ public class Resources
 	 *         400 if not
 	 */
 	@PUT
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	@Consumes("application/json")
-	public String createResource(@PathParam("pid") String pid,
-			CreateObjectBean input)
+	@Consumes({ "application/json", "application/xml" })
+	public String create(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace, CreateObjectBean input)
 	{
 		if (input == null)
 		{
@@ -294,19 +263,43 @@ public class Resources
 					"The type you've provided is NULL or empty.");
 		}
 		if (input.type.compareTo(ObjectType.monograph.toString()) == 0)
-			return createMonograph(pid);
+			return createMonograph(pid, namespace);
 		else if (input.type.compareTo(ObjectType.ejournal.toString()) == 0)
-			return createEJournal(pid);
+			return createEJournal(pid, namespace);
 		else if (input.type.compareTo(ObjectType.webpage.toString()) == 0)
-			return createWebpage(pid);
+			return createWebpage(pid, namespace);
 		else if (input.type.compareTo(ObjectType.webpageVersion.toString()) == 0)
-			return createWebpageVersion(input.parentPid, pid);
+			return createWebpageVersion(input.parentPid, pid, namespace);
 		else if (input.type.compareTo(ObjectType.ejournalVolume.toString()) == 0)
-			return createEJournalVolume(input.parentPid, pid);
+			return createEJournalVolume(input.parentPid, pid, namespace);
 
-		throw new HttpArchiveException(Status.BAD_REQUEST.getStatusCode(),
-				"The type you've provided " + input.type
-						+ " does not exist or hasn't yet been implemented.");
+		else
+			return createResource(input, pid, namespace);
+
+	}
+
+	/**
+	 * Creates a new Resource. The Resource has a certain type an can be
+	 * connected to a parent resource.
+	 * 
+	 * @param pid
+	 *            the pid of the new resource
+	 * @param input
+	 *            a json string of the form { "type" :
+	 *            "<monograph | ejournal | webpage | webpageVersion | ejournalVolume | monographPart >"
+	 *            , "parentPid" : "uuid" }
+	 * @return a human readable message and a status code 200 if successful or a
+	 *         400 if not
+	 */
+	@POST
+	@Path("/{namespace}:{pid}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public String createPost(@PathParam("pid") String pid,
+			@PathParam("namepsace") String namespace,
+			final CreateObjectBean input)
+	{
+		return create(pid, namespace, input);
 	}
 
 	/**
@@ -322,8 +315,7 @@ public class Resources
 	@Path("/{pid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
-	public String updateResourceData(@PathParam("pid") String pid,
-			MultiPart multiPart)
+	public String updateData(@PathParam("pid") String pid, MultiPart multiPart)
 	{
 
 		try
@@ -349,6 +341,27 @@ public class Resources
 
 	/**
 	 * @param pid
+	 *            the pid of the resource
+	 * @param multiPart
+	 *            The data is transfered as multipart data in order to provide
+	 *            upload of large files
+	 * @return A human readable message and a status code of 200 if successful
+	 *         an of 500 if not.
+	 */
+	@POST
+	@Path("/{pid}/data")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes("multipart/mixed")
+	public String updateDataPost(@PathParam("pid") String pid,
+			MultiPart multiPart)
+	{
+
+		return updateData(pid, multiPart);
+
+	}
+
+	/**
+	 * @param pid
 	 *            The pid of the resource
 	 * @param content
 	 *            the metadata as n-triple rdf
@@ -359,8 +372,7 @@ public class Resources
 	@Path("/{pid}/metadata")
 	@Consumes({ "text/plain" })
 	@Produces({ "text/plain" })
-	public String updateResourceMetadata(@PathParam("pid") String pid,
-			String content)
+	public String updateMetadata(@PathParam("pid") String pid, String content)
 	{
 		try
 		{
@@ -380,13 +392,29 @@ public class Resources
 		}
 	}
 
-	@Deprecated
+	/**
+	 * @param pid
+	 *            The pid of the resource
+	 * @param content
+	 *            the metadata as n-triple rdf
+	 * @return a human readable message and a status code of 200 if successful
+	 *         and 500 if not.
+	 */
+	@POST
+	@Path("/{pid}/metadata")
+	@Consumes({ "text/plain" })
+	@Produces({ "text/plain" })
+	public String updateMetadataPost(@PathParam("pid") String pid,
+			String content)
+	{
+		return updateMetadata(pid, content);
+	}
+
 	@PUT
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateResourceDC(@PathParam("pid") String pid,
-			DCBeanAnnotated content)
+	public String updateDC(@PathParam("pid") String pid, DCBeanAnnotated content)
 	{
 		try
 		{
@@ -400,76 +428,13 @@ public class Resources
 		}
 	}
 
-	/**
-	 * Creates a new Resource. The Resource has a certain type an can be
-	 * connected to a parent resource.
-	 * 
-	 * @param pid
-	 *            the pid of the new resource
-	 * @param input
-	 *            a json string of the form { "type" :
-	 *            "<monograph | ejournal | webpage | webpageVersion | ejournalVolume | monographPart >"
-	 *            , "parentPid" : "uuid" }
-	 * @return a human readable message and a status code 200 if successful or a
-	 *         400 if not
-	 */
-	@POST
-	@Path("/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes("application/json")
-	public String createResourcePost(@PathParam("pid") String pid,
-			final CreateObjectBean input)
-	{
-		return createResource(pid, input);
-	}
-
-	/**
-	 * @param pid
-	 *            the pid of the resource
-	 * @param multiPart
-	 *            The data is transfered as multipart data in order to provide
-	 *            upload of large files
-	 * @return A human readable message and a status code of 200 if successful
-	 *         an of 500 if not.
-	 */
-	@POST
-	@Path("/{pid}/data")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes("multipart/mixed")
-	public String updateResourceDataPost(@PathParam("pid") String pid,
-			MultiPart multiPart)
-	{
-
-		return updateResourceData(pid, multiPart);
-
-	}
-
-	/**
-	 * @param pid
-	 *            The pid of the resource
-	 * @param content
-	 *            the metadata as n-triple rdf
-	 * @return a human readable message and a status code of 200 if successful
-	 *         and 500 if not.
-	 */
-	@POST
-	@Path("/{pid}/metadata")
-	@Consumes({ "text/plain" })
-	@Produces({ "text/plain" })
-	public String updateResourceMetadataPost(@PathParam("pid") String pid,
-			String content)
-	{
-		return updateResourceMetadata(pid, content);
-	}
-
-	@Deprecated
 	@POST
 	@Path("/{pid}/dc")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public String updateResourceDCPost(String pid, DCBeanAnnotated content)
+	public String updateDCPost(String pid, DCBeanAnnotated content)
 	{
-		return updateResourceDC(pid, content);
+		return updateDC(pid, content);
 	}
 
 	/**
@@ -479,13 +444,14 @@ public class Resources
 	 *         or a 500 if not.
 	 */
 	@DELETE
-	@Path("/{pid}")
+	@Path("/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteResource(@PathParam("pid") String pid)
+	public String delete(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		try
 		{
-			return actions.delete(pid, false);
+			return actions.delete(namespace + ":" + pid, false);
 
 		}
 		catch (ArchiveException e)
@@ -505,7 +471,7 @@ public class Resources
 	@DELETE
 	@Path("/{pid}/data")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteResourceData(@PathParam("pid") String pid)
+	public String deleteData(@PathParam("pid") String pid)
 	{
 		try
 		{
@@ -529,7 +495,7 @@ public class Resources
 	@DELETE
 	@Path("/{pid}/metadata")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteResourceMetadata(@PathParam("pid") String pid)
+	public String deleteMetadata(@PathParam("pid") String pid)
 	{
 		try
 		{
@@ -554,13 +520,11 @@ public class Resources
 	@DELETE
 	@Path("/type/{type}")
 	@Produces({ "application/json", "application/xml" })
-	public String deleteResourceOfType(@PathParam("type") String type)
+	public String deleteAllOfType(@PathParam("type") String type)
 	{
 		try
 		{
-			return actions.deleteAll(
-					actions.findByType(TypeType.contentType.toString() + ":"
-							+ type), false);
+			return actions.deleteAll(actions.findByType(type), false);
 		}
 		catch (ArchiveException e)
 		{
@@ -570,12 +534,128 @@ public class Resources
 		}
 	}
 
-	private String createWebpage(String pid)
+	/**
+	 * @param pid
+	 *            the pid of a resource containing multiple volumes
+	 * @return all volumes of the resource
+	 */
+	@GET
+	@Path("/{pid}/parts/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllParts(@PathParam("pid") String pid)
+	{
+
+		return new ObjectList(actions.findObject(pid, REL_IS_RELATED));
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of a resource containing multiple volumes
+	 * @return all volumes of the resource
+	 */
+	@GET
+	@Path("/{pid}/parents/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllParents(@PathParam("pid") String pid)
+	{
+
+		return new ObjectList(actions.findObject(pid, REL_BELONGS_TO_OBJECT));
+	}
+
+	private String createResource(CreateObjectBean input, String p,
+			String namespace)
+	{
+		logger.info("create " + input.type);
+		String pid = namespace + ":" + p;
+		try
+		{
+			if (actions.nodeExists(pid))
+			{
+				throw new HttpArchiveException(
+						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+						"Node already exists. I do nothing!");
+			}
+			Node rootObject = new Node();
+			rootObject.setNodeType(TYPE_OBJECT);
+			Link link = new Link();
+			link.setPredicate(REL_IS_NODE_TYPE);
+			link.setObject(TYPE_OBJECT, false);
+			rootObject.addRelation(link);
+			rootObject.setNamespace(namespace).setPID(pid);
+			rootObject.setContentType(input.getType());
+			rootObject.addContentModel(ContentModelFactory
+					.createHeadModel(namespace));
+			if (input.getParentPid() != null && !input.getParentPid().isEmpty())
+			{
+				String parentPid = input.getParentPid();
+				link = new Link();
+				link.setPredicate(REL_BELONGS_TO_OBJECT);
+				link.setObject(parentPid, false);
+				rootObject.addRelation(link);
+
+				link = new Link();
+				link.setPredicate(REL_IS_RELATED);
+				link.setObject(pid, false);
+				actions.addLink(parentPid, link);
+			}
+
+			ComplexObject object = new ComplexObject(rootObject);
+			return actions.create(object, true);
+
+		}
+		catch (ArchiveException e)
+		{
+			e.printStackTrace();
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	// --SPECIAL---
+
+	/**
+	 * @param pid
+	 *            the pid of a resource containing multiple volumes
+	 * @return all volumes of the resource
+	 */
+	@GET
+	@Path("/{pid}/volume/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllVolumes(@PathParam("pid") String pid)
+	{
+
+		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource containing versions
+	 * @return a list with pids of each version
+	 */
+	@GET
+	@Path("/{pid}/version/")
+	@Produces({ "application/json", "application/xml" })
+	public ObjectList getAllVersions(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return new ObjectList(actions.findObject(pid, HAS_VERSION));
+		}
+		catch (ArchiveException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+	}
+
+	private String createWebpage(String p, String namespace)
 	{
 		try
 		{
 			logger.info("create Webpage");
-
+			String pid = namespace + ":" + p;
 			if (actions.nodeExists(pid))
 			{
 				throw new HttpArchiveException(
@@ -590,8 +670,10 @@ public class Resources
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.webpage.toString());
-			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.webpage));
+			rootObject.addContentModel(ContentModelFactory
+					.createWebpageModel(namespace));
+			rootObject.addContentModel(ContentModelFactory
+					.createHeadModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -605,9 +687,10 @@ public class Resources
 		}
 	}
 
-	private String createMonograph(String pid)
+	private String createMonograph(String p, String namespace)
 	{
 		logger.info("create Monograph");
+		String pid = namespace + ":" + p;
 		try
 		{
 			if (actions.nodeExists(pid))
@@ -624,8 +707,12 @@ public class Resources
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.monograph.toString());
-			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.monograph));
+			rootObject.addContentModel(ContentModelFactory
+					.createMonographModel(namespace));
+			rootObject.addContentModel(ContentModelFactory
+					.createHeadModel(namespace));
+			rootObject.addContentModel(ContentModelFactory
+					.createPdfModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -639,12 +726,13 @@ public class Resources
 		}
 	}
 
-	private String createEJournal(String pid)
+	private String createEJournal(String p, String namespace)
 	{
+		String pid = namespace + ":" + p;
 		logger.info("create EJournal");
 		try
 		{
-			if (actions.nodeExists(namespace + ":" + pid))
+			if (actions.nodeExists(pid))
 			{
 				throw new HttpArchiveException(
 						Status.INTERNAL_SERVER_ERROR.getStatusCode(), namespace
@@ -658,10 +746,12 @@ public class Resources
 			link.setPredicate(REL_IS_NODE_TYPE);
 			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
-			rootObject.setNamespace(namespace).setPID(namespace + ":" + pid);
+			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.ejournal.toString());
-			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.ejournal));
+			rootObject.addContentModel(ContentModelFactory
+					.createEJournalModel(namespace));
+			rootObject.addContentModel(ContentModelFactory
+					.createHeadModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
 			return actions.create(object, true);
@@ -675,8 +765,10 @@ public class Resources
 		}
 	}
 
-	private String createWebpageVersion(String parentPid, String versionPid)
+	private String createWebpageVersion(String parentPid, String p,
+			String namespace)
 	{
+		String versionPid = namespace + ":" + p;
 		try
 		{
 			logger.info("create Webpage Version");
@@ -705,8 +797,8 @@ public class Resources
 
 			rootObject.setNamespace(namespace).setPID(versionPid);
 			rootObject.setContentType(ObjectType.webpageVersion.toString());
-			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.webpageVersion));
+			rootObject.addContentModel(ContentModelFactory
+					.createVersionModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
 
@@ -733,9 +825,11 @@ public class Resources
 		}
 	}
 
-	private String createEJournalVolume(String parentPid, String volumePid)
+	private String createEJournalVolume(String parentPid, String p,
+			String namespace)
 	{
 
+		String volumePid = namespace + ":" + p;
 		logger.info("create EJournal Volume");
 		try
 		{
@@ -763,8 +857,10 @@ public class Resources
 
 			rootObject.setNamespace(namespace).setPID(volumePid);
 			rootObject.setContentType(ObjectType.ejournalVolume.toString());
-			rootObject.addContentModel(ContentModelFactory.create(namespace,
-					ObjectType.ejournalVolume));
+			rootObject.addContentModel(ContentModelFactory
+					.createVolumeModel(namespace));
+			rootObject.addContentModel(ContentModelFactory
+					.createPdfModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
 
@@ -789,4 +885,5 @@ public class Resources
 		}
 
 	}
+
 }

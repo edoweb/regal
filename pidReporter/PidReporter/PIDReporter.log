@@ -312,3 +312,9 @@ INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:O
 INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-25T10:37:26Z !
 INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Found 95 pids !
 INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber - Start harvesting http://www.dipp.nrw.de/repository/ !
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber - Set spec is pub-type:journal !
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber - Harvest Date 2013-04-25T08:45:40Z !
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber - Found 9 pids !
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !

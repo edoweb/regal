@@ -5,5 +5,11 @@
       <url>http://repository.jboss.org/nexus/content/groups/public/</url>
       <mirrorOf>jboss</mirrorOf>
       </mirror>
+    <mirror>
+      <id>aduna-to-central</id>
+      <url>http://maven.ontotext.com/content/repositories/aduna/</url>
+      <mirrorOf>aduna</mirrorOf>
+      </mirror>
+
     </mirrors>
 </settings>

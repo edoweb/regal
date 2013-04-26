@@ -16,38 +16,14 @@
  */
 package de.nrw.hbz.edoweb2.sync.ingest;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.StringWriter;
 import java.util.Vector;
-
-import javax.ws.rs.core.MediaType;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
-import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
-import com.sun.jersey.multipart.BodyPart;
-import com.sun.jersey.multipart.MultiPart;
-import com.sun.jersey.multipart.file.StreamDataBodyPart;
-import com.sun.jersey.multipart.impl.MultiPartWriter;
-
-import de.nrw.hbz.edoweb2.api.DCBeanAnnotated;
 import de.nrw.hbz.edoweb2.api.ObjectType;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
-import de.nrw.hbz.edoweb2.sync.mapper.ControlBean;
-import de.nrw.hbz.edoweb2.sync.mapper.DCBean;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -59,10 +35,8 @@ public class EdowebIngester implements IngestInterface
 
 	final static String namespace = "edoweb";
 
-	String user = null;
-	String password = null;
+	Webclient webclient = null;
 	String host = null;
-	Client webclient = null;
 
 	/**
 	 * @param usr
@@ -74,18 +48,8 @@ public class EdowebIngester implements IngestInterface
 	 */
 	public EdowebIngester(String usr, String pwd, String host)
 	{
-		user = usr;
-		password = pwd;
 		this.host = host;
-		ClientConfig cc = new DefaultClientConfig();
-		cc.getClasses().add(MultiPartWriter.class);
-		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-		cc.getProperties().put(
-				DefaultApacheHttpClientConfig.PROPERTY_CHUNKED_ENCODING_SIZE,
-				1024);
-		webclient = Client.create(cc);
-		webclient.addFilter(new HTTPBasicAuthFilter(user, password));
+		webclient = new Webclient(namespace, usr, pwd, host);
 	}
 
 	@Override
@@ -260,18 +224,7 @@ public class EdowebIngester implements IngestInterface
 	@Override
 	public void delete(String p)
 	{
-		String pid = namespace + ":" + p;
-
-		WebResource delete = webclient.resource(host
-				+ ":8080/edoweb2-api/utils/delete/" + pid);
-		try
-		{
-			delete.delete();
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.info(pid + " Can't delete!");
-		}
+		webclient.delete(p);
 
 	}
 
@@ -281,7 +234,7 @@ public class EdowebIngester implements IngestInterface
 		logger.info(pid + " " + "Found eJournal volume.");
 		String resource = host + ":8080/edoweb2-api/ejournal/" + namespace
 				+ ":" + dtlBean.getParentPid() + "/volume/" + pid;
-		createObject(resource, dtlBean, "application/pdf",
+		webclient.createObject(dtlBean, "application/pdf",
 				ObjectType.ejournalVolume);
 		logger.info(pid + " " + "updated.\n");
 	}
@@ -292,7 +245,7 @@ public class EdowebIngester implements IngestInterface
 		logger.info(pid + " Found webpage version.");
 		String resource = host + ":8080/edoweb2-api/webpage/" + namespace + ":"
 				+ dtlBean.getParentPid() + "/version/" + pid;
-		createObject(resource, dtlBean, "application/zip",
+		webclient.createObject(dtlBean, "application/zip",
 				ObjectType.webpageVersion);
 		logger.info(pid + " " + "updated.\n");
 	}
@@ -302,9 +255,10 @@ public class EdowebIngester implements IngestInterface
 
 		String pid = namespace + ":" + dtlBean.getPid();
 		logger.info(pid + " Found monograph.");
-		String resource = host + ":8080/edoweb2-api/monograph/" + pid;
-		createObject(resource, dtlBean, "application/pdf", ObjectType.monograph);
-		metadata(resource, dtlBean, ObjectType.monograph);
+
+		webclient
+				.createObject(dtlBean, "application/pdf", ObjectType.monograph);
+		webclient.metadata(dtlBean);
 		logger.info(pid + " " + "updated.\n");
 	}
 
@@ -314,9 +268,9 @@ public class EdowebIngester implements IngestInterface
 		try
 		{
 			logger.info(pid + " Found ejournal.");
-			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
-			createResource(ejournal, dtlBean);
-			metadata(ejournal, dtlBean, ObjectType.ejournal);
+
+			webclient.createResource(ObjectType.ejournal, dtlBean);
+			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
 			logger.info(pid + " " + "Found " + numOfVols + " volumes.");
@@ -337,8 +291,8 @@ public class EdowebIngester implements IngestInterface
 		{
 			logger.info(pid + " Found webpage.");
 			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
-			createResource(webpage, dtlBean);
-			metadata(webpage, dtlBean, ObjectType.webpage);
+			webclient.createResource(ObjectType.webpage, dtlBean);
+			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
 			logger.info(pid + " " + "Found " + numOfVersions + " versions.");
@@ -358,16 +312,15 @@ public class EdowebIngester implements IngestInterface
 		try
 		{
 			logger.info(pid + " Found webpage.");
-			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
-			createResource(webpage, dtlBean);
-			metadata(webpage, dtlBean, ObjectType.webpage);
+			webclient.createResource(ObjectType.webpage, dtlBean);
+			webclient.metadata(dtlBean);
 			for (DigitalEntity b : dtlBean.getArchiveLinks())
 			{
 				String versionPid = namespace + ":" + b.getPid();
 				if (b.getStreamMime().compareTo("application/zip") == 0)
 				{
-					createObject(webpage + "/version/" + versionPid, b,
-							"application/zip", ObjectType.webpageVersion);
+					webclient.createObject(b, "application/zip",
+							ObjectType.webpageVersion);
 					break;
 				}
 			}
@@ -386,9 +339,9 @@ public class EdowebIngester implements IngestInterface
 		try
 		{
 			logger.info(pid + " Found ejournal.");
-			String ejournal = host + ":8080/edoweb2-api/ejournal/" + pid;
-			createResource(ejournal, dtlBean);
-			metadata(ejournal, dtlBean, ObjectType.ejournal);
+
+			webclient.createResource(ObjectType.ejournal, dtlBean);
+			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
 			int count = 1;
@@ -412,9 +365,9 @@ public class EdowebIngester implements IngestInterface
 		try
 		{
 			logger.info(pid + " Found webpage.");
-			String webpage = host + ":8080/edoweb2-api/webpage/" + pid;
-			createResource(webpage, dtlBean);
-			metadata(webpage, dtlBean, ObjectType.webpage);
+
+			webclient.createResource(ObjectType.webpage, dtlBean);
+			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVersions = viewLinks.size();
 			logger.info(pid + " Found " + numOfVersions + " versions.");
@@ -433,253 +386,4 @@ public class EdowebIngester implements IngestInterface
 
 	}
 
-	private void metadata(String resource, DigitalEntity dtlBean,
-			ObjectType type)
-	{
-		try
-		{
-			updateDC(resource + "/dc", dtlBean, type);
-		}
-		catch (Exception e)
-		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
-		}
-		try
-		{
-			lobidify(dtlBean);
-		}
-		catch (Exception e)
-		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
-		}
-		try
-		{
-			index(dtlBean);
-		}
-		catch (Exception e)
-		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
-		}
-		try
-		{
-			oaiProvide(dtlBean);
-		}
-		catch (Exception e)
-		{
-			logger.error(dtlBean.getPid() + " " + e.getMessage());
-		}
-
-	}
-
-	private void createObject(String resource, DigitalEntity dtlBean,
-			String expectedMime, ObjectType type)
-	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		String data = resource + "/data";
-
-		createResource(resource, dtlBean);
-
-		if (dtlBean.getStreamMime().compareTo(expectedMime) != 0)
-		{
-			DigitalEntity fulltextObject = null;
-			for (DigitalEntity view : dtlBean.getViewMainLinks())
-			{
-				if (view.getStreamMime().compareTo(expectedMime) == 0)
-				{
-					fulltextObject = view;
-					break;
-				}
-			}
-			if (fulltextObject != null)
-			{
-				updateData(data, fulltextObject);
-			}
-			else
-			{
-				logger.warn(pid + " found no valid data.");
-			}
-		}
-		else
-		{
-			updateData(data, dtlBean);
-		}
-		updateLabel(resource, dtlBean, type);
-	}
-
-	private void createResource(String endpoint, DigitalEntity dtlBean)
-	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		WebResource resource = webclient.resource(endpoint);
-		try
-		{
-			resource.put(String.class);
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.info(pid + " already exists - will be updated!");
-		}
-	}
-
-	private void updateDC(String endpoint, DigitalEntity dtlBean,
-			ObjectType type)
-	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		WebResource webpageDC = webclient.resource(endpoint);
-
-		DCBeanAnnotated dc = new DCBeanAnnotated();
-
-		try
-		{
-			dc.add(marc2dc(dtlBean));
-			dc.addDescription(dtlBean.getLabel());
-			// dc.addType(TypeType.contentType + ":" + type);
-			webpageDC.post(dc);
-
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.info(pid + " " + e.getMessage());
-		}
-		catch (Exception e)
-		{
-			logger.debug(pid + " " + e.getMessage());
-		}
-	}
-
-	private void updateLabel(String endpoint, DigitalEntity dtlBean,
-			ObjectType type)
-	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		WebResource webpageDC = webclient.resource(endpoint + "/dc");
-
-		DCBeanAnnotated dc = new DCBeanAnnotated();
-
-		try
-		{
-			dc.addTitle("Version of: " + pid);
-			dc.addDescription(dtlBean.getLabel());
-			webpageDC.post(dc);
-
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.info(pid + " " + e.getMessage());
-		}
-		catch (Exception e)
-		{
-			logger.debug(pid + " " + e.getMessage());
-		}
-	}
-
-	private void updateData(String endpoint, DigitalEntity dtlBean)
-	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		WebResource data = webclient.resource(endpoint);
-
-		try
-		{
-			logger.info(pid + " Updata data: " + dtlBean.getStreamMime());
-			MultiPart multiPart = new MultiPart();
-			multiPart.bodyPart(new StreamDataBodyPart("InputStream",
-					new FileInputStream(dtlBean.getStream()), dtlBean
-							.getStream().getName()));
-			multiPart.bodyPart(new BodyPart(dtlBean.getStreamMime(),
-					MediaType.TEXT_PLAIN_TYPE));
-			data.type("multipart/mixed").post(multiPart);
-
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.error(pid + " " + e.getMessage());
-		}
-		catch (FileNotFoundException e)
-		{
-			logger.error(pid + " " + "FileNotFound "
-					+ dtlBean.getStream().getAbsolutePath());
-		}
-		catch (Exception e)
-		{
-			logger.error(pid + " " + e.getMessage());
-		}
-
-	}
-
-	private void lobidify(DigitalEntity dtlBean)
-	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		WebResource lobid = webclient.resource(host
-				+ ":8080/edoweb2-api/utils/lobidify/" + namespace + ":"
-				+ dtlBean.getPid());
-		try
-
-		{
-			lobid.type("text/plain").post();
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.warn(pid + " fetching lobid-data failed");
-		}
-	}
-
-	private void index(DigitalEntity dtlBean)
-	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		try
-		{
-
-			WebResource index = webclient.resource(host
-					+ ":8080/edoweb2-api/utils/index/" + pid);
-			index.post();
-			logger.info(pid + ": got indexed!");
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.warn(pid + " " + "Not indexed! "
-					+ e.getResponse().getEntity(String.class));
-		}
-		catch (Exception e)
-		{
-			logger.warn(pid + " " + "Not indexed! " + e.getMessage());
-		}
-	}
-
-	private void oaiProvide(DigitalEntity dtlBean)
-	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		WebResource oaiSet = webclient.resource(host
-				+ ":8080/edoweb2-api/utils/makeOaiSet/" + namespace + ":"
-				+ dtlBean.getPid());
-		try
-		{
-			oaiSet.post();
-		}
-		catch (UniformInterfaceException e)
-		{
-			logger.warn(pid + " " + "Not oai provided! " + e.getMessage());
-		}
-	}
-
-	private DCBeanAnnotated marc2dc(DigitalEntity dtlBean)
-	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		try
-		{
-			StringWriter str = new StringWriter();
-			TransformerFactory tFactory = TransformerFactory.newInstance();
-			Transformer transformer = tFactory
-					.newTransformer(new StreamSource(ClassLoader
-							.getSystemResourceAsStream("MARC21slim2OAIDC.xsl")));
-			transformer.transform(new StreamSource(dtlBean.getMarcFile()),
-					new StreamResult(str));
-			String xmlStr = str.getBuffer().toString();
-			DCBeanAnnotated dc = new DCBeanAnnotated(new DCBean(xmlStr));
-			return dc;
-
-		}
-		catch (Throwable t)
-		{
-			logger.warn(pid + " " + t.getCause().getMessage());
-		}
-		return null;
-	}
 }

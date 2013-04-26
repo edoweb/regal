@@ -21,6 +21,7 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_NODE;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -59,6 +60,7 @@ public class Node
 	private String mimeType = null;
 	private String namespace = null;
 	private String contentType = null;
+	private Date lastModified = null;
 	DCBean bean = new DCBean();
 
 	public Node()
@@ -718,5 +720,15 @@ public class Node
 	public String getContentType()
 	{
 		return contentType;
+	}
+
+	public Date getLastModified()
+	{
+		return lastModified;
+	}
+
+	public void setLastModified(Date lastModified)
+	{
+		this.lastModified = lastModified;
 	}
 }

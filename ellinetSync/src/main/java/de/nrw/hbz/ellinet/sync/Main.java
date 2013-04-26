@@ -35,8 +35,9 @@ import de.nrw.hbz.edoweb2.digitool.pidreporter.PIDReporter;
 import de.nrw.hbz.edoweb2.sync.DigitoolDownloadConfiguration;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBuilder;
-import de.nrw.hbz.edoweb2.sync.ingest.EdowebIngester;
+import de.nrw.hbz.edoweb2.sync.extern.DigitoolDigitalEntityBuilder;
 import de.nrw.hbz.edoweb2.sync.ingest.IngestInterface;
+import de.nrw.hbz.ellinet.sync.ingest.EllinetIngester;
 
 /**
  * Class Main
@@ -176,7 +177,7 @@ public class Main
 		harvester = new PIDReporter(oaiServer, timestampFile);
 		downloader = new DigitoolDownloader(server, downloadLocation);
 
-		ingester = new EdowebIngester(user, password, host);
+		ingester = new EllinetIngester(user, password, host);
 
 		if (mode.compareTo("INIT") == 0)
 		{
@@ -264,7 +265,7 @@ public class Main
 
 		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
 		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-		DigitalEntityBuilder builder = new DigitalEntityBuilder();
+		DigitalEntityBuilder builder = new DigitoolDigitalEntityBuilder();
 
 		int size = pids.size();
 		for (int i = 0; i < size; i++)
@@ -279,8 +280,7 @@ public class Main
 				if (!downloader.hasUpdated())
 				{
 					logger.info("New Files Available: Start Ingest!");
-					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
-							pids.get(i));
+					DigitalEntity dtlBean = builder.build(baseDir, pids.get(i));
 
 					ingester.ingest(dtlBean);
 					dtlBean = null;
@@ -288,8 +288,7 @@ public class Main
 				else if (downloader.hasUpdated())
 				{
 					logger.info("Update Files!");
-					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
-							pids.get(i));
+					DigitalEntity dtlBean = builder.build(baseDir, pids.get(i));
 					ingester.ingest(dtlBean);
 					dtlBean = null;
 				}
@@ -319,7 +318,7 @@ public class Main
 		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
 		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
-		DigitalEntityBuilder builder = new DigitalEntityBuilder();
+		DigitoolDigitalEntityBuilder builder = new DigitoolDigitalEntityBuilder();
 
 		int size = pids.size();
 		for (int i = 0; i < size; i++)
@@ -334,8 +333,7 @@ public class Main
 				if (!downloader.hasUpdated())
 				{
 					logger.info("New Files Available: Start Ingest!");
-					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
-							pids.get(i));
+					DigitalEntity dtlBean = builder.build(baseDir, pids.get(i));
 
 					ingester.ingest(dtlBean);
 					dtlBean = null;
@@ -343,8 +341,7 @@ public class Main
 				else if (downloader.hasUpdated())
 				{
 					logger.info("Update Files!");
-					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
-							pids.get(i));
+					DigitalEntity dtlBean = builder.build(baseDir, pids.get(i));
 					ingester.update(dtlBean);
 					dtlBean = null;
 				}
@@ -373,7 +370,7 @@ public class Main
 
 		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
 		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-		DigitalEntityBuilder builder = new DigitalEntityBuilder();
+		DigitoolDigitalEntityBuilder builder = new DigitoolDigitalEntityBuilder();
 		// IngestInterface ingester = new FedoraIngester("ellinet",
 		// fedoraBase, user, password, axisHome);
 
@@ -390,8 +387,7 @@ public class Main
 				if (!downloader.hasUpdated() && downloader.hasDownloaded())
 				{
 					logger.info("New Files Available: Start Ingest!");
-					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
-							pids.get(i));
+					DigitalEntity dtlBean = builder.build(baseDir, pids.get(i));
 
 					ingester.ingest(dtlBean);
 					dtlBean = null;
@@ -423,7 +419,7 @@ public class Main
 		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
 		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
-		DigitalEntityBuilder builder = new DigitalEntityBuilder();
+		DigitoolDigitalEntityBuilder builder = new DigitoolDigitalEntityBuilder();
 		// IngestInterface ingester = new FedoraIngester("ellinet",
 		// fedoraBase, user, password, axisHome);
 		int size = pids.size();
@@ -439,8 +435,7 @@ public class Main
 				if (!downloader.hasUpdated())
 				{
 					logger.info("New Files Available: Start Ingest!");
-					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
-							pids.get(i));
+					DigitalEntity dtlBean = builder.build(baseDir, pids.get(i));
 
 					ingester.ingest(dtlBean);
 					dtlBean = null;
@@ -448,8 +443,7 @@ public class Main
 				else if (downloader.hasUpdated())
 				{
 					logger.info("Update Files!");
-					DigitalEntity dtlBean = builder.buildComplexBean(baseDir,
-							pids.get(i));
+					DigitalEntity dtlBean = builder.build(baseDir, pids.get(i));
 					ingester.ingest(dtlBean);
 					dtlBean = null;
 				}
@@ -472,7 +466,7 @@ public class Main
 		try
 		{
 			pids = readPidlist(pidListFile);
-			DigitalEntityBuilder builder = new DigitalEntityBuilder();
+			DigitoolDigitalEntityBuilder builder = new DigitoolDigitalEntityBuilder();
 			// IngestInterface ingester = new FedoraIngester("ellinet",
 			// fedoraBase, user, password, axisHome);
 			int size = pids.size();
@@ -488,8 +482,8 @@ public class Main
 					if (!downloader.hasUpdated())
 					{
 
-						DigitalEntity dtlBean = builder.buildComplexBean(
-								baseDir, pids.get(i));
+						DigitalEntity dtlBean = builder.build(baseDir,
+								pids.get(i));
 
 						ingester.ingest(dtlBean);
 						dtlBean = null;
@@ -499,8 +493,8 @@ public class Main
 					else if (downloader.hasUpdated())
 					{
 
-						DigitalEntity dtlBean = builder.buildComplexBean(
-								baseDir, pids.get(i));
+						DigitalEntity dtlBean = builder.build(baseDir,
+								pids.get(i));
 						ingester.ingest(dtlBean);
 						dtlBean = null;
 						logger.info((i + 1) + "/" + size + " " + pid

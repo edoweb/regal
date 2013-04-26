@@ -271,7 +271,8 @@ class OaiPidGrabber
 		Vector<String> result = new Vector<String>();
 		int start = 0;
 		// int i = 0;
-		Pattern pattern = Pattern.compile("<identifier>oai:[^:]*:([0-9]*)");
+		Pattern pattern = Pattern
+				.compile("<identifier>oai:[^:]*:([^<]*)</identifier>");
 		Matcher matcher = pattern.matcher(stream);
 		while (matcher.find(start))
 		{

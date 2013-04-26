@@ -17,6 +17,7 @@
 package de.nrw.hbz.edoweb2.api;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -67,6 +68,8 @@ public class View
 	Vector<String> fedoraUrl = null;
 	Vector<String> risearchUrl = null;
 	Vector<String> message = null;
+
+	private Date lastModified = null;
 
 	// Vector<String> htmlUrl = null;
 	// Vector<String> metsUrl = null;
@@ -982,5 +985,15 @@ public class View
 	public void addPredicate(String pred, String object)
 	{
 		predicates.add(new SimpleEntry(pred, object));
+	}
+
+	public void setLastModified(Date lm)
+	{
+		lastModified = lm;
+	}
+
+	public Date getLastModified()
+	{
+		return lastModified;
 	}
 }
