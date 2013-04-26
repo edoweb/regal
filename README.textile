@@ -7,6 +7,53 @@ h1. Releases
 Not released yet! The current status of this project is "in development". 
 Current Version is still SNAPSHOT-0.0.1.
 
+h1. Install
+
+Required: *apache2, maven3, git*!
+
+Download "install.sh":https://github.com/jschnasse/edoweb2/blob/master/ui/helper/install.sh and "variables.sh":https://github.com/jschnasse/edoweb2/blob/master/ui/helper/variables.sh
+
+Edit variables.sh as you need e.g.
+
+bc.. ARCHIVE_HOME=/opt/test
+SERVER=localhost
+ARCHIVE_USER=user
+ARCHIVE_PASSWORD=password
+EMAIL=schnasse@hbz-nrw.de
+
+TOMCAT_PORT=8080
+ELASTICSEARCH_PORT=9200
+
+# Only needed when you want to mirror from a supported system (edoweb|ellinet|dipp)
+PREFIX=edoweb
+DOWNLOAD=http://klio.hbz-nrw.de:1801
+OAI=http://klio.hbz-nrw.de:1801/edowebOAI
+SET=doc-type:report
+
+p. Execute
+
+bc.. mkdir /opt/test
+chmod u+x install.sh
+./install.sh
+
+p. Make html readable for apache user
+
+bc.. chown -R www-data /opt/test/html
+
+p. Link apache to site.conf
+
+bc.. echo "Include /opt/test/conf/site.conf" >> /etc/apache2/apache2.conf
+/etc/init.d/apache2 restart
+
+p. Test
+
+bc.. curl -i -u user:password -XPUT http://localhost/resources/test:1234 -d '{"type":"monograph"}' -H "Content-Type:application/json";echo
+curl -i -u user:password -XPUT http://localhost/resources/test:1234/data --form "data=@test.pdf" --form "type=application/pdf" -H "Content-Type:multipart/mixed";echo
+curl -i -u user:password -XPOST http://localhost/utils/index/test:1234
+
+p. Finish ?!
+Navigate with your browser to http://localhost
+
 h1. Build
 
 bc.. mvn clean install 
