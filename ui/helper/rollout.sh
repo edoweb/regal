@@ -40,7 +40,7 @@ cp $SYNCER_SRC $SYNCER_DEST
 
 rm -rf  $WEBAPPS/oai-pmh*
 
-
+cp $SRC/ui/bin/oai-pmh.war $WEBAPPS
 $ARCHIVE_HOME/fedora/tomcat/bin/startup.sh
 echo "FINISHED!"
 echo install htdocs
@@ -63,6 +63,6 @@ echo -e "cd -" >> ${PREFIX}Sync.sh
 mv ${PREFIX}Sync.sh $ARCHIVE_HOME/sync
 cp $ARCHIVE_HOME/src/ui/helper/variables.sh $ARCHIVE_HOME/sync
 
-cp $SRC/ui/bin/oai-pmh.war $WEBAPPS
+
 cp $SRC/ui/conf/proai.properties $WEBAPPS/oai-pmh/WEB-INF/classes
 

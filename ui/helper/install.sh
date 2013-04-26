@@ -57,6 +57,25 @@ echo "fedora.admin.pass=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/install.propert
 echo "apia.ssl.required=false" >> $ARCHIVE_HOME/conf/install.properties
 echo >> $ARCHIVE_HOME/conf/install.properties
 
+echo "write fedora-users.xml"
+
+echo -e "<?xml version='1.0' ?>" > fedora-users.xml
+echo -e "  <users>" >> fedora-users.xml
+echo -e "    <user name=\"$ARCHIVE_USER\" password=\"$ARCHIVE_PASSWORD\">" >> fedora-users.xml
+echo -e "      <attribute name=\"fedoraRole\">" >> fedora-users.xml
+echo -e "        <value>administrator</value>" >> fedora-users.xml
+echo -e "      </attribute>" >> fedora-users.xml
+echo -e "    </user>" >> fedora-users.xml
+echo -e "    <user name=\"fedoraIntCallUser\" password=\"changeme\">" >> fedora-users.xml
+echo -e "      <attribute name=\"fedoraRole\">" >> fedora-users.xml
+echo -e "        <value>fedoraInternalCall-1</value>" >> fedora-users.xml
+echo -e "        <value>fedoraInternalCall-2</value>" >> fedora-users.xml
+echo -e "      </attribute>" >> fedora-users.xml
+echo -e "    </user>" >> fedora-users.xml
+echo -e "  </users>" >> fedora-users.xml
+echo -e "" >> fedora-users.xml
+
+
 echo "write api.properties"
 
 echo "serverName=http://$SERVER"  > $ARCHIVE_HOME/conf/api.properties
@@ -167,6 +186,7 @@ export FEDORA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora/tomcat
 java -jar fcrepo-installer-3.6.1.jar  $ARCHIVE_HOME/conf/install.properties
 cp  $ARCHIVE_HOME/conf/tomcat-users.xml $ARCHIVE_HOME/fedora/tomcat/conf
+cp  $ARCHIVE_HOME/conf/fedora-users.xml $ARCHIVE_HOME/fedora/server/config/
 cp  $ARCHIVE_HOME/conf/setenv.sh $ARCHIVE_HOME/fedora/tomcat/bin
 cp  $ARCHIVE_HOME/conf/web.properties $ARCHIVE_HOME/fedora/server/config/spring/web/
 
