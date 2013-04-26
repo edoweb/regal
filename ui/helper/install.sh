@@ -167,7 +167,7 @@ export FEDORA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora/tomcat
 java -jar fcrepo-installer-3.6.1.jar  $ARCHIVE_HOME/conf/install.properties
 cp  $ARCHIVE_HOME/conf/tomcat-users.xml $ARCHIVE_HOME/fedora/tomcat/conf
-cp  $ARCHIVE_HOME/conf/setenv.xml $ARCHIVE_HOME/fedora/tomcat/bin
+cp  $ARCHIVE_HOME/conf/setenv.sh $ARCHIVE_HOME/fedora/tomcat/bin
 cp  $ARCHIVE_HOME/conf/web.properties $ARCHIVE_HOME/fedora/server/config/spring/web/
 
 echo "install elasticsearch"
@@ -183,7 +183,7 @@ echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
 
 echo "install archive"
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
-$ARCHIVE_HOME/src/ui/helper/rollout.sh $PREFIX $ARCHIVE_HOME $ARCHIVE_USER $ARCHIVE_PASSWORD
+$ARCHIVE_HOME/src/ui/helper/rollout.sh
 }
 
 function cleanUp()
