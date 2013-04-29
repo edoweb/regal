@@ -206,6 +206,9 @@ echo "install archive"
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
 cp variables.sh $ARCHIVE_HOME/src/ui/helper/
 #$ARCHIVE_HOME/src/ui/helper/rollout.sh
+
+echo "copy html"
+cp -r $ARCHIVE_HOME/src/ui/htdocs/* $ARCHIVE_HOME/html/
 }
 
 function cleanUp()
@@ -220,8 +223,7 @@ SRC=$ARCHIVE_HOME/src
 WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
 SYNCER_SRC=$SRC/${PREFIX}Sync/target/${PREFIX}Sync-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 SYNCER_DEST=$ARCHIVE_HOME/sync/${PREFIX}sync.jar
-FRONTEND_SRC=$SRC/ui/htdocs
-FRONTEND_DEST=$ARCHIVE_HOME/html
+
 
 export FEDORA_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_HOME=$FEDORA_HOME/tomcat
@@ -257,10 +259,7 @@ rm -rf  $WEBAPPS/oai-pmh*
 
 cp $SRC/ui/bin/oai-pmh.war $WEBAPPS
 $ARCHIVE_HOME/fedora/tomcat/bin/startup.sh
-echo "FINISHED!"
-echo install htdocs
-cp -r $FRONTEND_SRC/* $FRONTEND_DEST
-
+echo "Generate sync template"
 
 echo -e "#! /bin/bash" > ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl

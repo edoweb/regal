@@ -255,7 +255,6 @@ public class EdowebIngester implements IngestInterface
 
 		String pid = namespace + ":" + dtlBean.getPid();
 		logger.info(pid + " Found monograph.");
-
 		webclient
 				.createObject(dtlBean, "application/pdf", ObjectType.monograph);
 		webclient.metadata(dtlBean);
