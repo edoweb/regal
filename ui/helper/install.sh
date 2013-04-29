@@ -17,6 +17,7 @@ mkdir -v $ARCHIVE_HOME/fedora
 mkdir -v $ARCHIVE_HOME/${PREFIX}base
 mkdir -v $ARCHIVE_HOME/logs
 mkdir -v $ARCHIVE_HOME/conf
+mkdir -v $ARCHIVE_HOME/bin
 }
 
 function createConfig()
@@ -204,7 +205,7 @@ echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
 echo "install archive"
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
 cp variables.sh $ARCHIVE_HOME/src/ui/helper/
-$ARCHIVE_HOME/src/ui/helper/rollout.sh
+#$ARCHIVE_HOME/src/ui/helper/rollout.sh
 }
 
 function cleanUp()
@@ -213,7 +214,84 @@ rm fcrepo-installer-3.6.1.jar
 rm elasticsearch-0.19.11.tar.gz
 }
 
-makeDir
-createConfig
-install
-cleanUp
+function rollout()
+{
+SRC=$ARCHIVE_HOME/src
+WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
+SYNCER_SRC=$SRC/${PREFIX}Sync/target/${PREFIX}Sync-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+SYNCER_DEST=$ARCHIVE_HOME/sync/${PREFIX}sync.jar
+FRONTEND_SRC=$SRC/ui/htdocs
+FRONTEND_DEST=$ARCHIVE_HOME/html
+
+export FEDORA_HOME=$ARCHIVE_HOME/fedora
+export CATALINA_HOME=$FEDORA_HOME/tomcat
+
+
+mkdir -v $ARCHIVE_HOME/${PREFIX}base
+ln -s $ARCHIVE_HOME/${PREFIX}base $ARCHIVE_HOME/html/${PREFIX}base
+echo "Update src must be done manually!"
+echo "OK?"
+$ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh
+
+echo "Fetch source..."
+cd $SRC/
+git pull origin
+cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
+cp variables.sh $ARCHIVE_HOME/src/ui/helper/
+echo "Compile..."
+mvn -q -e clean install
+cd $SRC/${PREFIX}Sync
+mvn -q -e assembly:assembly 
+cd $SRC/edoweb2-api
+echo "Compile end ..."
+
+echo "Install Webapi"
+echo "install archive"
+mvn -q -e war:war
+echo "Rollout..."
+rm -rf  $WEBAPPS/edoweb2-api*
+cp $SRC/edoweb2-api/target/edoweb2-api.war $WEBAPPS/edoweb2-api.war
+cp $SYNCER_SRC $SYNCER_DEST 
+
+rm -rf  $WEBAPPS/oai-pmh*
+
+cp $SRC/ui/bin/oai-pmh.war $WEBAPPS
+$ARCHIVE_HOME/fedora/tomcat/bin/startup.sh
+echo "FINISHED!"
+echo install htdocs
+cp -r $FRONTEND_SRC/* $FRONTEND_DEST
+
+
+echo -e "#! /bin/bash" > ${PREFIX}Sync.sh.tmpl
+echo -e "" >> ${PREFIX}Sync.sh.tmpl
+echo -e "source variables.sh" >> ${PREFIX}Sync.sh.tmpl
+echo -e "export LANG=en_US.UTF-8" >> ${PREFIX}Sync.sh.tmpl
+echo -e "" >> ${PREFIX}Sync.sh.tmpl
+echo -e "cd \$ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh.tmpl
+echo -e "" >> ${PREFIX}Sync.sh.tmpl
+echo -e "cp .oaitimestamp\$PREFIX oaitimestamp\$PREFIX`date +"%Y%m%d"`" >> ${PREFIX}Sync.sh.tmpl
+echo -e "" >> ${PREFIX}Sync.sh.tmpl
+echo -e "java -jar -Xms512m -Xmx512m \${PREFIX}sync.jar --mode INIT -list \$ARCHIVE_HOME/sync/pidlist.txt --user \$ARCHIVE_USER --password \$ARCHIVE_PASSWORD --dtl \$DOWNLOAD --cache \$ARCHIVE_HOME/\${PREFIX}base --oai  \$OAI --set \$SET --timestamp .oaitimestamp\$PREFIX --fedoraBase http://\$SERVER:\$TOMCAT_PORT/fedora --host http://\$SERVER >> ${PREFIX}log`date +"%Y%m%d"`.txt 2>&1" >> ${PREFIX}Sync.sh.tmpl
+echo -e "" >> ${PREFIX}Sync.sh.tmpl
+echo -e "cd -" >> ${PREFIX}Sync.sh.tmpl
+
+mv ${PREFIX}Sync.sh.tmpl $ARCHIVE_HOME/sync
+cp $ARCHIVE_HOME/src/ui/helper/variables.sh $ARCHIVE_HOME/sync
+
+cp $SRC/ui/conf/proai.properties $WEBAPPS/oai-pmh/WEB-INF/classes
+}
+
+if [ $# -e 0  ]
+then
+	makeDir
+	createConfig
+	install
+	rollout
+	cleanUp
+elif [ $1 == "-u" ]
+then
+	rollout
+else
+	echo "Wrong usage! Only argument accepted is -u for update."
+fi
+
