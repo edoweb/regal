@@ -91,19 +91,20 @@ import com.yourmediashelf.fedora.client.FedoraCredentials;
 import com.yourmediashelf.fedora.client.request.AddDatastream;
 import com.yourmediashelf.fedora.client.request.AddRelationship;
 import com.yourmediashelf.fedora.client.request.FedoraRequest;
-import com.yourmediashelf.fedora.client.request.GetDatastream;
+import com.yourmediashelf.fedora.client.request.FindObjects;
 import com.yourmediashelf.fedora.client.request.GetDatastreamDissemination;
 import com.yourmediashelf.fedora.client.request.GetNextPID;
-import com.yourmediashelf.fedora.client.request.GetObjectXML;
 import com.yourmediashelf.fedora.client.request.Ingest;
+import com.yourmediashelf.fedora.client.request.ListDatastreams;
 import com.yourmediashelf.fedora.client.request.ModifyDatastream;
 import com.yourmediashelf.fedora.client.request.PurgeObject;
 import com.yourmediashelf.fedora.client.request.Upload;
 import com.yourmediashelf.fedora.client.response.FedoraResponse;
 import com.yourmediashelf.fedora.client.response.FindObjectsResponse;
-import com.yourmediashelf.fedora.client.response.GetDatastreamResponse;
 import com.yourmediashelf.fedora.client.response.GetNextPIDResponse;
+import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
 import com.yourmediashelf.fedora.client.response.UploadResponse;
+import com.yourmediashelf.fedora.generated.access.DatastreamType;
 import com.yourmediashelf.fedora.generated.management.PidList;
 
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
@@ -322,17 +323,21 @@ public class FedoraFacade implements FedoraInterface, Constants
 		try
 		{
 
-			GetDatastreamResponse response = new GetDatastream(pid,
-					datastreamId).execute();
+			ListDatastreamsResponse response = new ListDatastreams(pid)
+					.execute();
 
-			response.getDatastreamProfile();
+			for (DatastreamType ds : response.getDatastreams())
+			{
+				if (ds.getDsid().compareTo(datastreamId) == 0)
+					return true;
+			}
 
 		}
 		catch (FedoraClientException e)
 		{
 			return false;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -408,14 +413,20 @@ public class FedoraFacade implements FedoraInterface, Constants
 		try
 		{
 
-			new GetObjectXML(pid).execute();
+			FindObjectsResponse response = new FindObjects().terms(pid).pid()
+					.execute();
+			for (String p : response.getPids())
+			{
+				if (p.compareTo(pid) == 0)
+					return true;
+			}
 
 		}
 		catch (Exception e)
 		{
 			return false;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
