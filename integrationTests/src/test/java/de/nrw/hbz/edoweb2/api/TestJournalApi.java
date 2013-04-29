@@ -59,7 +59,7 @@ public class TestJournalApi
 					properties.getProperty("password")));
 
 			WebResource delete = c.resource(properties.getProperty("apiUrl")
-					+ "/edowebAdmin/delete/edoweb:123");
+					+ "/utils/delete/edoweb:123");
 			WebResource journals = c.resource(properties.getProperty("apiUrl")
 					+ "/ejournal/");
 			WebResource aJournal = c.resource(journals.toString()

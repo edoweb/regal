@@ -67,7 +67,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.fcrepo.client.Uploader;
 import org.fcrepo.common.Constants;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -1804,25 +1803,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 	 * <em>Title: </em>
 	 * </p>
 	 * <p>
-	 * Description: Loads files up to a fedora directory for ingesting
-	 * </p>
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	private Uploader getUploader() throws IOException
-	{
-		URL url = new URL(host);
-		return new Uploader(url.getProtocol(), url.getHost(), url.getPort(),
-				url.getPath(), user, passwd);
-	}
-
-	/**
-	 * 
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
 	 * Description: Creates new Rels-Ext datastream in object 'pid'
 	 * </p>
 	 * 
@@ -1848,11 +1828,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 					+ "    <rdf:Description rdf:about=\"info:fedora/"
 					+ pid
 					+ "\">" + "    </rdf:Description>" + "</rdf:RDF>";
-			ByteArrayInputStream is = new ByteArrayInputStream(
-					initialContent.getBytes());
-
-			Uploader uploader = getUploader();
-			String location = uploader.upload(is);
 
 			// @SuppressWarnings("unused")
 			// String newID = fedoraManager.addDatastream(pid, "RELS-EXT",
@@ -1862,15 +1837,10 @@ public class FedoraFacade implements FedoraInterface, Constants
 			// mimeType, formatURI, location, "X", state, checksumType,
 			// null, // checksum type and checksum
 			// "Try to add RELS-EXT datastream");
-			new ModifyDatastream(pid, "RELS-EXT")
-					.mimeType("application/rdf+xml")
+			new AddDatastream(pid, "RELS-EXT").mimeType("application/rdf+xml")
 					.formatURI("info:fedora/fedora-system:FedoraRELSExt-1.0")
-					.versionable(true).dsLocation(location).execute();
+					.versionable(true).content(initialContent).execute();
 
-		}
-		catch (RemoteException e)
-		{
-			throw new ArchiveException(e.getMessage(), e);
 		}
 		catch (Exception e)
 		{
@@ -1962,16 +1932,16 @@ public class FedoraFacade implements FedoraInterface, Constants
 			// "info:hbz/hbz-system:HBZContentModelInfoStream1.0", dh,
 			// "DISABLED", null, "UPDATE OF HBZCMInfoStream", false);
 
-			new ModifyDatastream(node.getPID(), "HBZCMInfoStream")
+			new AddDatastream(node.getPID(), "HBZCMInfoStream")
 					.mimeType("text/xml")
 					.formatURI(
 							"info:hbz/hbz-system:HBZContentModelInfoStream1.0")
-					.versionable(true).dsLocation(infoStream.toString())
-					.execute();
+					.versionable(true).content(infoStream.toString()).execute();
 		}
 
 		catch (FedoraClientException e)
 		{
+			e.printStackTrace();
 			throw new ArchiveException(e.getMessage(), e);
 		}
 
