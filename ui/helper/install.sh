@@ -31,7 +31,7 @@ echo "apia.auth.required=true" >> $ARCHIVE_HOME/conf/install.properties
 echo "database.jdbcDriverClass=org.apache.derby.jdbc.EmbeddedDriver" >> $ARCHIVE_HOME/conf/install.properties
 echo "upstream.auth.enabled=false" >> $ARCHIVE_HOME/conf/install.properties
 echo "tomcat.ssl.port=8443" >> $ARCHIVE_HOME/conf/install.properties
-echo "ssl.available=true" >> $ARCHIVE_HOME/conf/install.properties
+echo "ssl.available=false" >> $ARCHIVE_HOME/conf/install.properties
 echo "database.jdbcURL=jdbc\:derby\:$ARCHIVE_HOME/fedora/derby/fedora3;create\=true" >> $ARCHIVE_HOME/conf/install.properties
 echo "messaging.uri=vm\:(broker\:(tcp\://localhost\:61616))" >> $ARCHIVE_HOME/conf/install.properties
 echo "database.password=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/install.properties
@@ -53,7 +53,7 @@ echo "fesl.authn.enabled=true" >> $ARCHIVE_HOME/conf/install.properties
 echo "fedora.home=$ARCHIVE_HOME/fedora" >> $ARCHIVE_HOME/conf/install.properties
 echo "install.type=custom" >> $ARCHIVE_HOME/conf/install.properties
 echo "servlet.engine=included" >> $ARCHIVE_HOME/conf/install.properties
-echo "apim.ssl.required=true" >> $ARCHIVE_HOME/conf/install.properties
+echo "apim.ssl.required=false" >> $ARCHIVE_HOME/conf/install.properties
 echo "fedora.admin.pass=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/install.properties
 echo "apia.ssl.required=false" >> $ARCHIVE_HOME/conf/install.properties
 echo >> $ARCHIVE_HOME/conf/install.properties
@@ -179,8 +179,8 @@ function install()
 {
 echo "download some files"
 git clone https://github.com/jschnasse/edoweb2.git $ARCHIVE_HOME/src
-wget http://ares.hbz-nrw.de/fcrepo-installer-3.6.1.jar 
-wget http://ares.hbz-nrw.de/elasticsearch-0.19.11.tar.gz
+wget http://repo1.maven.org/maven2/org/fcrepo/fcrepo-installer/3.6.1/fcrepo-installer-3.6.1.jar
+wget http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.19.11.tar.gz
 
 echo "install fedora"
 export FEDORA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora
@@ -204,11 +204,10 @@ echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
 
 echo "install archive"
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
-cp variables.sh $ARCHIVE_HOME/src/ui/helper/
+pwd
+cp variables.sh $ARCHIVE_HOME/bin/
 #$ARCHIVE_HOME/src/ui/helper/rollout.sh
 
-echo "copy html"
-cp -r $ARCHIVE_HOME/src/ui/htdocs/* $ARCHIVE_HOME/html/
 }
 
 function cleanUp()
@@ -239,17 +238,21 @@ echo "Fetch source..."
 cd $SRC/
 git pull origin
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
-cp variables.sh $ARCHIVE_HOME/src/ui/helper/
+#cp variables.sh $ARCHIVE_HOME/src/ui/helper/
 echo "Compile..."
 mvn -q -e clean install
+cd -
+
 cd $SRC/${PREFIX}Sync
 mvn -q -e assembly:assembly 
-cd $SRC/edoweb2-api
-echo "Compile end ..."
+cd -
 
+cd $SRC/edoweb2-api
 echo "Install Webapi"
 echo "install archive"
 mvn -q -e war:war
+cd -
+
 echo "Rollout..."
 rm -rf  $WEBAPPS/edoweb2-api*
 cp $SRC/edoweb2-api/target/edoweb2-api.war $WEBAPPS/edoweb2-api.war
@@ -268,29 +271,37 @@ echo -e "export LANG=en_US.UTF-8" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
 echo -e "cd \$ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "cp .oaitimestamp\$PREFIX oaitimestamp\$PREFIX`date +"%Y%m%d"`" >> ${PREFIX}Sync.sh.tmpl
+echo -e "cp .oaitimestamp\$PREFIX oaitimestamp\$PREFIX`date +\"%Y%m%d\"`" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "java -jar -Xms512m -Xmx512m \${PREFIX}sync.jar --mode INIT -list \$ARCHIVE_HOME/sync/pidlist.txt --user \$ARCHIVE_USER --password \$ARCHIVE_PASSWORD --dtl \$DOWNLOAD --cache \$ARCHIVE_HOME/\${PREFIX}base --oai  \$OAI --set \$SET --timestamp .oaitimestamp\$PREFIX --fedoraBase http://\$SERVER:\$TOMCAT_PORT/fedora --host http://\$SERVER >> ${PREFIX}log`date +"%Y%m%d"`.txt 2>&1" >> ${PREFIX}Sync.sh.tmpl
+echo -e "java -jar -Xms512m -Xmx512m \${PREFIX}sync.jar --mode INIT -list \$ARCHIVE_HOME/sync/pidlist.txt --user \$ARCHIVE_USER --password \$ARCHIVE_PASSWORD --dtl \$DOWNLOAD --cache \$ARCHIVE_HOME/\${PREFIX}base --oai  \$OAI --set \$SET --timestamp .oaitimestamp\$PREFIX --fedoraBase http://\$SERVER:\$TOMCAT_PORT/fedora --host http://\$SERVER >> ${PREFIX}log`date +\"%Y%m%d\"`.txt 2>&1" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
 echo -e "cd -" >> ${PREFIX}Sync.sh.tmpl
 
 mv ${PREFIX}Sync.sh.tmpl $ARCHIVE_HOME/sync
 cp $ARCHIVE_HOME/src/ui/helper/variables.sh $ARCHIVE_HOME/sync
 
+
+echo "copy html"
+cp -r $ARCHIVE_HOME/src/ui/htdocs/* $ARCHIVE_HOME/html/
+sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/EasyEllinetSearch.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/EasyEllinetSearch.js"
+
 cp $SRC/ui/conf/proai.properties $WEBAPPS/oai-pmh/WEB-INF/classes
+cp $SRC/ui/helper/install.sh $ARCHIVE_HOME/bin/
 }
 
-if [ $# -e 0  ]
+if [ $# -eq 0 ]
 then
 	makeDir
 	createConfig
 	install
 	rollout
 	cleanUp
-elif [ $1 == "-u" ]
-then
-	rollout
 else
+    if [ $1 -e "-u" ]
+    then
+	rollout
+    else
 	echo "Wrong usage! Only argument accepted is -u for update."
+    fi
 fi
 
