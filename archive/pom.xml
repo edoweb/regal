@@ -193,5 +193,10 @@
 			<version>0.5</version>
 		</dependency>
 		
-		</dependencies>
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-multipart</artifactId>
+			<version>1.17.1</version>
+		</dependency>
+	</dependencies>
 </project>

@@ -13,7 +13,12 @@ h1. Install
 
 Required: *apache2, maven3, git*!
 
-Download "install.sh":https://github.com/jschnasse/edoweb2/blob/master/ui/helper/install.sh and "variables.sh":https://github.com/jschnasse/edoweb2/blob/master/ui/helper/variables.sh
+Download "installer.tar.gz":https://raw.github.com/jschnasse/edoweb2/master/ui/helper/installer.tar.gz
+
+Uncompress
+
+bc.. tar -xzf installer.tar.gz
+cd installer
 
 Edit variables.sh as you need e.g.
 

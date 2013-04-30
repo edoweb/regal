@@ -57,38 +57,18 @@ public class Utils
 	}
 
 	/**
-	 * @return A message or an HttpArchiveException
-	 */
-	@DELETE
-	@Path("/formatAll")
-	@Produces({ "application/json", "application/xml" })
-	public String formatAll()
-	{
-		try
-		{
-			return actions.formatAll();
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
-	/**
 	 * @param pid
 	 *            The pid to delete
 	 * @return A message or an ArchiveException
 	 */
 	@DELETE
-	@Path("/delete/{pid}")
+	@Path("/deleteNamespace/{namespace}")
 	@Produces({ "application/json", "application/xml" })
-	public String delete(@PathParam("pid") String pid)
+	public String delete(@PathParam("namespace") String namespace)
 	{
 		try
 		{
-			return actions.delete(pid, false);
+			return actions.deleteNamespace(namespace);
 		}
 		catch (ArchiveException e)
 		{
@@ -215,13 +195,14 @@ public class Utils
 	}
 
 	@GET
-	@Path("/epicur/{pid}")
+	@Path("/epicur/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String epicur(@PathParam("pid") String pid)
+	public String epicur(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		try
 		{
-			return actions.epicur(pid);
+			return actions.epicur(pid, namespace);
 		}
 		catch (ArchiveException e)
 		{

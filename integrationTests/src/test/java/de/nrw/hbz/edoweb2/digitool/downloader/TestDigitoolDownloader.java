@@ -34,10 +34,7 @@ import org.junit.Test;
 public class TestDigitoolDownloader
 {
 	Properties properties = new Properties();
-	/*
-	 * 1637992 4676380 2258539 1638892 4628526
-	 */
-	String pid = "3237400";// "3237397";//
+
 	private final String piddownloaderServer;
 	private final String piddownloaderDownloadLocation;
 
@@ -65,35 +62,59 @@ public class TestDigitoolDownloader
 	@Before
 	public void setUp()
 	{
-		try
-		{
 
-			FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation
-					+ File.separator + pid));
-
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void downloadPid()
 	{
 
+		try
+		{
+
+			FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation
+					+ File.separator + "3025500"));
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
 		DigitoolDownloader downloader = new DigitoolDownloader(
 				piddownloaderServer, piddownloaderDownloadLocation);
 
 		try
 		{
-			downloader.download(pid);
+			downloader.download("3025500");
 			Assert.assertTrue(new File(piddownloaderDownloadLocation
-					+ File.separator + pid).exists());
+					+ File.separator + "3025500").exists());
+
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
+		}
+		try
+		{
+
+			FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation
+					+ File.separator + "3025500"));
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		try
+		{
+			downloader.download("3237400");
+			Assert.assertTrue(false);
+		}
+		catch (IOException e)
+		{
+
 		}
 
 	}

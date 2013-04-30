@@ -101,7 +101,13 @@ public class FedoraFacadeIntegrationTest
 
 		URL url = this.getClass().getResource("/test.pdf");
 		object.setUploadData(url.getPath(), "test", "application/pdf");
-
+		List<String> result = facade
+				.findPids("test:*", FedoraVocabulary.SIMPLE);
+		for (String pid : result)
+			facade.deleteNode(pid);
+		result = facade.findPids("testCM:*", FedoraVocabulary.SIMPLE);
+		for (String pid : result)
+			facade.deleteNode(pid);
 	}
 
 	@Test
@@ -109,8 +115,6 @@ public class FedoraFacadeIntegrationTest
 	{
 		try
 		{
-			if (facade.nodeExists(object.getPID()))
-				facade.deleteNode(object.getPID());
 			facade.createNode(object);
 			Assert.assertTrue(facade.nodeExists(object.getPID()));
 		}
@@ -126,9 +130,6 @@ public class FedoraFacadeIntegrationTest
 	{
 		try
 		{
-
-			if (facade.nodeExists(object.getPID()))
-				facade.deleteNode(object.getPID());
 
 			facade.createNode(object);
 			Node node = facade.readNode(object.getPID());
@@ -209,6 +210,9 @@ public class FedoraFacadeIntegrationTest
 	{
 		List<String> result = facade
 				.findPids("test:*", FedoraVocabulary.SIMPLE);
+		for (String pid : result)
+			facade.deleteNode(pid);
+		result = facade.findPids("testCM:*", FedoraVocabulary.SIMPLE);
 		for (String pid : result)
 			facade.deleteNode(pid);
 	}

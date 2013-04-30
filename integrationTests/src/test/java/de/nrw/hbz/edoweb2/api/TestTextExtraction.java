@@ -18,8 +18,12 @@ public class TestTextExtraction
 
 		List<String> pids = actions.findByType("monograph");
 
+		int count = 1;
 		for (String pid : pids)
 		{
+			if (count <= 0)
+				break;
+			count--;
 			System.out.println(pid);
 			try
 			{

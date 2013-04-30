@@ -182,25 +182,27 @@ class Archive implements ArchiveInterface
 			node.setNamespace(namespace);
 			fedoraInterface.createNode(node);
 		}
-		else
-		{
 
-			node = fedoraInterface.readNode(node.getPID());
-			// Parent to node
-			Link meToNode = new Link();
-			meToNode.setPredicate(node.getHasNodeType());
-			meToNode.setObject(addUriPrefix(node.getPID()), false);
-			parent.addRelation(meToNode);
+		node = fedoraInterface.readNode(node.getPID());
+		// Parent to node
+		Link meToNode = new Link();
+		meToNode.setPredicate(node.getHasNodeType());
+		meToNode.setObject(addUriPrefix(node.getPID()), false);
+		parent.addRelation(meToNode);
+		System.out.println(node.getPID() + " has parent " + parent.getPID());
+		// node to parent
+		Link nodeToMe = new Link();
+		nodeToMe.setPredicate(node.getIsNodeTypeOf());
+		nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
+		node.addRelation(nodeToMe);
 
-			// node to parent
-			Link nodeToMe = new Link();
-			nodeToMe.setPredicate(node.getIsNodeTypeOf());
-			nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
-			node.addRelation(nodeToMe);
+		nodeToMe = new Link();
+		nodeToMe.setPredicate(REL_BELONGS_TO_OBJECT);
+		nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
+		node.addRelation(nodeToMe);
 
-			fedoraInterface.updateNode(node);
-			sesame.updateNode(node);
-		}
+		fedoraInterface.updateNode(node);
+		sesame.updateNode(node);
 
 		fedoraInterface.updateNode(parent);
 		sesame.updateNode(node);

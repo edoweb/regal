@@ -18,14 +18,17 @@ FRONTEND_DEST=$ARCHIVE_HOME/html
 export FEDORA_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_HOME=$FEDORA_HOME/tomcat
 
+
 mkdir -v $ARCHIVE_HOME/${PREFIX}base
 ln -s $ARCHIVE_HOME/${PREFIX}base $ARCHIVE_HOME/html/${PREFIX}base
 echo "Update src must be done manually!"
 echo "OK?"
 $ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh
 
-echo "Compile..."
+echo "Fetch source..."
 cd $SRC/
+git pull origin
+echo "Compile..."
 mvn -q -e clean install
 cd $SRC/${PREFIX}Sync
 mvn -q -e assembly:assembly 

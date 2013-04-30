@@ -35,6 +35,7 @@ public class TestActions
 	@Test
 	public void testFindByType() throws IOException
 	{
+		// TODO implement
 		Actions actions = new Actions();
 		for (String result : actions
 				.findByType(ObjectType.monograph.toString()))
@@ -49,11 +50,11 @@ public class TestActions
 	{
 		Actions actions = new Actions();
 		Assert.assertEquals("urn:nbn:de:edoweb-12340",
-				actions.generateUrn("1234"));
+				actions.generateUrn("1234", "edoweb"));
 		Assert.assertEquals("urn:nbn:de:edoweb-12357",
-				actions.generateUrn("1235"));
+				actions.generateUrn("1235", "edoweb"));
 		Assert.assertEquals("urn:nbn:de:edoweb-123476",
-				actions.generateUrn("12347"));
-		System.out.println(actions.epicur("1234"));
+				actions.generateUrn("12347", "edoweb"));
+		System.out.println(actions.epicur("1234", "edoweb"));
 	}
 }

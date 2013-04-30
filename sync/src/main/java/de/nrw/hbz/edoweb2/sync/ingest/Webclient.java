@@ -162,8 +162,8 @@ public class Webclient
 		catch (UniformInterfaceException e)
 		{
 			logger.info(pid + " already exists - will be updated!");
-			logger.info(pid + " resourceUrl: " + resourceUrl);
-			e.printStackTrace();
+			// logger.info(pid + " resourceUrl: " + resourceUrl);
+			// e.printStackTrace();
 		}
 	}
 
@@ -220,12 +220,12 @@ public class Webclient
 		catch (UniformInterfaceException e)
 		{
 			logger.info(pid + " " + e.getMessage());
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 		catch (Exception e)
 		{
 			logger.debug(pid + " " + e.getMessage());
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
