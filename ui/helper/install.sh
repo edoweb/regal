@@ -266,7 +266,7 @@ echo "Generate sync template"
 
 echo -e "#! /bin/bash" > ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "source variables.sh" >> ${PREFIX}Sync.sh.tmpl
+echo -e "source ${PREFIX}Variables.sh" >> ${PREFIX}Sync.sh.tmpl
 echo -e "export LANG=en_US.UTF-8" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
 echo -e "cd \$ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh.tmpl
@@ -278,7 +278,7 @@ echo -e "" >> ${PREFIX}Sync.sh.tmpl
 echo -e "cd -" >> ${PREFIX}Sync.sh.tmpl
 
 mv ${PREFIX}Sync.sh.tmpl $ARCHIVE_HOME/sync
-cp $ARCHIVE_HOME/src/ui/helper/variables.sh $ARCHIVE_HOME/sync
+cp variables.sh $ARCHIVE_HOME/sync/${PREFIX}Variables.sh
 
 
 echo "copy html"
@@ -297,7 +297,7 @@ then
 	rollout
 	cleanUp
 else
-    if [ $1 -e "-u" ]
+    if [ $1 == "-u" ]
     then
 	rollout
     else
