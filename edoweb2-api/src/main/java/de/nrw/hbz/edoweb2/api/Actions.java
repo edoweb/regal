@@ -988,23 +988,6 @@ class Actions
 	}
 
 	/**
-	 * Deletes all objects in namespaces test,edoweb and oai.
-	 * 
-	 * @return a short message
-	 */
-	String formatAll()
-	{
-		StringBuffer result = new StringBuffer();
-
-		result.append(deleteAll(archive.findNodes("test:*"), false) + "\n");
-		result.append(deleteAll(archive.findNodes("edoweb" + ":*"), false)
-				+ "\n");
-		result.append(deleteAll(archive.findNodes("oai:*"), false) + "\n");
-
-		return result.toString();
-	}
-
-	/**
 	 * @param pid
 	 *            The pid of an existing object.
 	 * @param type

@@ -57,26 +57,6 @@ public class Utils
 	}
 
 	/**
-	 * @return A message or an HttpArchiveException
-	 */
-	@DELETE
-	@Path("/formatAll")
-	@Produces({ "application/json", "application/xml" })
-	public String formatAll()
-	{
-		try
-		{
-			return actions.formatAll();
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
-	/**
 	 * @param pid
 	 *            The pid to delete
 	 * @return A message or an ArchiveException
