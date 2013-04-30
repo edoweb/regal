@@ -107,6 +107,7 @@ import com.yourmediashelf.fedora.client.request.Upload;
 import com.yourmediashelf.fedora.client.response.FedoraResponse;
 import com.yourmediashelf.fedora.client.response.FindObjectsResponse;
 import com.yourmediashelf.fedora.client.response.GetNextPIDResponse;
+import com.yourmediashelf.fedora.client.response.IngestResponse;
 import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
 import com.yourmediashelf.fedora.client.response.UploadResponse;
 import com.yourmediashelf.fedora.generated.access.DatastreamType;
@@ -190,7 +191,8 @@ public class FedoraFacade implements FedoraInterface, Constants
 			// ingestor.ingestAndCommit(new ByteArrayInputStream(foxmlObject),
 			// FOXML1_1.uri, "Created with HBZ Webservice");
 
-			new Ingest(node.getPID()).label(node.getLabel()).execute();
+			IngestResponse response = new Ingest(node.getPID()).label(
+					node.getLabel()).execute(fedora);
 
 			updateDc(node);
 			createContentModels(node);
