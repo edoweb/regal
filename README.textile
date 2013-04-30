@@ -22,7 +22,7 @@ cd installer
 
 p. Edit variables.sh as you need e.g.
 
-bc.. ARCHIVE_HOME=/opt/test
+bc.. ARCHIVE_HOME=/opt/archive
 SERVER=localhost
 ARCHIVE_USER=user
 ARCHIVE_PASSWORD=password
@@ -39,17 +39,17 @@ SET=doc-type:report
 
 p. Execute
 
-bc.. mkdir /opt/test
+bc.. mkdir /opt/archive
 chmod u+x install.sh
 ./install.sh
 
 p. Make html readable for apache user
 
-bc.. chown -R www-data /opt/test/html
+bc.. chown -R www-data /opt/archive/html
 
 p. Link apache to site.conf
 
-bc.. echo "Include /opt/test/conf/site.conf" >> /etc/apache2/apache2.conf
+bc.. echo "Include /opt/archive/conf/site.conf" >> /etc/apache2/apache2.conf
 /etc/init.d/apache2 restart
 
 p. Test
@@ -59,7 +59,12 @@ curl -i -u user:password -XPUT http://localhost/resources/test:1234/data --form 
 curl -i -u user:password -XPOST http://localhost/utils/index/test:1234
 
 p. Finish ?!
-Navigate with your browser to http://localhost
+Navigate your browser to http://localhost
+
+h2. Update
+
+bc.. cd /opt/archive/bin
+./install.sh -u 
 
 h1. Build
 
