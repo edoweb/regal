@@ -67,6 +67,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.fcrepo.common.Constants;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -215,6 +221,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (FedoraClientException e)
 		{
+			e.printStackTrace();
 			throw new ArchiveException("An unknown exception occured. "
 					+ e.getMessage(), e);
 		}
@@ -235,12 +242,13 @@ public class FedoraFacade implements FedoraInterface, Constants
 			readRelsExt(node);
 			readContentModels(node);
 
-			FedoraCredentials credentials = new FedoraCredentials(host, user,
-					passwd);
-			com.yourmediashelf.fedora.client.FedoraClient fedora = new com.yourmediashelf.fedora.client.FedoraClient(
-					credentials);
-
-			FedoraRequest.setDefaultClient(fedora);
+			// FedoraCredentials credentials = new FedoraCredentials(host, user,
+			// passwd);
+			// com.yourmediashelf.fedora.client.FedoraClient fedora = new
+			// com.yourmediashelf.fedora.client.FedoraClient(
+			// credentials);
+			//
+			// FedoraRequest.setDefaultClient(fedora);
 
 			node.setLabel(fedora.getObjectProfile(pid).execute().getLabel());
 			node.setLastModified(fedora.getLastModifiedDate(pid));
@@ -248,11 +256,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 		catch (FedoraClientException e)
 		{
 			throw new ArchiveException("An unknown exception occured.", e);
-		}
-		catch (java.net.MalformedURLException e)
-		{
-			throw new ArchiveException("The variable host: " + host
-					+ " may contain a malformed url.", e);
 		}
 		catch (RemoteException e)
 		{
@@ -283,20 +286,26 @@ public class FedoraFacade implements FedoraInterface, Constants
 	}
 
 	@Override
-	public InputStream findTriples(String rdfQuery, String queryType,
-			String outputFormat)
+	public InputStream findTriples(String query, String queryFormat,
+			String outputformat)
 	{
-		TripleSearch search = new TripleSearch(this.host, this.user,
-				this.passwd);
+		HttpClient httpClient = new HttpClient();
+		httpClient.getState().setCredentials(
+				new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
+				new UsernamePasswordCredentials(user, passwd));
+		HttpMethod method = new GetMethod(host);
 		try
 		{
-			return search.find(rdfQuery, queryType, outputFormat);
+			method.setQueryString("type=triples&lang=" + queryFormat
+					+ "&format=" + outputformat + "&query="
+					+ URIUtil.encodeQuery(query));
+			httpClient.executeMethod(method);
+			return method.getResponseBodyAsStream();
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
-			throw new ArchiveException("An unknown exception occured.", e);
+			throw new ArchiveException(e.getMessage(), e);
 		}
-
 	}
 
 	@Override
@@ -2166,15 +2175,16 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 	private List<String> findPidsSimple(String rdfQuery)
 	{
-		FedoraCredentials credentials;
+		// FedoraCredentials credentials;
 		try
 		{
 
-			credentials = new FedoraCredentials(host, user, passwd);
-			com.yourmediashelf.fedora.client.FedoraClient fedora = new com.yourmediashelf.fedora.client.FedoraClient(
-					credentials);
-
-			FedoraRequest.setDefaultClient(fedora);
+			// credentials = new FedoraCredentials(host, user, passwd);
+			// com.yourmediashelf.fedora.client.FedoraClient fedora = new
+			// com.yourmediashelf.fedora.client.FedoraClient(
+			// credentials);
+			//
+			// FedoraRequest.setDefaultClient(fedora);
 
 			FindObjectsResponse response = fedora.findObjects().maxResults(50)
 					.resultFormat("xml").pid().terms(rdfQuery).execute();
@@ -2192,10 +2202,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 			}
 
 			return result;
-		}
-		catch (MalformedURLException e)
-		{
-			throw new ArchiveException("An unknown exception occured.", e);
 		}
 		catch (FedoraClientException e)
 		{
