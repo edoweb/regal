@@ -1,4 +1,4 @@
-ARCHIVE_HOME=/opt/test
+ARCHIVE_HOME=/opt/archive
 PREFIX=edoweb
 SERVER=localhost
 ARCHIVE_USER=jan
