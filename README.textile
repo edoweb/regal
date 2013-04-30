@@ -20,7 +20,7 @@ Uncompress
 bc.. tar -xzf installer.tar.gz
 cd installer
 
-Edit variables.sh as you need e.g.
+p. Edit variables.sh as you need e.g.
 
 bc.. ARCHIVE_HOME=/opt/test
 SERVER=localhost
