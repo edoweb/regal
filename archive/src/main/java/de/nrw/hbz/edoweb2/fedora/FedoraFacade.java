@@ -645,7 +645,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 		if (!dataStreamExists(pid, "RELS-EXT"))
 		{
-			// System.out.println("PID "+pid+" doesn't exist, create new");
+			System.out.println("PID " + pid + " doesn't exist, create new");
 			createFedoraXmlForRelsExt(pid);
 
 		}
@@ -653,43 +653,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 		Vector<Link> links = node.getRelsExt();
 		createRelsExt(pid, links);
 
-	}
-
-	private void createRelsExt(String pid, Vector<Link> links)
-	{
-		if (links != null)
-			for (Link curHBZLink : links)
-			{
-				if (curHBZLink == null)
-					return;
-				// System.out.println(" CREATE: <" + pid + "> <"
-				// + curHBZLink.getPredicate() + "> <"
-				// + curHBZLink.getObject() + ">");
-
-				if (curHBZLink.isLiteral())
-				{
-					// System.out.println("isLiteral");
-					// fedoraManager.addRelationship(pid,
-					// curHBZLink.getPredicate(), curHBZLink.getObject(),
-					// curHBZLink.isLiteral(), null);
-					new AddRelationship(pid).predicate(
-							curHBZLink.getPredicate()).object(
-							curHBZLink.getObject(), curHBZLink.isLiteral());
-				}
-				else
-				{
-					// System.out.println("NOT isLiteral");
-					// fedoraManager.addRelationship(pid,
-					// curHBZLink.getPredicate(),
-					// addUriPrefix(curHBZLink.getObject()),
-					// curHBZLink.isLiteral(), null);
-					new AddRelationship(pid).predicate(
-							curHBZLink.getPredicate()).object(
-							addUriPrefix(curHBZLink.getObject()),
-							curHBZLink.isLiteral());
-
-				}
-			}
 	}
 
 	/**
@@ -791,7 +754,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 			UploadResponse response = request.execute();
 			String location = response.getUploadLocation();
 
-			String newID = null;
 			if (dataStreamExists(node.getPID(), node.getFileName()))
 			{
 				new ModifyDatastream(node.getPID(), node.getFileName())
@@ -808,7 +770,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 						.controlGroup("M").execute();
 			}
 			node.setDataUrl(new URL(host + "/objects/" + node.getPID()
-					+ "/datastreams/" + newID + "/content"));
+					+ "/datastreams/" + node.getFileName() + "/content"));
 			Link link = new Link();
 			link.setObject(node.getFileName(), true);
 			link.setPredicate(HAS_DATASTREAM);
@@ -821,6 +783,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			throw new ArchiveException(node.getPID()
 					+ " an unknown exception occured.", e);
 		}
@@ -1497,6 +1460,48 @@ public class FedoraFacade implements FedoraInterface, Constants
 					+ " an unknown exception occured.", e);
 		}
 
+	}
+
+	private void createRelsExt(String pid, Vector<Link> links)
+	{
+		if (links != null)
+			for (Link curHBZLink : links)
+			{
+				if (curHBZLink == null)
+					return;
+				System.out.println(" CREATE: <" + pid + "> <"
+						+ curHBZLink.getPredicate() + "> <"
+						+ curHBZLink.getObject() + ">");
+
+				try
+				{
+					if (curHBZLink.isLiteral())
+					{
+						System.out.println("isLiteral");
+
+						new AddRelationship(pid)
+								.predicate(curHBZLink.getPredicate())
+								.object(curHBZLink.getObject(),
+										curHBZLink.isLiteral()).execute();
+					}
+					else
+					{
+						System.out.println("NOT isLiteral");
+
+						new AddRelationship(pid)
+								.predicate(curHBZLink.getPredicate())
+								.object(addUriPrefix(curHBZLink.getObject()),
+										curHBZLink.isLiteral()).execute();
+
+					}
+				}
+				catch (Exception e)
+				{
+					System.out.println("UPDATE: Could not ingest: <" + pid
+							+ "> <" + curHBZLink.getPredicate() + "> <"
+							+ curHBZLink.getObject() + ">");
+				}
+			}
 	}
 
 	private void updateRelsExt(String pid, Vector<Link> links)

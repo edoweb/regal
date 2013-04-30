@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.ws.rs.core.MediaType;
+
 import junit.framework.Assert;
 
 import org.apache.commons.io.IOUtils;
@@ -18,6 +20,9 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.multipart.BodyPart;
+import com.sun.jersey.multipart.MultiPart;
+import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
 public class TestJournalApi
 {
@@ -58,33 +63,18 @@ public class TestJournalApi
 			c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
 					properties.getProperty("password")));
 
-			WebResource delete = c.resource(properties.getProperty("apiUrl")
-					+ "/utils/delete/edoweb:123");
+			WebResource deleteNs = c.resource(properties.getProperty("apiUrl")
+					+ "/utils/deleteNamespace/test");
+
 			WebResource journals = c.resource(properties.getProperty("apiUrl")
 					+ "/ejournal/");
-			WebResource aJournal = c.resource(journals.toString()
-					+ "edoweb:123");
+			WebResource aJournal = c.resource(journals.toString() + "test:123");
 
 			WebResource aJournalMetadata = c.resource(aJournal.toString()
 					+ "/metadata");
 			WebResource aJournalDc = c.resource(aJournal.toString() + "/dc");
 
-			// --------------Clean up--------------------
-			{
-				try
-				{
-					String response = delete.delete(String.class);
-					waitWorkaround();
-					System.out.println(response);
-					ObjectList list = journals.get(ObjectList.class);
-					Assert.assertTrue(list.getList().isEmpty());
-				}
-				catch (UniformInterfaceException e)
-				{
-					System.out.println(e.getResponse().getEntity(String.class));
-				}
-
-			}
+			deleteNs.delete();
 
 			String request = "content";
 			String response = "";
@@ -110,7 +100,7 @@ public class TestJournalApi
 				v.add("Test");
 				dc.setCreator(v);
 				aJournalDc.post(DCBeanAnnotated.class, dc);
-				waitWorkaround();
+
 				dc = aJournalDc.get(DCBeanAnnotated.class);
 				Assert.assertEquals("Test", dc.getCreator().get(0));
 				dc = aJournalDc.get(DCBeanAnnotated.class);
@@ -124,7 +114,7 @@ public class TestJournalApi
 			WebResource aJournalVolumes = c.resource(aJournal.toString()
 					+ "/volume/");
 			WebResource aJournalVolume = c.resource(aJournal.toString()
-					+ "/volume/edoweb:345");
+					+ "/volume/test:345");
 			WebResource aJournalVolumeMetadata = c.resource(aJournalVolume
 					.toString() + "/metadata");
 			WebResource aJournalVolumeDc = c.resource(aJournalVolume.toString()
@@ -139,21 +129,24 @@ public class TestJournalApi
 					.getContextClassLoader().getResourceAsStream("test.ttl"));
 			aJournalVolumeMetadata.type("text/plain").post(metadata);
 
-			byte[] data = IOUtils.toByteArray(Thread.currentThread()
-					.getContextClassLoader().getResourceAsStream("test.pdf"));
-			aJournalVolumeData.type("application/pdf").post(data);
+			MultiPart multiPart = new MultiPart();
+			multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
+					.currentThread().getContextClassLoader()
+					.getResourceAsStream("test.pdf"), "test.pdf"));
+			multiPart.bodyPart(new BodyPart("application/pdf",
+					MediaType.TEXT_PLAIN_TYPE));
+			aJournalVolumeData.type("multipart/mixed").post(multiPart);
 
 			DCBeanAnnotated dc = aJournalVolumeDc.get(DCBeanAnnotated.class);
 			Vector<String> v = new Vector<String>();
 			v.add("TestVolume");
 			dc.setCreator(v);
 			aJournalVolumeDc.post(dc);
-			waitWorkaround();
+
 			dc = aJournalVolumeDc.get(DCBeanAnnotated.class);
 			Assert.assertEquals("TestVolume", dc.getCreator().get(0));
 
-			response = delete.delete(String.class);
-			waitWorkaround();
+			response = deleteNs.delete(String.class);
 			System.out.println(response);
 
 		}
@@ -165,31 +158,9 @@ public class TestJournalApi
 		}
 	}
 
-	private void waitWorkaround()
-	{
-		/*
-		 * Workaround START
-		 */
-		try
-		{
-
-			Thread.sleep(10000);
-
-		}
-		catch (InterruptedException e1)
-		{
-
-			e1.printStackTrace();
-		}
-		/*
-		 * Workaround END
-		 */
-	}
-
 	@After
 	public void tearDown()
 	{
 
 	}
-
 }

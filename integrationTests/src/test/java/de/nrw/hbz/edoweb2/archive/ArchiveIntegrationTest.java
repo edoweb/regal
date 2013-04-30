@@ -120,6 +120,13 @@ public class ArchiveIntegrationTest
 		{
 			archive.deleteNode(pid);
 		}
+
+		objects = archive.findNodes("testCM:*");
+		for (String pid : objects)
+		{
+			archive.deleteNode(pid);
+		}
+
 	}
 
 	@Test
@@ -232,12 +239,7 @@ public class ArchiveIntegrationTest
 			archive.deleteComplexObject(object.getRoot().getPID());
 			Assert.assertFalse(archive.nodeExists(object.getRoot().getPID()));
 			Assert.assertEquals(3, archive.findNodes("test:*").size());
-			// List<String> objects = facade.findNodes("test:*");
-			//
-			// for (String pid : objects)
-			// {
-			// System.out.println("Still exists " + pid);
-			// }
+
 		}
 		catch (Exception e)
 		{
@@ -250,6 +252,12 @@ public class ArchiveIntegrationTest
 	public void tearDown()
 	{
 		List<String> objects = archive.findNodes("test:*");
+		for (String pid : objects)
+		{
+			archive.deleteNode(pid);
+		}
+
+		objects = archive.findNodes("testCM:*");
 		for (String pid : objects)
 		{
 			archive.deleteNode(pid);

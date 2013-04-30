@@ -21,10 +21,11 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.ws.rs.core.MediaType;
+
 import junit.framework.Assert;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +35,9 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.multipart.BodyPart;
+import com.sun.jersey.multipart.MultiPart;
+import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -89,19 +93,13 @@ public class TestReportApi
 			WebResource myReportMetadata = c.resource(myReport.toString()
 					+ "/metadata");
 			WebResource myReportDc = c.resource(myReport.toString() + "/dc");
+			WebResource deleteNs = c.resource(properties.getProperty("apiUrl")
+					+ "/utils/deleteNamespace/test");
 
 			// --------------Clean up--------------------
 			{
-				try
-				{
-					String response = delete.delete(String.class);
-					waitWorkaround();
-					System.out.println(response);
-				}
-				catch (UniformInterfaceException e)
-				{
-					System.out.println(e.getResponse().getEntity(String.class));
-				}
+				String response = deleteNs.delete(String.class);
+				System.out.println(response);
 
 			}
 
@@ -120,9 +118,13 @@ public class TestReportApi
 
 			System.out.println(response);
 
-			byte[] data = IOUtils.toByteArray(Thread.currentThread()
-					.getContextClassLoader().getResourceAsStream("test.pdf"));
-			myReportData.type("application/pdf").post(data);
+			MultiPart multiPart = new MultiPart();
+			multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
+					.currentThread().getContextClassLoader()
+					.getResourceAsStream("test.pdf"), "test.pdf"));
+			multiPart.bodyPart(new BodyPart("application/pdf",
+					MediaType.TEXT_PLAIN_TYPE));
+			myReportData.type("multipart/mixed").post(multiPart);
 
 			byte[] metadata = IOUtils.toByteArray(Thread.currentThread()
 					.getContextClassLoader().getResourceAsStream("test.ttl"));
@@ -135,7 +137,7 @@ public class TestReportApi
 				v.add("Test");
 				dc.setCreator(v);
 				myReportDc.post(DCBeanAnnotated.class, dc);
-				waitWorkaround();
+
 				dc = myReportDc.get(DCBeanAnnotated.class);
 				Assert.assertEquals("Test", dc.getCreator().get(0));
 			}
@@ -144,40 +146,19 @@ public class TestReportApi
 
 			}
 
-			response = delete.delete(String.class);
-			System.out.println(response);
+			// --------------Clean up--------------------
+			{
+				response = deleteNs.delete(String.class);
+				System.out.println(response);
+
+			}
 		}
 		catch (UniformInterfaceException e)
 		{
+			e.printStackTrace();
 			System.out.println(e.getResponse().getEntity(String.class));
 		}
 
 	}
 
-	private void waitWorkaround()
-	{
-		/*
-		 * Workaround START
-		 */
-		try
-		{
-
-			Thread.sleep(10000);
-
-		}
-		catch (InterruptedException e1)
-		{
-
-			e1.printStackTrace();
-		}
-		/*
-		 * Workaround END
-		 */
-	}
-
-	@After
-	public void tearDown()
-	{
-
-	}
 }

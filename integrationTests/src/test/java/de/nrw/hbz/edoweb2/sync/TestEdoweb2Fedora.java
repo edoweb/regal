@@ -21,8 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 //import java.text.ParseException;
 //import java.util.Date;
@@ -83,112 +81,32 @@ public class TestEdoweb2Fedora
 		piddownloaderServer = properties.getProperty("piddownloader.server");
 		piddownloaderDownloadLocation = properties
 				.getProperty("piddownloader.downloadLocation");
-
-		// provide a prepared pidList
-		// pidreporterPidFile = properties.getProperty("pidreporter.pidFile");
-
-	}
-
-	/*
-	 * 1637992 4676380 2258539 1638892 4628526 2238484
-	 */
-	@Before
-	public void setUp()
-	{
-		pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();
-		Main main = new Main();
-
-		try
-		{
-			main.run("DELE", user, password, piddownloaderServer,
-					piddownloaderDownloadLocation, pidreporterServer,
-					pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-					"http://localhost", pidreporterPidFile);
-		}
-		catch (Exception e)
-		{
-
-		}
-		// try
-		// {
-		//
-		// FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
-		//
-		// }
-		// catch (IOException e)
-		// {
-		// e.printStackTrace();
-		// }
-		// // System.out
-		// // .println(piddownloaderDownloadLocation + " has been deleted!");
-		// if (!new File(piddownloaderDownloadLocation).exists())
-		// {
-		// // boolean success =
-		// (new File(piddownloaderDownloadLocation)).mkdirs();
-		// // if (success)
-		// // {
-		// // // System.out.println(piddownloaderDownloadLocation
-		// // // + " has been created!");
-		// // }
-		// }
-
 	}
 
 	@Test
 	public void mainTest() throws IOException
 	{
-		Main main = new Main();
-
-		main.run("PIDL", user, password, piddownloaderServer,
-				piddownloaderDownloadLocation, pidreporterServer,
-				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-				"http://localhost", pidreporterPidFile);
-
-	}
-
-	@After
-	public void tearDown()
-	{
+		System.out
+				.println("de.nrw.hbz.edoweb2.sync.TestEdoweb2Fedora.java : Please comment out to run this test!");
 		// Main main = new Main();
-		//
-		// main.run("DELE", user, password, piddownloaderServer,
-		// piddownloaderDownloadLocation, pidreporterServer,
-		// pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-		// pidreporterPidFile);
+		// pidreporterPidFile =
+		// getClass().getResource("/pidlist.txt").getPath();
 		//
 		// try
 		// {
-		// FileUtils
-		// .deleteDirectory(new File("piddownloaderDownloadLocation"));
+		// main.run("DELE", user, password, piddownloaderServer,
+		// piddownloaderDownloadLocation, pidreporterServer,
+		// pidreporterSet, pidreporterTimestampFile, fedoraUrl,
+		// "http://localhost", pidreporterPidFile);
 		// }
-		// catch (IOException e)
+		// catch (Exception e)
 		// {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
+		//
 		// }
+		// main.run("PIDL", user, password, piddownloaderServer,
+		// piddownloaderDownloadLocation, pidreporterServer,
+		// pidreporterSet, pidreporterTimestampFile, fedoraUrl,
+		// "http://localhost", pidreporterPidFile);
 
 	}
-	// 1637996
-	// 1638000
-	// 1638004
-	// 1638008
-	// 1638012
-	// 1638016
-	// 1638020
-	// 1638024
-	// 1638028
-	// 1638032
-	// 1638036
-	// 1637994
-	// 1637998
-	// 1638002
-	// 1638006
-	// 1638010
-	// 1638014
-	// 1638018
-	// 1638022
-	// 1638026
-	// 1638030
-	// 1638034
-	// 1638038
 }

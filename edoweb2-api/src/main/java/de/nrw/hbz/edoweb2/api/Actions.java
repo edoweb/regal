@@ -1424,7 +1424,7 @@ class Actions
 
 	}
 
-	String epicur(String pid)
+	String epicur(String pid, String namespace)
 	{
 		String status = "urn_new";
 		String result = "<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xmlns:xsi=\"http://www.w3.com/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://nbn-resolving.de/urn/resolver.pl?urn=urn:nbn:de:1111-2004033116\">"
@@ -1438,12 +1438,14 @@ class Actions
 				+ "		  </administrative_data>"
 				+ "		  <record>"
 				+ "		    <identifier scheme=\"urn:nbn:de\">"
-				+ generateUrn(pid)
+				+ generateUrn(pid, namespace)
 				+ "</identifier>"
 				+ "		    <resource>"
 				+ "		      <identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
 				+ uriPrefix
 				+ ""
+				+ namespace
+				+ ":"
 				+ pid
 				+ "</identifier>"
 				+ "		      <format scheme=\"imt\">text/html</format>"
@@ -1451,14 +1453,14 @@ class Actions
 		return result;
 	}
 
-	String generateUrn(String pid)
+	String generateUrn(String pid, String namespace)
 	{
 		String result = null;
 		String raw = null;
 		String urn = "urn";
 		String nbn = "nbn";
 		String de = "de";
-		String snid = archive.readNode(pid).getNamespace();
+		String snid = namespace;
 		String niss = pid;
 
 		raw = urn + ":" + nbn + ":" + de + ":" + snid + "-" + niss;
@@ -1909,6 +1911,17 @@ class Actions
 	public Node readNode(String pid)
 	{
 		return archive.readNode(pid);
+	}
+
+	public String deleteNamespace(String namespace)
+	{
+		List<String> objects = archive.findNodes(namespace + ":*");
+		StringBuffer result = new StringBuffer();
+		for (String pid : objects)
+		{
+			result.append(archive.deleteNode(pid) + "\n");
+		}
+		return result.toString();
 	}
 
 }
