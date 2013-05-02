@@ -908,7 +908,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 		this.updateRelsExt(foSDepPid, sDepHBZLinks);
 
-		new ModifyDatastream(foCMPid,
+		new AddDatastream(foCMPid,
 				de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL)
 				.versionable(true)
 				.formatURI(
@@ -916,20 +916,20 @@ public class FedoraFacade implements FedoraInterface, Constants
 				.dsState("A").controlGroup("M").mimeType("text/xml")
 				.content(getDsCompositeModel(cm)).execute();
 
-		new ModifyDatastream(foSDefPid, DS_METHODMAP).versionable(true)
+		new AddDatastream(foSDefPid, DS_METHODMAP).versionable(true)
 				.formatURI(DS_METHODMAP_URI).dsState("A").controlGroup("M")
 				.mimeType("text/xml").content(getMethodMap(cm)).execute();
 
-		new ModifyDatastream(foSDepPid, DS_METHODMAP_WSDL).versionable(true)
+		new AddDatastream(foSDepPid, DS_METHODMAP_WSDL).versionable(true)
 				.formatURI(DS_METHODMAP_WSDL_URI).dsState("A")
 				.controlGroup("M").mimeType("text/xml")
 				.content(getMethodMapToWsdl(cm)).execute();
 
-		new ModifyDatastream(foSDepPid, DS_INPUTSPEC).versionable(true)
+		new AddDatastream(foSDepPid, DS_INPUTSPEC).versionable(true)
 				.formatURI(DS_INPUTSPEC_URI).dsState("A").controlGroup("M")
 				.mimeType("text/xml").content(getDSInputSpec()).execute();
 
-		new ModifyDatastream(foSDepPid, DS_WSDL).versionable(true)
+		new AddDatastream(foSDepPid, DS_WSDL).versionable(true)
 				.formatURI(DS_WSDL_URI).dsState("A").controlGroup("M")
 				.mimeType("text/xml").content(getWsdl(cm)).execute();
 
