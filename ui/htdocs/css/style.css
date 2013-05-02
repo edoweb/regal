@@ -177,4 +177,11 @@ td
 	color: #404040;
 
 }*/
+.tablelabel
+{
+       background-color: grey;
+       font-size:0.9em;
+ }
+
+
 .highlight { background-color: yellow }
