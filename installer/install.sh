@@ -27,11 +27,11 @@ echo "write install.properties"
 echo "keystore.file=default" > $ARCHIVE_HOME/conf/install.properties
 echo "ri.enabled=true" >> $ARCHIVE_HOME/conf/install.properties
 echo "messaging.enabled=true" >> $ARCHIVE_HOME/conf/install.properties
-echo "apia.auth.required=true" >> $ARCHIVE_HOME/conf/install.properties
+echo "apia.auth.required=false" >> $ARCHIVE_HOME/conf/install.properties
 echo "database.jdbcDriverClass=org.apache.derby.jdbc.EmbeddedDriver" >> $ARCHIVE_HOME/conf/install.properties
 echo "upstream.auth.enabled=false" >> $ARCHIVE_HOME/conf/install.properties
 echo "tomcat.ssl.port=8443" >> $ARCHIVE_HOME/conf/install.properties
-echo "ssl.available=false" >> $ARCHIVE_HOME/conf/install.properties
+echo "ssl.available=true" >> $ARCHIVE_HOME/conf/install.properties
 echo "database.jdbcURL=jdbc\:derby\:$ARCHIVE_HOME/fedora/derby/fedora3;create\=true" >> $ARCHIVE_HOME/conf/install.properties
 echo "messaging.uri=vm\:(broker\:(tcp\://localhost\:61616))" >> $ARCHIVE_HOME/conf/install.properties
 echo "database.password=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/install.properties
@@ -49,7 +49,7 @@ echo "fedora.serverContext=fedora" >> $ARCHIVE_HOME/conf/install.properties
 echo "keystore.password=changeit" >> $ARCHIVE_HOME/conf/install.properties
 echo "llstore.type=akubra-fs" >> $ARCHIVE_HOME/conf/install.properties
 echo "tomcat.home=$ARCHIVE_HOME/fedora/tomcat" >> $ARCHIVE_HOME/conf/install.properties
-echo "fesl.authn.enabled=true" >> $ARCHIVE_HOME/conf/install.properties
+echo "fesl.authn.enabled=false" >> $ARCHIVE_HOME/conf/install.properties
 echo "fedora.home=$ARCHIVE_HOME/fedora" >> $ARCHIVE_HOME/conf/install.properties
 echo "install.type=custom" >> $ARCHIVE_HOME/conf/install.properties
 echo "servlet.engine=included" >> $ARCHIVE_HOME/conf/install.properties
@@ -81,7 +81,7 @@ echo "write api.properties"
 
 echo "serverName=http://$SERVER"  > $ARCHIVE_HOME/conf/api.properties
 echo "fedoraExtern=http://$SERVER/fedora"  >> $ARCHIVE_HOME/conf/api.properties
-echo "fedoraIntern=http://$SERVER:$TOMCAT_PORT/fedora" >> $ARCHIVE_HOME/conf/api.properties
+echo "fedoraIntern=http://localhost:$TOMCAT_PORT/fedora" >> $ARCHIVE_HOME/conf/api.properties
 echo "user=$ARCHIVE_USER" >> $ARCHIVE_HOME/conf/api.properties
 echo "password=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/api.properties
 echo "namespace=$PREFIX" >> $ARCHIVE_HOME/conf/api.properties

@@ -67,12 +67,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.fcrepo.client.utility.ingest.AutoIngestor;
-import org.fcrepo.client.utility.ingest.XMLBuilder;
-import org.fcrepo.client.utility.ingest.XMLBuilder.OBJECT_TYPE;
 import org.fcrepo.common.Constants;
-import org.fcrepo.server.access.FedoraAPIAMTOM;
-import org.fcrepo.server.management.FedoraAPIMMTOM;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -182,33 +177,9 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 		try
 		{
-			try
-			{
-				IngestResponse response = new Ingest(node.getPID()).label(
-						node.getLabel()).execute();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				try
-				{
-					org.fcrepo.client.FedoraClient fedoraClient = new org.fcrepo.client.FedoraClient(
-							host, user, passwd);
 
-					FedoraAPIAMTOM fedoraAccess = fedoraClient.getAPIAMTOM();
-					FedoraAPIMMTOM fedoraManager = fedoraClient.getAPIMMTOM();
-					byte[] foxmlObject = serializeNode(node.getPID(),
-							node.getLabel(), new XMLBuilder(fedoraManager),
-							XMLBuilder.OBJECT_TYPE.dataObject);
-					AutoIngestor.ingestAndCommit(fedoraAccess, fedoraManager,
-							new ByteArrayInputStream(foxmlObject),
-							FOXML1_1.uri, "Created with HBZ Webservice");
-				}
-				catch (Exception e2)
-				{
-					e2.printStackTrace();
-				}
-			}
+			IngestResponse response = new Ingest(node.getPID()).label(
+					node.getLabel()).execute();
 
 			updateDc(node);
 			createContentModels(node);
@@ -244,32 +215,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 					+ e.getMessage(), e);
 		}
 
-	}
-
-	private byte[] serializeNode(String pid, String label,
-			XMLBuilder xmlBuilder, OBJECT_TYPE type)
-	{
-
-		try
-		{
-			String objXML = xmlBuilder.createObjectXML(type, pid, label);
-
-			objXML = setOwnerToXMLString(objXML);
-
-			return objXML.getBytes("UTF-8");
-		}
-		catch (RemoteException e)
-		{
-
-			e.printStackTrace();
-		}
-		catch (UnsupportedEncodingException e)
-		{
-
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 
 	@Override
