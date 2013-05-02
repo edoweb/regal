@@ -27,11 +27,11 @@ echo "write install.properties"
 echo "keystore.file=default" > $ARCHIVE_HOME/conf/install.properties
 echo "ri.enabled=true" >> $ARCHIVE_HOME/conf/install.properties
 echo "messaging.enabled=true" >> $ARCHIVE_HOME/conf/install.properties
-echo "apia.auth.required=true" >> $ARCHIVE_HOME/conf/install.properties
+echo "apia.auth.required=false" >> $ARCHIVE_HOME/conf/install.properties
 echo "database.jdbcDriverClass=org.apache.derby.jdbc.EmbeddedDriver" >> $ARCHIVE_HOME/conf/install.properties
 echo "upstream.auth.enabled=false" >> $ARCHIVE_HOME/conf/install.properties
 echo "tomcat.ssl.port=8443" >> $ARCHIVE_HOME/conf/install.properties
-echo "ssl.available=false" >> $ARCHIVE_HOME/conf/install.properties
+echo "ssl.available=true" >> $ARCHIVE_HOME/conf/install.properties
 echo "database.jdbcURL=jdbc\:derby\:$ARCHIVE_HOME/fedora/derby/fedora3;create\=true" >> $ARCHIVE_HOME/conf/install.properties
 echo "messaging.uri=vm\:(broker\:(tcp\://localhost\:61616))" >> $ARCHIVE_HOME/conf/install.properties
 echo "database.password=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/install.properties
@@ -49,7 +49,7 @@ echo "fedora.serverContext=fedora" >> $ARCHIVE_HOME/conf/install.properties
 echo "keystore.password=changeit" >> $ARCHIVE_HOME/conf/install.properties
 echo "llstore.type=akubra-fs" >> $ARCHIVE_HOME/conf/install.properties
 echo "tomcat.home=$ARCHIVE_HOME/fedora/tomcat" >> $ARCHIVE_HOME/conf/install.properties
-echo "fesl.authn.enabled=true" >> $ARCHIVE_HOME/conf/install.properties
+echo "fesl.authn.enabled=false" >> $ARCHIVE_HOME/conf/install.properties
 echo "fedora.home=$ARCHIVE_HOME/fedora" >> $ARCHIVE_HOME/conf/install.properties
 echo "install.type=custom" >> $ARCHIVE_HOME/conf/install.properties
 echo "servlet.engine=included" >> $ARCHIVE_HOME/conf/install.properties
@@ -81,7 +81,7 @@ echo "write api.properties"
 
 echo "serverName=http://$SERVER"  > $ARCHIVE_HOME/conf/api.properties
 echo "fedoraExtern=http://$SERVER/fedora"  >> $ARCHIVE_HOME/conf/api.properties
-echo "fedoraIntern=http://$SERVER:$TOMCAT_PORT/fedora" >> $ARCHIVE_HOME/conf/api.properties
+echo "fedoraIntern=http://localhost:$TOMCAT_PORT/fedora" >> $ARCHIVE_HOME/conf/api.properties
 echo "user=$ARCHIVE_USER" >> $ARCHIVE_HOME/conf/api.properties
 echo "password=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/api.properties
 echo "namespace=$PREFIX" >> $ARCHIVE_HOME/conf/api.properties
@@ -118,17 +118,17 @@ echo >> $ARCHIVE_HOME/conf/setenv.sh
 echo -e "export CATALINA_OPTS" >> $ARCHIVE_HOME/conf/setenv.sh
 echo >> $ARCHIVE_HOME/conf/setenv.sh
 
-echo "write web.properties"
-
-echo "security.ssl.api.management=REQUIRES_SECURE_CHANNEL" > $ARCHIVE_HOME/conf/web.properties
-echo "security.auth.filters=AuthFilterJAAS" >> $ARCHIVE_HOME/conf/web.properties
-echo "security.fesl.authN.jaas.apia.enabled=false" >> $ARCHIVE_HOME/conf/web.properties
-echo "fedora.port=$TOMCAT_PORT" >> $ARCHIVE_HOME/conf/web.properties
-echo "security.fesl.authZ.enabled=false" >>$ARCHIVE_HOME/conf/web.properties
-echo "fedora.port.secure=8443" >> $ARCHIVE_HOME/conf/web.properties
-echo "security.ssl.api.default=ANY_CHANNEL" >> $ARCHIVE_HOME/conf/web.properties
-echo "security.ssl.api.access=ANY_CHANNEL" >> $ARCHIVE_HOME/conf/web.properties
-echo  >> $ARCHIVE_HOME/conf/web.properties
+#echo "write web.properties"
+#
+#echo "security.ssl.api.management=REQUIRES_SECURE_CHANNEL" > $ARCHIVE_HOME/conf/web.properties
+#echo "security.auth.filters=AuthFilterJAAS" >> $ARCHIVE_HOME/conf/web.properties
+#echo "security.fesl.authN.jaas.apia.enabled=false" >> $ARCHIVE_HOME/conf/web.properties
+#echo "fedora.port=$TOMCAT_PORT" >> $ARCHIVE_HOME/conf/web.properties
+#echo "security.fesl.authZ.enabled=false" >>$ARCHIVE_HOME/conf/web.properties
+#echo "fedora.port.secure=8443" >> $ARCHIVE_HOME/conf/web.properties
+#echo "security.ssl.api.default=ANY_CHANNEL" >> $ARCHIVE_HOME/conf/web.properties
+#echo "security.ssl.api.access=ANY_CHANNEL" >> $ARCHIVE_HOME/conf/web.properties
+#echo  >> $ARCHIVE_HOME/conf/web.properties
 
 echo "write elasticsearch.yml"
 
@@ -189,7 +189,7 @@ java -jar fcrepo-installer-3.6.1.jar  $ARCHIVE_HOME/conf/install.properties
 cp  $ARCHIVE_HOME/conf/tomcat-users.xml $ARCHIVE_HOME/fedora/tomcat/conf
 cp  $ARCHIVE_HOME/conf/fedora-users.xml $ARCHIVE_HOME/fedora/server/config/
 cp  $ARCHIVE_HOME/conf/setenv.sh $ARCHIVE_HOME/fedora/tomcat/bin
-cp  $ARCHIVE_HOME/conf/web.properties $ARCHIVE_HOME/fedora/server/config/spring/web/
+#cp  $ARCHIVE_HOME/conf/web.properties $ARCHIVE_HOME/fedora/server/config/spring/web/
 
 echo "install elasticsearch"
 tar -xzf elasticsearch-0.19.11.tar.gz
@@ -227,11 +227,8 @@ SYNCER_DEST=$ARCHIVE_HOME/sync/${PREFIX}sync.jar
 export FEDORA_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_HOME=$FEDORA_HOME/tomcat
 
-
 mkdir -v $ARCHIVE_HOME/${PREFIX}base
 ln -s $ARCHIVE_HOME/${PREFIX}base $ARCHIVE_HOME/html/${PREFIX}base
-echo "Update src must be done manually!"
-echo "OK?"
 $ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh
 
 echo "Fetch source..."
@@ -240,17 +237,17 @@ git pull origin
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
 #cp variables.sh $ARCHIVE_HOME/src/ui/helper/
 echo "Compile..."
-mvn -q -e clean install
+mvn -q -e clean install -DskipTests
 cd -
 
 cd $SRC/${PREFIX}Sync
-mvn -q -e assembly:assembly 
+mvn -q -e assembly:assembly -DskipTests
 cd -
 
 cd $SRC/edoweb2-api
 echo "Install Webapi"
 echo "install archive"
-mvn -q -e war:war
+mvn -q -e war:war -DskipTests
 cd -
 
 echo "Rollout..."
@@ -286,7 +283,7 @@ cp -r $ARCHIVE_HOME/src/ui/htdocs/* $ARCHIVE_HOME/html/
 sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/EasyEllinetSearch.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/EasyEllinetSearch.js"
 
 cp $SRC/ui/conf/proai.properties $WEBAPPS/oai-pmh/WEB-INF/classes
-cp $SRC/ui/helper/install.sh $ARCHIVE_HOME/bin/
+cp $SRC/installer/install.sh $ARCHIVE_HOME/bin/
 }
 
 if [ $# -eq 0 ]
