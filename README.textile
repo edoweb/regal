@@ -13,7 +13,7 @@ h1. Install
 
 Required: *apache2 with proxy and rewrite module, maven3, git*!
 
-Download "installer.tar.gz":https://raw.github.com/jschnasse/edoweb2/master/installer.tar.gz
+Download "installer.tar.gz":https://raw.github.com/edoweb/edoweb2/master/installer.tar.gz
 
 Uncompress
 
