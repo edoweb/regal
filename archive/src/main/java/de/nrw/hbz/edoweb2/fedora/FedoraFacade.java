@@ -67,13 +67,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.util.URIUtil;
+import org.fcrepo.client.utility.ingest.AutoIngestor;
+import org.fcrepo.client.utility.ingest.XMLBuilder;
+import org.fcrepo.client.utility.ingest.XMLBuilder.OBJECT_TYPE;
 import org.fcrepo.common.Constants;
+import org.fcrepo.server.access.FedoraAPIAMTOM;
+import org.fcrepo.server.management.FedoraAPIMMTOM;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -91,6 +90,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.yourmediashelf.fedora.client.FedoraClient;
 import com.yourmediashelf.fedora.client.FedoraClientException;
 import com.yourmediashelf.fedora.client.FedoraCredentials;
 import com.yourmediashelf.fedora.client.request.AddDatastream;
@@ -99,10 +99,12 @@ import com.yourmediashelf.fedora.client.request.FedoraRequest;
 import com.yourmediashelf.fedora.client.request.FindObjects;
 import com.yourmediashelf.fedora.client.request.GetDatastreamDissemination;
 import com.yourmediashelf.fedora.client.request.GetNextPID;
+import com.yourmediashelf.fedora.client.request.GetObjectProfile;
 import com.yourmediashelf.fedora.client.request.Ingest;
 import com.yourmediashelf.fedora.client.request.ListDatastreams;
 import com.yourmediashelf.fedora.client.request.ModifyDatastream;
 import com.yourmediashelf.fedora.client.request.PurgeObject;
+import com.yourmediashelf.fedora.client.request.RiSearch;
 import com.yourmediashelf.fedora.client.request.Upload;
 import com.yourmediashelf.fedora.client.response.FedoraResponse;
 import com.yourmediashelf.fedora.client.response.FindObjectsResponse;
@@ -128,7 +130,7 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
  * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
-@SuppressWarnings("static-access")
+
 public class FedoraFacade implements FedoraInterface, Constants
 {
 
@@ -137,10 +139,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 	 * actual fedora calls!
 	 * 
 	 * */
-	private com.yourmediashelf.fedora.client.FedoraClient fedora;
+
 	private final String host;
 	private final String user;
 	private final String passwd;
+
 	String objecUrl = "info:fedora";
 
 	/**
@@ -154,14 +157,13 @@ public class FedoraFacade implements FedoraInterface, Constants
 	public FedoraFacade(String host, String aUser, String aPassword)
 	{
 		this.user = aUser;
-		this.passwd = aPassword;
 		this.host = host;
-
+		this.passwd = aPassword;
 		try
 		{
 			FedoraCredentials credentials = new FedoraCredentials(host, aUser,
 					aPassword);
-			fedora = new com.yourmediashelf.fedora.client.FedoraClient(
+			FedoraClient fedora = new com.yourmediashelf.fedora.client.FedoraClient(
 					credentials);
 			FedoraRequest.setDefaultClient(fedora);
 
@@ -180,19 +182,33 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 		try
 		{
-			// byte[] foxmlObject = serializeNode(node.getPID(),
-			// node.getLabel(),
-			// new XMLBuilder(fedoraManager),
-			// XMLBuilder.OBJECT_TYPE.dataObject);
-			//
-			// AutoIngestor ingestor = new AutoIngestor(fedoraAccess,
-			// fedoraManager);
-			//
-			// ingestor.ingestAndCommit(new ByteArrayInputStream(foxmlObject),
-			// FOXML1_1.uri, "Created with HBZ Webservice");
+			try
+			{
+				IngestResponse response = new Ingest(node.getPID()).label(
+						node.getLabel()).execute();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				try
+				{
+					org.fcrepo.client.FedoraClient fedoraClient = new org.fcrepo.client.FedoraClient(
+							host, user, passwd);
 
-			IngestResponse response = new Ingest(node.getPID()).label(
-					node.getLabel()).execute(fedora);
+					FedoraAPIAMTOM fedoraAccess = fedoraClient.getAPIAMTOM();
+					FedoraAPIMMTOM fedoraManager = fedoraClient.getAPIMMTOM();
+					byte[] foxmlObject = serializeNode(node.getPID(),
+							node.getLabel(), new XMLBuilder(fedoraManager),
+							XMLBuilder.OBJECT_TYPE.dataObject);
+					AutoIngestor.ingestAndCommit(fedoraAccess, fedoraManager,
+							new ByteArrayInputStream(foxmlObject),
+							FOXML1_1.uri, "Created with HBZ Webservice");
+				}
+				catch (Exception e2)
+				{
+					e2.printStackTrace();
+				}
+			}
 
 			updateDc(node);
 			createContentModels(node);
@@ -221,13 +237,39 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 			createRelsExt(node);
 		}
-		catch (FedoraClientException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 			throw new ArchiveException("An unknown exception occured. "
 					+ e.getMessage(), e);
 		}
 
+	}
+
+	private byte[] serializeNode(String pid, String label,
+			XMLBuilder xmlBuilder, OBJECT_TYPE type)
+	{
+
+		try
+		{
+			String objXML = xmlBuilder.createObjectXML(type, pid, label);
+
+			objXML = setOwnerToXMLString(objXML);
+
+			return objXML.getBytes("UTF-8");
+		}
+		catch (RemoteException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (UnsupportedEncodingException e)
+		{
+
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	@Override
@@ -244,16 +286,9 @@ public class FedoraFacade implements FedoraInterface, Constants
 			readRelsExt(node);
 			readContentModels(node);
 
-			// FedoraCredentials credentials = new FedoraCredentials(host, user,
-			// passwd);
-			// com.yourmediashelf.fedora.client.FedoraClient fedora = new
-			// com.yourmediashelf.fedora.client.FedoraClient(
-			// credentials);
-			//
-			// FedoraRequest.setDefaultClient(fedora);
-
-			node.setLabel(fedora.getObjectProfile(pid).execute().getLabel());
-			node.setLastModified(fedora.getLastModifiedDate(pid));
+			node.setLabel(new GetObjectProfile(pid).execute().getLabel());
+			node.setLastModified(new GetObjectProfile(pid).execute()
+					.getLastModifiedDate());
 		}
 		catch (FedoraClientException e)
 		{
@@ -291,18 +326,11 @@ public class FedoraFacade implements FedoraInterface, Constants
 	public InputStream findTriples(String query, String queryFormat,
 			String outputformat)
 	{
-		HttpClient httpClient = new HttpClient();
-		httpClient.getState().setCredentials(
-				new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
-				new UsernamePasswordCredentials(user, passwd));
-		HttpMethod method = new GetMethod(host);
 		try
 		{
-			method.setQueryString("type=triples&lang=" + queryFormat
-					+ "&format=" + outputformat + "&query="
-					+ URIUtil.encodeQuery(query));
-			httpClient.executeMethod(method);
-			return method.getResponseBodyAsStream();
+			FedoraResponse response = new RiSearch(query).format(outputformat)
+					.lang(queryFormat).type("triples").execute();
+			return response.getEntityInputStream();
 		}
 		catch (Exception e)
 		{
@@ -879,41 +907,14 @@ public class FedoraFacade implements FedoraInterface, Constants
 	private void createContentModel(ContentModel cm)
 			throws FedoraClientException, UnsupportedEncodingException
 	{
-		// String state = "A";
-
 		String foCMPid = cm.getContentModelPID();
 		String foSDefPid = cm.getServiceDefinitionPID();
 		String foSDepPid = cm.getServiceDeploymentPID();
 
-		// Create CM
-		// byte[] cmFoxmlObject = serializeNode(foCMPid, "Content Model",
-		// new XMLBuilder(fedoraManager),
-		// XMLBuilder.OBJECT_TYPE.contentModel);
-		// AutoIngestor.ingestAndCommit(this.fedoraAccess, fedoraManager,
-		// new ByteArrayInputStream(cmFoxmlObject), FOXML1_1.uri,
-		// "Created with HBZ Webservice");
-
 		new Ingest(foCMPid).label("Content Model").execute();
-
-		// // Create SDef
-		// byte[] sDefFoxmlObject = serializeNode(foSDefPid,
-		// "ServiceDefinition",
-		// new XMLBuilder(fedoraManager),
-		// XMLBuilder.OBJECT_TYPE.serviceDefinition);
-		// AutoIngestor.ingestAndCommit(this.fedoraAccess, fedoraManager,
-		// new ByteArrayInputStream(sDefFoxmlObject), FOXML1_1.uri,
-		// "Created with HBZ Webservice");
 
 		new Ingest(foSDefPid).label("ServiceDefinition").execute();
 
-		// // Create SDep
-		// byte[] sDepFoxmlObject = serializeNode(foSDepPid,
-		// "ServiceDeployment",
-		// new XMLBuilder(fedoraManager),
-		// XMLBuilder.OBJECT_TYPE.serviceDeployment);
-		// AutoIngestor.ingestAndCommit(this.fedoraAccess, fedoraManager,
-		// new ByteArrayInputStream(sDepFoxmlObject), FOXML1_1.uri,
-		// "Created with HBZ Webservice");
 		new Ingest(foSDepPid).label("ServiceDeployment").execute();
 
 		// Create Rels-Ext Datestreams
@@ -962,20 +963,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 		this.updateRelsExt(foSDepPid, sDepHBZLinks);
 
-		// DataHandler dh = new DataHandler(new ByteArrayDataSource(
-		// getDsCompositeModel(cm).getBytes("UTF-8"), "text/xml"));
-		//
-		// fedoraManager
-		// .modifyDatastreamByValue(
-		// foCMPid,
-		// de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL,
-		// null,
-		// "DS-Composite-Stream",
-		// "text/xml",
-		// de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL_URI,
-		// dh, "DISABLED", null, "UPDATE OF METHODMAP STREAM",
-		// false);
-
 		new ModifyDatastream(foCMPid,
 				de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL)
 				.versionable(true)
@@ -984,50 +971,18 @@ public class FedoraFacade implements FedoraInterface, Constants
 				.dsState("A").controlGroup("M").mimeType("text/xml")
 				.content(getDsCompositeModel(cm)).execute();
 
-		// Add Methodmap to sDef
-		// dh = new DataHandler(new
-		// ByteArrayDataSource(getMethodMap(cm).getBytes(
-		// "UTF-8"), "text/xml"));
-		// fedoraManager.modifyDatastreamByValue(foSDefPid, DS_METHODMAP, null,
-		// "Methodmap-Stream", "text/xml", DS_METHODMAP_URI, dh,
-		// "DISABLED", null, "UPDATE OF METHODMAP STREAM", false);
-
 		new ModifyDatastream(foSDefPid, DS_METHODMAP).versionable(true)
 				.formatURI(DS_METHODMAP_URI).dsState("A").controlGroup("M")
 				.mimeType("text/xml").content(getMethodMap(cm)).execute();
-
-		// Add Methodmap to sDep
-		// dh = new DataHandler(new ByteArrayDataSource(getMethodMapToWsdl(cm)
-		// .getBytes("UTF-8"), "text/xml"));
-		// fedoraManager.modifyDatastreamByValue(foSDepPid, DS_METHODMAP_WSDL,
-		// null, "Methodmap-Stream", "text/xml", DS_METHODMAP_WSDL_URI,
-		// dh, "DISABLED", null, "UPDATE OF METHODMAP STREAM", false);
 
 		new ModifyDatastream(foSDepPid, DS_METHODMAP_WSDL).versionable(true)
 				.formatURI(DS_METHODMAP_WSDL_URI).dsState("A")
 				.controlGroup("M").mimeType("text/xml")
 				.content(getMethodMapToWsdl(cm)).execute();
 
-		// Add DSINPUTSPEC to sDep
-		// dh = new DataHandler(new
-		// ByteArrayDataSource(getDSInputSpec().getBytes(
-		// "UTF-8"), "text/xml"));
-		// fedoraManager.modifyDatastreamByValue(foSDepPid, DS_INPUTSPEC, null,
-		// "DSINPUTSPEC-Stream", "text/xml", DS_INPUTSPEC_URI, dh,
-		// "DISABLED", null, "UPDATE OF DSINPUTSPEC STREAM", false);
-
 		new ModifyDatastream(foSDepPid, DS_INPUTSPEC).versionable(true)
 				.formatURI(DS_INPUTSPEC_URI).dsState("A").controlGroup("M")
 				.mimeType("text/xml").content(getDSInputSpec()).execute();
-
-		// Add WSDL to sDep
-		// System.out.println(foSDepPid);
-		// System.out.println(cm.getWsdl());
-		// dh = new DataHandler(new ByteArrayDataSource(getWsdl(cm).getBytes(
-		// "UTF-8"), "text/xml"));
-		// fedoraManager.modifyDatastreamByValue(foSDepPid, DS_WSDL, null,
-		// "WSDL-Stream", "text/xml", DS_WSDL_URI, dh, "DISABLED", null,
-		// "UPDATE OF WSDL STREAM", false);
 
 		new ModifyDatastream(foSDepPid, DS_WSDL).versionable(true)
 				.formatURI(DS_WSDL_URI).dsState("A").controlGroup("M")
@@ -1038,8 +993,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 	private void readDcToNode(Node node) throws RemoteException,
 			FedoraClientException
 	{
-		// MIMETypedStream ds = fedoraAccess.getDatastreamDissemination(
-		// node.getPID(), "DC", null);
 
 		FedoraResponse response = new GetDatastreamDissemination(node.getPID(),
 				"DC").download(true).execute();
@@ -1213,17 +1166,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 	}
 
-	/**
-	 * <p>
-	 * <em>Title: </em>
-	 * </p>
-	 * <p>
-	 * Description:
-	 * </p>
-	 * 
-	 * @param node
-	 * @throws FedoraClientException
-	 */
 	private void readRelsExt(Node node) throws FedoraClientException
 	{
 
@@ -1796,12 +1738,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 		try
 		{
 			String result = preamble + update.toString() + fazit;
-			// DataHandler dh = new DataHandler(new ByteArrayDataSource(
-			// result.getBytes("UTF-8"), "text/xml"));
-			// fedoraManager.modifyDatastreamByValue(node.getPID(), "DC", null,
-			// "Dublin Core Record for this object", "text/xml",
-			// "http://www.openarchives.org/OAI/2.0/oai_dc/", dh,
-			// "DISABLED", null, "UPDATE OF DC STREAM", false);
+
 			new ModifyDatastream(node.getPID(), "DC").mimeType("text/xml")
 					.formatURI("http://www.openarchives.org/OAI/2.0/oai_dc/")
 					.versionable(true).content(result).execute();
@@ -1831,28 +1768,12 @@ public class FedoraFacade implements FedoraInterface, Constants
 		// System.out.println("Create new REL-EXT "+pid);
 		try
 		{
-			// String state = "A";
-			// String label = "RDF Statements about this object";
-			// String mimeType = "application/rdf+xml";
-			// String formatURI = "info:fedora/fedora-system:FedoraRELSExt-1.0";
-			// ArrayOfString altIDs = null;
-			// String checksumType = null;
-			// String location = null;
-			// boolean versionable = true;
 
 			String initialContent = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:rel=\"info:fedora/fedora-system:def/relations-external#\">"
 					+ "    <rdf:Description rdf:about=\"info:fedora/"
 					+ pid
 					+ "\">" + "    </rdf:Description>" + "</rdf:RDF>";
 
-			// @SuppressWarnings("unused")
-			// String newID = fedoraManager.addDatastream(pid, "RELS-EXT",
-			// altIDs,
-			// label,
-			// versionable, // DEFAULT_VERSIONABLE
-			// mimeType, formatURI, location, "X", state, checksumType,
-			// null, // checksum type and checksum
-			// "Try to add RELS-EXT datastream");
 			new AddDatastream(pid, "RELS-EXT").mimeType("application/rdf+xml")
 					.formatURI("info:fedora/fedora-system:FedoraRELSExt-1.0")
 					.versionable(true).content(initialContent).execute();
@@ -1863,32 +1784,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 			throw new ArchiveException(e.getMessage(), e);
 		}
 	}
-
-	// private byte[] serializeNode(String pid, String label,
-	// XMLBuilder xmlBuilder, OBJECT_TYPE type)
-	// {
-	//
-	// try
-	// {
-	// String objXML = xmlBuilder.createObjectXML(type, pid, label);
-	//
-	// objXML = setOwnerToXMLString(objXML);
-	//
-	// return objXML.getBytes("UTF-8");
-	// }
-	// catch (RemoteException e)
-	// {
-	//
-	// e.printStackTrace();
-	// }
-	// catch (UnsupportedEncodingException e)
-	// {
-	//
-	// e.printStackTrace();
-	// }
-	//
-	// return null;
-	// }
 
 	private void createFedoraXMLForContentModels(Node node)
 	{
@@ -1939,14 +1834,6 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 		try
 		{
-			// System.out.println(node.getPID());
-			// DataHandler dh = new DataHandler(new
-			// ByteArrayDataSource(infoStream
-			// .toString().getBytes("UTF-8"), "text/xml"));
-			// fedoraManager.modifyDatastreamByValue(node.getPID(),
-			// "HBZCMInfoStream", null, "HBZCMInfoStream", "text/xml",
-			// "info:hbz/hbz-system:HBZContentModelInfoStream1.0", dh,
-			// "DISABLED", null, "UPDATE OF HBZCMInfoStream", false);
 
 			new AddDatastream(node.getPID(), "HBZCMInfoStream")
 					.mimeType("text/xml")
@@ -2177,18 +2064,10 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 	private List<String> findPidsSimple(String rdfQuery)
 	{
-		// FedoraCredentials credentials;
+
 		try
 		{
-
-			// credentials = new FedoraCredentials(host, user, passwd);
-			// com.yourmediashelf.fedora.client.FedoraClient fedora = new
-			// com.yourmediashelf.fedora.client.FedoraClient(
-			// credentials);
-			//
-			// FedoraRequest.setDefaultClient(fedora);
-
-			FindObjectsResponse response = fedora.findObjects().maxResults(50)
+			FindObjectsResponse response = new FindObjects().maxResults(50)
 					.resultFormat("xml").pid().terms(rdfQuery).execute();
 			if (!response.hasNext())
 				return response.getPids();
@@ -2196,7 +2075,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 			while (response.hasNext())
 			{
 
-				response = fedora.findObjects().pid()
+				response = new FindObjects().pid()
 						.sessionToken(response.getToken()).maxResults(50)
 						.resultFormat("xml").execute();
 				result.addAll(response.getPids());
