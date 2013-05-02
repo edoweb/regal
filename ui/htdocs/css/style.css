@@ -156,12 +156,9 @@ a:visited {
 .plabel
 {
 	vertical-align: text-top;
-	font-size:1.5em;
+	font-size:0.9em;
 }
-.tablelabel
-{
-	background-color: grey;
-}
+
 table tr td
 {
 	font-size:0.9em;

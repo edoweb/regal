@@ -45,8 +45,8 @@ class HtmlAdapter
 	static String getHtml(View view)
 	{
 
-		String edowebStyle = "http://orthos.hbz-nrw.de/css/style.css";
-		String edowebLogo = "http://orthos.hbz-nrw.de/logo.gif";
+		String edowebStyle = "/css/style.css";
+		String edowebLogo = "/logo.gif";
 
 		try
 		{
