@@ -1032,15 +1032,13 @@ class Actions
 		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
 
 		// TODO only if synced Resource
-		if (pid.length() == 14)
-			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
-					+ "base/" + pidWithoutNamespace);
+		view.addCacheUrl(this.serverName + "/" + node.getNamespace() + "base/"
+				+ pidWithoutNamespace);
 
 		view.addFedoraUrl(this.fedoraExtern + "/objects/" + pid);
-		// TODO only if synced resource
-		if (pid.length() == 14)
-			view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
-					+ pidWithoutNamespace);
+		// TODO only if resource from digitool
+		view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
+				+ pidWithoutNamespace);
 
 		String query = "<info:fedora/" + pid + "> * *";
 		try
@@ -1438,6 +1436,18 @@ class Actions
 
 	String generateUrn(String pid, String namespace)
 	{
+		List<String> urns = getView(pid).getUrn();
+		if (urns != null && !urns.isEmpty())
+		{
+			if (urns.size() > 1)
+			{
+				logger.warn("Found multiple urns " + urns.size());
+			}
+			else
+			{
+				return urns.get(0);
+			}
+		}
 		String result = null;
 		String raw = null;
 		String urn = "urn";
