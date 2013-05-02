@@ -1,5 +1,4 @@
 ARCHIVE_HOME=/opt/archive
-PREFIX=edoweb
 SERVER=localhost
 ARCHIVE_USER=jan
 ARCHIVE_PASSWORD=schnasse
@@ -11,6 +10,7 @@ ELASTICSEARCH_PORT=9200
 
 
 # Only needed when you want to mirror from a supported system (edoweb|ellinet|dipp)
+PREFIX=edoweb
 DOWNLOAD=http://klio.hbz-nrw.de:1801
 OAI=http://klio.hbz-nrw.de:1801/edowebOAI
 SET=doc-type:report

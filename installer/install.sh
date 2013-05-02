@@ -283,7 +283,7 @@ cp -r $ARCHIVE_HOME/src/ui/htdocs/* $ARCHIVE_HOME/html/
 sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/EasyEllinetSearch.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/EasyEllinetSearch.js"
 
 cp $SRC/ui/conf/proai.properties $WEBAPPS/oai-pmh/WEB-INF/classes
-cp $SRC/ui/helper/install.sh $ARCHIVE_HOME/bin/
+cp $SRC/installer/install.sh $ARCHIVE_HOME/bin/
 }
 
 if [ $# -eq 0 ]

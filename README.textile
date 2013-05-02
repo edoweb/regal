@@ -11,7 +11,7 @@ Current Version is still SNAPSHOT-0.0.1.
 
 h1. Install
 
-Required: *apache2, maven3, git*!
+Required: *apache2 with proxy and rewrite module, maven3, git*!
 
 Download "installer.tar.gz":https://raw.github.com/jschnasse/edoweb2/master/installer.tar.gz
 
