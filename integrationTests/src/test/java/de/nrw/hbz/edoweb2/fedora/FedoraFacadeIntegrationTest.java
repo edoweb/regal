@@ -48,7 +48,7 @@ public class FedoraFacadeIntegrationTest
 {
 
 	Properties properties = null;
-	FedoraFacade facade = null;
+	FedoraInterface facade = null;
 	Node object = null;
 
 	@Before
