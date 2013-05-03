@@ -237,17 +237,17 @@ git pull origin
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
 #cp variables.sh $ARCHIVE_HOME/src/ui/helper/
 echo "Compile..."
-mvn -q -e clean install -DskipTests
+mvn -q -e clean install -DskipTests --settings settings.xml
 cd -
 
 cd $SRC/${PREFIX}Sync
-mvn -q -e assembly:assembly -DskipTests
+mvn -q -e assembly:assembly -DskipTests --settings ../settings.xml
 cd -
 
 cd $SRC/edoweb2-api
 echo "Install Webapi"
 echo "install archive"
-mvn -q -e war:war -DskipTests
+mvn -q -e war:war -DskipTests --settings ../settings.xml
 cd -
 
 echo "Rollout..."
@@ -268,9 +268,9 @@ echo -e "export LANG=en_US.UTF-8" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
 echo -e "cd \$ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "cp .oaitimestamp\$PREFIX oaitimestamp\$PREFIX`date +\"%Y%m%d\"`" >> ${PREFIX}Sync.sh.tmpl
+echo -e "cp .oaitimestamp\$PREFIX oaitimestamp\${PREFIX}\`date +\"%Y%m%d\"\`" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "java -jar -Xms512m -Xmx512m \${PREFIX}sync.jar --mode INIT -list \$ARCHIVE_HOME/sync/pidlist.txt --user \$ARCHIVE_USER --password \$ARCHIVE_PASSWORD --dtl \$DOWNLOAD --cache \$ARCHIVE_HOME/\${PREFIX}base --oai  \$OAI --set \$SET --timestamp .oaitimestamp\$PREFIX --fedoraBase http://\$SERVER:\$TOMCAT_PORT/fedora --host http://\$SERVER >> ${PREFIX}log`date +\"%Y%m%d\"`.txt 2>&1" >> ${PREFIX}Sync.sh.tmpl
+echo -e "java -jar -Xms512m -Xmx512m \${PREFIX}sync.jar --mode INIT -list \$ARCHIVE_HOME/sync/pidlist.txt --user \$ARCHIVE_USER --password \$ARCHIVE_PASSWORD --dtl \$DOWNLOAD --cache \$ARCHIVE_HOME/\${PREFIX}base --oai  \$OAI --set \$SET --timestamp .oaitimestamp\$PREFIX --fedoraBase http://\$SERVER:\$TOMCAT_PORT/fedora --host http://\$SERVER >> ${PREFIX}log\`date +\"%Y%m%d\"\`.txt 2>&1" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
 echo -e "cd -" >> ${PREFIX}Sync.sh.tmpl
 

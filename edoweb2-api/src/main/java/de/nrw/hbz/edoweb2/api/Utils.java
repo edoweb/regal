@@ -64,7 +64,7 @@ public class Utils
 	@DELETE
 	@Path("/deleteNamespace/{namespace}")
 	@Produces({ "application/json", "application/xml" })
-	public String delete(@PathParam("namespace") String namespace)
+	public String deleteNamespace(@PathParam("namespace") String namespace)
 	{
 		try
 		{

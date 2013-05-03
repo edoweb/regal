@@ -691,6 +691,7 @@ public class Resources
 	{
 		logger.info("create Monograph");
 		String pid = namespace + ":" + p;
+		ComplexObject object = null;
 		try
 		{
 			if (actions.nodeExists(pid))
@@ -714,8 +715,7 @@ public class Resources
 			rootObject.addContentModel(ContentModelFactory
 					.createPdfModel(namespace));
 
-			ComplexObject object = new ComplexObject(rootObject);
-			return actions.create(object, true);
+			object = new ComplexObject(rootObject);
 
 		}
 		catch (ArchiveException e)
@@ -724,6 +724,8 @@ public class Resources
 					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
 					e.getMessage());
 		}
+
+		return actions.create(object, true);
 	}
 
 	private String createEJournal(String p, String namespace)

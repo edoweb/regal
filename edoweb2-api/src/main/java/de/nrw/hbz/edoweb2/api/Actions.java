@@ -1032,15 +1032,13 @@ class Actions
 		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
 
 		// TODO only if synced Resource
-		if (pid.length() == 14)
-			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
-					+ "base/" + pidWithoutNamespace);
+		view.addCacheUrl(this.serverName + "/" + node.getNamespace() + "base/"
+				+ pidWithoutNamespace);
 
 		view.addFedoraUrl(this.fedoraExtern + "/objects/" + pid);
-		// TODO only if synced resource
-		if (pid.length() == 14)
-			view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
-					+ pidWithoutNamespace);
+		// TODO only if resource from digitool
+		view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
+				+ pidWithoutNamespace);
 
 		String query = "<info:fedora/" + pid + "> * *";
 		try
@@ -1438,6 +1436,25 @@ class Actions
 
 	String generateUrn(String pid, String namespace)
 	{
+		try
+		{
+			List<String> urns = getView(pid).getUrn();
+			if (urns != null && !urns.isEmpty())
+			{
+				if (urns.size() > 1)
+				{
+					logger.warn("Found multiple urns " + urns.size());
+				}
+				else
+				{
+					return urns.get(0);
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			logger.warn("You attemp to create an urn for non-existing object.");
+		}
 		String result = null;
 		String raw = null;
 		String urn = "urn";
@@ -1899,12 +1916,7 @@ class Actions
 	public String deleteNamespace(String namespace)
 	{
 		List<String> objects = archive.findNodes(namespace + ":*");
-		StringBuffer result = new StringBuffer();
-		for (String pid : objects)
-		{
-			result.append(archive.deleteNode(pid) + "\n");
-		}
-		return result.toString();
+		return deleteAll(objects, false);
 	}
 
 }

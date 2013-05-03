@@ -161,9 +161,10 @@ public class Webclient
 		}
 		catch (UniformInterfaceException e)
 		{
-			logger.info(pid + " already exists - will be updated!");
-			// logger.info(pid + " resourceUrl: " + resourceUrl);
-			// e.printStackTrace();
+			logger.info(pid + " already exists - will be updated! "
+					+ e.getMessage());
+			logger.info(pid + " resourceUrl: " + resourceUrl);
+			e.printStackTrace();
 		}
 	}
 

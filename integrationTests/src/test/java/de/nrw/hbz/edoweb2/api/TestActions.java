@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import junit.framework.Assert;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,6 +21,9 @@ public class TestActions
 		{
 			properties = new Properties();
 			properties.load(getClass().getResourceAsStream("/test.properties"));
+			Actions actions = new Actions();
+			actions.deleteNamespace("test");
+			actions.deleteNamespace("testCM");
 		}
 		catch (FileNotFoundException e)
 		{
@@ -46,6 +50,24 @@ public class TestActions
 	}
 
 	@Test
+	public void testCreation()
+	{
+		try
+		{
+			Resources resources = new Resources();
+			CreateObjectBean input = new CreateObjectBean();
+			input.setType("monograph");
+			resources.create("123", "test", input);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+
+	}
+
+	@Test
 	public void epicur() throws IOException
 	{
 		Actions actions = new Actions();
@@ -56,5 +78,13 @@ public class TestActions
 		Assert.assertEquals("urn:nbn:de:edoweb-123476",
 				actions.generateUrn("12347", "edoweb"));
 		System.out.println(actions.epicur("1234", "edoweb"));
+	}
+
+	@After
+	public void tearDown() throws IOException
+	{
+		Actions actions = new Actions();
+		actions.deleteNamespace("test");
+		actions.deleteNamespace("testCM");
 	}
 }
