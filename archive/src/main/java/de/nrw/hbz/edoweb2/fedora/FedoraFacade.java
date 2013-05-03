@@ -231,7 +231,8 @@ public class FedoraFacade implements FedoraInterface
 		{
 			utils.readDcToNode(node);
 			utils.readRelsExt(node);
-			readContentModels(node);
+			// TODO Fix me
+			// readContentModels(node);
 
 			node.setLabel(new GetObjectProfile(pid).execute().getLabel());
 			node.setLastModified(new GetObjectProfile(pid).execute()

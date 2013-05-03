@@ -81,7 +81,7 @@ public class FedoraFacadeIntegrationTest
 		object.addContentModel(ContentModelFactory.createPdfModel("test"));
 
 		URL url = this.getClass().getResource("/test.pdf");
-		object.setUploadData(url.getPath(), "test", "application/pdf");
+		object.setUploadData(url.getPath(), "data", "application/pdf");
 
 		List<String> result = facade
 				.findPids("test:*", FedoraVocabulary.SIMPLE);
@@ -191,32 +191,43 @@ public class FedoraFacadeIntegrationTest
 	public void makeContentModel()
 	{
 		facade.createNode(object);
-		// String namespace = "test";
-		// facade.updateContentModel(ContentModelFactory
-		// .createHeadModel(namespace));
-		// facade.updateContentModel(ContentModelFactory
-		// .createEJournalModel(namespace));
-		// facade.updateContentModel(ContentModelFactory
-		// .createMonographModel(namespace));
-		// facade.updateContentModel(ContentModelFactory
-		// .createWebpageModel(namespace));
-		// facade.updateContentModel(ContentModelFactory
-		// .createVersionModel(namespace));
-		// facade.updateContentModel(ContentModelFactory
-		// .createVolumeModel(namespace));
-		// facade.updateContentModel(ContentModelFactory.createPdfModel(namespace));
+		String namespace = "test";
+		facade.updateContentModel(ContentModelFactory
+				.createHeadModel(namespace));
+		facade.updateContentModel(ContentModelFactory
+				.createEJournalModel(namespace));
+		facade.updateContentModel(ContentModelFactory
+				.createMonographModel(namespace));
+		facade.updateContentModel(ContentModelFactory
+				.createWebpageModel(namespace));
+		facade.updateContentModel(ContentModelFactory
+				.createVersionModel(namespace));
+		facade.updateContentModel(ContentModelFactory
+				.createVolumeModel(namespace));
+		facade.updateContentModel(ContentModelFactory.createPdfModel(namespace));
+
+		// TODO Assertion
+
+	}
+
+	@Test
+	public void nodeExists()
+	{
+		Assert.assertTrue(!facade.nodeExists(object.getPID()));
+		facade.createNode(object);
+		Assert.assertTrue(facade.nodeExists(object.getPID()));
 	}
 
 	@After
 	public void tearDown()
 	{
-		// List<String> result = facade
-		// .findPids("test:*", FedoraVocabulary.SIMPLE);
-		// for (String pid : result)
-		// facade.deleteNode(pid);
-		// result = facade.findPids("testCM:*", FedoraVocabulary.SIMPLE);
-		// for (String pid : result)
-		// facade.deleteNode(pid);
+		List<String> result = facade
+				.findPids("test:*", FedoraVocabulary.SIMPLE);
+		for (String pid : result)
+			facade.deleteNode(pid);
+		result = facade.findPids("testCM:*", FedoraVocabulary.SIMPLE);
+		for (String pid : result)
+			facade.deleteNode(pid);
 	}
 
 }

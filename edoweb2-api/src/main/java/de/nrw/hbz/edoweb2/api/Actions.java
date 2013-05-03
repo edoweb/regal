@@ -1436,17 +1436,24 @@ class Actions
 
 	String generateUrn(String pid, String namespace)
 	{
-		List<String> urns = getView(pid).getUrn();
-		if (urns != null && !urns.isEmpty())
+		try
 		{
-			if (urns.size() > 1)
+			List<String> urns = getView(pid).getUrn();
+			if (urns != null && !urns.isEmpty())
 			{
-				logger.warn("Found multiple urns " + urns.size());
+				if (urns.size() > 1)
+				{
+					logger.warn("Found multiple urns " + urns.size());
+				}
+				else
+				{
+					return urns.get(0);
+				}
 			}
-			else
-			{
-				return urns.get(0);
-			}
+		}
+		catch (Exception e)
+		{
+			logger.warn("You attemp to create an urn for non-existing object.");
 		}
 		String result = null;
 		String raw = null;

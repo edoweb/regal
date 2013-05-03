@@ -90,7 +90,7 @@ public class TestJournalApi
 
 			byte[] metadata = IOUtils.toByteArray(Thread.currentThread()
 					.getContextClassLoader().getResourceAsStream("test.ttl"));
-			aJournalMetadata.type("text/plain").post(metadata);
+			aJournalMetadata.type("text/plain").put(metadata);
 
 			try
 			{
