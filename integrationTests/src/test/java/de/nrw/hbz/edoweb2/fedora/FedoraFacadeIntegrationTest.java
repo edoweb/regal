@@ -28,7 +28,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.edoweb2.datatypes.ContentModel;
+import de.nrw.hbz.edoweb2.api.ContentModelFactory;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 
 /**
@@ -76,31 +76,13 @@ public class FedoraFacadeIntegrationTest
 				.addCreator("Jan Schnasse").setLabel("Ein Testobjekt")
 				.addTitle("Ein Testtitel");
 
-		ContentModel cm = new ContentModel();
-
-		cm.addPrescribedDs("DC", "http://www.openarchives.org/OAI/2.0/oai_dc/",
-				"text/xml");
-		cm.addPrescribedDs("RELS-EXT",
-				"info:fedora/fedora-system:FedoraRELSExt-1.0",
-				"application/rdf+xml");
-
-		cm.setContentModelPID("test:HBZNodeModel");
-		cm.setServiceDefinitionPID("test:HBZNodeServiceDefinition");
-		cm.setServiceDeploymentPID("test:HBZNodeServiceDeployment");
-		cm.addMethod(
-				"listParents",
-				"http://localhost:8080/AdditionalServices/services/HBZNodeServices/ListParents?pid=(pid)");
-		cm.addMethod(
-				"dc",
-				"http://localhost:8080/AdditionalServices/services/HBZNodeServices/ListDCStream?pid=(pid)");
-		cm.addMethod(
-				"listChildren",
-				"http://localhost:8181/AdditionalServices/services/HBZNodeServices/ListChildren?pid=(pid)");
-
-		object.addContentModel(cm);
+		// object.addContentModel(ContentModelFactory.createMonographModel("test"));
+		// object.addContentModel(ContentModelFactory.createHeadModel("test"));
+		object.addContentModel(ContentModelFactory.createPdfModel("test"));
 
 		URL url = this.getClass().getResource("/test.pdf");
 		object.setUploadData(url.getPath(), "test", "application/pdf");
+
 		List<String> result = facade
 				.findPids("test:*", FedoraVocabulary.SIMPLE);
 		for (String pid : result)
@@ -191,7 +173,7 @@ public class FedoraFacadeIntegrationTest
 			facade.createNode(object);
 
 		result = facade.findPids("test:*", FedoraVocabulary.SIMPLE);
-		Assert.assertEquals(4, result.size());
+		Assert.assertEquals(1, result.size());
 	}
 
 	@Test
@@ -205,16 +187,36 @@ public class FedoraFacadeIntegrationTest
 		Assert.assertFalse(facade.nodeExists(object.getPID()));
 	}
 
+	@Test
+	public void makeContentModel()
+	{
+		facade.createNode(object);
+		// String namespace = "test";
+		// facade.updateContentModel(ContentModelFactory
+		// .createHeadModel(namespace));
+		// facade.updateContentModel(ContentModelFactory
+		// .createEJournalModel(namespace));
+		// facade.updateContentModel(ContentModelFactory
+		// .createMonographModel(namespace));
+		// facade.updateContentModel(ContentModelFactory
+		// .createWebpageModel(namespace));
+		// facade.updateContentModel(ContentModelFactory
+		// .createVersionModel(namespace));
+		// facade.updateContentModel(ContentModelFactory
+		// .createVolumeModel(namespace));
+		// facade.updateContentModel(ContentModelFactory.createPdfModel(namespace));
+	}
+
 	@After
 	public void tearDown()
 	{
-		List<String> result = facade
-				.findPids("test:*", FedoraVocabulary.SIMPLE);
-		for (String pid : result)
-			facade.deleteNode(pid);
-		result = facade.findPids("testCM:*", FedoraVocabulary.SIMPLE);
-		for (String pid : result)
-			facade.deleteNode(pid);
+		// List<String> result = facade
+		// .findPids("test:*", FedoraVocabulary.SIMPLE);
+		// for (String pid : result)
+		// facade.deleteNode(pid);
+		// result = facade.findPids("testCM:*", FedoraVocabulary.SIMPLE);
+		// for (String pid : result)
+		// facade.deleteNode(pid);
 	}
 
 }

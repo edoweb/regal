@@ -1909,12 +1909,7 @@ class Actions
 	public String deleteNamespace(String namespace)
 	{
 		List<String> objects = archive.findNodes(namespace + ":*");
-		StringBuffer result = new StringBuffer();
-		for (String pid : objects)
-		{
-			result.append(archive.deleteNode(pid) + "\n");
-		}
-		return result.toString();
+		return deleteAll(objects, false);
 	}
 
 }

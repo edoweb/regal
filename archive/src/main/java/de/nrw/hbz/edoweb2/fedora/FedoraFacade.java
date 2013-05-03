@@ -24,6 +24,8 @@ import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_CONTENT_TYPE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_IN_NAMESPACE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.CM_CONTENTMODEL;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL_URI;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_INPUTSPEC;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_INPUTSPEC_URI;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_METHODMAP;
@@ -67,7 +69,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.fcrepo.common.Constants;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -126,7 +127,7 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
 
-public class FedoraFacade implements FedoraInterface, Constants
+public class FedoraFacade implements FedoraInterface
 {
 
 	/**
@@ -595,9 +596,12 @@ public class FedoraFacade implements FedoraInterface, Constants
 	@Override
 	public void updateContentModel(ContentModel cm)
 	{
-		deleteNode(cm.getContentModelPID());
-		deleteNode(cm.getServiceDefinitionPID());
-		deleteNode(cm.getServiceDeploymentPID());
+		if (nodeExists(cm.getContentModelPID()))
+			deleteNode(cm.getContentModelPID());
+		if (nodeExists(cm.getServiceDefinitionPID()))
+			deleteNode(cm.getServiceDefinitionPID());
+		if (nodeExists(cm.getServiceDeploymentPID()))
+			deleteNode(cm.getServiceDeploymentPID());
 		try
 		{
 			createContentModel(cm);
@@ -908,12 +912,9 @@ public class FedoraFacade implements FedoraInterface, Constants
 
 		this.updateRelsExt(foSDepPid, sDepHBZLinks);
 
-		new AddDatastream(foCMPid,
-				de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL)
-				.versionable(true)
-				.formatURI(
-						de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL_URI)
-				.dsState("A").controlGroup("M").mimeType("text/xml")
+		new AddDatastream(foCMPid, DS_COMPOSITE_MODEL).versionable(true)
+				.formatURI(DS_COMPOSITE_MODEL_URI).dsState("A")
+				.controlGroup("M").mimeType("text/xml")
 				.content(getDsCompositeModel(cm)).execute();
 
 		new AddDatastream(foSDefPid, DS_METHODMAP).versionable(true)
@@ -1151,7 +1152,7 @@ public class FedoraFacade implements FedoraInterface, Constants
 						link.setPredicate(predUri.stringValue());
 
 						// System.out.println(" READ: <" + node.getPID() + "> <"
-						// + link.getPredicate() + "> <"
+						// + link.getPredicate() + "> <"import static
 						// + link.getObject() + ">");
 
 						if (link.getPredicate().compareTo(REL_IS_NODE_TYPE) == 0)
