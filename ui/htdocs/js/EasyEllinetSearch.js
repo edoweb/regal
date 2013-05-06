@@ -104,7 +104,7 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 
 	var request = {
 		type : "POST",
-		url : "http://ares.hbz-nrw.de:9200/" + index,
+		url : "http://localhost:9200/" + index,
 		data : myQuery,
 		processData : false,
 		dataType : "json",
