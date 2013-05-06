@@ -296,8 +296,8 @@ class HtmlAdapter
 	{
 		String urnResolver = "http://nbn-resolving.de/";
 		String doiResolver = "http://dx.doi.org/";
-		String pdfLogo = "http://orthos.hbz-nrw.de/pdflogo.svg";
-		String zipLogo = "http://orthos.hbz-nrw.de/zip.png";
+		String pdfLogo = "/pdflogo.svg";
+		String zipLogo = "/zip.png";
 		if (fieldName == "http://purl.org/ontology/bibo/doi")
 		{
 

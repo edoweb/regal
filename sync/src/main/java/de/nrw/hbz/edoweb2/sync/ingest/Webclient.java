@@ -149,11 +149,12 @@ public class Webclient
 	{
 
 		String pid = namespace + ":" + dtlBean.getPid();
+		String parentPid = namespace + ":" + dtlBean.getParentPid();
 		String resourceUrl = this.endpoint + pid;
 		WebResource resource = webclient.resource(resourceUrl);
 		CreateObjectBean input = new CreateObjectBean();
 		input.setType(type.toString());
-		input.setParentPid(dtlBean.getParentPid());
+		input.setParentPid(parentPid);
 
 		try
 		{
@@ -161,10 +162,9 @@ public class Webclient
 		}
 		catch (UniformInterfaceException e)
 		{
-			logger.info(pid + " already exists - will be updated! "
-					+ e.getMessage());
-			logger.info(pid + " resourceUrl: " + resourceUrl);
-			e.printStackTrace();
+			logger.info(pid + " " + e.getMessage());
+			// logger.info(pid + " resourceUrl: " + resourceUrl);
+			// e.printStackTrace();
 		}
 	}
 

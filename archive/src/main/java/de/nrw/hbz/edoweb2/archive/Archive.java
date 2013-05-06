@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Vector;
 
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
+import de.nrw.hbz.edoweb2.archive.exceptions.NodeNotFoundException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObjectNode;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
@@ -244,7 +245,7 @@ class Archive implements ArchiveInterface
 	{
 		if (!nodeExists(rootPID))
 		{
-			throw new ArchiveException(rootPID + " doesn't exist.");
+			throw new NodeNotFoundException(rootPID + " doesn't exist.");
 		}
 		return fedoraInterface.readNode(rootPID);
 
@@ -305,7 +306,7 @@ class Archive implements ArchiveInterface
 	{
 		if (!nodeExists(rootPID))
 		{
-			throw new ArchiveException(rootPID + " doesn't exist.");
+			throw new NodeNotFoundException(rootPID + " doesn't exist.");
 		}
 		Node node = fedoraInterface.readNode(rootPID);
 
@@ -317,7 +318,7 @@ class Archive implements ArchiveInterface
 	{
 		if (!nodeExists(nodePid))
 		{
-			throw new ArchiveException(nodePid + " doesn't exist.");
+			throw new NodeNotFoundException(nodePid + " doesn't exist.");
 		}
 		node.setPID(nodePid);
 		fedoraInterface.updateNode(node);
@@ -329,7 +330,7 @@ class Archive implements ArchiveInterface
 	{
 		if (!nodeExists(rootPID))
 		{
-			throw new ArchiveException(rootPID
+			throw new NodeNotFoundException(rootPID
 					+ " doesn't exist. Can't delete!");
 		}
 		// logger.info("deleteObject");
@@ -371,7 +372,7 @@ class Archive implements ArchiveInterface
 	{
 		if (!nodeExists(pid))
 		{
-			throw new ArchiveException(pid
+			throw new NodeNotFoundException(pid
 					+ " doesn't exist. Can't delete node.");
 		}
 		fedoraInterface.deleteNode(pid);
@@ -383,7 +384,7 @@ class Archive implements ArchiveInterface
 	{
 		if (!nodeExists(pid))
 		{
-			throw new ArchiveException(pid
+			throw new NodeNotFoundException(pid
 					+ " doesn't exist. Can't delete node.");
 		}
 		fedoraInterface.deleteDatastream(pid, datastreamName);
@@ -408,7 +409,7 @@ class Archive implements ArchiveInterface
 	{
 		if (!nodeExists(nodePid))
 		{
-			throw new ArchiveException(nodePid + " doesn't exist.");
+			throw new NodeNotFoundException(nodePid + " doesn't exist.");
 		}
 		updateNode(nodePid, object);
 		sesame.updateNode(object);

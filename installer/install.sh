@@ -263,7 +263,7 @@ echo "Generate sync template"
 
 echo -e "#! /bin/bash" > ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "source ${PREFIX}Variables.sh" >> ${PREFIX}Sync.sh.tmpl
+echo -e "source $ARCHIVE_HOME/sync/${PREFIX}Variables.sh" >> ${PREFIX}Sync.sh.tmpl
 echo -e "export LANG=en_US.UTF-8" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
 echo -e "cd \$ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh.tmpl

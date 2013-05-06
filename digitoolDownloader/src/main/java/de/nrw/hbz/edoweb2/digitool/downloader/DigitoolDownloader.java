@@ -162,6 +162,7 @@ public class DigitoolDownloader
 			}
 			catch (Exception e)
 			{
+				e.printStackTrace();
 				logger.error(e.getMessage());
 			}
 			// beanBuilder.buildComplexBean(objectDirectory, pid);

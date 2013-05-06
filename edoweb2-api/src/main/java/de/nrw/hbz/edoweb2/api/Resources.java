@@ -571,8 +571,7 @@ public class Resources
 		{
 			if (actions.nodeExists(pid))
 			{
-				throw new HttpArchiveException(
-						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+				throw new HttpArchiveException(304,
 						"Node already exists. I do nothing!");
 			}
 			Node rootObject = new Node();
@@ -658,8 +657,7 @@ public class Resources
 			String pid = namespace + ":" + p;
 			if (actions.nodeExists(pid))
 			{
-				throw new HttpArchiveException(
-						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+				throw new HttpArchiveException(304,
 						"Node already exists. I do nothing!");
 			}
 			Node rootObject = new Node();
@@ -696,8 +694,7 @@ public class Resources
 		{
 			if (actions.nodeExists(pid))
 			{
-				throw new HttpArchiveException(
-						Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+				throw new HttpArchiveException(304,
 						"Node already exists. I do nothing!");
 			}
 			Node rootObject = new Node();
@@ -736,10 +733,8 @@ public class Resources
 		{
 			if (actions.nodeExists(pid))
 			{
-				throw new HttpArchiveException(
-						Status.INTERNAL_SERVER_ERROR.getStatusCode(), namespace
-								+ ":" + pid
-								+ " node already exists. I do nothing!");
+				throw new HttpArchiveException(304,
+						"Node already exists. I do nothing!");
 			}
 
 			Node rootObject = new Node();
@@ -773,6 +768,11 @@ public class Resources
 		String versionPid = namespace + ":" + p;
 		try
 		{
+			if (actions.nodeExists(versionPid))
+			{
+				throw new HttpArchiveException(304,
+						"Node already exists. I do nothing!");
+			}
 			logger.info("create Webpage Version");
 
 			Node rootObject = new Node();
@@ -835,6 +835,11 @@ public class Resources
 		logger.info("create EJournal Volume");
 		try
 		{
+			if (actions.nodeExists(volumePid))
+			{
+				throw new HttpArchiveException(304,
+						"Node already exists. I do nothing!");
+			}
 			Node rootObject = new Node();
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
@@ -881,6 +886,7 @@ public class Resources
 		}
 		catch (ArchiveException e)
 		{
+			e.printStackTrace();
 			throw new HttpArchiveException(
 					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
 					e.getMessage());

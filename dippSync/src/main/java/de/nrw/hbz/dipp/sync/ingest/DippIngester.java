@@ -103,7 +103,7 @@ public class DippIngester implements IngestInterface
 			logger.info(pid + " Found " + numOfVols + " volumes.");
 			for (DigitalEntity b : viewLinks)
 			{
-				b.setParentPid(pid);
+				b.setParentPid(ppid);
 				logger.info("Part: " + (count++) + "/" + numOfVols);
 				String p = b.getPid();
 				String pp = b.getPid().substring(
