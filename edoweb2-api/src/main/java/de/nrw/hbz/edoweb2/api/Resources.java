@@ -210,6 +210,60 @@ public class Resources
 		return actions.readDC(pid);
 	}
 
+	@GET
+	@Path("/{pid}/fulltext")
+	@Produces({ "application/xml", "application/json" })
+	public Response getFulltext(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.getFulltext(pid);
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+
+	}
+
+	@GET
+	@Path("/{pid}/epicur")
+	@Produces({ "application/xml", "application/json" })
+	public Response getEpicur(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.getEpicur(pid);
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+
+	}
+
+	@GET
+	@Path("/{pid}/oai_dc")
+	@Produces({ "application/xml", "application/json" })
+	public Response getOAI_DC(@PathParam("pid") String pid)
+	{
+		try
+		{
+			return actions.getOAI_DC(pid);
+		}
+		catch (URISyntaxException e)
+		{
+			throw new HttpArchiveException(
+					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+					e.getMessage());
+		}
+
+	}
+
 	/**
 	 * @param type
 	 *            the type of the resources that must be returned

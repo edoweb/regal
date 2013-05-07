@@ -1176,7 +1176,9 @@ class Actions
 							Statement st = statements.next();
 							String rdfSubject = st.getSubject().stringValue();
 
-							if (rdfSubject.compareTo(lobidUri) == 0)
+							if (rdfSubject
+									.compareTo("http://edoweb.org/resources/"
+											+ pid) == 0)
 							{
 								view.addPredicate(st.getPredicate()
 										.stringValue(), st.getObject()
@@ -1342,8 +1344,14 @@ class Actions
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(in, writer, "UTF-8");
 			String str = writer.toString();
-
-			updateMetadata(pid, str);
+			str.replaceAll(lobidUrl, "http://edoweb.org/resources/" + pid);
+			updateMetadata(
+					pid,
+					str
+							+ "\n <http://edoweb.org/resources/"
+							+ pid
+							+ "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
+							+ lobidUrl + "> .");
 		}
 		catch (IOException e)
 		{
@@ -1917,6 +1925,36 @@ class Actions
 	{
 		List<String> objects = archive.findNodes(namespace + ":*");
 		return deleteAll(objects, false);
+	}
+
+	public Response getFulltext(String pid) throws URISyntaxException
+	{
+
+		return Response.temporaryRedirect(
+				new java.net.URI(fedoraExtern + "/fedora/objects/" + pid
+						+ "/methods/edowebCM:pdfServiceDefinition/pdfbox"))
+				.build();
+
+	}
+
+	public Response getEpicur(String pid) throws URISyntaxException
+	{
+
+		return Response.temporaryRedirect(
+				new java.net.URI(fedoraExtern + "/fedora/objects/" + pid
+						+ "/methods/edowebCM:edowebServiceDefinition/epicur"))
+				.build();
+
+	}
+
+	public Response getOAI_DC(String pid) throws URISyntaxException
+	{
+
+		return Response.temporaryRedirect(
+				new java.net.URI(fedoraExtern + "/fedora/objects/" + pid
+						+ "/methods/edowebCM:edowebServiceDefinition/oai_dc"))
+				.build();
+
 	}
 
 }
