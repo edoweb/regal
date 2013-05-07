@@ -92,25 +92,11 @@ import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 
-//import org.fcrepo.client.Uploader;
-
 /**
- * <p>
- * 
- * </p>
- * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
-
 public class FedoraFacade implements FedoraInterface
 {
-
-	/**
-	 * TODO: This class is way too long. Cut version independent stuff from
-	 * actual fedora calls!
-	 * 
-	 * */
-
 	private FedoraAPIAMTOM fedoraAccess;
 	private FedoraAPIMMTOM fedoraManager;
 	private org.fcrepo.client.FedoraClient fedoraClient;
