@@ -33,7 +33,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 /**
  * @author jan
@@ -61,11 +60,33 @@ class HtmlAdapter
 			html.setAttribute("xml:lang", "de");
 			Element head = doc.createElement("head");
 			Element css = doc.createElement("link");
-
 			css.setAttribute("rel", "stylesheet");
 			css.setAttribute("href", edowebStyle);
 			css.setAttribute("type", "text/css");
+
+			Element css2 = doc.createElement("link");
+			css2.setAttribute("rel", "stylesheet");
+			css2.setAttribute("href",
+					"http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css");
+
+			Element script1 = doc.createElement("script");
+			script1.setAttribute("src",
+					"http://code.jquery.com/jquery-1.9.1.js");
+
+			Element script2 = doc.createElement("script");
+			script2.setAttribute("src",
+					"http://code.jquery.com/ui/1.10.3/jquery-ui.js");
+
+			Element script3 = doc.createElement("script");
+			script3.appendChild(doc
+					.createTextNode("$(function() {$( \"#tabs\" ).tabs();});"));
+
 			head.appendChild(css);
+			head.appendChild(css2);
+			head.appendChild(script1);
+			head.appendChild(script2);
+			head.appendChild(script3);
+
 			Element body = doc.createElement("body");
 
 			Element div = doc.createElement("div");
@@ -109,28 +130,31 @@ class HtmlAdapter
 		Element li = doc.createElement("li");
 		li.setAttribute("class", "item");
 
+		Element div = doc.createElement("div");
+		div.setAttribute("id", "tabs");
+		Element tabul = doc.createElement("ul");
+		Element li1 = doc.createElement("li");
+		Element a = doc.createElement("a");
+		a.setAttribute("href", "#tabs-1");
+		a.appendChild(doc.createTextNode("Repository"));
+		li1.appendChild(a);
+
+		Element li2 = doc.createElement("li");
+		Element a2 = doc.createElement("a");
+		a2.setAttribute("href", "#tabs-2");
+		a2.appendChild(doc.createTextNode("Catalog"));
+		li2.appendChild(a2);
+
+		tabul.appendChild(li1);
+		tabul.appendChild(li2);
+
+		div.appendChild(tabul);
+
+		Element divTab1 = doc.createElement("div");
+		divTab1.setAttribute("id", "tabs-1");
+		div.appendChild(divTab1);
+
 		Element table = doc.createElement("table");
-
-		Element tr = doc.createElement("tr");
-		Element td = doc.createElement("td");
-		td.setAttribute("class", "tablelabel");
-		td.setAttribute("colspan", "4");
-		Element a = doc.createElement("h1");
-		a.setAttribute("class", "tableheading");
-		Text text = doc.createTextNode(view.getFirstPid());
-		a.appendChild(text);
-		td.appendChild(a);
-		tr.appendChild(td);
-		table.appendChild(tr);
-
-		tr = doc.createElement("tr");
-		td = doc.createElement("td");
-		td.setAttribute("class", "tablelabel");
-		td.setAttribute("colspan", "4");
-		text = doc.createTextNode("Repository");
-		td.appendChild(text);
-		tr.appendChild(td);
-		table.appendChild(tr);
 
 		addToTable(doc, table, "Fulltext", view.getPdfUrl());
 
@@ -168,12 +192,24 @@ class HtmlAdapter
 
 		addToTable(doc, table, "Related Url", view.getUrl());
 
-		tr = doc.createElement("tr");
-		td = doc.createElement("td");
+		divTab1.appendChild(table);
+		Element divTab2 = doc.createElement("div");
+		divTab2.setAttribute("id", "tabs-2");
+		div.appendChild(divTab2);
+
+		table = doc.createElement("table");
+
+		Element tr = doc.createElement("tr");
+		Element td = doc.createElement("td");
 		td.setAttribute("class", "tablelabel");
 		td.setAttribute("colspan", "4");
-		text = doc.createTextNode("Catalog");
-		td.appendChild(text);
+		a = doc.createElement("h1");
+		a.setAttribute("class", "tableheading");
+		tr = doc.createElement("tr");
+		td = doc.createElement("td");
+		td.setAttribute("colspan", "4");
+
+		td.appendChild(doc.createTextNode("About : " + view.getUri()));
 		tr.appendChild(td);
 		table.appendChild(tr);
 
@@ -183,14 +219,9 @@ class HtmlAdapter
 					.toString());
 		}
 
-		tr = doc.createElement("tr");
-		td = doc.createElement("td");
-		td.setAttribute("class", "tablelabel");
-		td.setAttribute("colspan", "4");
-		text = doc.createTextNode("Relations");
-		td.appendChild(text);
-		tr.appendChild(td);
-		table.appendChild(tr);
+		divTab2.appendChild(table);
+
+		table = doc.createElement("table");
 
 		addHasPart(doc, table, "hasPart", view);
 
@@ -277,6 +308,7 @@ class HtmlAdapter
 
 		table.appendChild(tr);
 
+		li.appendChild(div);
 		li.appendChild(table);
 
 		ul.appendChild(li);
