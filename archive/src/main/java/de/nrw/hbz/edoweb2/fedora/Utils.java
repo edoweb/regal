@@ -373,15 +373,13 @@ public class Utils
 			{
 				new ModifyDatastream(node.getPID(), "metadata")
 						.versionable(true).dsState("A").controlGroup("M")
-						.mimeType(node.getMimeType()).dsLocation(location)
-						.execute();
+						.mimeType("text/plain").dsLocation(location).execute();
 			}
 			else
 			{
 				new AddDatastream(node.getPID(), "metadata").versionable(true)
-						.dsState("A").controlGroup("M")
-						.mimeType(node.getMimeType()).dsLocation(location)
-						.execute();
+						.dsState("A").controlGroup("M").mimeType("text/plain")
+						.dsLocation(location).execute();
 			}
 			node.setDataUrl(new URL(host + "/objects/" + node.getPID()
 					+ "/datastreams/" + newID + "/content"));

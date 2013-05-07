@@ -3,6 +3,8 @@ package de.nrw.hbz.edoweb2.api;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
@@ -22,14 +24,21 @@ public class TestActions
 			properties = new Properties();
 			properties.load(getClass().getResourceAsStream("/test.properties"));
 			Actions actions = new Actions();
-			actions.deleteNamespace("test");
+			try
+			{
+				actions.deleteNamespace("test");
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 			actions.deleteNamespace("testCM");
 		}
 		catch (FileNotFoundException e)
 		{
 			e.printStackTrace();
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -78,13 +87,33 @@ public class TestActions
 		Assert.assertEquals("urn:nbn:de:edoweb-123476",
 				actions.generateUrn("12347", "edoweb"));
 		System.out.println(actions.epicur("1234", "edoweb"));
+
+		String str = "<http://lobid.org/resource/HT015456932> <http://purl.org/vocab/frbr/core#exemplar> <http://lobid.org/item/HT015456932%3AElektronische+Publikation> .";
+		str = Pattern.compile("http://lobid.org/resource/HT015456932")
+				.matcher(str)
+				.replaceAll(Matcher.quoteReplacement("edoweb:1234"));
+		System.out.println(str);
 	}
 
 	@After
 	public void tearDown() throws IOException
 	{
 		Actions actions = new Actions();
-		actions.deleteNamespace("test");
-		actions.deleteNamespace("testCM");
+		try
+		{
+			actions.deleteNamespace("test");
+		}
+		catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		try
+		{
+			actions.deleteNamespace("testCM");
+		}
+		catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
 	}
 }

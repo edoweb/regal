@@ -98,13 +98,14 @@ public class Utils
 	}
 
 	@POST
-	@Path("/index/{pid}")
+	@Path("/index/{namespace}:{pid}")
 	@Produces({ "application/json", "application/xml" })
-	public String index(@PathParam("pid") String pid)
+	public String index(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		try
 		{
-			return actions.index(pid);
+			return actions.index(pid, namespace);
 		}
 		catch (ArchiveException e)
 		{

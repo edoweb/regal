@@ -36,6 +36,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -144,10 +146,13 @@ class Actions
 	 */
 	String deleteAll(List<String> pids, boolean wait)
 	{
+		if (pids == null || pids.isEmpty())
+			throw new HttpArchiveException(304, "Nothing to delete!");
 		logger.info("Delete All");
 		StringBuffer msg = new StringBuffer();
 		for (String pid : pids)
 		{
+
 			try
 			{
 				msg.append(delete(pid, wait) + "\n");
@@ -1170,15 +1175,13 @@ class Actions
 					if (view.getLobidUrl() != null
 							&& !view.getLobidUrl().isEmpty())
 					{
-						String lobidUri = view.getLobidUrl().firstElement();
+
 						while (statements.hasNext())
 						{
 							Statement st = statements.next();
 							String rdfSubject = st.getSubject().stringValue();
 
-							if (rdfSubject
-									.compareTo("http://edoweb.org/resources/"
-											+ pid) == 0)
+							if (rdfSubject.compareTo(pid) == 0)
 							{
 								view.addPredicate(st.getPredicate()
 										.stringValue(), st.getObject()
@@ -1237,7 +1240,8 @@ class Actions
 	 */
 	String outdex(String pid)
 	{
-		String namespace = archive.readNode(pid).getNamespace();
+
+		String namespace = pid.substring(0, pid.indexOf(':') - 1);
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
@@ -1262,10 +1266,11 @@ class Actions
 	 *            The pid that must be indexed
 	 * @return a short message.
 	 */
-	String index(String pid)
+	String index(String p, String namespace)
 	{
 		String message = "";
 		String viewAsString = "";
+		String pid = namespace + ":" + p;
 		// View view = getView(pid);
 
 		ClientConfig cc = new DefaultClientConfig();
@@ -1274,7 +1279,7 @@ class Actions
 		Client c = Client.create(cc);
 		try
 		{
-			String namespace = archive.readNode(pid).getNamespace();
+
 			// TODO configure port and host
 			WebResource index = c.resource("http://localhost:9200/" + namespace
 					+ "/titel/" + pid);
@@ -1330,7 +1335,7 @@ class Actions
 		{
 			throw new ArchiveException(pid + " no Catalog-Id found");
 		}
-		String lobidUrl = " http://lobid.org/resource/" + alephid;
+		String lobidUrl = "http://lobid.org/resource/" + alephid;
 		InputStream in = null;
 		try
 		{
@@ -1344,14 +1349,14 @@ class Actions
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(in, writer, "UTF-8");
 			String str = writer.toString();
-			str.replaceAll(lobidUrl, "http://edoweb.org/resources/" + pid);
-			updateMetadata(
-					pid,
-					str
-							+ "\n <http://edoweb.org/resources/"
-							+ pid
-							+ "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
-							+ lobidUrl + "> .");
+			str = Pattern.compile(lobidUrl).matcher(str)
+					.replaceAll(Matcher.quoteReplacement(pid))
+					+ "<"
+					+ pid
+					+ "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
+					+ lobidUrl + "> .";
+
+			updateMetadata(pid, str);
 		}
 		catch (IOException e)
 		{
@@ -1461,7 +1466,7 @@ class Actions
 		}
 		catch (Exception e)
 		{
-			logger.warn("You attemp to create an urn for non-existing object.");
+			logger.warn("You attempt to create an urn for non-existing object.");
 		}
 		String result = null;
 		String raw = null;

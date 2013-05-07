@@ -126,7 +126,7 @@ public class FedoraFacadeIntegrationTest
 			Assert.assertEquals(0, "Ein Testobjekt".compareTo(node.getLabel()));
 			Assert.assertEquals(0,
 					"Ein Testtitel".compareTo(node.getFirstTitle()));
-			Assert.assertEquals(0, "test".compareTo(node.getFileName()));
+			Assert.assertEquals(0, "data".compareTo(node.getFileName()));
 			Assert.assertEquals(0,
 					"application/pdf".compareTo(node.getMimeType()));
 
