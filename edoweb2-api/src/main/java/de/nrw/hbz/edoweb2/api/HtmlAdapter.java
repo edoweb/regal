@@ -96,11 +96,7 @@ class HtmlAdapter
 			div.appendChild(image);
 			body.appendChild(div);
 
-			Element ul = doc.createElement("ul");
-			ul.setAttribute("class", "collection");
-			body.appendChild(ul);
-
-			setItem(ul, doc, view);
+			setItem(body, doc, view);
 
 			html.appendChild(head);
 			html.appendChild(body);
@@ -125,10 +121,8 @@ class HtmlAdapter
 		return "";
 	}
 
-	private static void setItem(Element ul, Document doc, View view)
+	private static void setItem(Element body, Document doc, View view)
 	{
-		Element li = doc.createElement("li");
-		li.setAttribute("class", "item");
 
 		Element div = doc.createElement("div");
 		div.setAttribute("id", "tabs");
@@ -145,8 +139,22 @@ class HtmlAdapter
 		a2.appendChild(doc.createTextNode("Catalog"));
 		li2.appendChild(a2);
 
+		Element li3 = doc.createElement("li");
+		Element a3 = doc.createElement("a");
+		a3.setAttribute("href", "#tabs-3");
+		a3.appendChild(doc.createTextNode("Relations"));
+		li3.appendChild(a3);
+
+		Element li4 = doc.createElement("li");
+		Element a4 = doc.createElement("a");
+		a4.setAttribute("href", "#tabs-4");
+		a4.appendChild(doc.createTextNode("Links"));
+		li4.appendChild(a4);
+
 		tabul.appendChild(li1);
 		tabul.appendChild(li2);
+		tabul.appendChild(li3);
+		tabul.appendChild(li4);
 
 		div.appendChild(tabul);
 
@@ -203,13 +211,12 @@ class HtmlAdapter
 		Element td = doc.createElement("td");
 		td.setAttribute("class", "tablelabel");
 		td.setAttribute("colspan", "4");
-		a = doc.createElement("h1");
-		a.setAttribute("class", "tableheading");
+
 		tr = doc.createElement("tr");
-		td = doc.createElement("td");
+
 		td.setAttribute("colspan", "4");
 
-		td.appendChild(doc.createTextNode("About : " + view.getUri()));
+		td.appendChild(doc.createTextNode("About: " + view.getUri()));
 		tr.appendChild(td);
 		table.appendChild(tr);
 
@@ -221,11 +228,23 @@ class HtmlAdapter
 
 		divTab2.appendChild(table);
 
+		Element divTab3 = doc.createElement("div");
+		divTab3.setAttribute("id", "tabs-3");
+		div.appendChild(divTab3);
+
 		table = doc.createElement("table");
+		divTab3.appendChild(table);
 
 		addHasPart(doc, table, "hasPart", view);
 
 		addIsPartOf(doc, table, "isPartOf", view);
+
+		Element divTab4 = doc.createElement("div");
+		divTab4.setAttribute("id", "tabs-4");
+		div.appendChild(divTab4);
+
+		table = doc.createElement("table");
+		divTab4.appendChild(table);
 
 		tr = doc.createElement("tr");
 		td = doc.createElement("td");
@@ -308,10 +327,7 @@ class HtmlAdapter
 
 		table.appendChild(tr);
 
-		li.appendChild(div);
-		li.appendChild(table);
-
-		ul.appendChild(li);
+		body.appendChild(div);
 
 	}
 
