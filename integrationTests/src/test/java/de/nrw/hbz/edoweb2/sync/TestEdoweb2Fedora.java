@@ -88,25 +88,13 @@ public class TestEdoweb2Fedora
 	{
 		System.out
 				.println("de.nrw.hbz.edoweb2.sync.TestEdoweb2Fedora.java : Please comment out to run this test!");
-		// Main main = new Main();
-		// pidreporterPidFile =
-		// getClass().getResource("/pidlist.txt").getPath();
-		//
-		// try
-		// {
-		// main.run("DELE", user, password, piddownloaderServer,
-		// piddownloaderDownloadLocation, pidreporterServer,
-		// pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-		// "http://localhost", pidreporterPidFile);
-		// }
-		// catch (Exception e)
-		// {
-		//
-		// }
-		// main.run("PIDL", user, password, piddownloaderServer,
-		// piddownloaderDownloadLocation, pidreporterServer,
-		// pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-		// "http://localhost", pidreporterPidFile);
+		Main main = new Main();
+		pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();
+
+		main.run("PIDL", user, password, piddownloaderServer,
+				piddownloaderDownloadLocation, pidreporterServer,
+				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
+				"http://localhost", pidreporterPidFile);
 
 	}
 }

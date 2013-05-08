@@ -158,13 +158,16 @@ public class Webclient
 
 		try
 		{
+			System.out.println(pid);
+			System.out.println(input.getParentPid());
+			System.out.println(input.getType());
 			resource.put(input);
 		}
 		catch (UniformInterfaceException e)
 		{
 			logger.info(pid + " " + e.getMessage());
-			// logger.info(pid + " resourceUrl: " + resourceUrl);
-			// e.printStackTrace();
+			logger.info(pid + " resourceUrl: " + resourceUrl);
+			e.printStackTrace();
 		}
 	}
 

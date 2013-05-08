@@ -316,6 +316,7 @@ public class EdowebIngester implements IngestInterface
 			for (DigitalEntity b : dtlBean.getArchiveLinks())
 			{
 				String versionPid = namespace + ":" + b.getPid();
+				b.setParentPid(dtlBean.getPid());
 				if (b.getStreamMime().compareTo("application/zip") == 0)
 				{
 					webclient.createObject(b, "application/zip",
