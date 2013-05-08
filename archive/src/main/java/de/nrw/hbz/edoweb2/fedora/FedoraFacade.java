@@ -48,7 +48,6 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.rpc.ServiceException;
 
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
@@ -96,7 +95,7 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
  */
 public class FedoraFacade implements FedoraInterface
 {
-	
+
 	private final String host;
 	private final String user;
 	private final String passwd;
@@ -126,8 +125,6 @@ public class FedoraFacade implements FedoraInterface
 			FedoraClient fedora = new com.yourmediashelf.fedora.client.FedoraClient(
 					credentials);
 			FedoraRequest.setDefaultClient(fedora);
-
-		
 
 		}
 		catch (MalformedURLException e)
@@ -188,6 +185,7 @@ public class FedoraFacade implements FedoraInterface
 		Node node = new Node();
 		node.setPID(pid);
 		node.setNamespace(pid.substring(0, pid.indexOf(':')));
+
 		try
 		{
 			utils.readDcToNode(node);
@@ -214,8 +212,13 @@ public class FedoraFacade implements FedoraInterface
 			FedoraResponse response = new GetDatastreamDissemination(pid,
 					"data").download(true).execute();
 			node.setMimeType(response.getType());
+
+			node.setDataUrl(new URL(host + "/objects/" + pid
+					+ "/datastreams/data/content"));
+
 			node.setMetadataUrl(new URL(host + "/objects/" + pid
 					+ "/datastreams/metadata/content"));
+
 		}
 		catch (MalformedURLException e)
 		{

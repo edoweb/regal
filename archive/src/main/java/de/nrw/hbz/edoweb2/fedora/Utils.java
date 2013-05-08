@@ -137,9 +137,10 @@ public class Utils
 					}
 					catch (Exception e2)
 					{
-						System.out.println("UPDATE: Could not ingest: <" + pid
-								+ "> <" + curHBZLink.getPredicate() + "> <"
-								+ curHBZLink.getObject() + ">");
+						// System.out.println("UPDATE: Could not ingest: <" +
+						// pid
+						// + "> <" + curHBZLink.getPredicate() + "> <"
+						// + curHBZLink.getObject() + ">");
 
 					}
 
@@ -245,15 +246,15 @@ public class Utils
 		try
 		{
 
-			UploadResponse response = new Upload(new File(node.getUploadFile()))
-					.execute();
+			File file = new File(node.getUploadFile());
+			UploadResponse response = new Upload(file).execute();
 
 			String location = response.getUploadLocation();
 
 			new AddDatastream(node.getPID(), node.getFileName())
-					.versionable(true).dsState("A").controlGroup("M")
-					.mimeType(node.getMimeType()).dsLocation(location)
-					.execute();
+					.versionable(true).dsLabel(file.getName()).dsState("A")
+					.controlGroup("M").mimeType(node.getMimeType())
+					.dsLocation(location).execute();
 
 			node.setDataUrl(new URL(host + "/objects/" + node.getPID()
 					+ "/datastreams/" + node.getFileName() + "/content"));
@@ -286,9 +287,9 @@ public class Utils
 			String location = response.getUploadLocation();
 
 			new AddDatastream(node.getPID(), "metadata").versionable(true)
-					.dsState("A").controlGroup("M")
-					.mimeType(node.getMimeType()).dsLocation(location)
-					.execute();
+					.dsState("A").dsLabel("n-triple rdf metadata")
+					.controlGroup("M").mimeType(node.getMimeType())
+					.dsLocation(location).execute();
 
 			node.setMetadataUrl(new URL(this.host + "/objects/" + node.getPID()
 					+ "/datastreams/" + "metadata" + "/content"));
@@ -315,22 +316,22 @@ public class Utils
 
 		try
 		{
-			Upload request = new Upload(new File(node.getUploadFile()));
+			File file = new File(node.getUploadFile());
+			Upload request = new Upload(file);
 			UploadResponse response = request.execute();
 			String location = response.getUploadLocation();
 
 			if (dataStreamExists(node.getPID(), node.getFileName()))
 			{
 				new ModifyDatastream(node.getPID(), node.getFileName())
-						.versionable(true).dsState("A").controlGroup("M")
-						.mimeType(node.getMimeType()).dsLocation(location)
-						.execute();
+						.versionable(true).dsState("A").dsLabel(file.getName())
+						.controlGroup("M").mimeType(node.getMimeType())
+						.dsLocation(location).execute();
 			}
 			else
 			{
 				new AddDatastream(node.getPID(), node.getFileName())
-						.versionable(true).dsState("A")
-						.mimeType(node.getMimeType())
+						.versionable(true).dsState("A").dsLabel(file.getName())
 						.mimeType(node.getMimeType()).dsLocation(location)
 						.controlGroup("M").execute();
 			}
@@ -367,13 +368,15 @@ public class Utils
 			if (dataStreamExists(node.getPID(), "metadata"))
 			{
 				new ModifyDatastream(node.getPID(), "metadata")
-						.versionable(true).dsState("A").controlGroup("M")
-						.mimeType("text/plain").dsLocation(location).execute();
+						.versionable(true).dsLabel("n-triple rdf metadata")
+						.dsState("A").controlGroup("M").mimeType("text/plain")
+						.dsLocation(location).execute();
 			}
 			else
 			{
 				new AddDatastream(node.getPID(), "metadata").versionable(true)
-						.dsState("A").controlGroup("M").mimeType("text/plain")
+						.dsState("A").dsLabel("n-triple rdf metadata")
+						.controlGroup("M").mimeType("text/plain")
 						.dsLocation(location).execute();
 			}
 			// node.setDataUrl(new URL(host + "/objects/" + node.getPID()
@@ -1138,15 +1141,15 @@ public class Utils
 			{
 				if (curHBZLink == null)
 					return;
-				System.out.println(" CREATE: <" + pid + "> <"
-						+ curHBZLink.getPredicate() + "> <"
-						+ curHBZLink.getObject() + ">");
+				// System.out.println(" CREATE: <" + pid + "> <"
+				// + curHBZLink.getPredicate() + "> <"
+				// + curHBZLink.getObject() + ">");
 
 				try
 				{
 					if (curHBZLink.isLiteral())
 					{
-						System.out.println("isLiteral");
+						// System.out.println("isLiteral");
 
 						new AddRelationship(pid)
 								.predicate(curHBZLink.getPredicate())
@@ -1155,7 +1158,7 @@ public class Utils
 					}
 					else
 					{
-						System.out.println("NOT isLiteral");
+						// System.out.println("NOT isLiteral");
 
 						new AddRelationship(pid)
 								.predicate(curHBZLink.getPredicate())
@@ -1166,9 +1169,9 @@ public class Utils
 				}
 				catch (Exception e)
 				{
-					System.out.println("UPDATE: Could not ingest: <" + pid
-							+ "> <" + curHBZLink.getPredicate() + "> <"
-							+ curHBZLink.getObject() + ">");
+					// System.out.println("UPDATE: Could not ingest: <" + pid
+					// + "> <" + curHBZLink.getPredicate() + "> <"
+					// + curHBZLink.getObject() + ">");
 				}
 			}
 	}
