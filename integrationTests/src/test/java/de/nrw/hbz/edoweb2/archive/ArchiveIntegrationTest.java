@@ -38,7 +38,6 @@ import de.nrw.hbz.edoweb2.datatypes.ComplexObjectNode;
 import de.nrw.hbz.edoweb2.datatypes.ContentModel;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
-import de.nrw.hbz.edoweb2.datatypes.Vocabulary;
 import de.nrw.hbz.edoweb2.fedora.FedoraVocabulary;
 
 /**
@@ -195,7 +194,7 @@ public class ArchiveIntegrationTest
 			InputStream stream = archive.findTriples(
 					"<http://127.0.0.1:8080/fedora/objects/"
 							+ myObject.getPID() + "> <"
-							+ Vocabulary.REL_IS_RELATED + "> *",
+							+ FedoraVocabulary.HAS_PART + "> *",
 					FedoraVocabulary.SPO, FedoraVocabulary.N3);
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(stream, writer, "utf-8");

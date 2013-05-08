@@ -16,10 +16,10 @@
  */
 package de.nrw.hbz.edoweb2.archive;
 
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.HAS_PART;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_PART_OF;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.SIMPLE;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.SPO;
 
 import java.io.InputStream;
 import java.util.List;
@@ -34,7 +34,6 @@ import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
 import de.nrw.hbz.edoweb2.fedora.FedoraFacade;
 import de.nrw.hbz.edoweb2.fedora.FedoraInterface;
-import de.nrw.hbz.edoweb2.fedora.FedoraVocabulary;
 import de.nrw.hbz.edoweb2.sesame.SesameFacade;
 
 /**
@@ -97,12 +96,6 @@ class Archive implements ArchiveInterface
 		rootObject.setLabel("Default Object");// (pid,
 												// "Ein wunderschönes Objekt");
 		rootObject.setNamespace(namespace);
-
-		rootObject.setNodeType(TYPE_OBJECT);
-		Link link = new Link();
-		link.setPredicate(REL_IS_NODE_TYPE);
-		link.setObject(TYPE_OBJECT, false);
-		rootObject.addRelation(link);
 
 		fedoraInterface.createNode(rootObject);
 
@@ -197,7 +190,7 @@ class Archive implements ArchiveInterface
 		node.addRelation(nodeToMe);
 
 		nodeToMe = new Link();
-		nodeToMe.setPredicate(REL_BELONGS_TO_OBJECT);
+		nodeToMe.setPredicate(IS_PART_OF);
 		nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
 		node.addRelation(nodeToMe);
 
@@ -263,7 +256,7 @@ class Archive implements ArchiveInterface
 
 		for (Link rel : rels)
 		{
-			if (rel.getPredicate().compareTo(REL_IS_RELATED) == 0)
+			if (rel.getPredicate().compareTo(HAS_PART) == 0)
 			{
 				String pid = removeUriPrefix(rel.getObject());
 
@@ -286,7 +279,7 @@ class Archive implements ArchiveInterface
 	{
 		for (Link rel : rels)
 		{
-			if (rel.getPredicate().compareTo(REL_IS_RELATED) == 0)
+			if (rel.getPredicate().compareTo(HAS_PART) == 0)
 			{
 				String pid = removeUriPrefix(rel.getObject());
 				if (pid.compareTo(rootPID) == 0)
@@ -338,8 +331,8 @@ class Archive implements ArchiveInterface
 		// Find all children
 		List<String> pids = null;
 
-		pids = fedoraInterface.findPids("* <" + REL_BELONGS_TO_OBJECT + "> <"
-				+ addUriPrefix(rootPID) + ">", FedoraVocabulary.SPO);
+		pids = fedoraInterface.findPids("* <" + IS_PART_OF + "> <"
+				+ addUriPrefix(rootPID) + ">", SPO);
 
 		// Delete all children
 		if (pids != null)
@@ -357,7 +350,7 @@ class Archive implements ArchiveInterface
 					System.out
 							.println(pid
 									+ " node is shared by other objects. Can't delete!");
-					node.removeRelation(REL_BELONGS_TO_OBJECT, rootPID);
+					node.removeRelation(IS_PART_OF, rootPID);
 					fedoraInterface.updateNode(node);
 					sesame.updateNode(node);
 				}
@@ -393,7 +386,7 @@ class Archive implements ArchiveInterface
 	@Override
 	public List<String> findNodes(String searchTerm)
 	{
-		return fedoraInterface.findPids(searchTerm, FedoraVocabulary.SIMPLE);
+		return fedoraInterface.findPids(searchTerm, SIMPLE);
 	}
 
 	@Override

@@ -74,10 +74,12 @@ class HtmlAdapter
 			Element script1 = doc.createElement("script");
 			script1.setAttribute("src",
 					"http://code.jquery.com/jquery-1.9.1.js");
+			script1.appendChild(doc.createComment("workaround"));
 
 			Element script2 = doc.createElement("script");
 			script2.setAttribute("src",
 					"http://code.jquery.com/ui/1.10.3/jquery-ui.js");
+			script2.appendChild(doc.createComment("workaround"));
 
 			Element script3 = doc.createElement("script");
 			script3.appendChild(doc
@@ -254,6 +256,7 @@ class HtmlAdapter
 		div.appendChild(divTab3);
 
 		table = doc.createElement("table");
+		table.appendChild(doc.createComment("avoid empty elements for firefox"));
 		divTab3.appendChild(table);
 
 		addHasPart(doc, table, "hasPart", view);

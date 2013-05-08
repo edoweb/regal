@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -65,8 +64,8 @@ public class FedoraFacadeIntegrationTest
 			e.printStackTrace();
 		}
 
-		System.out.println(XmlSchemaCollection.class
-				.getResource("XmlSchemaCollection.class"));
+		// System.out.println(XmlSchemaCollection.class
+		// .getResource("XmlSchemaCollection.class"));
 
 		facade = new FedoraFacade(properties.getProperty("fedoraUrl"),
 				properties.getProperty("user"),

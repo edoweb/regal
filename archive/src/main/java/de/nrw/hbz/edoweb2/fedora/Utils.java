@@ -1,12 +1,7 @@
 package de.nrw.hbz.edoweb2.fedora;
 
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.DATASTREAM_MIME;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.FEDORA_INFO_NAMESPACE;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.HAS_DATASTREAM;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.HAS_METADATASTREAM;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.METADATASTREAM_MIME;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_CONTENT_TYPE;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_IN_NAMESPACE;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 
 import java.io.BufferedInputStream;
@@ -262,15 +257,15 @@ public class Utils
 
 			node.setDataUrl(new URL(host + "/objects/" + node.getPID()
 					+ "/datastreams/" + node.getFileName() + "/content"));
-			Link link = new Link();
-			link.setObject(node.getFileName(), true);
-			link.setPredicate(HAS_DATASTREAM);
-			node.addRelation(link);
-
-			link = new Link();
-			link.setObject(node.getMimeType(), true);
-			link.setPredicate(DATASTREAM_MIME);
-			node.addRelation(link);
+			// Link link = new Link();
+			// link.setObject(node.getFileName(), true);
+			// link.setPredicate(HAS_DATASTREAM);
+			// node.addRelation(link);
+			//
+			// link = new Link();
+			// link.setObject(node.getMimeType(), true);
+			// link.setPredicate(DATASTREAM_MIME);
+			// node.addRelation(link);
 
 		}
 		catch (Exception e)
@@ -297,15 +292,15 @@ public class Utils
 
 			node.setMetadataUrl(new URL(this.host + "/objects/" + node.getPID()
 					+ "/datastreams/" + "metadata" + "/content"));
-			Link link = new Link();
-			link.setObject(node.getMetadataFile(), true);
-			link.setPredicate(HAS_METADATASTREAM);
-			node.addRelation(link);
-
-			link = new Link();
-			link.setObject("text/plain", true);
-			link.setPredicate(METADATASTREAM_MIME);
-			node.addRelation(link);
+			// Link link = new Link();
+			// link.setObject(node.getMetadataFile(), true);
+			// link.setPredicate(HAS_METADATASTREAM);
+			// node.addRelation(link);
+			//
+			// link = new Link();
+			// link.setObject("text/plain", true);
+			// link.setPredicate(METADATASTREAM_MIME);
+			// node.addRelation(link);
 
 		}
 		catch (Exception e)
@@ -339,17 +334,17 @@ public class Utils
 						.mimeType(node.getMimeType()).dsLocation(location)
 						.controlGroup("M").execute();
 			}
-			node.setDataUrl(new URL(host + "/objects/" + node.getPID()
-					+ "/datastreams/" + node.getFileName() + "/content"));
-			Link link = new Link();
-			link.setObject(node.getFileName(), true);
-			link.setPredicate(HAS_DATASTREAM);
-			node.addRelation(link);
-
-			link = new Link();
-			link.setObject(node.getMimeType(), true);
-			link.setPredicate(DATASTREAM_MIME);
-			node.addRelation(link);
+			// node.setDataUrl(new URL(host + "/objects/" + node.getPID()
+			// + "/datastreams/" + node.getFileName() + "/content"));
+			// Link link = new Link();
+			// link.setObject(node.getFileName(), true);
+			// link.setPredicate(HAS_DATASTREAM);
+			// node.addRelation(link);
+			//
+			// link = new Link();
+			// link.setObject(node.getMimeType(), true);
+			// link.setPredicate(DATASTREAM_MIME);
+			// node.addRelation(link);
 		}
 		catch (Exception e)
 		{
@@ -381,17 +376,17 @@ public class Utils
 						.dsState("A").controlGroup("M").mimeType("text/plain")
 						.dsLocation(location).execute();
 			}
-			node.setDataUrl(new URL(host + "/objects/" + node.getPID()
-					+ "/datastreams/" + newID + "/content"));
-			Link link = new Link();
-			link.setObject(node.getMetadataFile(), true);
-			link.setPredicate(HAS_METADATASTREAM);
-			node.addRelation(link);
-
-			link = new Link();
-			link.setObject("text/plain", true);
-			link.setPredicate(METADATASTREAM_MIME);
-			node.addRelation(link);
+			// node.setDataUrl(new URL(host + "/objects/" + node.getPID()
+			// + "/datastreams/" + newID + "/content"));
+			// Link link = new Link();
+			// link.setObject(node.getMetadataFile(), true);
+			// link.setPredicate(HAS_METADATASTREAM);
+			// node.addRelation(link);
+			//
+			// link = new Link();
+			// link.setObject("text/plain", true);
+			// link.setPredicate(METADATASTREAM_MIME);
+			// node.addRelation(link);
 		}
 		catch (Exception e)
 		{
@@ -622,30 +617,32 @@ public class Utils
 						{
 							node.setNodeType(link.getObject());
 						}
-						else if (link.getPredicate().compareTo(
-								REL_IS_IN_NAMESPACE) == 0)
-						{
-							node.setNamespace(link.getObject());
-						}
-						else if (link.getPredicate().compareTo(HAS_DATASTREAM) == 0)
-						{
-							node.setFileName(link.getObject());
-							node.setDataUrl(new URL(host + "/objects/"
-									+ node.getPID() + "/datastreams/"
-									+ node.getFileName() + "/content"));
-
-						}
-						else if (link.getPredicate().compareTo(DATASTREAM_MIME) == 0)
-						{
-							node.setMimeType(link.getObject());
-						}
-						else if (link.getPredicate().compareTo(
-								HAS_METADATASTREAM) == 0)
-						{
-							node.setMetadataUrl(new URL(host + "/objects/"
-									+ node.getPID()
-									+ "/datastreams/metadata/content"));
-						}
+						// else if (link.getPredicate().compareTo(
+						// REL_IS_IN_NAMESPACE) == 0)
+						// {
+						// node.setNamespace(link.getObject());
+						// }
+						// else if
+						// (link.getPredicate().compareTo(HAS_DATASTREAM) == 0)
+						// {
+						// node.setFileName(link.getObject());
+						// node.setDataUrl(new URL(host + "/objects/"
+						// + node.getPID() + "/datastreams/"
+						// + node.getFileName() + "/content"));
+						//
+						// }
+						// else if
+						// (link.getPredicate().compareTo(DATASTREAM_MIME) == 0)
+						// {
+						// node.setMimeType(link.getObject());
+						// }
+						// else if (link.getPredicate().compareTo(
+						// HAS_METADATASTREAM) == 0)
+						// {
+						// node.setMetadataUrl(new URL(host + "/objects/"
+						// + node.getPID()
+						// + "/datastreams/metadata/content"));
+						// }
 						else if (link.getPredicate()
 								.compareTo(REL_CONTENT_TYPE) == 0)
 						{

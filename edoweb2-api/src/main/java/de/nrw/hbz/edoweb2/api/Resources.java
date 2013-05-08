@@ -22,10 +22,10 @@ import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME;
 import static de.nrw.hbz.edoweb2.api.Vocabulary.HAS_VOLUME_NAME;
 import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VERSION;
 import static de.nrw.hbz.edoweb2.api.Vocabulary.IS_VOLUME;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_NODE_TYPE;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_OBJECT;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.HAS_PART;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_PART_OF;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -151,10 +151,11 @@ public class Resources
 	public Response get(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
+		// return about(namespace + ":" + pid);
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + namespace + ":" + pid
-								+ "/about")).status(303).build();
+						new java.net.URI("../resources/" + namespace + ":"
+								+ pid + "/about")).status(303).build();
 	}
 
 	/**
@@ -602,7 +603,7 @@ public class Resources
 	public ObjectList getAllParts(@PathParam("pid") String pid)
 	{
 
-		return new ObjectList(actions.findObject(pid, REL_IS_RELATED));
+		return new ObjectList(actions.findObject(pid, HAS_PART));
 	}
 
 	/**
@@ -616,7 +617,7 @@ public class Resources
 	public ObjectList getAllParents(@PathParam("pid") String pid)
 	{
 
-		return new ObjectList(actions.findObject(pid, REL_BELONGS_TO_OBJECT));
+		return new ObjectList(actions.findObject(pid, IS_PART_OF));
 	}
 
 	private String createResource(CreateObjectBean input, String p,
@@ -645,12 +646,12 @@ public class Resources
 			{
 				String parentPid = input.getParentPid();
 				link = new Link();
-				link.setPredicate(REL_BELONGS_TO_OBJECT);
+				link.setPredicate(IS_PART_OF);
 				link.setObject(parentPid, false);
 				rootObject.addRelation(link);
 
 				link = new Link();
-				link.setPredicate(REL_IS_RELATED);
+				link.setPredicate(HAS_PART);
 				link.setObject(pid, false);
 				actions.addLink(parentPid, link);
 			}
@@ -850,7 +851,7 @@ public class Resources
 			rootObject.addRelation(link);
 
 			link = new Link();
-			link.setPredicate(REL_BELONGS_TO_OBJECT);
+			link.setPredicate(IS_PART_OF);
 			link.setObject(parentPid, false);
 			rootObject.addRelation(link);
 
@@ -868,7 +869,7 @@ public class Resources
 			actions.addLink(parentPid, link);
 
 			link = new Link();
-			link.setPredicate(REL_IS_RELATED);
+			link.setPredicate(HAS_PART);
 			link.setObject(versionPid, false);
 
 			actions.addLink(parentPid, link);
@@ -910,7 +911,7 @@ public class Resources
 			rootObject.addRelation(link);
 
 			link = new Link();
-			link.setPredicate(REL_BELONGS_TO_OBJECT);
+			link.setPredicate(IS_PART_OF);
 			link.setObject(parentPid, false);
 			rootObject.addRelation(link);
 
@@ -934,7 +935,7 @@ public class Resources
 			actions.addLink(parentPid, link);
 
 			link = new Link();
-			link.setPredicate(REL_IS_RELATED);
+			link.setPredicate(HAS_PART);
 			link.setObject(volumePid, false);
 			actions.addLink(parentPid, link);
 

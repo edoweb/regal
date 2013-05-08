@@ -16,10 +16,10 @@
  */
 package de.nrw.hbz.edoweb2.api;
 
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_CONTENT_TYPE;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.HAS_PART;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_MEMBER_OF;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_PART_OF;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.ITEM_ID;
 
 import java.io.File;
@@ -1116,14 +1116,14 @@ class Actions
 			}
 		}
 
-		for (String relPid : findObject(pid, REL_BELONGS_TO_OBJECT))
+		for (String relPid : findObject(pid, IS_PART_OF))
 		{
 			String relUrl = serverName + "/resources/" + relPid;
 
 			view.addIsPartOf(relUrl, relPid);
 		}
 
-		for (String relPid : findObject(pid, REL_IS_RELATED))
+		for (String relPid : findObject(pid, HAS_PART))
 		{
 			String relUrl = serverName + "/resources/" + relPid;
 
@@ -1240,22 +1240,25 @@ class Actions
 	String outdex(String pid)
 	{
 
-		String namespace = pid.substring(0, pid.indexOf(':') - 1);
+		String namespace = pid.substring(0, pid.indexOf(':'));
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 		Client c = Client.create(cc);
+		String indexUrl = "http://localhost:9200/" + namespace + "/titel/"
+				+ pid;
 		try
 		{
-			WebResource index = c.resource("http://localhost:9200/" + namespace
-					+ "/titel/" + pid);
+
+			WebResource index = c.resource(indexUrl);
 			index.accept(MediaType.APPLICATION_JSON);
 
 			index.delete();
 		}
 		catch (Exception e)
 		{
-			throw new ArchiveException(pid + " can't delete from index.", e);
+			throw new ArchiveException(pid + " can't delete from index: "
+					+ indexUrl, e);
 		}
 		return pid + " remove from index!";
 	}

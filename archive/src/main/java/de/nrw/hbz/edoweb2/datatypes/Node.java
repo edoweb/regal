@@ -16,9 +16,9 @@
  */
 package de.nrw.hbz.edoweb2.datatypes;
 
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_BELONGS_TO_OBJECT;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_RELATED;
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.TYPE_NODE;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.HAS_PART;
+import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.IS_PART_OF;
 
 import java.net.URL;
 import java.util.Date;
@@ -65,22 +65,22 @@ public class Node
 
 	public Node()
 	{
-		this.isNodeTypeOf = REL_IS_RELATED;
-		this.hasNodeType = REL_IS_RELATED;
+		this.isNodeTypeOf = HAS_PART;
+		this.hasNodeType = HAS_PART;
 		setNodeType(TYPE_NODE);
 	}
 
 	public Node(String pid)
 	{
-		this.isNodeTypeOf = REL_IS_RELATED;
-		this.hasNodeType = REL_IS_RELATED;
+		this.isNodeTypeOf = HAS_PART;
+		this.hasNodeType = HAS_PART;
 		setNodeType(TYPE_NODE);
 		setPID(pid);
 	}
 
 	public Node addRelation(Link link)
 	{
-		if (link.getPredicate().compareTo(REL_BELONGS_TO_OBJECT) == 0)
+		if (link.getPredicate().compareTo(IS_PART_OF) == 0)
 		{
 			addObject(link.getObject());
 			link.setLiteral(false);
@@ -111,7 +111,7 @@ public class Node
 		{
 
 			Link isParentRel = new Link();
-			isParentRel.setPredicate(REL_BELONGS_TO_OBJECT);
+			isParentRel.setPredicate(IS_PART_OF);
 			isParentRel.setObject(Vocabulary.FEDORA_INFO_NAMESPACE + getPID(),
 					false);
 			node.addRelation(isParentRel);
@@ -121,7 +121,7 @@ public class Node
 			for (String rootPid : objects)
 			{
 				Link isParentRel = new Link();
-				isParentRel.setPredicate(REL_BELONGS_TO_OBJECT);
+				isParentRel.setPredicate(IS_PART_OF);
 				isParentRel.setObject(rootPid, false);
 				node.addRelation(isParentRel);
 

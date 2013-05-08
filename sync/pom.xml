@@ -50,37 +50,37 @@
 				</configuration>
 
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.0-alpha-3</version>
-				<executions>
-					<execution>
-						<id>ban-other-loggers</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<bannedDependencies>
-									<searchTransitive>true</searchTransitive>
-									<excludes>
-										<!-- Ban the secondary frameworks -->
-										<exclude>log4j:log4j</exclude>
-										<exclude>commons-logging</exclude>
-										<!-- Ban other slf4j bridges so we don't end up in an infinite 
-											loop -->
-										<exclude>org.slf4j:slf4j-log4j12</exclude>
-									</excludes>
-									<message>Secondary logging frameworks are
-										banned in preference
-										to org.slf4j:*-over-slf4j</message>
-								</bannedDependencies>
-							</rules>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-enforcer-plugin</artifactId> -->
+<!-- 				<version>1.0-alpha-3</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>ban-other-loggers</id> -->
+<!-- 						<goals> -->
+<!-- 							<goal>enforce</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<rules> -->
+<!-- 								<bannedDependencies> -->
+<!-- 									<searchTransitive>true</searchTransitive> -->
+<!-- 									<excludes> -->
+<!-- 										Ban the secondary frameworks -->
+<!-- 										<exclude>log4j:log4j</exclude> -->
+<!-- 										<exclude>commons-logging</exclude> -->
+<!-- 										Ban other slf4j bridges so we don't end up in an infinite -->
+<!-- 											loop --> 
+<!-- 										<exclude>org.slf4j:slf4j-log4j12</exclude> -->
+<!-- 									</excludes> -->
+<!-- 									<message>Secondary logging frameworks are -->
+<!-- 										banned in preference -->
+<!-- 										to org.slf4j:*-over-slf4j</message> -->
+<!-- 								</bannedDependencies> -->
+<!-- 							</rules> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
 		</plugins>
 	</build>
 	<dependencies>
@@ -212,6 +212,18 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.9</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-common-utilities</artifactId>
+			<version>2.5.10</version>
 		</dependency>
 	</dependencies>
 </project>

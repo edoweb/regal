@@ -17,7 +17,6 @@
 package de.nrw.hbz.edoweb2.fedora;
 
 import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_CONTENT_TYPE;
-import static de.nrw.hbz.edoweb2.datatypes.Vocabulary.REL_IS_IN_NAMESPACE;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.CM_CONTENTMODEL;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL;
 import static de.nrw.hbz.edoweb2.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL_URI;
@@ -41,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Vector;
@@ -50,8 +50,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.rpc.ServiceException;
 
-import org.fcrepo.server.access.FedoraAPIAMTOM;
-import org.fcrepo.server.management.FedoraAPIMMTOM;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -81,6 +79,7 @@ import com.yourmediashelf.fedora.client.request.PurgeObject;
 import com.yourmediashelf.fedora.client.request.RiSearch;
 import com.yourmediashelf.fedora.client.response.FedoraResponse;
 import com.yourmediashelf.fedora.client.response.GetNextPIDResponse;
+import com.yourmediashelf.fedora.client.response.GetObjectProfileResponse;
 import com.yourmediashelf.fedora.client.response.IngestResponse;
 import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
 import com.yourmediashelf.fedora.generated.access.DatastreamType;
@@ -97,10 +96,7 @@ import de.nrw.hbz.edoweb2.datatypes.Node;
  */
 public class FedoraFacade implements FedoraInterface
 {
-	private FedoraAPIAMTOM fedoraAccess;
-	private FedoraAPIMMTOM fedoraManager;
-	private org.fcrepo.client.FedoraClient fedoraClient;
-
+	
 	private final String host;
 	private final String user;
 	private final String passwd;
@@ -131,24 +127,7 @@ public class FedoraFacade implements FedoraInterface
 					credentials);
 			FedoraRequest.setDefaultClient(fedora);
 
-			fedoraClient = new org.fcrepo.client.FedoraClient(host, user,
-					passwd);
-
-			try
-			{
-				fedoraAccess = fedoraClient.getAPIAMTOM();
-				fedoraManager = fedoraClient.getAPIMMTOM();
-			}
-			catch (ServiceException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		
 
 		}
 		catch (MalformedURLException e)
@@ -182,13 +161,8 @@ public class FedoraFacade implements FedoraInterface
 				utils.createMetadataStream(node);
 
 			}
+
 			Link link = new Link();
-			link.setObject(node.getNamespace(), true);
-			link.setPredicate(REL_IS_IN_NAMESPACE);
-
-			node.addRelation(link);
-
-			link = new Link();
 			link.setObject(node.getContentType(), true);
 			link.setPredicate(REL_CONTENT_TYPE);
 
@@ -210,19 +184,21 @@ public class FedoraFacade implements FedoraInterface
 	{
 		if (!nodeExists(pid))
 			throw new NodeNotFoundException(pid + " does not exist!");
+
 		Node node = new Node();
 		node.setPID(pid);
-
+		node.setNamespace(pid.substring(0, pid.indexOf(':')));
 		try
 		{
 			utils.readDcToNode(node);
 			utils.readRelsExt(node);
 			// TODO Fix me
 			// readContentModels(node);
+			GetObjectProfileResponse prof = new GetObjectProfile(pid).execute();
 
-			node.setLabel(new GetObjectProfile(pid).execute().getLabel());
-			node.setLastModified(new GetObjectProfile(pid).execute()
-					.getLastModifiedDate());
+			node.setLabel(prof.getLabel());
+			node.setLastModified(prof.getLastModifiedDate());
+
 		}
 		catch (FedoraClientException e)
 		{
@@ -231,6 +207,23 @@ public class FedoraFacade implements FedoraInterface
 		catch (RemoteException e)
 		{
 			throw new ArchiveException("An unknown exception occured.", e);
+		}
+
+		try
+		{
+			FedoraResponse response = new GetDatastreamDissemination(pid,
+					"data").download(true).execute();
+			node.setMimeType(response.getType());
+			node.setMetadataUrl(new URL(host + "/objects/" + pid
+					+ "/datastreams/metadata/content"));
+		}
+		catch (MalformedURLException e)
+		{
+
+		}
+		catch (FedoraClientException e)
+		{
+
 		}
 
 		return node;
