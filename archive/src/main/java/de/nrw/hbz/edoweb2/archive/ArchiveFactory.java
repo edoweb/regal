@@ -33,8 +33,8 @@ public class ArchiveFactory
 	 * @return An archive object implementing the ArchivInterface.java
 	 */
 	public static ArchiveInterface getArchiveImpl(String host, String user,
-			String passwd, String sesameNativeStore)
+			String passwd)
 	{
-		return Archive.getInstance(host, user, passwd, sesameNativeStore);
+		return Archive.getInstance(host, user, passwd);
 	}
 }

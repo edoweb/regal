@@ -211,13 +211,14 @@ public class Resources
 	}
 
 	@GET
-	@Path("/{pid}/fulltext")
+	@Path("/{namespace}:{pid}/fulltext")
 	@Produces({ "application/xml", "application/json" })
-	public Response getFulltext(@PathParam("pid") String pid)
+	public Response getFulltext(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		try
 		{
-			return actions.getFulltext(pid);
+			return actions.getFulltext(pid, namespace);
 		}
 		catch (URISyntaxException e)
 		{
@@ -229,13 +230,14 @@ public class Resources
 	}
 
 	@GET
-	@Path("/{pid}/epicur")
+	@Path("/{namespace}:{pid}/epicur")
 	@Produces({ "application/xml", "application/json" })
-	public Response getEpicur(@PathParam("pid") String pid)
+	public Response getEpicur(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		try
 		{
-			return actions.getEpicur(pid);
+			return actions.getEpicur(pid, namespace);
 		}
 		catch (URISyntaxException e)
 		{
@@ -247,13 +249,14 @@ public class Resources
 	}
 
 	@GET
-	@Path("/{pid}/oai_dc")
+	@Path("/{namespace}:{pid}/oai_dc")
 	@Produces({ "application/xml", "application/json" })
-	public Response getOAI_DC(@PathParam("pid") String pid)
+	public Response getOAI_DC(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
 		try
 		{
-			return actions.getOAI_DC(pid);
+			return actions.getOAI_DC(pid, namespace);
 		}
 		catch (URISyntaxException e)
 		{

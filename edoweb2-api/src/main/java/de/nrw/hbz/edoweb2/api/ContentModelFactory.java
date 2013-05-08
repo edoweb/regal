@@ -30,9 +30,9 @@ public class ContentModelFactory
 	public static ContentModel createHeadModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:edowebObjectModel");
-		cm.setServiceDefinitionPID(namespace + "CM:edowebServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + "CM:edowebServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:headObjectModel");
+		cm.setServiceDefinitionPID(namespace + "CM:headServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + "CM:headServiceDeployment");
 
 		cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
 		cm.addMethod("epicur", "http://localhost/utils/epicur/(pid)");

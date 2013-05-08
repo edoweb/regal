@@ -96,15 +96,15 @@ import de.nrw.hbz.edoweb2.fedora.FedoraVocabulary;
 class Actions
 {
 	final static Logger logger = LoggerFactory.getLogger(Actions.class);
-	ArchiveInterface archive = null;
-	String fedoraExtern = null;
-	String culturegraphUrl = null;
-	String lobidUrl = null;
-	String verbundUrl = null;
-	String dataciteUrl = null;
-	String baseUrl = null;
-	String serverName = null;
-	String uriPrefix = null;
+	private ArchiveInterface archive = null;
+	private String fedoraExtern = null;
+	private String serverName = null;
+	private String uriPrefix = null;
+	private String lobidUrl = null;
+	private String verbundUrl = null;
+	private String dataciteUrl;
+	private String baseUrl;
+	private String culturegraphUrl;
 
 	// String namespace = null;
 
@@ -115,23 +115,22 @@ class Actions
 	Actions() throws IOException
 	{
 		Properties properties = new Properties();
-
 		properties.load(getClass().getResourceAsStream("/api.properties"));
-
 		fedoraExtern = properties.getProperty("fedoraExtern");
-		culturegraphUrl = properties.getProperty("culturegraphUrl");
+		serverName = properties.getProperty("serverName");
+		archive = ArchiveFactory.getArchiveImpl(
+				properties.getProperty("fedoraIntern"),
+				properties.getProperty("user"),
+				properties.getProperty("password"));
+		uriPrefix = serverName + "/" + "resources" + "/";
+
+		properties.load(getClass().getResourceAsStream(
+				"/externalLinks.properties"));
 		lobidUrl = properties.getProperty("lobidUrl");
 		verbundUrl = properties.getProperty("verbundUrl");
 		dataciteUrl = properties.getProperty("dataciteUrl");
 		baseUrl = properties.getProperty("baseUrl");
-		serverName = properties.getProperty("serverName");
-
-		archive = ArchiveFactory.getArchiveImpl(
-				properties.getProperty("fedoraIntern"),
-				properties.getProperty("user"),
-				properties.getProperty("password"),
-				properties.getProperty("sesameStore"));
-		uriPrefix = serverName + "/" + "resources" + "/";
+		culturegraphUrl = properties.getProperty("culturegraphUrl");
 
 	}
 
@@ -1932,33 +1931,36 @@ class Actions
 		return deleteAll(objects, false);
 	}
 
-	public Response getFulltext(String pid) throws URISyntaxException
+	public Response getFulltext(String pid, String namespace)
+			throws URISyntaxException
 	{
 
 		return Response.temporaryRedirect(
-				new java.net.URI(fedoraExtern + "/fedora/objects/" + pid
-						+ "/methods/edowebCM:pdfServiceDefinition/pdfbox"))
-				.build();
+				new java.net.URI(fedoraExtern + "/objects/" + namespace + ":"
+						+ pid + "/methods/" + namespace
+						+ "CM:pdfServiceDefinition/pdfbox")).build();
 
 	}
 
-	public Response getEpicur(String pid) throws URISyntaxException
+	public Response getEpicur(String pid, String namespace)
+			throws URISyntaxException
 	{
 
 		return Response.temporaryRedirect(
-				new java.net.URI(fedoraExtern + "/fedora/objects/" + pid
-						+ "/methods/edowebCM:edowebServiceDefinition/epicur"))
-				.build();
+				new java.net.URI(fedoraExtern + "/objects/" + namespace + ":"
+						+ pid + "/methods/" + namespace
+						+ "CM:headServiceDefinition/epicur")).build();
 
 	}
 
-	public Response getOAI_DC(String pid) throws URISyntaxException
+	public Response getOAI_DC(String pid, String namespace)
+			throws URISyntaxException
 	{
 
 		return Response.temporaryRedirect(
-				new java.net.URI(fedoraExtern + "/fedora/objects/" + pid
-						+ "/methods/edowebCM:edowebServiceDefinition/oai_dc"))
-				.build();
+				new java.net.URI(fedoraExtern + "/objects/" + namespace + ":"
+						+ pid + "/methods/" + namespace
+						+ "CM:headServiceDefinition/oai_dc")).build();
 
 	}
 

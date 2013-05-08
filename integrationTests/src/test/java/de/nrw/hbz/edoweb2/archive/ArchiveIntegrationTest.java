@@ -75,8 +75,7 @@ public class ArchiveIntegrationTest
 		archive = ArchiveFactory.getArchiveImpl(
 				properties.getProperty("fedoraUrl"),
 				properties.getProperty("user"),
-				properties.getProperty("password"),
-				properties.getProperty("sesameStore"));
+				properties.getProperty("password"));
 
 		rootObject = new Node();
 		rootObject.setNodeType(TYPE_OBJECT);

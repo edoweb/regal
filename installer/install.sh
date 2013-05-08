@@ -87,13 +87,6 @@ echo "fedoraExtern=http://$SERVER/fedora"  >> $ARCHIVE_HOME/conf/api.properties
 echo "fedoraIntern=http://localhost:$TOMCAT_PORT/fedora" >> $ARCHIVE_HOME/conf/api.properties
 echo "user=$ARCHIVE_USER" >> $ARCHIVE_HOME/conf/api.properties
 echo "password=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/api.properties
-echo "namespace=$PREFIX" >> $ARCHIVE_HOME/conf/api.properties
-echo "sesameStore=/tmp/myRepository" >> $ARCHIVE_HOME/conf/api.properties
-echo "lobidUrl=http://lobid.org/resource/" >> $ARCHIVE_HOME/conf/api.properties
-echo "verbundUrl=http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3D" >> $ARCHIVE_HOME/conf/api.properties
-echo "dataciteUrl=http://data.datacite.org/" >> $ARCHIVE_HOME/conf/api.properties
-echo "baseUrl=http://www.base-search.net/Search/Results?lookfor=" >> $ARCHIVE_HOME/conf/api.properties
-echo "culturegraphUrl=http://www.culturegraph.org/about/" >> $ARCHIVE_HOME/conf/api.properties
 echo >> $ARCHIVE_HOME/conf/api.properties
 
 echo "write tomcat-users.xml"

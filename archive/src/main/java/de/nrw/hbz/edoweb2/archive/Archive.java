@@ -59,12 +59,11 @@ class Archive implements ArchiveInterface
 	private SesameFacade sesame = null;
 	private static Archive me = null;
 
-	public static Archive getInstance(String host, String user,
-			String password, String sesameNativeStore)
+	public static Archive getInstance(String host, String user, String password)
 	{
 		if (me == null)
 		{
-			me = new Archive(host, user, password, sesameNativeStore);
+			me = new Archive(host, user, password, "/tmp/testses");
 		}
 		return me;
 	}
