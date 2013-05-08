@@ -1706,23 +1706,23 @@ class Actions
 
 	private void waitWorkaround()
 	{
-		/*
-		 * Workaround START
-		 */
-		try
-		{
-			logger.info("Wait 10 sec! Nasty workaround.");
-			Thread.sleep(10000);
-			logger.info("Stop Waiting! Nasty workaround.");
-		}
-		catch (InterruptedException e1)
-		{
-
-			e1.printStackTrace();
-		}
-		/*
-		 * Workaround END
-		 */
+		// /*
+		// * Workaround START
+		// */
+		// try
+		// {
+		// logger.info("Wait 10 sec! Nasty workaround.");
+		// Thread.sleep(10000);
+		// logger.info("Stop Waiting! Nasty workaround.");
+		// }
+		// catch (InterruptedException e1)
+		// {
+		//
+		// e1.printStackTrace();
+		// }
+		// /*
+		// * Workaround END
+		// */
 	}
 
 	public String pdfbox(Node node)

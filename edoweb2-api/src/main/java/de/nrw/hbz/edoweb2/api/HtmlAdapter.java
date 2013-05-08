@@ -456,6 +456,7 @@ class HtmlAdapter
 
 				Element image = doc.createElement("img");
 				image.setAttribute("src", pdfLogo);
+				image.setAttribute("width", "100");
 
 				Element link = doc.createElement("a");
 				link.setAttribute("href", str);
@@ -480,6 +481,7 @@ class HtmlAdapter
 
 				Element image = doc.createElement("img");
 				image.setAttribute("src", zipLogo);
+				image.setAttribute("width", "100");
 
 				Element link = doc.createElement("a");
 				link.setAttribute("href", str);

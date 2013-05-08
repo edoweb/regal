@@ -879,6 +879,7 @@ public class Resources
 		}
 		catch (ArchiveException e)
 		{
+			e.printStackTrace();
 			throw new HttpArchiveException(
 					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
 					e.getMessage());
