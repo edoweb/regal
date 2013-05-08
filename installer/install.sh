@@ -18,6 +18,9 @@ mkdir -v $ARCHIVE_HOME/${PREFIX}base
 mkdir -v $ARCHIVE_HOME/logs
 mkdir -v $ARCHIVE_HOME/conf
 mkdir -v $ARCHIVE_HOME/bin
+mkdir -v -p $ARCHIVE_HOME/proai/cache
+mkdir -v -p $ARCHIVE_HOME/proai/sessions
+mkdir -v -p $ARCHIVE_HOME/proai/schemas
 }
 
 function createConfig()
