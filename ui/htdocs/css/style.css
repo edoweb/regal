@@ -6,6 +6,7 @@ body {
 	margin-right: 60px;
 	background-image:url(img/background_gradient.jpg);
 	background-repeat: repeat-x;
+
 }
 
 image {
@@ -95,6 +96,7 @@ a:visited {
 }
 #resultList a:hover {
 	text-decoration: none;
+	
 }
 #resultList a:active {
 	text-decoration: none;
@@ -112,7 +114,7 @@ a:visited {
 //	font-family: monospace;
 	font-size: 0.9em;
 	background-color: #ffffff;
-	
+		border-radius: 15px;
 	box-shadow: 5px 5px 7px #999999;
 	
 }
@@ -204,4 +206,11 @@ td
 	border-radius: 15px;
 
 
+}
+
+#tabheader
+{
+	position:absolute;
+	top:40;
+	right:40;
 }

@@ -17,6 +17,8 @@
 package de.nrw.hbz.edoweb2.api;
 
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
@@ -157,6 +159,25 @@ class HtmlAdapter
 		tabul.appendChild(li4);
 
 		div.appendChild(tabul);
+
+		Element searchDiv = doc.createElement("div");
+		searchDiv.setAttribute("id", "tabheader");
+		Element searchLink = doc.createElement("a");
+		try
+		{
+			String host = new URI(view.getUri()).getHost();
+			searchLink.setAttribute("href", "http://" + host);
+			Element searchImage = doc.createElement("img");
+			searchImage.setAttribute("src", "/search.png");
+			searchImage.setAttribute("height", "40");
+			searchLink.appendChild(searchImage);
+			searchDiv.appendChild(searchLink);
+			div.appendChild(searchDiv);
+		}
+		catch (URISyntaxException e)
+		{
+
+		}
 
 		Element divTab1 = doc.createElement("div");
 		divTab1.setAttribute("id", "tabs-1");
