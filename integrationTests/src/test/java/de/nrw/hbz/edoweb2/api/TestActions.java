@@ -12,6 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.nrw.hbz.edoweb2.datatypes.Node;
+
 public class TestActions
 {
 	Properties properties;
@@ -30,9 +32,17 @@ public class TestActions
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+
 			}
-			actions.deleteNamespace("testCM");
+			try
+			{
+
+				actions.deleteNamespace("testCM");
+			}
+			catch (Exception e)
+			{
+
+			}
 		}
 		catch (FileNotFoundException e)
 		{
@@ -53,7 +63,55 @@ public class TestActions
 		for (String result : actions
 				.findByType(ObjectType.monograph.toString()))
 		{
-			System.out.println(result);
+			Node node = actions.readNode(result);
+			String type = node.getContentType();
+
+			if (type == null || type.isEmpty())
+				Assert.fail();
+			else if (ObjectType.monograph.toString().compareTo(type) != 0)
+			{
+				Assert.fail();
+			}
+		}
+
+		for (String result : actions.findByType(ObjectType.ejournal.toString()))
+		{
+			Node node = actions.readNode(result);
+			String type = node.getContentType();
+
+			if (type == null || type.isEmpty())
+				Assert.fail();
+			else if (ObjectType.ejournal.toString().compareTo(type) != 0)
+			{
+				Assert.fail();
+			}
+		}
+
+		for (String result : actions.findByType(ObjectType.ejournalVolume
+				.toString()))
+		{
+			Node node = actions.readNode(result);
+			String type = node.getContentType();
+
+			if (type == null || type.isEmpty())
+				Assert.fail();
+			else if (ObjectType.ejournalVolume.toString().compareTo(type) != 0)
+			{
+				Assert.fail();
+			}
+		}
+
+		for (String result : actions.findByType(ObjectType.webpage.toString()))
+		{
+			Node node = actions.readNode(result);
+			String type = node.getContentType();
+
+			if (type == null || type.isEmpty())
+				Assert.fail();
+			else if (ObjectType.webpage.toString().compareTo(type) != 0)
+			{
+				Assert.fail();
+			}
 		}
 
 	}

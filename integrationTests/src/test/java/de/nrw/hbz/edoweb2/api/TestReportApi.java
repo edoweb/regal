@@ -98,9 +98,16 @@ public class TestReportApi
 
 			// --------------Clean up--------------------
 			{
-				String response = deleteNs.delete(String.class);
-				System.out.println(response);
+				try
+				{
+					String response = deleteNs.delete(String.class);
+					System.out.println(response);
 
+				}
+				catch (UniformInterfaceException e)
+				{
+					System.out.println(e.getMessage());
+				}
 			}
 
 			String request = "content";
@@ -160,5 +167,4 @@ public class TestReportApi
 		}
 
 	}
-
 }

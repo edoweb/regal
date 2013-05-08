@@ -74,8 +74,14 @@ public class TestJournalApi
 					+ "/metadata");
 			WebResource aJournalDc = c.resource(aJournal.toString() + "/dc");
 
-			deleteNs.delete();
-
+			try
+			{
+				deleteNs.delete();
+			}
+			catch (UniformInterfaceException e)
+			{
+				System.out.println(e.getMessage());
+			}
 			String request = "content";
 			String response = "";
 			try

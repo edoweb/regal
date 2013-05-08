@@ -57,6 +57,8 @@ public class TestDigitoolDownloader
 		piddownloaderServer = properties.getProperty("piddownloader.server");
 		piddownloaderDownloadLocation = properties
 				.getProperty("piddownloader.downloadLocation");
+		File dir = new File(piddownloaderDownloadLocation);
+		dir.mkdirs();
 	}
 
 	@Before
