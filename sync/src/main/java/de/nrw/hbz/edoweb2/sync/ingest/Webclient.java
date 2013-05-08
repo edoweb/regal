@@ -350,14 +350,14 @@ public class Webclient
 		String pid = namespace + ":" + p;
 
 		WebResource delete = webclient.resource(host
-				+ ":8080/edoweb2-api/utils/delete/" + pid);
+				+ ":8080/edoweb2-api/resources/" + pid);
 		try
 		{
 			delete.delete();
 		}
 		catch (UniformInterfaceException e)
 		{
-			logger.info(pid + " Can't delete!");
+			logger.info(pid + " Can't delete!" + e.getMessage());
 		}
 	}
 }

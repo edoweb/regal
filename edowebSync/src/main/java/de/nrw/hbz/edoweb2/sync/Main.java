@@ -397,8 +397,6 @@ public class Main
 
 	/*
 	 * + "UPDT: All PIDs in cache will be reingested"
-	 * 
-	 * TODO: The implementation doesn't fit to the specification
 	 */
 	void updt(String sets)
 	{
@@ -425,7 +423,7 @@ public class Main
 				{
 					logger.info("New Files Available: Start Ingest!");
 					DigitalEntity dtlBean = builder.build(baseDir, pids.get(i));
-
+					ingester.delete(dtlBean.getPid());
 					ingester.ingest(dtlBean);
 					dtlBean = null;
 				}
@@ -433,6 +431,7 @@ public class Main
 				{
 					logger.info("Update Files!");
 					DigitalEntity dtlBean = builder.build(baseDir, pids.get(i));
+					ingester.delete(dtlBean.getPid());
 					ingester.ingest(dtlBean);
 					dtlBean = null;
 				}
