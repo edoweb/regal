@@ -58,6 +58,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.nrw.hbz.edoweb2.digitool.pidreporter.PIDReporter;
+import de.nrw.hbz.edoweb2.sync.extern.DownloaderInterface;
 
 /**
  * Class DigitoolDownloader
@@ -76,7 +77,7 @@ import de.nrw.hbz.edoweb2.digitool.pidreporter.PIDReporter;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class DippDownloader
+public class DippDownloader implements DownloaderInterface
 {
 	final static Logger logger = LoggerFactory.getLogger(DippDownloader.class);
 
@@ -87,10 +88,7 @@ public class DippDownloader
 	boolean updated = false;
 	boolean downloaded = false;
 
-	/**
-	 * Only for main->run! API-CALLs must use DigitoolDownloader(String,String);
-	 */
-	private DippDownloader()
+	public DippDownloader()
 	{
 		// beanBuilder = new DigitalEntityBeanBuilder();
 
@@ -102,7 +100,7 @@ public class DippDownloader
 	 * @param downloadLocation
 	 *            a local directory to store the downloaded data
 	 */
-	public DippDownloader(String server, String downloadLocation)
+	public void init(String server, String downloadLocation)
 	{
 		this.downloadLoaction = downloadLocation;
 		this.server = server;

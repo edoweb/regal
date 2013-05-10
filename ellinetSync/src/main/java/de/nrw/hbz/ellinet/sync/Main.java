@@ -19,6 +19,7 @@ package de.nrw.hbz.ellinet.sync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 import de.nrw.hbz.edoweb2.sync.Syncer;
 import de.nrw.hbz.ellinet.sync.ingest.EllinetIngester;
 
@@ -42,7 +43,8 @@ public class Main
 
 	public static void main(String[] args)
 	{
-		Syncer syncer = new Syncer(new EllinetIngester());
+		Syncer syncer = new Syncer(new EllinetIngester(),
+				new DigitoolDownloader());
 		syncer.main(args);
 	}
 }

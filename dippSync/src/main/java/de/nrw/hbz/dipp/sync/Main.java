@@ -19,6 +19,7 @@ package de.nrw.hbz.dipp.sync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.nrw.hbz.dipp.downloader.DippDownloader;
 import de.nrw.hbz.dipp.sync.ingest.DippIngester;
 import de.nrw.hbz.edoweb2.sync.Syncer;
 
@@ -41,7 +42,7 @@ public class Main
 
 	public static void main(String[] args)
 	{
-		Syncer syncer = new Syncer(new DippIngester());
+		Syncer syncer = new Syncer(new DippIngester(), new DippDownloader());
 		syncer.main(args);
 	}
 }

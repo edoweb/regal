@@ -30,11 +30,11 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 import de.nrw.hbz.edoweb2.digitool.pidreporter.PIDReporter;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntity;
 import de.nrw.hbz.edoweb2.sync.extern.DigitalEntityBuilder;
 import de.nrw.hbz.edoweb2.sync.extern.DigitoolDigitalEntityBuilder;
+import de.nrw.hbz.edoweb2.sync.extern.DownloaderInterface;
 import de.nrw.hbz.edoweb2.sync.ingest.IngestInterface;
 
 /**
@@ -57,7 +57,7 @@ public class Syncer
 
 	final private IngestInterface ingester;
 	private PIDReporter harvester;
-	private DigitoolDownloader downloader;
+	private DownloaderInterface downloader;
 	private String mode;
 	private String user;
 	private String password;
@@ -71,9 +71,10 @@ public class Syncer
 	private String pidListFile;
 	private Options options;
 
-	public Syncer(IngestInterface ingester)
+	public Syncer(IngestInterface ingester, DownloaderInterface downloader)
 	{
 		this.ingester = ingester;
+		this.downloader = downloader;
 		options = new Options();
 
 		options.addOption("?", "help", false, "Print usage information");
@@ -155,7 +156,7 @@ public class Syncer
 			}
 
 			harvester = new PIDReporter(oai, timestamp);
-			downloader = new DigitoolDownloader(dtl, cache);
+			downloader.init(dtl, cache);
 			ingester.init(host, user, password);
 		}
 		catch (ParseException e)

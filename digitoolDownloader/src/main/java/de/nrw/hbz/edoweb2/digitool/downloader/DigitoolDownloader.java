@@ -51,6 +51,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.nrw.hbz.edoweb2.digitool.pidreporter.PIDReporter;
+import de.nrw.hbz.edoweb2.sync.extern.DownloaderInterface;
 
 /**
  * Class DigitoolDownloader
@@ -65,7 +66,7 @@ import de.nrw.hbz.edoweb2.digitool.pidreporter.PIDReporter;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class DigitoolDownloader
+public class DigitoolDownloader implements DownloaderInterface
 {
 	final static Logger logger = LoggerFactory
 			.getLogger(DigitoolDownloader.class);
@@ -80,7 +81,7 @@ public class DigitoolDownloader
 	/**
 	 * Only for main->run! API-CALLs must use DigitoolDownloader(String,String);
 	 */
-	private DigitoolDownloader()
+	public DigitoolDownloader()
 	{
 		// beanBuilder = new DigitalEntityBeanBuilder();
 
@@ -92,35 +93,34 @@ public class DigitoolDownloader
 	 * @param downloadLocation
 	 *            a local directory to store the downloaded data
 	 */
-	public DigitoolDownloader(String server, String downloadLocation)
+	public void init(String server, String downloadLocation)
 	{
 		this.downloadLoaction = downloadLocation;
 		this.server = server;
 		// beanBuilder = new DigitalEntityBeanBuilder();
 	}
 
-	/**
-	 * @param pid
-	 *            the digitool pid
-	 * @return a message for the user
-	 * @throws IOException
-	 *             if something goes wrong
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.nrw.hbz.edoweb2.digitool.downloader.DownloaderInterface#download(java
+	 * .lang.String)
 	 */
+	@Override
 	public String download(String pid) throws IOException
 	{
 		return download(pid, true);
 	}
 
-	/**
-	 * @param pid
-	 *            a valid digitool pid
-	 * @param forceDownload
-	 *            if true the data will be downloaded. if false the data will
-	 *            only be downloaded if isn't there yet
-	 * @return a message for the user
-	 * @throws IOException
-	 *             if something goes wrong
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.nrw.hbz.edoweb2.digitool.downloader.DownloaderInterface#download(java
+	 * .lang.String, boolean)
 	 */
+	@Override
 	public String download(String pid, boolean forceDownload)
 			throws IOException
 	{
@@ -263,17 +263,26 @@ public class DigitoolDownloader
 		return dir.getAbsolutePath();
 	}
 
-	/**
-	 * @return true if the downloader has updated an existing dataset
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.nrw.hbz.edoweb2.digitool.downloader.DownloaderInterface#hasUpdated()
 	 */
+	@Override
 	public boolean hasUpdated()
 	{
 		return updated;
 	}
 
-	/**
-	 * @return true if data has been downloaded
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.nrw.hbz.edoweb2.digitool.downloader.DownloaderInterface#hasDownloaded
+	 * ()
 	 */
+	@Override
 	public boolean hasDownloaded()
 	{
 		return downloaded;

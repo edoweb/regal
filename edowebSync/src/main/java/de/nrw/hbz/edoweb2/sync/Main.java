@@ -19,6 +19,7 @@ package de.nrw.hbz.edoweb2.sync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader;
 import de.nrw.hbz.edoweb2.sync.ingest.EdowebIngester;
 
 /**
@@ -31,7 +32,8 @@ public class Main
 
 	public static void main(String[] args)
 	{
-		Syncer syncer = new Syncer(new EdowebIngester());
+		Syncer syncer = new Syncer(new EdowebIngester(),
+				new DigitoolDownloader());
 		syncer.main(args);
 	}
 }

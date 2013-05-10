@@ -27,6 +27,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.nrw.hbz.edoweb2.sync.extern.DownloaderInterface;
+
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
@@ -83,8 +85,8 @@ public class TestDigitoolDownloader
 			e.printStackTrace();
 		}
 
-		DigitoolDownloader downloader = new DigitoolDownloader(
-				piddownloaderServer, piddownloaderDownloadLocation);
+		DownloaderInterface downloader = new DigitoolDownloader();
+		downloader.init(piddownloaderServer, piddownloaderDownloadLocation);
 
 		try
 		{
