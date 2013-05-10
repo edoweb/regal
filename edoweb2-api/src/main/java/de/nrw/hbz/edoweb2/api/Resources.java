@@ -96,7 +96,11 @@ public class Resources
 	{
 		try
 		{
-			return actions.readData(pid);
+			Response res = actions.readData(pid);
+			if (res == null)
+				throw new HttpArchiveException(404,
+						"Datastream does not exist!");
+			return res;
 		}
 		catch (ArchiveException e)
 		{
@@ -168,15 +172,11 @@ public class Resources
 	@Produces({ "text/plain" })
 	public String readMetadata(@PathParam("pid") String pid)
 	{
+
 		try
 		{
-			return actions.readMetadata(pid);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
+			String result = actions.readMetadata(pid);
+			return result;
 		}
 		catch (URISyntaxException e)
 		{

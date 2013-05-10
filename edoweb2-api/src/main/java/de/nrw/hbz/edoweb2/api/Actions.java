@@ -84,6 +84,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import de.nrw.hbz.edoweb2.archive.ArchiveFactory;
 import de.nrw.hbz.edoweb2.archive.ArchiveInterface;
 import de.nrw.hbz.edoweb2.archive.exceptions.ArchiveException;
+import de.nrw.hbz.edoweb2.archive.exceptions.NodeNotFoundException;
 import de.nrw.hbz.edoweb2.datatypes.ComplexObject;
 import de.nrw.hbz.edoweb2.datatypes.Link;
 import de.nrw.hbz.edoweb2.datatypes.Node;
@@ -437,9 +438,10 @@ class Actions
 	 */
 	Response readData(String pid) throws URISyntaxException
 	{
+
 		Node node = null;
 
-		node = archive.readNode(pid);
+		node = readNode(pid);
 
 		if (node != null && node.getDataUrl() != null)
 		{
@@ -449,6 +451,7 @@ class Actions
 
 		}
 		return null;
+
 	}
 
 	/**
@@ -461,11 +464,12 @@ class Actions
 
 		logger.info("Read DC");
 
-		Node node = archive.readNode(pid);
+		Node node = readNode(pid);
 		if (node != null)
 			return new DCBeanAnnotated(node);
 
 		return null;
+
 	}
 
 	/**
@@ -480,12 +484,14 @@ class Actions
 	String readMetadata(String pid) throws URISyntaxException,
 			MalformedURLException, IOException
 	{
-		String result = "";
-		Node node = archive.readNode(pid);
+
+		String result = null;
+		Node node = readNode(pid);
+
 		if (node != null && node.getMetadataUrl() != null)
 		{
+			System.out.println("HO");
 			InputStream in = null;
-			System.out.println(node.getMetadataUrl());
 			try
 			{
 				in = new URL(fedoraExtern + "/objects/" + pid
@@ -500,7 +506,12 @@ class Actions
 			}
 
 		}
+		if (result == null || result.isEmpty())
+		{
+			throw new HttpArchiveException(404, "Datastream does not exist!");
+		}
 		return result;
+
 	}
 
 	/**
@@ -528,7 +539,7 @@ class Actions
 		tmp.deleteOnExit();
 
 		FileUtils.writeByteArrayToFile(tmp, content);
-		Node node = archive.readNode(pid);
+		Node node = readNode(pid);
 		if (node != null)
 		{
 			node.setUploadData(tmp.getAbsolutePath(), "data", mimeType);
@@ -536,6 +547,7 @@ class Actions
 		}
 
 		return pid + " data successfully updated!";
+
 	}
 
 	/**
@@ -602,7 +614,7 @@ class Actions
 			}
 		}
 
-		Node node = archive.readNode(pid);
+		Node node = readNode(pid);
 		if (node != null)
 		{
 			node.setUploadData(tmp.getAbsolutePath(), "data", mimeType);
@@ -610,6 +622,7 @@ class Actions
 		}
 
 		return pid + " data successfully updated!";
+
 	}
 
 	/**
@@ -621,10 +634,11 @@ class Actions
 	 */
 	String updateDC(String pid, DCBeanAnnotated content)
 	{
+
 		logger.info("Update DC");
 
 		content.trim();
-		Node node = archive.readNode(pid);
+		Node node = readNode(pid);
 		node.setContributer(content.getContributer());
 		node.setCoverage(content.getCoverage());
 		node.setCreator(content.getCreator());
@@ -643,6 +657,7 @@ class Actions
 		archive.updateNode(pid, node);
 
 		return pid + " dc successfully updated!";
+
 	}
 
 	/**
@@ -667,7 +682,7 @@ class Actions
 		File file = File.createTempFile("tmpmetadata", "tmp");
 		file.deleteOnExit();
 		FileUtils.writeStringToFile(file, content);
-		Node node = archive.readNode(pid);
+		Node node = readNode(pid);
 		if (node != null)
 		{
 			node.setMetadataFile(file.getAbsolutePath());
@@ -675,6 +690,7 @@ class Actions
 		}
 
 		return pid + " metadata successfully updated!";
+
 	}
 
 	/**
@@ -717,7 +733,7 @@ class Actions
 	String addLinks(String pid, List<Link> links)
 	{
 
-		Node node = archive.readNode(pid);
+		Node node = readNode(pid);
 		for (Link link : links)
 		{
 			node.addRelation(link);
@@ -758,7 +774,7 @@ class Actions
 	String updateLink(String pid, Link link)
 	{
 
-		Node node = archive.readNode(pid);
+		Node node = readNode(pid);
 		Vector<Link> links = node.getRelsExt();
 		Iterator<Link> iterator = links.iterator();
 
@@ -785,8 +801,9 @@ class Actions
 	 */
 	String makeOAISet(String pid)
 	{
+
 		String ddc = null;
-		Node node = archive.readNode(pid);
+		Node node = readNode(pid);
 
 		URL metadata = node.getMetadataUrl();
 		InputStream in = null;
@@ -882,7 +899,8 @@ class Actions
 				IOUtils.closeQuietly(in);
 			}
 		}
-		// TODO this block is deprecated as soon as lobid works like expected
+		// TODO this block is deprecated as soon as lobid works like
+		// expected
 		if (ddc == null && node.getSubject() != null)
 			for (String subject : node.getSubject())
 			{
@@ -923,7 +941,8 @@ class Actions
 			linkObjectToOaiSet(node, spec, oaipid);
 		}
 		else
-		// TODO this block is deprecated as soon as lobid works like expected
+		// TODO this block is deprecated as soon as lobid works like
+		// expected
 		if (node.getType() != null)
 			for (String type : node.getType())
 			{
@@ -1000,8 +1019,10 @@ class Actions
 	 */
 	View getView(String pid)
 	{
-		Node node = archive.readNode(pid);
+
+		Node node = readNode(pid);
 		return getView(node);
+
 	}
 
 	/**
@@ -1319,9 +1340,10 @@ class Actions
 	 */
 	String lobidify(String pid)
 	{
+
 		Node node;
 
-		node = archive.readNode(pid);
+		node = readNode(pid);
 
 		List<String> identifier = node.getIdentifier();
 		String alephid = "";
@@ -1380,6 +1402,7 @@ class Actions
 		}
 
 		return pid + " lobid metadata successfully loaded!";
+
 	}
 
 	/**
@@ -1389,7 +1412,8 @@ class Actions
 	 */
 	String oaidc(String pid)
 	{
-		Node node = archive.readNode(pid);
+
+		Node node = readNode(pid);
 		if (node == null)
 			return "No node with pid " + pid + " found";
 
@@ -1817,7 +1841,8 @@ class Actions
 
 	public String itext(String pid)
 	{
-		Node node = archive.readNode(pid);
+
+		Node node = readNode(pid);
 		URL content = node.getDataUrl();
 		String mimeType = node.getMimeType();
 		if (mimeType == null)
@@ -1925,7 +1950,14 @@ class Actions
 
 	public Node readNode(String pid)
 	{
-		return archive.readNode(pid);
+		try
+		{
+			return archive.readNode(pid);
+		}
+		catch (NodeNotFoundException e)
+		{
+			throw new HttpArchiveException(404, e.getMessage());
+		}
 	}
 
 	public String deleteNamespace(String namespace)
