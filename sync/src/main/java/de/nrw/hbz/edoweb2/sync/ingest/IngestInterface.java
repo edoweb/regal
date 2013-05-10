@@ -28,20 +28,24 @@ public interface IngestInterface
 	/**
 	 * Ingests a digitool object in the archive
 	 * 
-	 * @param dtlBean the java representation of a digitool object
+	 * @param dtlBean
+	 *            the java representation of a digitool object
 	 */
 	public abstract void ingest(DigitalEntity dtlBean);
 
 	/**
 	 * Deletes a object from the archive
 	 * 
-	 * @param pid the pid of the object
+	 * @param pid
+	 *            the pid of the object
 	 */
 	public abstract void delete(String pid);
 
 	/**
 	 * Updates a object in the archive
-	 * @param dtlBean the digitool object
+	 * 
+	 * @param dtlBean
+	 *            the digitool object
 	 */
 	public abstract void update(DigitalEntity dtlBean);
 
@@ -51,4 +55,14 @@ public interface IngestInterface
 	 * @return the model
 	 */
 	public abstract ContentModel createContentModel();
+
+	/**
+	 * @param usr
+	 *            a valid user
+	 * @param pwd
+	 *            the users password
+	 * @param host
+	 *            the host of the webapi
+	 */
+	public abstract void init(String host, String user, String password);
 }

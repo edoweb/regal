@@ -235,6 +235,7 @@ public class ArchiveIntegrationTest
 			archive.createComplexObject(object);
 			Thread.sleep(10000);
 			archive.deleteComplexObject(object.getRoot().getPID());
+
 			Assert.assertFalse(archive.nodeExists(object.getRoot().getPID()));
 			Assert.assertEquals(3, archive.findNodes("test:*").size());
 
@@ -249,17 +250,17 @@ public class ArchiveIntegrationTest
 	@After
 	public void tearDown()
 	{
-		List<String> objects = archive.findNodes("test:*");
-		for (String pid : objects)
-		{
-			archive.deleteNode(pid);
-		}
-
-		objects = archive.findNodes("testCM:*");
-		for (String pid : objects)
-		{
-			archive.deleteNode(pid);
-		}
+		// List<String> objects = archive.findNodes("test:*");
+		// for (String pid : objects)
+		// {
+		// archive.deleteNode(pid);
+		// }
+		//
+		// objects = archive.findNodes("testCM:*");
+		// for (String pid : objects)
+		// {
+		// archive.deleteNode(pid);
+		// }
 
 	}
 }

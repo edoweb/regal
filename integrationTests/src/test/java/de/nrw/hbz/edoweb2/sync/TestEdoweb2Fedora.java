@@ -17,10 +17,14 @@ package de.nrw.hbz.edoweb2.sync;
  *
  */
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 //import java.text.ParseException;
 //import java.util.Date;
@@ -55,7 +59,6 @@ public class TestEdoweb2Fedora
 
 	public TestEdoweb2Fedora()
 	{
-
 		try
 		{
 			properties = new Properties();
@@ -83,6 +86,16 @@ public class TestEdoweb2Fedora
 				.getProperty("piddownloader.downloadLocation");
 	}
 
+	@Before
+	@After
+	public void cleanUp() throws IOException
+	{
+		File dir = new File("/tmp/edoweb/test");
+		if (dir.exists())
+			FileUtils.deleteDirectory(dir);
+		dir.mkdirs();
+	}
+
 	@Test
 	public void mainTest() throws IOException
 	{
@@ -91,10 +104,26 @@ public class TestEdoweb2Fedora
 		Main main = new Main();
 		pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();
 
-		main.run("PIDL", user, password, piddownloaderServer,
-				piddownloaderDownloadLocation, pidreporterServer,
-				pidreporterSet, pidreporterTimestampFile, fedoraUrl,
-				"http://localhost", pidreporterPidFile);
+		main.main(new String[] { "--mode", "PIDL", "--user", user,
+				"--password", password, "--dtl", piddownloaderServer, "-cache",
+				piddownloaderDownloadLocation, "--oai", pidreporterServer,
+				"--set", pidreporterSet, "--timestamp",
+				pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+				"http://localhost", "-list", pidreporterPidFile });
+
+		main.main(new String[] { "--mode", "UPDT", "--user", user,
+				"--password", password, "--dtl", piddownloaderServer, "-cache",
+				piddownloaderDownloadLocation, "--oai", pidreporterServer,
+				"--set", pidreporterSet, "--timestamp",
+				pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+				"http://localhost", "-list", pidreporterPidFile });
+
+		main.main(new String[] { "--mode", "DELE", "--user", user,
+				"--password", password, "--dtl", piddownloaderServer, "-cache",
+				piddownloaderDownloadLocation, "--oai", pidreporterServer,
+				"--set", pidreporterSet, "--timestamp",
+				pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+				"http://localhost", "-list", pidreporterPidFile });
 
 	}
 }
