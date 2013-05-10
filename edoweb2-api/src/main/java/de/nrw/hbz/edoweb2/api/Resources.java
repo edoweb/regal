@@ -732,7 +732,7 @@ public class Resources
 					.createHeadModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
-			return actions.create(object, true);
+			return actions.create(object, false);
 
 		}
 		catch (ArchiveException e)
@@ -780,7 +780,7 @@ public class Resources
 					e.getMessage());
 		}
 
-		return actions.create(object, true);
+		return actions.create(object, false);
 	}
 
 	private String createEJournal(String p, String namespace)
@@ -809,7 +809,7 @@ public class Resources
 					.createHeadModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
-			return actions.create(object, true);
+			return actions.create(object, false);
 
 		}
 		catch (ArchiveException e)
