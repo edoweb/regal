@@ -38,18 +38,16 @@ public class EdowebIngester implements IngestInterface
 	Webclient webclient = null;
 	String host = null;
 
-	/**
-	 * @param usr
-	 *            a valid user
-	 * @param pwd
-	 *            the users password
-	 * @param host
-	 *            the host of the webapi
-	 */
-	public EdowebIngester(String usr, String pwd, String host)
+	public EdowebIngester()
+	{
+
+	}
+
+	@Override
+	public void init(String host, String user, String password)
 	{
 		this.host = host;
-		webclient = new Webclient(namespace, usr, pwd, host);
+		webclient = new Webclient(namespace, user, password, host);
 	}
 
 	@Override

@@ -47,10 +47,11 @@ public class EllinetIngester implements IngestInterface
 	String host = null;
 	Webclient webclient = null;
 
-	public EllinetIngester(String usr, String pwd, String host)
+	@Override
+	public void init(String host, String user, String password)
 	{
 		this.host = host;
-		webclient = new Webclient(namespace, usr, pwd, host);
+		webclient = new Webclient(namespace, user, password, host);
 	}
 
 	@Override
