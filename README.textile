@@ -29,7 +29,7 @@ mvn assembly:assembly
 
 h1. Test
 
-To make use of the integrationTests install a fedora-3.6 and make the edoweb2-api.war available e.g.
+To make use of the integrationTests install a fedora-3.6 and make the api.war available e.g.
 
 bc.. cd api
 mvn clean install war:war
