@@ -45,11 +45,11 @@ chmod u+x install.sh
 
 p. Make html readable for apache user
 
-bc.. chown -R www-data /opt/archive/html
+bc.. chown -R www-data /opt/regal/html
 
 p. Link apache to site.conf
 
-bc.. echo "Include /opt/archive/conf/site.conf" >> /etc/apache2/apache2.conf
+bc.. echo "Include /opt/regal/conf/site.conf" >> /etc/apache2/apache2.conf
 /etc/init.d/apache2 restart
 
 p. Test
