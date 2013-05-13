@@ -1,6 +1,8 @@
 h1. About
 
-regal provides a repository and graph-based api for library data and is developed in the context of edoweb3 - http://www.hbz-nrw.de/angebote/hosting/edoweb/
+regal - repository and graph-based api for library data 
+
+Regal is developed in the context of edoweb3 - http://www.hbz-nrw.de/angebote/hosting/edoweb/
 
 For more information visit the "wiki":https://github.com/edoweb/edoweb2/wiki/_pages
 
@@ -11,7 +13,7 @@ Current Version is still SNAPSHOT-0.0.1.
 
 h1. Install
 
-Please visit "wiki":https://github.com/edoweb/regal/wiki/Installation
+Please visit my installation pages on the "wiki":https://github.com/edoweb/regal/wiki/Installation
 
 h1. Build
 
@@ -29,11 +31,11 @@ mvn assembly:assembly
 
 h1. Test
 
-To make use of the integrationTests install a fedora-3.6 and make the edoweb2-api.war available e.g.
+To make use of the integrationTests install a fedora-3.6 and make the api.war available e.g.
 
 bc.. cd api
 mvn clean install war:war
-cp target/api.war $FEDORA_HOME/tomcat/webapps
+cp target/api.war /opt/regal/fedora/tomcat/webapps
 
 p. launch tests with
 
