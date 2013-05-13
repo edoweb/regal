@@ -50,7 +50,7 @@ import de.nrw.hbz.regal.sync.extern.DigitalEntity;
  * Webclient collects typical api-calls and make them available in the
  * regal-sync module
  * 
- * @author Jan Schnasse
+ * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
 public class Webclient
