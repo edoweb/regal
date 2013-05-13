@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>de.nrw.hbz.edoweb2</groupId>
-		<artifactId>edoweb2</artifactId>
+		<groupId>de.nrw.hbz.regal</groupId>
+		<artifactId>regal</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
@@ -13,8 +13,8 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>archive</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>regal-archive</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
@@ -25,8 +25,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>edowebSync</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>edoweb-sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
@@ -151,8 +151,8 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>dippDownloader</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>dipp-downloader</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

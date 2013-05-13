@@ -2,13 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	
 	<parent>
-		<artifactId>edoweb2</artifactId>
-		<groupId>de.nrw.hbz.edoweb2</groupId>
+		<artifactId>regal</artifactId>
+		<groupId>de.nrw.hbz.regal</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>archive</artifactId>
-	<name>archive</name>
+	<artifactId>regal-archive</artifactId>
+	<name>regal-archive</name>
 
 	<dependencies>
 	<dependency>

@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>digitoolDownloader</artifactId>
-	<name>digitoolDownloader</name>
+	<artifactId>digitool-downloader</artifactId>
+	<name>digitool-downloader</name>
 	<parent>
-		<artifactId>edoweb2</artifactId>
-		<groupId>de.nrw.hbz.edoweb2</groupId>
+		<artifactId>regal</artifactId>
+		<groupId>de.nrw.hbz.regal</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<build>
@@ -42,7 +42,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.nrw.hbz.edoweb2.digitool.downloader.DigitoolDownloader</mainClass>
+							<mainClass>de.nrw.hbz.regal.DigitoolDownloader</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -67,8 +67,8 @@
 			<version>1.4</version>
 		</dependency>
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>pidReporter</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>regal-pidreporter</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
@@ -106,6 +106,11 @@
 			<version>2.0</version>
 			<type>jar</type>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>regal-downloader</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

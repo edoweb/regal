@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<artifactId>edoweb2</artifactId>
-		<groupId>de.nrw.hbz.edoweb2</groupId>
+		<artifactId>regal</artifactId>
+		<groupId>de.nrw.hbz.regal</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>ellinetSync</artifactId>
+	<artifactId>ellinet-sync</artifactId>
 	<packaging>jar</packaging>
-	<name>ellinetSync</name>
+	<name>ellinet-sync</name>
 
 
 	<properties>
@@ -61,18 +61,18 @@
 		</dependency>
 
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>digitoolDownloader</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>digitool-downloader</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>edoweb2-api</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>regal-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>sync</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>regal-sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	

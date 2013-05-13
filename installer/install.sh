@@ -160,11 +160,11 @@ echo -e "RewriteEngine on" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /fedora/(.*) http://localhost:$TOMCAT_PORT/fedora/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /search/(.*) http://localhost:$ELASTICSEARCH_PORT/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/resources/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/resources/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /ejournal/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/ejournal/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /monograph/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/monograph/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /webpage/(.*) http://localhost:$TOMCAT_PORT/edoweb2-api/webpage/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /utils/(.*)  http://localhost:$TOMCAT_PORT/edoweb2-api/utils/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/resources/(.*) http://localhost:$TOMCAT_PORT/api/resources/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /ejournal/(.*) http://localhost:$TOMCAT_PORT/api/ejournal/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /monograph/(.*) http://localhost:$TOMCAT_PORT/api/monograph/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /webpage/(.*) http://localhost:$TOMCAT_PORT/api/webpage/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /utils/(.*)  http://localhost:$TOMCAT_PORT/api/utils/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /oai-pmh/(.*) http://localhost:$TOMCAT_PORT/oai-pmh/\$1 [P] " >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "</VirtualHost>" >> $ARCHIVE_HOME/conf/site.conf
@@ -199,7 +199,7 @@ cp $APACHE_CONF $ARCHIVE_HOME/conf/httpd.conf
 echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
 
 echo "install archive"
-cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
+cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/api/src/main/resources
 pwd
 cp variables.sh $ARCHIVE_HOME/bin/
 #$ARCHIVE_HOME/src/ui/helper/rollout.sh
@@ -216,7 +216,7 @@ function rollout()
 {
 SRC=$ARCHIVE_HOME/src
 WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
-SYNCER_SRC=$SRC/${PREFIX}Sync/target/${PREFIX}Sync-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+SYNCER_SRC=$SRC/${PREFIX}Sync/target/${PREFIX}-sync-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 SYNCER_DEST=$ARCHIVE_HOME/sync/${PREFIX}sync.jar
 
 
@@ -230,7 +230,7 @@ $ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh
 echo "Fetch source..."
 cd $SRC/
 git pull origin
-cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/edoweb2-api/src/main/resources
+cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/api/src/main/resources
 #cp variables.sh $ARCHIVE_HOME/src/ui/helper/
 echo "Compile..."
 mvn -q -e clean install -DskipTests --settings settings.xml
@@ -240,15 +240,15 @@ cd $SRC/${PREFIX}Sync
 mvn -q -e assembly:assembly -DskipTests --settings ../settings.xml
 cd -
 
-cd $SRC/edoweb2-api
+cd $SRC/api
 echo "Install Webapi"
 echo "install archive"
 mvn -q -e war:war -DskipTests --settings ../settings.xml
 cd -
 
 echo "Rollout..."
-rm -rf  $WEBAPPS/edoweb2-api*
-cp $SRC/edoweb2-api/target/edoweb2-api.war $WEBAPPS/edoweb2-api.war
+rm -rf  $WEBAPPS/api*
+cp $SRC/api/target/api.war $WEBAPPS/api.war
 cp $SYNCER_SRC $SYNCER_DEST 
 
 rm -rf  $WEBAPPS/oai-pmh*
@@ -271,7 +271,7 @@ echo -e "" >> ${PREFIX}Sync.sh.tmpl
 echo -e "cd -" >> ${PREFIX}Sync.sh.tmpl
 
 mv ${PREFIX}Sync.sh.tmpl $ARCHIVE_HOME/sync
-cp variables.sh $ARCHIVE_HOME/sync/${PREFIX}Variables.sh
+cp variables.sh $ARCHIVE_HOME/sync/${PREFIX}Variables.sh.tmpl
 
 
 echo "copy html"
