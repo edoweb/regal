@@ -1,4 +1,4 @@
-ARCHIVE_HOME=/opt/archive
+ARCHIVE_HOME=/opt/regal
 SERVER=localhost
 ARCHIVE_USER=jan
 ARCHIVE_PASSWORD=schnasse
@@ -13,6 +13,6 @@ ELASTICSEARCH_PORT=9200
 PREFIX=edoweb
 DOWNLOAD=http://klio.hbz-nrw.de:1801
 OAI=http://klio.hbz-nrw.de:1801/edowebOAI
-SET=doc-type:report
+SET=edoweb-oai_dc-all
 
 
