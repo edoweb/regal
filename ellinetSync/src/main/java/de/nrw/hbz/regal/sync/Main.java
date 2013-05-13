@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.regal.DigitoolDownloader;
-import de.nrw.hbz.regal.sync.Syncer;
+import de.nrw.hbz.regal.sync.extern.DigitoolDigitalEntityBuilder;
 import de.nrw.hbz.regal.sync.ingest.EllinetIngester;
 
 /**
@@ -44,7 +44,7 @@ public class Main
 	public static void main(String[] args)
 	{
 		Syncer syncer = new Syncer(new EllinetIngester(),
-				new DigitoolDownloader());
+				new DigitoolDownloader(), new DigitoolDigitalEntityBuilder());
 		syncer.main(args);
 	}
 }

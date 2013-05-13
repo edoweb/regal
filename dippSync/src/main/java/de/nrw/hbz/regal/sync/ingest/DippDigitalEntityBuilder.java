@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal.sync.extern;
+package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -34,6 +34,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import de.nrw.hbz.regal.sync.extern.DigitalEntity;
+import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilder;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de

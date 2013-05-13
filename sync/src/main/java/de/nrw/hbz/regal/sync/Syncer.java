@@ -34,7 +34,6 @@ import de.nrw.hbz.regal.DownloaderInterface;
 import de.nrw.hbz.regal.PIDReporter;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilder;
-import de.nrw.hbz.regal.sync.extern.DigitoolDigitalEntityBuilder;
 import de.nrw.hbz.regal.sync.ingest.IngestInterface;
 
 /**
@@ -55,9 +54,10 @@ public class Syncer
 
 	final static Logger logger = LoggerFactory.getLogger(Syncer.class);
 
-	final private IngestInterface ingester;
 	private PIDReporter harvester;
+	private IngestInterface ingester;
 	private DownloaderInterface downloader;
+	private DigitalEntityBuilder builder;
 	private String mode;
 	private String user;
 	private String password;
@@ -71,10 +71,12 @@ public class Syncer
 	private String pidListFile;
 	private Options options;
 
-	public Syncer(IngestInterface ingester, DownloaderInterface downloader)
+	public Syncer(IngestInterface ingester, DownloaderInterface downloader,
+			DigitalEntityBuilder builder)
 	{
 		this.ingester = ingester;
 		this.downloader = downloader;
+		this.builder = builder;
 		options = new Options();
 
 		options.addOption("?", "help", false, "Print usage information");
@@ -219,7 +221,6 @@ public class Syncer
 
 		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
 		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-		DigitalEntityBuilder builder = new DigitoolDigitalEntityBuilder();
 
 		int size = pids.size();
 		for (int i = 0; i < size; i++)
@@ -272,8 +273,6 @@ public class Syncer
 		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
 		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
-		DigitoolDigitalEntityBuilder builder = new DigitoolDigitalEntityBuilder();
-
 		int size = pids.size();
 		for (int i = 0; i < size; i++)
 		{
@@ -323,7 +322,6 @@ public class Syncer
 		boolean forceDownload = false;
 		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
 		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
-		DigitoolDigitalEntityBuilder builder = new DigitoolDigitalEntityBuilder();
 		int size = pids.size();
 		for (int i = 0; i < size; i++)
 		{
@@ -368,7 +366,6 @@ public class Syncer
 		Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
 		logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
-		DigitoolDigitalEntityBuilder builder = new DigitoolDigitalEntityBuilder();
 		int size = pids.size();
 		for (int i = 0; i < size; i++)
 		{
@@ -403,7 +400,6 @@ public class Syncer
 		try
 		{
 			pids = readPidlist(pidListFile);
-			DigitoolDigitalEntityBuilder builder = new DigitoolDigitalEntityBuilder();
 			int size = pids.size();
 			for (int i = 0; i < size; i++)
 			{
