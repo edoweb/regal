@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.regal.DippDownloader;
-import de.nrw.hbz.regal.sync.Syncer;
+import de.nrw.hbz.regal.sync.ingest.DippDigitalEntityBuilder;
 import de.nrw.hbz.regal.sync.ingest.DippIngester;
 
 /**
@@ -42,7 +42,8 @@ public class Main
 
 	public static void main(String[] args)
 	{
-		Syncer syncer = new Syncer(new DippIngester(), new DippDownloader());
+		Syncer syncer = new Syncer(new DippIngester(), new DippDownloader(),
+				new DippDigitalEntityBuilder());
 		syncer.main(args);
 	}
 }
