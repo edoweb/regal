@@ -174,7 +174,7 @@ echo -e "</VirtualHost>" >> $ARCHIVE_HOME/conf/site.conf
 function install()
 {
 echo "download some files"
-git clone https://github.com/jschnasse/edoweb2.git $ARCHIVE_HOME/src
+git clone https://github.com/jschnasse/regal.git $ARCHIVE_HOME/src
 wget http://repo1.maven.org/maven2/org/fcrepo/fcrepo-installer/3.6.1/fcrepo-installer-3.6.1.jar
 wget http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.19.11.tar.gz
 

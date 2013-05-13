@@ -30,8 +30,6 @@ import org.junit.Test;
 //import java.util.Date;
 //import de.nrw.hbz.dtl2fedora.util.ISO8601DateParser;
 
-import de.nrw.hbz.regal.sync.Main;
-
 /**
  * Class TestDigitool2Fedora
  * 
@@ -103,29 +101,30 @@ public class TestEdoweb2Fedora
 	{
 		System.out
 				.println("de.nrw.hbz.edoweb2.sync.TestEdoweb2Fedora.java : Please comment out to run this test!");
-		Main main = new Main();
-		pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();
-
-		main.main(new String[] { "--mode", "PIDL", "--user", user,
-				"--password", password, "--dtl", piddownloaderServer, "-cache",
-				piddownloaderDownloadLocation, "--oai", pidreporterServer,
-				"--set", pidreporterSet, "--timestamp",
-				pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
-				"http://localhost", "-list", pidreporterPidFile });
-
-		main.main(new String[] { "--mode", "UPDT", "--user", user,
-				"--password", password, "--dtl", piddownloaderServer, "-cache",
-				piddownloaderDownloadLocation, "--oai", pidreporterServer,
-				"--set", pidreporterSet, "--timestamp",
-				pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
-				"http://localhost", "-list", pidreporterPidFile });
-
-		main.main(new String[] { "--mode", "DELE", "--user", user,
-				"--password", password, "--dtl", piddownloaderServer, "-cache",
-				piddownloaderDownloadLocation, "--oai", pidreporterServer,
-				"--set", pidreporterSet, "--timestamp",
-				pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
-				"http://localhost", "-list", pidreporterPidFile });
+		// Main main = new Main();
+		// pidreporterPidFile =
+		// getClass().getResource("/pidlist.txt").getPath();
+		//
+		// main.main(new String[] { "--mode", "PIDL", "--user", user,
+		// "--password", password, "--dtl", piddownloaderServer, "-cache",
+		// piddownloaderDownloadLocation, "--oai", pidreporterServer,
+		// "--set", pidreporterSet, "--timestamp",
+		// pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+		// "http://localhost", "-list", pidreporterPidFile });
+		//
+		// main.main(new String[] { "--mode", "UPDT", "--user", user,
+		// "--password", password, "--dtl", piddownloaderServer, "-cache",
+		// piddownloaderDownloadLocation, "--oai", pidreporterServer,
+		// "--set", pidreporterSet, "--timestamp",
+		// pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+		// "http://localhost", "-list", pidreporterPidFile });
+		//
+		// main.main(new String[] { "--mode", "DELE", "--user", user,
+		// "--password", password, "--dtl", piddownloaderServer, "-cache",
+		// piddownloaderDownloadLocation, "--oai", pidreporterServer,
+		// "--set", pidreporterSet, "--timestamp",
+		// pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+		// "http://localhost", "-list", pidreporterPidFile });
 
 	}
 }

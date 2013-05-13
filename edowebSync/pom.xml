@@ -41,7 +41,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.nrw.hbz.edoweb2.sync.Main</mainClass>
+							<mainClass>de.nrw.hbz.regal.sync.Main</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

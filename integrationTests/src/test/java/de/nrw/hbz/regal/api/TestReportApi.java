@@ -39,8 +39,6 @@ import com.sun.jersey.multipart.BodyPart;
 import com.sun.jersey.multipart.MultiPart;
 import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
-import de.nrw.hbz.regal.api.DCBeanAnnotated;
-
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
@@ -113,16 +111,17 @@ public class TestReportApi
 			}
 
 			String request = "content";
-			String response = myReport.put(String.class, request);
+			String response = "";
 
 			try
 			{
-				myReport.put(String.class, request);
+				response = myReport.put(String.class, request);
 
 			}
 			catch (UniformInterfaceException e)
 			{
 				System.out.println(e.getResponse().getEntity(String.class));
+				Assert.fail();
 			}
 
 			System.out.println(response);

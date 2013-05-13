@@ -21,6 +21,10 @@
 					<groupId>org.openrdf.sesame</groupId>
 					<artifactId>sesame-model</artifactId>
 				</exclusion>
+				<exclusion>
+					<artifactId>log4j-over-slf4j</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -32,6 +36,10 @@
 				<exclusion>
 					<groupId>org.openrdf.sesame</groupId>
 					<artifactId>sesame-model</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j-over-slf4j</artifactId>
+					<groupId>org.slf4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
