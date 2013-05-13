@@ -13,7 +13,7 @@ Current Version is still SNAPSHOT-0.0.1.
 
 h1. Install
 
-Please visit my installation pages "wiki":https://github.com/edoweb/regal/wiki/Installation
+Please visit my installation pages on the "wiki":https://github.com/edoweb/regal/wiki/Installation
 
 h1. Build
 
