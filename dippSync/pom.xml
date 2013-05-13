@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<artifactId>edoweb2</artifactId>
-		<groupId>de.nrw.hbz.edoweb2</groupId>
+		<artifactId>regal</artifactId>
+		<groupId>de.nrw.hbz.regal</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>dippSync</artifactId>
+	<artifactId>dipp-sync</artifactId>
 	<packaging>jar</packaging>
-	<name>dippSync</name>
+	<name>dipp-sync</name>
 
 
 	<properties>
@@ -28,7 +28,7 @@
 							<classpathPrefix>lib</classpathPrefix>
 							<classpathLayoutType>repository</classpathLayoutType>
 							<classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
-							<mainClass>de.nrw.hbz.dipp.sync.Main</mainClass>
+							<mainClass>de.nrw.hbz.regal.sync.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -41,7 +41,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.nrw.hbz.dipp.sync.Main</mainClass>
+							<mainClass>de.nrw.hbz.regal.sync.Main</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -61,19 +61,25 @@
 		</dependency>
 
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>dippDownloader</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>dipp-downloader</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>edoweb2-api</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>regal-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>sync</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>regal-sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
 		</dependency>
 	</dependencies>
 </project>

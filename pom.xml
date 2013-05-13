@@ -16,11 +16,11 @@
 	</properties>
 
 
-	<groupId>de.nrw.hbz.edoweb2</groupId>
-	<artifactId>edoweb2</artifactId>
+	<groupId>de.nrw.hbz.regal</groupId>
+	<artifactId>regal</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>edoweb2</name>
+	<name>regal</name>
 	<url>http://www.hbz-nrw.de/</url>
 
 
@@ -135,6 +135,7 @@
 
 
 	</repositories>
+	
 
 	<build>
 		<plugins>
@@ -168,14 +169,15 @@
 	</dependencies>
 	<modules>
 		<module>archive</module>
-		<module>pidReporter</module>
+		<module>downloader</module>
+		<module>pidreporter</module>
 		<module>digitoolDownloader</module>
 		<module>dippDownloader</module>
 		<module>sync</module>
 		<module>edowebSync</module>
 		<module>ellinetSync</module>
 		<module>dippSync</module>
-		<module>edoweb2-api</module>
+		<module>api</module>
 		<module>edowebOAI</module>
 		<!-- <module>integrationTests</module> -->
 	</modules>

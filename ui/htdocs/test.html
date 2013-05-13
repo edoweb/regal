@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+<head>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<link
+	href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"
+	rel="stylesheet" />
+<script src="http://code.jquery.com/jquery-1.9.1.js">
+<!--workaround-->
+	
+</script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js">
+<!--workaround-->
+	
+</script>
+<script>
+	$(function() {
+		$("#tabs").tabs();
+	});
+</script>
+</head>
+<body>
+	<div class="logo">
+		<image src="/logo.gif" />
+	</div>
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabs-1">Repository</a></li>
+			<li><a href="#tabs-2">Catalog</a></li>
+			<li><a href="#tabs-3">Relations</a></li>
+			<li><a href="#tabs-4">Links</a></li>
+		</ul>
+		<div id="tabheader">
+			<a href="http://localhost"><img height="40" src="/search.png" /></a>
+		</div>
+		<div id="tabs-1">
+			<table>
+				<tr>
+					<td class="plabel">URI</td>
+					<td><a href="http://localhost/resources/edoweb:3309852">http://localhost/resources/edoweb:3309852</a></td>
+				</tr>
+				<tr>
+					<td class="plabel">Webarchive</td>
+					<td class="textlink"><a
+						href="http://localhost/resources/edoweb:3309852/data"><img
+							src="/zip.png" /></a></td>
+				</tr>
+				<tr>
+					<td class="plabel">Title</td>
+					<td>Version of: edoweb:3309852</td>
+				</tr>
+				<tr>
+					<td class="plabel">Type</td>
+					<td>contentType:webpageVersion</td>
+				</tr>
+				<tr>
+					<td class="plabel">Description</td>
+					<td>16.11.2009 09:15:44</td>
+				</tr>
+				<tr>
+					<td class="plabel">Related Identifier</td>
+					<td>edoweb:3309852</td>
+				</tr>
+			</table>
+		</div>
+		<div id="tabs-2">
+			<table>
+				<tr>
+					<td class="tablelabel" colspan="4">About:
+						http://localhost/resources/edoweb:3309852</td>
+				</tr>
+			</table>
+		</div>
+		<div id="tabs-3">
+			<table>
+				<!--avoid empty elements for firefox-->
+				<tr>
+					<td class="plabel">isPartOf</td>
+					<td class="relation"><a class="relationLink"
+						href="http://localhost/resources/edoweb:2139486">edoweb:2139486</a></td>
+				</tr>
+			</table>
+		</div>
+		<div id="tabs-4">
+			<table>
+				<tr>
+					<td class="plabel">External</td>
+					<td><a href="" id="lobidLink">@ lobid.org</a><a href=""
+						id="verbundLink">@ hbz-nrw.de</a><a
+						href="http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid=3309852"
+						id="digitoolLink">@ digitool.hbz-nrw.de</a></td>
+				</tr>
+				<tr>
+					<td class="plabel">Internal</td>
+					<td><a href="http://localhost/fedora/objects/edoweb:3309852"
+						id="fedoraLink">@ fedora</a><a
+						href="http://localhost/fedora/risearch?type=triples&amp;lang=spo&amp;format=RDF/XML&amp;query=%3Cinfo:fedora/edoweb:3309852%3E%20*%20*"
+						id="risearchLink">@ risearch</a><a
+						href="http://localhost/edowebbase/3309852" id="cacheLink">@
+							cache</a></td>
+				</tr>
+				<tr>
+					<td class="editIcon" />
+					<td class="fedoraLogo" />
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

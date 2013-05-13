@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<artifactId>edoweb2</artifactId>
-		<groupId>de.nrw.hbz.edoweb2</groupId>
+		<artifactId>regal</artifactId>
+		<groupId>de.nrw.hbz.regal</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>edowebSync</artifactId>
+	<artifactId>edoweb-sync</artifactId>
 	<packaging>jar</packaging>
-	<name>edowebSync</name>
+	<name>edoweb-sync</name>
 
 
 	<properties>
@@ -28,7 +28,7 @@
 							<classpathPrefix>lib</classpathPrefix>
 							<classpathLayoutType>repository</classpathLayoutType>
 							<classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
-							<mainClass>de.nrw.hbz.edoweb2.sync.Main</mainClass>
+							<mainClass>de.nrw.hbz.regal.sync.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -41,7 +41,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.nrw.hbz.edoweb2.sync.Main</mainClass>
+							<mainClass>de.nrw.hbz.regal.sync.Main</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -50,37 +50,7 @@
 				</configuration>
 
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.0-alpha-3</version>
-				<executions>
-					<execution>
-						<id>ban-other-loggers</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<bannedDependencies>
-									<searchTransitive>true</searchTransitive>
-									<excludes>
-										<!-- Ban the secondary frameworks -->
-										<exclude>log4j:log4j</exclude>
-										<exclude>commons-logging</exclude>
-										<!-- Ban other slf4j bridges so we don't end up in an infinite 
-											loop -->
-										<exclude>org.slf4j:slf4j-log4j12</exclude>
-									</excludes>
-									<message>Secondary logging frameworks are
-										banned in preference
-										to org.slf4j:*-over-slf4j</message>
-								</bannedDependencies>
-							</rules>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			
 		</plugins>
 	</build>
 	<dependencies>
@@ -89,80 +59,65 @@
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>
 			<version>20040117.000000</version>
+			
 		</dependency>
 
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>digitoolDownloader</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>digitool-downloader</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sli4j-slf4j-log4j</artifactId>
-					<groupId>com.googlecode.sli4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sli4j-log4j</artifactId>
-					<groupId>com.googlecode.sli4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sli4j-slf4j</artifactId>
-					<groupId>com.googlecode.sli4j</groupId>
-				</exclusion>
-			</exclusions>
+			
 		</dependency>
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>edoweb2-api</artifactId>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>regal-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			
+		</dependency>
+	<!-- Use JDK logging for runtime since that's what Glassfish uses. -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>1.7.5</version>
+			<scope>runtime</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>org.apache.logging.log4j</groupId>
-				</exclusion>
 				<exclusion>
 					<artifactId>commons-logging</artifactId>
 					<groupId>commons-logging</groupId>
 				</exclusion>
-				<exclusion>
-					<artifactId>sli4j-slf4j-log4j</artifactId>
-					<groupId>com.googlecode.sli4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sli4j-slf4j</artifactId>
-					<groupId>com.googlecode.sli4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
+				</exclusions>
 		</dependency>
-		<!-- Use JDK logging for runtime since that's what Glassfish uses. -->
 
 		<!-- Anything using log4j should defer to slf4j. -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>1.7.5</version>
+			<scope>runtime</scope>
+			
+		</dependency>
 
 		<!-- Anything using commons-logging should defer to slf4j. -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.7.5</version>
+			<scope>runtime</scope>
+			
+		</dependency>
 		
 		<dependency>
-			<groupId>de.nrw.hbz.edoweb2</groupId>
-			<artifactId>sync</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+			
+		</dependency>
+		
+		<dependency>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>regal-sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			
 		</dependency>
 	</dependencies>
 </project>
