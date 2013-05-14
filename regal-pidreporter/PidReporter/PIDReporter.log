@@ -1,0 +1,320 @@
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T11:47:28Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 4302 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T11:47:28Z !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T11:48:00Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T11:48:00Z !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T11:52:13Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T11:57:55Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 4302 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T11:57:55Z !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T12:28:43Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - No .oaitimestamp available! First harvest!?
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - I continue with harvest from scratch!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T12:38:23Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 4302 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - No .oaitimestamp available! First harvest!?
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - I continue with harvest from scratch!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T12:43:16Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 4302 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T12:43:16Z !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T12:43:31Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T13:07:43Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 4302 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T13:11:56Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 940 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T13:13:33Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 940 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 940 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T12:41:02Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T12:41:02Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - No .oaitimestamp available! First harvest!?
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - I continue with harvest from scratch!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T12:52:21Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 940 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T12:52:21Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T12:52:21Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T12:52:21Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-10-07T12:52:21Z !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-07T12:56:11Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 764 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T12:56:11Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T12:56:11Z !
+WARN main de.nrw.hbz.ellinet.OaiPidGrabber - Harvesting ended in an empty response! Old timestape is still correct!
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records from 2011-11-07T12:56:11Z !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T14:00:05Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 4337 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T14:01:08Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 4337 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T14:02:17Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 4337 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is zbmed-oai_dc-al !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is zbmed-oai_dc-all !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T14:03:34Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 1303 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is doc-type:periodical !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T14:30:38Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 43 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is doc-type:periodicalPart !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T14:30:51Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 1272 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is doc-type:website !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T14:31:11Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 591 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is doc-type:report !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T14:31:26Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 1128 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T14:32:34Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 4337 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is null !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T14:42:30Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 4337 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is [Ljava.lang.String;@b815859 !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T15:17:47Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 1128 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is doc-type:report !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T15:19:40Z !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 1128 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is doc-type:report !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Harvest Date 2011-11-08T15:22:45Z !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is doc-type:website !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is doc-type:periodicalPart !
+INFO main de.nrw.hbz.ellinet.OaiPidGrabber - Set spec is doc-type:periodical !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Found 3034 pids !
+INFO main de.nrw.hbz.ellinet.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:report !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-10T07:26:28Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:website !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:periodicalPart !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:periodical !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Found 3091 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to null !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:report !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-10T07:28:06Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:website !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:periodicalPart !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:periodical !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Found 3091 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records from 2011-11-10T07:28:06Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is zbmed-oai_dc-all !
+WARN main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvesting ended in an empty response! Old timestape is still correct!
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Found 0 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+WARN main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - No .oaitimestamp available! First harvest!?
+WARN main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - I continue with harvest from scratch!
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records from null !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is zbmed-oai_dc-all !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-10T08:12:53Z !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Found 1306 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+WARN main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Timestamp file .ellinetOaiTimestamp is not available! First harvest!?
+WARN main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - I continue with harvest from scratch!
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records from null !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is zbmed-oai_dc-all !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-10T08:26:42Z !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Found 1306 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:report !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-10T08:26:55Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:website !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:periodicalPart !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:periodical !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Found 3091 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:report !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-14T10:42:43Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:website !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:periodicalPart !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:periodical !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Found 757 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is null  !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-14T10:43:11Z !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Found 757 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is edoweb-oai_dc-all !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-14T10:43:32Z !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Found 757 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records from 2011-11-10T08:26:42Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is zbmed-oai_dc-all !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-23T14:04:29Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Found 76 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://urania.hbz-nrw.de:1801/edowebOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is edoweb-oai_dc-all !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-23T14:04:39Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Found 3092 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records from 2011-11-23T14:04:29Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is zbmed-oai_dc-all !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-24T07:05:58Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Found 13 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Start harvesting http://klio.hbz-nrw.de:1801/zbmedOAI/ !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Set spec is doc-type:Other !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Harvest Date 2011-11-25T10:37:26Z !
+INFO main de.nrw.hbz.digitool.pidreporter.OaiPidGrabber - Found 95 pids !
+INFO main de.nrw.hbz.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber - Start harvesting http://www.dipp.nrw.de/repository/ !
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber - Harvest all Records! No from= Parameter set!
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber - Set spec is pub-type:journal !
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber - Harvest Date 2013-04-25T08:45:40Z !
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.OaiPidGrabber - Found 9 pids !
+INFO main de.nrw.hbz.edoweb2.digitool.pidreporter.PIDWriter - Print pids separated by newline to pids.txt !

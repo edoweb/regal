@@ -1,0 +1,37 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix gr: <http://purl.org/goodrelations/v1#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix lv: <http://lobid.org/vocab/lobid#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix libtype: <http://lobid.org/vocab/libtype#> .
+
+<http://lobid.org/item/HT015978361%3AElektronische+Publikation>
+    <http://purl.org/ontology/daia/label> "Elektronische Publikation" ;
+    <http://purl.org/vocab/frbr/core#exemplarOf> <http://lobid.org/resource/HT015978361> ;
+    <http://purl.org/vocab/frbr/core#owner> <http://lobid.org/organisation/DE-38M> ;
+    a <http://purl.org/vocab/frbr/core#Item> .
+
+<http://lobid.org/organisation/DE-38M>
+    a foaf:Organization ;
+    foaf:name "Deutsche Zentralbibliothek für Medizin" .
+
+<http://lobid.org/resource/HT015978361>
+    <http://iflastandards.info/ns/isbd/elements/P1004> "Stationäre Behandlung von Jugendlichen mit Schulabsentismus" ;
+    <http://iflastandards.info/ns/isbd/elements/P1006> "Konzept und Langzeiteffekte" ;
+    <http://iflastandards.info/ns/isbd/elements/P1016> "Köln" ;
+    lv:fulltextOnline <http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=3072418&custom_att_2=simple_viewer>, <http://dx.doi.org/10.4126/38m-000000070>, <http://nbn-resolving.de/urn:nbn:de:hbz:38m-0000000704> ;
+    <http://purl.org/dc/elements/1.1/creator> <http://d-nb.info/gnd/138569398> ;
+    dc:issued "2009" ;
+    dc:language <http://id.loc.gov/vocabulary/iso639-2/deu> ;
+    dc:medium <http://iflastandards.info/ns/isbd/terms/mediatype/T1002> ;
+    dc:subject <http://dewey.info/class/610/> ;
+    <http://purl.org/ontology/bibo/doi> <http://dx.doi.org/10.4126/38m-000000070> ;
+    <http://purl.org/vocab/frbr/core#exemplar> <http://lobid.org/item/HT015978361%3AElektronische+Publikation> ;
+    a dc:BibliographicResource, <http://purl.org/ontology/bibo/Book>, <http://purl.org/vocab/frbr/core#Manifestation> ;
+    foaf:isPrimaryTopicOf <http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT015978361> .

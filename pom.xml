@@ -168,18 +168,17 @@
 
 	</dependencies>
 	<modules>
-		<module>archive</module>
-		<module>downloader</module>
-		<module>pidreporter</module>
-		<module>digitoolDownloader</module>
-		<module>dippDownloader</module>
-		<module>sync</module>
-		<module>edowebSync</module>
-		<module>ellinetSync</module>
-		<module>dippSync</module>
-		<module>api</module>
-		<module>edowebOAI</module>
-		<!-- <module>integrationTests</module> -->
+		<module>regal-archive</module>
+		<module>regal-downloader</module>
+		<module>regal-pidreporter</module>
+		<module>digitool-downloader</module>
+		<module>dipp-downloader</module>
+		<module>regal-sync</module>
+		<module>edoweb-sync</module>
+		<module>ellinet-sync</module>
+		<module>dipp-sync</module>
+		<module>regal-api</module>
+		<module>edoweb-oai</module>
 	</modules>
 
 
