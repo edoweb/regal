@@ -443,7 +443,7 @@ class Actions
 
 		node = readNode(pid);
 
-		if (node != null && node.getDataUrl() != null)
+		if (node != null)
 		{
 			return Response.temporaryRedirect(
 					new java.net.URI(fedoraExtern + "/objects/" + pid
@@ -490,7 +490,7 @@ class Actions
 
 		if (node != null)
 		{
-			System.out.println("HO");
+
 			InputStream in = null;
 			try
 			{
