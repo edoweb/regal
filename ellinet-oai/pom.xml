@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>regal</artifactId>
+		<groupId>de.nrw.hbz.regal</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>ellinet-oai</artifactId>
+  <packaging>war</packaging>
+
+  <name>ellinet-oai</name>
+  <url>http://www.hbz-nrw.de</url>
+  <dependencies>
+  </dependencies>
+  <build>
+    <finalName>zbmedOAI</finalName>
+  </build>
+</project>

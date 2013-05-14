@@ -22,6 +22,7 @@
 	/**
 	 * 
 	 * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 07.11.2011
+	 * @author Andres Quast, quast@hbz-nrw.de
 	 * 
 	 */
 	InputStream is = null;
@@ -30,10 +31,7 @@
 	ByteArrayOutputStream bos = null;
 	String stream = null;
 	try
-	{// this jsp template parses the oai-pmh response of digitool 
-		// it adds a processing instruction to the output required for xsl-transformtion
-		// and if installed on the same server where the caller html form resists solves 
-		// the cross domain problem associated wih xslt and js (hopefully)
+	{
 		// Please edit the urls to your requirements
 
 		String oaiServer = "http://klio.hbz-nrw.de";

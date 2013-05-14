@@ -179,6 +179,7 @@
 		<module>dipp-sync</module>
 		<module>regal-api</module>
 		<module>edoweb-oai</module>
+		<module>ellinet-oai</module>
 	</modules>
 
 
