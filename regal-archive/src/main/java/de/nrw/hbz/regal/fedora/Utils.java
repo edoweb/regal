@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
@@ -276,18 +275,6 @@ public class Utils
 					.controlGroup("M").mimeType(node.getMimeType())
 					.dsLocation(location).execute();
 
-			node.setDataUrl(new URL(host + "/objects/" + node.getPID()
-					+ "/datastreams/" + node.getFileName() + "/content"));
-			// Link link = new Link();
-			// link.setObject(node.getFileName(), true);
-			// link.setPredicate(HAS_DATASTREAM);
-			// node.addRelation(link);
-			//
-			// link = new Link();
-			// link.setObject(node.getMimeType(), true);
-			// link.setPredicate(DATASTREAM_MIME);
-			// node.addRelation(link);
-
 		}
 		catch (Exception e)
 		{
@@ -310,19 +297,6 @@ public class Utils
 					.dsState("A").dsLabel("n-triple rdf metadata")
 					.controlGroup("M").mimeType(node.getMimeType())
 					.dsLocation(location).execute();
-
-			node.setMetadataUrl(new URL(this.host + "/objects/" + node.getPID()
-					+ "/datastreams/" + "metadata" + "/content"));
-			// Link link = new Link();
-			// link.setObject(node.getMetadataFile(), true);
-			// link.setPredicate(HAS_METADATASTREAM);
-			// node.addRelation(link);
-			//
-			// link = new Link();
-			// link.setObject("text/plain", true);
-			// link.setPredicate(METADATASTREAM_MIME);
-			// node.addRelation(link);
-
 		}
 		catch (Exception e)
 		{
