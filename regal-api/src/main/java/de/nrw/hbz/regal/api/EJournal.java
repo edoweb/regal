@@ -154,7 +154,7 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVolumes(@PathParam("pid") String pid)
 	{
-		return resources.getAllVolumes(pid);
+		return resources.getAllParts(pid);
 	}
 
 	@PUT

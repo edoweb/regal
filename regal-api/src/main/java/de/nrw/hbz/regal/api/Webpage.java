@@ -202,7 +202,7 @@ public class Webpage
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAllVersions(@PathParam("pid") String pid)
 	{
-		return resources.getAllVersions(pid);
+		return resources.getAllParts(pid);
 
 	}
 

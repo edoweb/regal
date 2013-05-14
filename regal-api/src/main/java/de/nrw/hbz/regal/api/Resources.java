@@ -16,12 +16,6 @@
  */
 package de.nrw.hbz.regal.api;
 
-import static de.nrw.hbz.regal.api.Vocabulary.HAS_VERSION;
-import static de.nrw.hbz.regal.api.Vocabulary.HAS_VERSION_NAME;
-import static de.nrw.hbz.regal.api.Vocabulary.HAS_VOLUME;
-import static de.nrw.hbz.regal.api.Vocabulary.HAS_VOLUME_NAME;
-import static de.nrw.hbz.regal.api.Vocabulary.IS_VERSION;
-import static de.nrw.hbz.regal.api.Vocabulary.IS_VOLUME;
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.regal.datatypes.Vocabulary.TYPE_OBJECT;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.HAS_PART;
@@ -671,42 +665,6 @@ public class Resources
 
 	// --SPECIAL---
 
-	/**
-	 * @param pid
-	 *            the pid of a resource containing multiple volumes
-	 * @return all volumes of the resource
-	 */
-	@GET
-	@Path("/{pid}/volume/")
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVolumes(@PathParam("pid") String pid)
-	{
-
-		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
-	}
-
-	/**
-	 * @param pid
-	 *            the pid of the resource containing versions
-	 * @return a list with pids of each version
-	 */
-	@GET
-	@Path("/{pid}/version/")
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVersions(@PathParam("pid") String pid)
-	{
-		try
-		{
-			return new ObjectList(actions.findObject(pid, HAS_VERSION));
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
 	private String createWebpage(String p, String namespace)
 	{
 		try
@@ -841,16 +799,6 @@ public class Resources
 			rootObject.addRelation(link);
 
 			link = new Link();
-			link.setPredicate(IS_VERSION);
-			link.setObject(parentPid, false);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(HAS_VERSION_NAME);
-			link.setObject(versionPid, true);
-			rootObject.addRelation(link);
-
-			link = new Link();
 			link.setPredicate(IS_PART_OF);
 			link.setObject(parentPid, false);
 			rootObject.addRelation(link);
@@ -861,12 +809,6 @@ public class Resources
 					.createVersionModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
-
-			link = new Link();
-			link.setPredicate(HAS_VERSION);
-			link.setObject(versionPid, false);
-
-			actions.addLink(parentPid, link);
 
 			link = new Link();
 			link.setPredicate(HAS_PART);
@@ -907,18 +849,8 @@ public class Resources
 			rootObject.addRelation(link);
 
 			link = new Link();
-			link.setPredicate(IS_VOLUME);
-			link.setObject(parentPid, false);
-			rootObject.addRelation(link);
-
-			link = new Link();
 			link.setPredicate(IS_PART_OF);
 			link.setObject(parentPid, false);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(HAS_VOLUME_NAME);
-			link.setObject(volumePid, true);
 			rootObject.addRelation(link);
 
 			rootObject.setNamespace(namespace).setPID(volumePid);
@@ -929,11 +861,6 @@ public class Resources
 					.createPdfModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
-
-			link = new Link();
-			link.setPredicate(HAS_VOLUME);
-			link.setObject(volumePid, false);
-			actions.addLink(parentPid, link);
 
 			link = new Link();
 			link.setPredicate(HAS_PART);
