@@ -488,7 +488,7 @@ class Actions
 		String result = null;
 		Node node = readNode(pid);
 
-		if (node != null && node.getMetadataUrl() != null)
+		if (node != null)
 		{
 			System.out.println("HO");
 			InputStream in = null;

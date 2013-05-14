@@ -57,7 +57,7 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return resources.getAllOfType(ObjectType.ejournal.toString());
+		return resources.getAllOfType(ObjectType.journal.toString());
 
 	}
 
@@ -65,7 +65,7 @@ public class EJournal
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return resources.deleteAllOfType(ObjectType.ejournal.toString());
+		return resources.deleteAllOfType(ObjectType.journal.toString());
 
 	}
 
@@ -85,7 +85,7 @@ public class EJournal
 			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
-		input.type = ObjectType.ejournal.toString();
+		input.type = ObjectType.journal.toString();
 		return resources.create(pid, namespace, input);
 
 	}
@@ -165,7 +165,7 @@ public class EJournal
 			@PathParam("volumePid") String volumePid)
 	{
 		CreateObjectBean input = new CreateObjectBean();
-		input.type = ObjectType.ejournalVolume.toString();
+		input.type = ObjectType.volume.toString();
 		input.parentPid = pid;
 		return resources.create(volumePid, namespace, input);
 	}
@@ -206,13 +206,14 @@ public class EJournal
 	}
 
 	@POST
-	@Path("/{pid}/volume/{volumePid}/data")
+	@Path("/{pid}/volume/{namespace}:{volumePid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
 	public String updateVolumeData(@PathParam("pid") String pid,
-			@PathParam("volumePid") String volumePid, MultiPart multiPart)
+			@PathParam("volumePid") String volumePid,
+			@PathParam("namespace") String namespace, MultiPart multiPart)
 	{
-		return resources.updateData(volumePid, multiPart);
+		return resources.updateData(volumePid, namespace, multiPart);
 	}
 
 	@GET

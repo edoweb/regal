@@ -119,7 +119,7 @@ public class Webpage
 			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
-		input.type = ObjectType.webpageVersion.toString();
+		input.type = ObjectType.version.toString();
 		input.parentPid = pid;
 		return resources.create(versionPid, namespace, input);
 
@@ -136,13 +136,14 @@ public class Webpage
 	}
 
 	@POST
-	@Path("/{pid}/version/{versionPid}/data")
+	@Path("/{namespace}:{pid}/version/{versionPid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
 	public String updateWebpageVersionData(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace,
 			@PathParam("versionPid") String versionPid, MultiPart multiPart)
 	{
-		return resources.updateData(versionPid, multiPart);
+		return resources.updateData(versionPid, namespace, multiPart);
 	}
 
 	@PUT

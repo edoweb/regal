@@ -60,8 +60,6 @@ public class Resources
 
 	final static Logger logger = LoggerFactory.getLogger(Resources.class);
 
-	// String namespace = "edoweb";
-
 	Actions actions = null;
 
 	/**
@@ -316,15 +314,14 @@ public class Resources
 		}
 		if (input.type.compareTo(ObjectType.monograph.toString()) == 0)
 			return createMonograph(pid, namespace);
-		else if (input.type.compareTo(ObjectType.ejournal.toString()) == 0)
+		else if (input.type.compareTo(ObjectType.journal.toString()) == 0)
 			return createEJournal(pid, namespace);
 		else if (input.type.compareTo(ObjectType.webpage.toString()) == 0)
 			return createWebpage(pid, namespace);
-		else if (input.type.compareTo(ObjectType.webpageVersion.toString()) == 0)
+		else if (input.type.compareTo(ObjectType.version.toString()) == 0)
 			return createWebpageVersion(input.parentPid, pid, namespace);
-		else if (input.type.compareTo(ObjectType.ejournalVolume.toString()) == 0)
+		else if (input.type.compareTo(ObjectType.volume.toString()) == 0)
 			return createEJournalVolume(input.parentPid, pid, namespace);
-
 		else
 			return createResource(input, pid, namespace);
 
@@ -364,17 +361,27 @@ public class Resources
 	 *         an of 500 if not.
 	 */
 	@PUT
-	@Path("/{pid}/data")
+	@Path("/{namespace}:{pid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
-	public String updateData(@PathParam("pid") String pid, MultiPart multiPart)
+	public String updateData(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace, MultiPart multiPart)
 	{
 
 		try
 		{
-			return actions.updateData(pid, multiPart.getBodyParts().get(0)
-					.getEntityAs(InputStream.class), multiPart.getBodyParts()
-					.get(1).getEntityAs(String.class));
+			String mimeType = multiPart.getBodyParts().get(1)
+					.getEntityAs(String.class);
+			// if (mimeType.compareTo("application/pdf") == 0)
+			// {
+			// Node node = actions.readNode(namespace+":"+pid);
+			// node.addContentModel(ContentModelFactory
+			// .createPdfModel(namespace));
+			// actions.updateNode(node);
+			// }
+			return actions.updateData(namespace + ":" + pid, multiPart
+					.getBodyParts().get(0).getEntityAs(InputStream.class),
+					mimeType);
 		}
 		catch (ArchiveException e)
 		{
@@ -401,14 +408,14 @@ public class Resources
 	 *         an of 500 if not.
 	 */
 	@POST
-	@Path("/{pid}/data")
+	@Path("/{namespace}:{pid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
 	public String updateDataPost(@PathParam("pid") String pid,
-			MultiPart multiPart)
+			@PathParam("namespace") String namespace, MultiPart multiPart)
 	{
 
-		return updateData(pid, multiPart);
+		return updateData(pid, namespace, multiPart);
 
 	}
 
@@ -760,7 +767,7 @@ public class Resources
 			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
-			rootObject.setContentType(ObjectType.ejournal.toString());
+			rootObject.setContentType(ObjectType.journal.toString());
 			rootObject.addContentModel(ContentModelFactory
 					.createEJournalModel(namespace));
 			rootObject.addContentModel(ContentModelFactory
@@ -804,7 +811,7 @@ public class Resources
 			rootObject.addRelation(link);
 
 			rootObject.setNamespace(namespace).setPID(versionPid);
-			rootObject.setContentType(ObjectType.webpageVersion.toString());
+			rootObject.setContentType(ObjectType.version.toString());
 			rootObject.addContentModel(ContentModelFactory
 					.createVersionModel(namespace));
 
@@ -854,7 +861,7 @@ public class Resources
 			rootObject.addRelation(link);
 
 			rootObject.setNamespace(namespace).setPID(volumePid);
-			rootObject.setContentType(ObjectType.ejournalVolume.toString());
+			rootObject.setContentType(ObjectType.volume.toString());
 			rootObject.addContentModel(ContentModelFactory
 					.createVolumeModel(namespace));
 			rootObject.addContentModel(ContentModelFactory
