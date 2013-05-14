@@ -82,12 +82,14 @@ public class Resources
 	 * @return the actual binary data
 	 */
 	@GET
-	@Path("/{pid}/data")
+	@Path("/{namespace}:{pid}/data")
 	@Produces({ "application/*" })
-	public Response readData(@PathParam("pid") String pid)
+	public Response readData(@PathParam("pid") String p,
+			@PathParam("namespace") String namespace)
 	{
 		try
 		{
+			String pid = namespace + ":" + p;
 			Response res = actions.readData(pid);
 			if (res == null)
 				throw new HttpArchiveException(404,

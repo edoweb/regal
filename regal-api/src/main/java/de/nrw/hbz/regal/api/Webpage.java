@@ -189,12 +189,13 @@ public class Webpage
 	}
 
 	@GET
-	@Path("/{pid}/version/{versionPid}/data")
+	@Path("/{pid}/version/{namespace}:{versionPid}/data")
 	@Produces({ "application/*" })
 	public Response readWebpageVersionData(@PathParam("pid") String pid,
-			@PathParam("versionPid") String versionPid)
+			@PathParam("versionPid") String versionPid,
+			@PathParam("namespace") String namespace)
 	{
-		return resources.readData(versionPid);
+		return resources.readData(versionPid, namespace);
 
 	}
 

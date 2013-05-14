@@ -81,11 +81,12 @@ public class Monograph
 	}
 
 	@GET
-	@Path("/{pid}/data")
+	@Path("/{namespace}:{pid}/data")
 	@Produces({ "application/*", "application/json" })
-	public Response readMonographData(@PathParam("pid") String pid)
+	public Response readMonographData(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
-		return resources.readData(pid);
+		return resources.readData(pid, namespace);
 	}
 
 	@GET

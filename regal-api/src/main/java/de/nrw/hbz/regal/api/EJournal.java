@@ -197,12 +197,13 @@ public class EJournal
 	}
 
 	@GET
-	@Path("/{pid}/volume/{volumePid}/data")
+	@Path("/{pid}/volume/{namespace}:{volumePid}/data")
 	@Produces({ "application/*" })
 	public Response readVolumeData(@PathParam("pid") String pid,
-			@PathParam("volumePid") String volumePid)
+			@PathParam("volumePid") String volumePid,
+			@PathParam("namespace") String namespace)
 	{
-		return resources.readData(volumePid);
+		return resources.readData(volumePid, namespace);
 	}
 
 	@POST
