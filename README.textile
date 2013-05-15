@@ -3,7 +3,7 @@
 
 h1. About
 
-regal - repository and graph-based api for library data 
+Regal - repository and graph-based api for library data 
 
 For more information visit the "wiki":https://github.com/edoweb/edoweb2/wiki/
 
