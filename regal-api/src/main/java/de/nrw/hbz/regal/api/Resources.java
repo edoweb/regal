@@ -639,7 +639,7 @@ public class Resources
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
+			link.setObject(TYPE_OBJECT, true);
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(input.getType());
@@ -689,7 +689,7 @@ public class Resources
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
+			link.setObject(TYPE_OBJECT, true);
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.webpage.toString());
@@ -726,7 +726,7 @@ public class Resources
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
+			link.setObject(TYPE_OBJECT, true);
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.monograph.toString());
@@ -766,7 +766,7 @@ public class Resources
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
+			link.setObject(TYPE_OBJECT, true);
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
 			rootObject.setContentType(ObjectType.journal.toString());
@@ -854,7 +854,7 @@ public class Resources
 			rootObject.setNodeType(TYPE_OBJECT);
 			Link link = new Link();
 			link.setPredicate(REL_IS_NODE_TYPE);
-			link.setObject(TYPE_OBJECT, false);
+			link.setObject(TYPE_OBJECT, true);
 			rootObject.addRelation(link);
 
 			link = new Link();
