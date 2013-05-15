@@ -1064,14 +1064,17 @@ class Actions
 
 		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
 
-		// TODO only if synced Resource
-		view.addCacheUrl(this.serverName + "/" + node.getNamespace() + "base/"
-				+ pidWithoutNamespace);
-
 		view.addFedoraUrl(this.fedoraExtern + "/objects/" + pid);
-		// TODO only if resource from digitool
-		view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
-				+ pidWithoutNamespace);
+
+		// TODO You know what to do!
+		if (pid.contains("edoweb") || pid.contains("ellinet"))
+		{
+			view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
+					+ pidWithoutNamespace);
+			// TODO only if synced Resource
+			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
+					+ "base/" + pidWithoutNamespace);
+		}
 
 		String query = "<info:fedora/" + pid + "> * *";
 		try
