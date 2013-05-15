@@ -1199,23 +1199,19 @@ class Actions
 
 				RepositoryResult<Statement> statements = con.getStatements(
 						null, null, null, true);
-				if (view.getLobidUrl() != null && !view.getLobidUrl().isEmpty())
+
+				while (statements.hasNext())
 				{
+					Statement st = statements.next();
+					String rdfSubject = st.getSubject().stringValue();
 
-					while (statements.hasNext())
+					if (rdfSubject.compareTo(pid) == 0)
 					{
-						Statement st = statements.next();
-						String rdfSubject = st.getSubject().stringValue();
-
-						System.out.println(rdfSubject);
-						System.out.println(pid);
-						if (rdfSubject.compareTo(pid) == 0)
-						{
-							view.addPredicate(st.getPredicate().stringValue(),
-									st.getObject().stringValue());
-						}
+						view.addPredicate(st.getPredicate().stringValue(), st
+								.getObject().stringValue());
 					}
 				}
+
 			}
 			catch (RepositoryException e)
 			{
