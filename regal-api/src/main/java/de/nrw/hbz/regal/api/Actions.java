@@ -1069,11 +1069,14 @@ class Actions
 		// TODO You know what to do!
 		if (pid.contains("edoweb") || pid.contains("ellinet"))
 		{
-			view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
-					+ pidWithoutNamespace);
-			// TODO only if synced Resource
-			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
-					+ "base/" + pidWithoutNamespace);
+			if (pid.length() <= 17)
+			{
+				view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
+						+ pidWithoutNamespace);
+				// TODO only if synced Resource
+				view.addCacheUrl(this.serverName + "/" + node.getNamespace()
+						+ "base/" + pidWithoutNamespace);
+			}
 		}
 
 		String query = "<info:fedora/" + pid + "> * *";
