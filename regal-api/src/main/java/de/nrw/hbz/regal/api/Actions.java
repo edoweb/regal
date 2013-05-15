@@ -443,7 +443,7 @@ class Actions
 
 		node = readNode(pid);
 
-		if (node != null && node.getDataUrl() != null)
+		if (node != null)
 		{
 			return Response.temporaryRedirect(
 					new java.net.URI(fedoraExtern + "/objects/" + pid
@@ -488,9 +488,9 @@ class Actions
 		String result = null;
 		Node node = readNode(pid);
 
-		if (node != null && node.getMetadataUrl() != null)
+		if (node != null)
 		{
-			System.out.println("HO");
+
 			InputStream in = null;
 			try
 			{
@@ -804,178 +804,186 @@ class Actions
 
 		String ddc = null;
 		Node node = readNode(pid);
-
-		URL metadata = node.getMetadataUrl();
-		InputStream in = null;
-		if (metadata != null)
+		try
 		{
-
-			try
+			URL metadata = new URL(fedoraExtern + "/objects/" + pid
+					+ "/datastreams/metadata/content");
+			InputStream in = null;
+			if (metadata != null)
 			{
-				in = metadata.openStream();
 
-				RepositoryConnection con = null;
-				Repository myRepository = new SailRepository(new MemoryStore());
 				try
 				{
-					myRepository.initialize();
-					con = myRepository.getConnection();
-					String baseURI = "";
+					in = metadata.openStream();
 
-					con.add(in, baseURI, RDFFormat.N3);
-
-					RepositoryResult<Statement> statements = con.getStatements(
-							null, null, null, true);
-
-					while (statements.hasNext())
+					RepositoryConnection con = null;
+					Repository myRepository = new SailRepository(
+							new MemoryStore());
+					try
 					{
-						Statement st = statements.next();
+						myRepository.initialize();
+						con = myRepository.getConnection();
+						String baseURI = "";
 
-						String rdfPredicate = st.getPredicate().stringValue();
-						if (rdfPredicate
-								.compareTo("http://purl.org/dc/terms/subject") == 0)
+						con.add(in, baseURI, RDFFormat.N3);
+
+						RepositoryResult<Statement> statements = con
+								.getStatements(null, null, null, true);
+
+						while (statements.hasNext())
 						{
-							String rdfObject = st.getObject().stringValue();
-							if (rdfObject
-									.startsWith("http://dewey.info/class/"))
-							{
-								ddc = rdfObject.subSequence(
-										rdfObject.length() - 4,
-										rdfObject.length() - 1).toString();
-								System.out.println("Found rdf ddc: " + ddc);
+							Statement st = statements.next();
 
-								String name = ddcmap(ddc);
-								String spec = "ddc:" + ddc;
-								String namespace = "oai";
-								String oaipid = namespace + ":" + ddc;
-								if (!this.nodeExists(oaipid))
+							String rdfPredicate = st.getPredicate()
+									.stringValue();
+							if (rdfPredicate
+									.compareTo("http://purl.org/dc/terms/subject") == 0)
+							{
+								String rdfObject = st.getObject().stringValue();
+								if (rdfObject
+										.startsWith("http://dewey.info/class/"))
 								{
-									createOAISet(name, spec, oaipid);
+									ddc = rdfObject.subSequence(
+											rdfObject.length() - 4,
+											rdfObject.length() - 1).toString();
+									System.out.println("Found rdf ddc: " + ddc);
+
+									String name = ddcmap(ddc);
+									String spec = "ddc:" + ddc;
+									String namespace = "oai";
+									String oaipid = namespace + ":" + ddc;
+									if (!this.nodeExists(oaipid))
+									{
+										createOAISet(name, spec, oaipid);
+									}
+									linkObjectToOaiSet(node, spec, oaipid);
 								}
-								linkObjectToOaiSet(node, spec, oaipid);
 							}
+
 						}
 
 					}
+					catch (RepositoryException e)
+					{
 
+						e.printStackTrace();
+					}
+					catch (RDFParseException e)
+					{
+
+						e.printStackTrace();
+					}
+					catch (IOException e)
+					{
+
+						e.printStackTrace();
+					}
+					finally
+					{
+						if (con != null)
+						{
+							try
+							{
+								con.close();
+							}
+							catch (RepositoryException e)
+							{
+								e.printStackTrace();
+							}
+						}
+					}
 				}
-				catch (RepositoryException e)
+				catch (IOException e1)
 				{
-
-					e.printStackTrace();
-				}
-				catch (RDFParseException e)
-				{
-
-					e.printStackTrace();
-				}
-				catch (IOException e)
-				{
-
-					e.printStackTrace();
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 				finally
 				{
-					if (con != null)
-					{
-						try
-						{
-							con.close();
-						}
-						catch (RepositoryException e)
-						{
-							e.printStackTrace();
-						}
-					}
+					IOUtils.closeQuietly(in);
 				}
 			}
-			catch (IOException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			finally
-			{
-				IOUtils.closeQuietly(in);
-			}
-		}
-		// TODO this block is deprecated as soon as lobid works like
-		// expected
-		if (ddc == null && node.getSubject() != null)
-			for (String subject : node.getSubject())
-			{
-				if (subject.startsWith("ddc"))
+			// TODO this block is deprecated as soon as lobid works like
+			// expected
+			if (ddc == null && node.getSubject() != null)
+				for (String subject : node.getSubject())
 				{
-					int end = 7;
-					if (subject.length() < 7)
-						end = subject.length();
-					ddc = subject.subSequence(4, end).toString();
-					logger.info("Found ddc: " + ddc);
-
-					String name = ddcmap(ddc);
-					String spec = "ddc:" + ddc;
-					String namespace = "oai";
-					String oaipid = namespace + ":" + ddc;
-					if (!this.nodeExists(oaipid))
+					if (subject.startsWith("ddc"))
 					{
-						createOAISet(name, spec, oaipid);
+						int end = 7;
+						if (subject.length() < 7)
+							end = subject.length();
+						ddc = subject.subSequence(4, end).toString();
+						logger.info("Found ddc: " + ddc);
+
+						String name = ddcmap(ddc);
+						String spec = "ddc:" + ddc;
+						String namespace = "oai";
+						String oaipid = namespace + ":" + ddc;
+						if (!this.nodeExists(oaipid))
+						{
+							createOAISet(name, spec, oaipid);
+						}
+						linkObjectToOaiSet(node, spec, oaipid);
 					}
-					linkObjectToOaiSet(node, spec, oaipid);
+
+				}
+			if (node.getContentType() != null)
+			{
+				String docType = node.getContentType();
+
+				logger.info("Found contentType: " + docType);
+
+				String name = docmap(docType);
+				String spec = TypeType.contentType.toString() + ":" + docType;
+				String namespace = "oai";
+				String oaipid = namespace + ":" + docType;
+				if (!this.nodeExists(oaipid))
+				{
+					createOAISet(name, spec, oaipid);
+				}
+				linkObjectToOaiSet(node, spec, oaipid);
+			}
+			else
+			// TODO this block is deprecated as soon as lobid works like
+			// expected
+			if (node.getType() != null)
+				for (String type : node.getType())
+				{
+					if (type.startsWith(TypeType.contentType.toString()))
+					{
+						String docType = type.substring(type.indexOf(':') + 1);
+						logger.info("Found contentType: " + docType);
+
+						String name = docmap(docType);
+						String spec = TypeType.contentType.toString() + ":"
+								+ docType;
+						String namespace = "oai";
+						String oaipid = namespace + ":" + docType;
+						if (!this.nodeExists(oaipid))
+						{
+							createOAISet(name, spec, oaipid);
+						}
+						linkObjectToOaiSet(node, spec, oaipid);
+					}
 				}
 
-			}
-		if (node.getContentType() != null)
-		{
-			String docType = node.getContentType();
-
-			logger.info("Found contentType: " + docType);
-
-			String name = docmap(docType);
-			String spec = TypeType.contentType.toString() + ":" + docType;
+			String name = "open_access";
+			String spec = "open_access";
 			String namespace = "oai";
-			String oaipid = namespace + ":" + docType;
+			String oaipid = namespace + ":" + "open_access";
 			if (!this.nodeExists(oaipid))
 			{
 				createOAISet(name, spec, oaipid);
 			}
 			linkObjectToOaiSet(node, spec, oaipid);
+
+			return pid + " successfully created oai sets!";
 		}
-		else
-		// TODO this block is deprecated as soon as lobid works like
-		// expected
-		if (node.getType() != null)
-			for (String type : node.getType())
-			{
-				if (type.startsWith(TypeType.contentType.toString()))
-				{
-					String docType = type.substring(type.indexOf(':') + 1);
-					logger.info("Found contentType: " + docType);
-
-					String name = docmap(docType);
-					String spec = TypeType.contentType.toString() + ":"
-							+ docType;
-					String namespace = "oai";
-					String oaipid = namespace + ":" + docType;
-					if (!this.nodeExists(oaipid))
-					{
-						createOAISet(name, spec, oaipid);
-					}
-					linkObjectToOaiSet(node, spec, oaipid);
-				}
-			}
-
-		String name = "open_access";
-		String spec = "open_access";
-		String namespace = "oai";
-		String oaipid = namespace + ":" + "open_access";
-		if (!this.nodeExists(oaipid))
+		catch (MalformedURLException e)
 		{
-			createOAISet(name, spec, oaipid);
+			throw new HttpArchiveException(500, e.getMessage());
 		}
-		linkObjectToOaiSet(node, spec, oaipid);
-
-		return pid + " successfully created oai sets!";
-
 	}
 
 	void linkObjectToOaiSet(Node node, String spec, String pid)
@@ -1056,14 +1064,20 @@ class Actions
 
 		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
 
-		// TODO only if synced Resource
-		view.addCacheUrl(this.serverName + "/" + node.getNamespace() + "base/"
-				+ pidWithoutNamespace);
-
 		view.addFedoraUrl(this.fedoraExtern + "/objects/" + pid);
-		// TODO only if resource from digitool
-		view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
-				+ pidWithoutNamespace);
+
+		// TODO You know what to do!
+		if (pid.contains("edoweb") || pid.contains("ellinet"))
+		{
+			if (pid.length() <= 17)
+			{
+				view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
+						+ pidWithoutNamespace);
+				// TODO only if synced Resource
+				view.addCacheUrl(this.serverName + "/" + node.getNamespace()
+						+ "base/" + pidWithoutNamespace);
+			}
+		}
 
 		String query = "<info:fedora/" + pid + "> * *";
 		try
@@ -1171,85 +1185,80 @@ class Actions
 
 		}
 
-		URL metadata = node.getMetadataUrl();
 		InputStream in = null;
-		if (metadata != null)
-		{
 
+		try
+		{
+			URL metadata = new URL(fedoraExtern + "/objects/" + pid
+					+ "/datastreams/metadata/content");
+			in = metadata.openStream();
+
+			RepositoryConnection con = null;
+			Repository myRepository = new SailRepository(new MemoryStore());
 			try
 			{
-				in = metadata.openStream();
+				myRepository.initialize();
+				con = myRepository.getConnection();
+				String baseURI = "";
 
-				RepositoryConnection con = null;
-				Repository myRepository = new SailRepository(new MemoryStore());
-				try
+				con.add(in, baseURI, RDFFormat.N3);
+
+				RepositoryResult<Statement> statements = con.getStatements(
+						null, null, null, true);
+
+				while (statements.hasNext())
 				{
-					myRepository.initialize();
-					con = myRepository.getConnection();
-					String baseURI = "";
+					Statement st = statements.next();
+					String rdfSubject = st.getSubject().stringValue();
 
-					con.add(in, baseURI, RDFFormat.N3);
-
-					RepositoryResult<Statement> statements = con.getStatements(
-							null, null, null, true);
-					if (view.getLobidUrl() != null
-							&& !view.getLobidUrl().isEmpty())
+					if (rdfSubject.compareTo(pid) == 0)
 					{
-
-						while (statements.hasNext())
-						{
-							Statement st = statements.next();
-							String rdfSubject = st.getSubject().stringValue();
-
-							if (rdfSubject.compareTo(pid) == 0)
-							{
-								view.addPredicate(st.getPredicate()
-										.stringValue(), st.getObject()
-										.stringValue());
-							}
-						}
+						view.addPredicate(st.getPredicate().stringValue(), st
+								.getObject().stringValue());
 					}
 				}
-				catch (RepositoryException e)
-				{
 
-					e.printStackTrace();
-				}
-				catch (RDFParseException e)
-				{
-
-					e.printStackTrace();
-				}
-				catch (IOException e)
-				{
-
-					e.printStackTrace();
-				}
-				finally
-				{
-					if (con != null)
-					{
-						try
-						{
-							con.close();
-						}
-						catch (RepositoryException e)
-						{
-							e.printStackTrace();
-						}
-					}
-				}
 			}
-			catch (IOException e1)
+			catch (RepositoryException e)
 			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+
+				e.printStackTrace();
+			}
+			catch (RDFParseException e)
+			{
+
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+
+				e.printStackTrace();
 			}
 			finally
 			{
-				IOUtils.closeQuietly(in);
+				if (con != null)
+				{
+					try
+					{
+						con.close();
+					}
+					catch (RepositoryException e)
+					{
+						e.printStackTrace();
+					}
+				}
 			}
 		}
+		catch (IOException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		finally
+		{
+			IOUtils.closeQuietly(in);
+		}
+
 		return view;
 	}
 
@@ -1752,7 +1761,7 @@ class Actions
 	public String pdfbox(Node node)
 	{
 		String pid = node.getPID();
-		URL content = node.getDataUrl();
+
 		String mimeType = node.getMimeType();
 		if (mimeType == null)
 			throw new HttpArchiveException(
@@ -1767,7 +1776,8 @@ class Actions
 		InputStream in = null;
 		try
 		{
-
+			URL content = new URL(fedoraExtern + "/objects/" + pid
+					+ "/datastreams/data/content");
 			pdfFile = File.createTempFile("pdf", "pdf");
 			pdfFile.deleteOnExit();
 			URL url = new URL(lobidUrl);
@@ -1843,7 +1853,7 @@ class Actions
 	{
 
 		Node node = readNode(pid);
-		URL content = node.getDataUrl();
+
 		String mimeType = node.getMimeType();
 		if (mimeType == null)
 			throw new HttpArchiveException(
@@ -1858,7 +1868,8 @@ class Actions
 		InputStream in = null;
 		try
 		{
-
+			URL content = new URL(fedoraExtern + "/objects/" + pid
+					+ "/datastreams/data/content");
 			pdfFile = File.createTempFile("pdf", "pdf");
 			pdfFile.deleteOnExit();
 			URL url = new URL(lobidUrl);

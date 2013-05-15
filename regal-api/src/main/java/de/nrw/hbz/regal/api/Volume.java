@@ -37,14 +37,14 @@ import org.slf4j.LoggerFactory;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-@Path("/file")
-public class FileResource
+@Path("/volume")
+public class Volume
 {
 	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
 
 	Resources resources = null;
 
-	public FileResource() throws IOException
+	public Volume() throws IOException
 	{
 
 		resources = new Resources();
@@ -55,7 +55,7 @@ public class FileResource
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return resources.deleteAllOfType(ObjectType.file.toString());
+		return resources.deleteAllOfType(ObjectType.volume.toString());
 	}
 
 	@PUT
@@ -65,7 +65,7 @@ public class FileResource
 			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
-		input.type = ObjectType.file.toString();
+		input.type = ObjectType.volume.toString();
 		return resources.create(pid, namespace, input);
 	}
 
@@ -110,7 +110,7 @@ public class FileResource
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return resources.getAllOfType(ObjectType.file.toString());
+		return resources.getAllOfType(ObjectType.volume.toString());
 	}
 
 	@GET

@@ -2,7 +2,7 @@
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ *  you may not use this issue except in compliance with the License.
  *  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
@@ -37,14 +37,14 @@ import org.slf4j.LoggerFactory;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-@Path("/file")
-public class FileResource
+@Path("/issue")
+public class Issue
 {
 	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
 
 	Resources resources = null;
 
-	public FileResource() throws IOException
+	public Issue() throws IOException
 	{
 
 		resources = new Resources();
@@ -55,7 +55,7 @@ public class FileResource
 	@Produces({ "application/json", "application/xml" })
 	public String deleteAll()
 	{
-		return resources.deleteAllOfType(ObjectType.file.toString());
+		return resources.deleteAllOfType(ObjectType.issue.toString());
 	}
 
 	@PUT
@@ -65,7 +65,7 @@ public class FileResource
 			@PathParam("namespace") String namespace)
 	{
 		CreateObjectBean input = new CreateObjectBean();
-		input.type = ObjectType.file.toString();
+		input.type = ObjectType.issue.toString();
 		return resources.create(pid, namespace, input);
 	}
 
@@ -110,7 +110,7 @@ public class FileResource
 	@Produces({ "application/json", "application/xml" })
 	public ObjectList getAll()
 	{
-		return resources.getAllOfType(ObjectType.file.toString());
+		return resources.getAllOfType(ObjectType.issue.toString());
 	}
 
 	@GET

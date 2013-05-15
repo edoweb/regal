@@ -277,19 +277,28 @@ class HtmlAdapter
 		td0.setAttribute("class", "plabel");
 		td0.appendChild(doc.createTextNode("External"));
 
-		a = doc.createElement("a");
-		a.setAttribute("href", view.getFirstLobidUrl());
-		a.setAttribute("id", "lobidLink");
-		a.appendChild(doc.createTextNode("@ lobid.org"));
-		td.appendChild(a);
+		if (view.getFirstLobidUrl() != null
+				&& !view.getFirstLobidUrl().isEmpty())
+		{
+			a = doc.createElement("a");
+			a.setAttribute("href", view.getFirstLobidUrl());
+			a.setAttribute("id", "lobidLink");
+			a.appendChild(doc.createTextNode("@ lobid.org"));
+			td.appendChild(a);
+		}
 
-		a = doc.createElement("a");
-		a.setAttribute("href", view.getFirstVerbundUrl());
-		a.setAttribute("id", "verbundLink");
-		a.appendChild(doc.createTextNode("@ hbz-nrw.de"));
-		td.appendChild(a);
-		// TODO only if synced Resource
-		if (view.getFirstDigitoolUrl() != null)
+		if (view.getFirstVerbundUrl() != null
+				&& !view.getFirstVerbundUrl().isEmpty())
+		{
+			a = doc.createElement("a");
+			a.setAttribute("href", view.getFirstVerbundUrl());
+			a.setAttribute("id", "verbundLink");
+			a.appendChild(doc.createTextNode("@ hbz-nrw.de"));
+			td.appendChild(a);
+		}
+
+		if (view.getFirstDigitoolUrl() != null
+				&& !view.getFirstDigitoolUrl().isEmpty())
 		{
 			a = doc.createElement("a");
 			a.setAttribute("href", view.getFirstDigitoolUrl());
@@ -322,7 +331,8 @@ class HtmlAdapter
 		a.appendChild(doc.createTextNode("@ risearch"));
 		td.appendChild(a);
 		// TODO only if synced resource
-		if (view.getFirstCacheUrl() != null)
+		if (view.getFirstCacheUrl() != null
+				&& !view.getFirstCacheUrl().isEmpty())
 		{
 			a = doc.createElement("a");
 			a.setAttribute("href", view.getFirstCacheUrl());

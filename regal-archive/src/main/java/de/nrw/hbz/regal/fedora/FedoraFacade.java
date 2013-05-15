@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Vector;
@@ -213,17 +212,8 @@ public class FedoraFacade implements FedoraInterface
 					"data").download(true).execute();
 			node.setMimeType(response.getType());
 
-			node.setDataUrl(new URL(host + "/objects/" + pid
-					+ "/datastreams/data/content"));
-
-			node.setMetadataUrl(new URL(host + "/objects/" + pid
-					+ "/datastreams/metadata/content"));
-
 		}
-		catch (MalformedURLException e)
-		{
 
-		}
 		catch (FedoraClientException e)
 		{
 

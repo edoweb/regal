@@ -20,7 +20,6 @@ import static de.nrw.hbz.regal.datatypes.Vocabulary.TYPE_NODE;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.HAS_PART;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 
-import java.net.URL;
 import java.util.Date;
 import java.util.Vector;
 
@@ -46,8 +45,8 @@ public class Node
 
 	String metadataFile;
 	String uploadFile;
-	URL dataUrl;
-	URL metadataUrl;
+	// URL dataUrl;
+	// URL metadataUrl;
 	Vector<Link> relsExt = new Vector<Link>();
 	Vector<String> parentObjects = new Vector<String>();
 	Vector<ContentModel> cms = new Vector<ContentModel>();
@@ -358,27 +357,27 @@ public class Node
 		parentObjects = new Vector<String>();
 	}
 
-	public URL getDataUrl()
-	{
-
-		return dataUrl;
-	}
-
-	public void setDataUrl(URL url)
-	{
-		this.dataUrl = url;
-	}
-
-	public URL getMetadataUrl()
-	{
-
-		return metadataUrl;
-	}
-
-	public void setMetadataUrl(URL url)
-	{
-		this.metadataUrl = url;
-	}
+	// public URL getDataUrl()
+	// {
+	//
+	// return dataUrl;
+	// }
+	//
+	// public void setDataUrl(URL url)
+	// {
+	// this.dataUrl = url;
+	// }
+	//
+	// public URL getMetadataUrl()
+	// {
+	//
+	// return metadataUrl;
+	// }
+	//
+	// public void setMetadataUrl(URL url)
+	// {
+	// this.metadataUrl = url;
+	// }
 
 	public Node addContributer(String e)
 	{

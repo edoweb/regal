@@ -19,14 +19,8 @@ package de.nrw.hbz.regal.sesame;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.openrdf.OpenRDFException;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.QueryLanguage;
@@ -232,29 +226,30 @@ public class SesameFacade
 
 	public void updateNode(Node node)
 	{
-		URL metadata = node.getMetadataUrl();
-		if (metadata == null)
-			return;
-
-		try
-		{
-
-			HttpClient httpClient = new HttpClient();
-			httpClient.getState().setCredentials(
-					new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
-					new UsernamePasswordCredentials(fedoraUser, fedoraPwd));
-			HttpMethod method = new GetMethod(metadata.toString());
-
-			httpClient.executeMethod(method);
-			InputStream content = method.getResponseBodyAsStream();
-
-			addTurtleStream(content, "");
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// URL metadata = new URL(fedoraExtern + "/objects/" + pid
+		// + "/datastreams/metadata/content");
+		// if (metadata == null)
+		// return;
+		//
+		// try
+		// {
+		//
+		// HttpClient httpClient = new HttpClient();
+		// httpClient.getState().setCredentials(
+		// new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
+		// new UsernamePasswordCredentials(fedoraUser, fedoraPwd));
+		// HttpMethod method = new GetMethod(metadata.toString());
+		//
+		// httpClient.executeMethod(method);
+		// InputStream content = method.getResponseBodyAsStream();
+		//
+		// addTurtleStream(content, "");
+		// }
+		// catch (IOException e)
+		// {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 	}
 }

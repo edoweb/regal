@@ -21,5 +21,5 @@ package de.nrw.hbz.regal.api;
  * 
  */
 public enum ObjectType {
-	monograph, ejournal, ejournalVolume, webpage, webpageVersion, file, supplement, article, issue
+	monograph, journal, volume, webpage, version, file, supplement, article, issue
 }

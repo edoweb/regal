@@ -16,9 +16,8 @@
      *
      */
     	/**
-    	 * 
     	 * @author Jan Schnasse, schnasse@hbz-nrw.de
-    	 * 
+    	 * @author Andres Quast, quast@hbz-nrw.de
     	 */
     try {
 	// Please edit the urls to your requirements

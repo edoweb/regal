@@ -7,9 +7,9 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>integrationTests</artifactId>
+	<artifactId>regal-tests</artifactId>
 
-	<name>integrationTests</name>
+	<name>regal-tests</name>
 	<dependencies>
 
 		<dependency>

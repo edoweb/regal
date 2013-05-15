@@ -16,12 +16,6 @@
  */
 package de.nrw.hbz.regal.api;
 
-import static de.nrw.hbz.regal.api.Vocabulary.HAS_VERSION;
-import static de.nrw.hbz.regal.api.Vocabulary.HAS_VERSION_NAME;
-import static de.nrw.hbz.regal.api.Vocabulary.HAS_VOLUME;
-import static de.nrw.hbz.regal.api.Vocabulary.HAS_VOLUME_NAME;
-import static de.nrw.hbz.regal.api.Vocabulary.IS_VERSION;
-import static de.nrw.hbz.regal.api.Vocabulary.IS_VOLUME;
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.regal.datatypes.Vocabulary.TYPE_OBJECT;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.HAS_PART;
@@ -66,8 +60,6 @@ public class Resources
 
 	final static Logger logger = LoggerFactory.getLogger(Resources.class);
 
-	// String namespace = "edoweb";
-
 	Actions actions = null;
 
 	/**
@@ -90,12 +82,14 @@ public class Resources
 	 * @return the actual binary data
 	 */
 	@GET
-	@Path("/{pid}/data")
+	@Path("/{namespace}:{pid}/data")
 	@Produces({ "application/*" })
-	public Response readData(@PathParam("pid") String pid)
+	public Response readData(@PathParam("pid") String p,
+			@PathParam("namespace") String namespace)
 	{
 		try
 		{
+			String pid = namespace + ":" + p;
 			Response res = actions.readData(pid);
 			if (res == null)
 				throw new HttpArchiveException(404,
@@ -322,15 +316,14 @@ public class Resources
 		}
 		if (input.type.compareTo(ObjectType.monograph.toString()) == 0)
 			return createMonograph(pid, namespace);
-		else if (input.type.compareTo(ObjectType.ejournal.toString()) == 0)
+		else if (input.type.compareTo(ObjectType.journal.toString()) == 0)
 			return createEJournal(pid, namespace);
 		else if (input.type.compareTo(ObjectType.webpage.toString()) == 0)
 			return createWebpage(pid, namespace);
-		else if (input.type.compareTo(ObjectType.webpageVersion.toString()) == 0)
+		else if (input.type.compareTo(ObjectType.version.toString()) == 0)
 			return createWebpageVersion(input.parentPid, pid, namespace);
-		else if (input.type.compareTo(ObjectType.ejournalVolume.toString()) == 0)
+		else if (input.type.compareTo(ObjectType.volume.toString()) == 0)
 			return createEJournalVolume(input.parentPid, pid, namespace);
-
 		else
 			return createResource(input, pid, namespace);
 
@@ -370,17 +363,27 @@ public class Resources
 	 *         an of 500 if not.
 	 */
 	@PUT
-	@Path("/{pid}/data")
+	@Path("/{namespace}:{pid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
-	public String updateData(@PathParam("pid") String pid, MultiPart multiPart)
+	public String updateData(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace, MultiPart multiPart)
 	{
 
 		try
 		{
-			return actions.updateData(pid, multiPart.getBodyParts().get(0)
-					.getEntityAs(InputStream.class), multiPart.getBodyParts()
-					.get(1).getEntityAs(String.class));
+			String mimeType = multiPart.getBodyParts().get(1)
+					.getEntityAs(String.class);
+			// if (mimeType.compareTo("application/pdf") == 0)
+			// {
+			// Node node = actions.readNode(namespace + ":" + pid);
+			// node.addContentModel(ContentModelFactory
+			// .createPdfModel(namespace));
+			// actions.updateNode(node);
+			// }
+			return actions.updateData(namespace + ":" + pid, multiPart
+					.getBodyParts().get(0).getEntityAs(InputStream.class),
+					mimeType);
 		}
 		catch (ArchiveException e)
 		{
@@ -407,14 +410,14 @@ public class Resources
 	 *         an of 500 if not.
 	 */
 	@POST
-	@Path("/{pid}/data")
+	@Path("/{namespace}:{pid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
 	public String updateDataPost(@PathParam("pid") String pid,
-			MultiPart multiPart)
+			@PathParam("namespace") String namespace, MultiPart multiPart)
 	{
 
-		return updateData(pid, multiPart);
+		return updateData(pid, namespace, multiPart);
 
 	}
 
@@ -671,42 +674,6 @@ public class Resources
 
 	// --SPECIAL---
 
-	/**
-	 * @param pid
-	 *            the pid of a resource containing multiple volumes
-	 * @return all volumes of the resource
-	 */
-	@GET
-	@Path("/{pid}/volume/")
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVolumes(@PathParam("pid") String pid)
-	{
-
-		return new ObjectList(actions.findObject(pid, HAS_VOLUME));
-	}
-
-	/**
-	 * @param pid
-	 *            the pid of the resource containing versions
-	 * @return a list with pids of each version
-	 */
-	@GET
-	@Path("/{pid}/version/")
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAllVersions(@PathParam("pid") String pid)
-	{
-		try
-		{
-			return new ObjectList(actions.findObject(pid, HAS_VERSION));
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
 	private String createWebpage(String p, String namespace)
 	{
 		try
@@ -802,7 +769,7 @@ public class Resources
 			link.setObject(TYPE_OBJECT, false);
 			rootObject.addRelation(link);
 			rootObject.setNamespace(namespace).setPID(pid);
-			rootObject.setContentType(ObjectType.ejournal.toString());
+			rootObject.setContentType(ObjectType.journal.toString());
 			rootObject.addContentModel(ContentModelFactory
 					.createEJournalModel(namespace));
 			rootObject.addContentModel(ContentModelFactory
@@ -841,32 +808,16 @@ public class Resources
 			rootObject.addRelation(link);
 
 			link = new Link();
-			link.setPredicate(IS_VERSION);
-			link.setObject(parentPid, false);
-			rootObject.addRelation(link);
-
-			link = new Link();
-			link.setPredicate(HAS_VERSION_NAME);
-			link.setObject(versionPid, true);
-			rootObject.addRelation(link);
-
-			link = new Link();
 			link.setPredicate(IS_PART_OF);
 			link.setObject(parentPid, false);
 			rootObject.addRelation(link);
 
 			rootObject.setNamespace(namespace).setPID(versionPid);
-			rootObject.setContentType(ObjectType.webpageVersion.toString());
+			rootObject.setContentType(ObjectType.version.toString());
 			rootObject.addContentModel(ContentModelFactory
 					.createVersionModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
-
-			link = new Link();
-			link.setPredicate(HAS_VERSION);
-			link.setObject(versionPid, false);
-
-			actions.addLink(parentPid, link);
 
 			link = new Link();
 			link.setPredicate(HAS_PART);
@@ -907,33 +858,18 @@ public class Resources
 			rootObject.addRelation(link);
 
 			link = new Link();
-			link.setPredicate(IS_VOLUME);
-			link.setObject(parentPid, false);
-			rootObject.addRelation(link);
-
-			link = new Link();
 			link.setPredicate(IS_PART_OF);
 			link.setObject(parentPid, false);
 			rootObject.addRelation(link);
 
-			link = new Link();
-			link.setPredicate(HAS_VOLUME_NAME);
-			link.setObject(volumePid, true);
-			rootObject.addRelation(link);
-
 			rootObject.setNamespace(namespace).setPID(volumePid);
-			rootObject.setContentType(ObjectType.ejournalVolume.toString());
+			rootObject.setContentType(ObjectType.volume.toString());
 			rootObject.addContentModel(ContentModelFactory
 					.createVolumeModel(namespace));
 			rootObject.addContentModel(ContentModelFactory
 					.createPdfModel(namespace));
 
 			ComplexObject object = new ComplexObject(rootObject);
-
-			link = new Link();
-			link.setPredicate(HAS_VOLUME);
-			link.setObject(volumePid, false);
-			actions.addLink(parentPid, link);
 
 			link = new Link();
 			link.setPredicate(HAS_PART);

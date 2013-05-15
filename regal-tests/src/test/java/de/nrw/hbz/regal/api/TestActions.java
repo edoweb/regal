@@ -12,10 +12,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.regal.api.Actions;
-import de.nrw.hbz.regal.api.CreateObjectBean;
-import de.nrw.hbz.regal.api.ObjectType;
-import de.nrw.hbz.regal.api.Resources;
 import de.nrw.hbz.regal.datatypes.Node;
 
 public class TestActions
@@ -78,28 +74,27 @@ public class TestActions
 			}
 		}
 
-		for (String result : actions.findByType(ObjectType.ejournal.toString()))
+		for (String result : actions.findByType(ObjectType.journal.toString()))
 		{
 			Node node = actions.readNode(result);
 			String type = node.getContentType();
 
 			if (type == null || type.isEmpty())
 				Assert.fail();
-			else if (ObjectType.ejournal.toString().compareTo(type) != 0)
+			else if (ObjectType.journal.toString().compareTo(type) != 0)
 			{
 				Assert.fail();
 			}
 		}
 
-		for (String result : actions.findByType(ObjectType.ejournalVolume
-				.toString()))
+		for (String result : actions.findByType(ObjectType.volume.toString()))
 		{
 			Node node = actions.readNode(result);
 			String type = node.getContentType();
 
 			if (type == null || type.isEmpty())
 				Assert.fail();
-			else if (ObjectType.ejournalVolume.toString().compareTo(type) != 0)
+			else if (ObjectType.volume.toString().compareTo(type) != 0)
 			{
 				Assert.fail();
 			}

@@ -94,7 +94,7 @@ public class DippIngester implements IngestInterface
 		{
 			logger.info(pid + " Found ejournal.");
 
-			webclient.createResource(ObjectType.ejournal, dtlBean);
+			webclient.createResource(ObjectType.journal, dtlBean);
 			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 			int numOfVols = viewLinks.size();

@@ -232,8 +232,7 @@ public class EdowebIngester implements IngestInterface
 		logger.info(pid + " " + "Found eJournal volume.");
 		String resource = host + ":8080/edoweb2-api/ejournal/" + namespace
 				+ ":" + dtlBean.getParentPid() + "/volume/" + pid;
-		webclient.createObject(dtlBean, "application/pdf",
-				ObjectType.ejournalVolume);
+		webclient.createObject(dtlBean, "application/pdf", ObjectType.volume);
 		logger.info(pid + " " + "updated.\n");
 	}
 
@@ -243,8 +242,7 @@ public class EdowebIngester implements IngestInterface
 		logger.info(pid + " Found webpage version.");
 		String resource = host + ":8080/edoweb2-api/webpage/" + namespace + ":"
 				+ dtlBean.getParentPid() + "/version/" + pid;
-		webclient.createObject(dtlBean, "application/zip",
-				ObjectType.webpageVersion);
+		webclient.createObject(dtlBean, "application/zip", ObjectType.version);
 		logger.info(pid + " " + "updated.\n");
 	}
 
@@ -266,7 +264,7 @@ public class EdowebIngester implements IngestInterface
 		{
 			logger.info(pid + " Found ejournal.");
 
-			webclient.createResource(ObjectType.ejournal, dtlBean);
+			webclient.createResource(ObjectType.journal, dtlBean);
 			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();
@@ -318,7 +316,7 @@ public class EdowebIngester implements IngestInterface
 				if (b.getStreamMime().compareTo("application/zip") == 0)
 				{
 					webclient.createObject(b, "application/zip",
-							ObjectType.webpageVersion);
+							ObjectType.version);
 					break;
 				}
 			}
@@ -338,7 +336,7 @@ public class EdowebIngester implements IngestInterface
 		{
 			logger.info(pid + " Found ejournal.");
 
-			webclient.createResource(ObjectType.ejournal, dtlBean);
+			webclient.createResource(ObjectType.journal, dtlBean);
 			webclient.metadata(dtlBean);
 			Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 			int numOfVols = viewMainLinks.size();

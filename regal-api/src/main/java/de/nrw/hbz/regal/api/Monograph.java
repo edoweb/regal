@@ -81,11 +81,12 @@ public class Monograph
 	}
 
 	@GET
-	@Path("/{pid}/data")
+	@Path("/{namespace}:{pid}/data")
 	@Produces({ "application/*", "application/json" })
-	public Response readMonographData(@PathParam("pid") String pid)
+	public Response readMonographData(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
 	{
-		return resources.readData(pid);
+		return resources.readData(pid, namespace);
 	}
 
 	@GET
@@ -149,13 +150,13 @@ public class Monograph
 	}
 
 	@POST
-	@Path("/{pid}/data")
+	@Path("/{namespace}:{pid}/data")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes("multipart/mixed")
 	public String updateMonographData(@PathParam("pid") String pid,
-			MultiPart multiPart)
+			@PathParam("namespace") String namespace, MultiPart multiPart)
 	{
-		return resources.updateData(pid, multiPart);
+		return resources.updateData(pid, namespace, multiPart);
 	}
 
 	@POST
