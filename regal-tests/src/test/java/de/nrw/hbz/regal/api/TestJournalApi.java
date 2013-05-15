@@ -24,8 +24,6 @@ import com.sun.jersey.multipart.BodyPart;
 import com.sun.jersey.multipart.MultiPart;
 import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
-import de.nrw.hbz.regal.api.DCBeanAnnotated;
-
 public class TestJournalApi
 {
 
@@ -69,7 +67,7 @@ public class TestJournalApi
 					+ "/utils/deleteNamespace/test");
 
 			WebResource journals = c.resource(properties.getProperty("apiUrl")
-					+ "/ejournal/");
+					+ "/journal/");
 			WebResource aJournal = c.resource(journals.toString() + "test:123");
 
 			WebResource aJournalMetadata = c.resource(aJournal.toString()

@@ -7,14 +7,10 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-
-import de.nrw.hbz.regal.api.Actions;
-import de.nrw.hbz.regal.api.HttpArchiveException;
 
 public class TestTextExtraction
 {
-	@Test
+	// @Test
 	public void testExtraction() throws IOException
 	{
 		Actions actions = new Actions();
