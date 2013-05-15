@@ -376,7 +376,7 @@ public class Resources
 					.getEntityAs(String.class);
 			// if (mimeType.compareTo("application/pdf") == 0)
 			// {
-			// Node node = actions.readNode(namespace+":"+pid);
+			// Node node = actions.readNode(namespace + ":" + pid);
 			// node.addContentModel(ContentModelFactory
 			// .createPdfModel(namespace));
 			// actions.updateNode(node);

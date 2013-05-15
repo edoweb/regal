@@ -1207,6 +1207,8 @@ class Actions
 						Statement st = statements.next();
 						String rdfSubject = st.getSubject().stringValue();
 
+						System.out.println(rdfSubject);
+						System.out.println(pid);
 						if (rdfSubject.compareTo(pid) == 0)
 						{
 							view.addPredicate(st.getPredicate().stringValue(),
