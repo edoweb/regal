@@ -5,8 +5,6 @@ h1. About
 
 regal - repository and graph-based api for library data 
 
-Regal is developed in the context of edoweb3 - http://www.hbz-nrw.de/angebote/hosting/edoweb/
-
 For more information visit the "wiki":https://github.com/edoweb/edoweb2/wiki/
 
 h1. Releases
