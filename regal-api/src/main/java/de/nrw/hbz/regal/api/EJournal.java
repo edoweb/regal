@@ -192,8 +192,8 @@ public class EJournal
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + namespace + ":" + pid
-								+ "/about")).status(303).build();
+						new java.net.URI("../resources/" + namespace + ":"
+								+ pid + "/about")).status(303).build();
 	}
 
 	@GET

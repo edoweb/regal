@@ -1342,7 +1342,7 @@ class Actions
 	List<String> getAll()
 	{
 		Vector<String> pids = new Vector<String>();
-		String query = "* <" + REL_IS_NODE_TYPE + "> <" + TYPE_OBJECT + ">";
+		String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
 		InputStream stream = archive.findTriples(query, FedoraVocabulary.SPO,
 				FedoraVocabulary.N3);
 		String findpid = null;
