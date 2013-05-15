@@ -17,6 +17,8 @@
 package de.nrw.hbz.regal.api;
 
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_CONTENT_TYPE;
+import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_IS_NODE_TYPE;
+import static de.nrw.hbz.regal.datatypes.Vocabulary.TYPE_OBJECT;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.HAS_PART;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_MEMBER_OF;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
@@ -1335,11 +1337,66 @@ class Actions
 	}
 
 	/**
-	 * @return a list of all objects in namespace
+	 * @return a list of all objects
 	 */
 	List<String> getAll()
 	{
-		return archive.findNodes(":*");
+		Vector<String> pids = new Vector<String>();
+		String query = "* <" + REL_IS_NODE_TYPE + "> <" + TYPE_OBJECT + ">";
+		InputStream stream = archive.findTriples(query, FedoraVocabulary.SPO,
+				FedoraVocabulary.N3);
+		String findpid = null;
+		RepositoryConnection con = null;
+		Repository myRepository = new SailRepository(new MemoryStore());
+		try
+		{
+			myRepository.initialize();
+			con = myRepository.getConnection();
+			String baseURI = "";
+
+			con.add(stream, baseURI, RDFFormat.N3);
+
+			RepositoryResult<Statement> statements = con.getStatements(null,
+					null, null, true);
+
+			while (statements.hasNext())
+			{
+				Statement st = statements.next();
+				findpid = st.getSubject().stringValue()
+						.replace("info:fedora/", "");
+				pids.add(findpid);
+			}
+		}
+		catch (RepositoryException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (RDFParseException e)
+		{
+
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (con != null)
+			{
+				try
+				{
+					con.close();
+				}
+				catch (RepositoryException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+		return pids;
 	}
 
 	/**
