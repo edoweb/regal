@@ -9,6 +9,7 @@
 	<artifactId>regal-api</artifactId>
 	<packaging>jar</packaging>
 	<name>regal-api</name>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.marc4j</groupId>

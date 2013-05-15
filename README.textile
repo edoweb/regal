@@ -1,4 +1,5 @@
 !https://raw.github.com/edoweb/regal/gh-pages/img/logo.png!
+!https://secure.travis-ci.org/jschnasse/edoweb2.png?branch=master!:https://travis-ci.org/jschnasse/edoweb2
 
 h1. About
 
@@ -6,47 +7,12 @@ regal - repository and graph-based api for library data
 
 Regal is developed in the context of edoweb3 - http://www.hbz-nrw.de/angebote/hosting/edoweb/
 
-For more information visit the "wiki":https://github.com/edoweb/edoweb2/wiki/_pages
+For more information visit the "wiki":https://github.com/edoweb/edoweb2/wiki/
 
 h1. Releases
 
 Not released yet! The current status of this project is "in development". 
 Current Version is still SNAPSHOT-0.0.1.
-
-h1. Install
-
-Please visit my installation pages on the "wiki":https://github.com/edoweb/regal/wiki/Installation
-
-h1. Build
-
-bc.. mvn clean install 
-
-h2. Api
-
-bc.. cd api
-mvn clean install war:war
-
-h2. Syncer
-
-bc.. cd edoweb-sync
-mvn assembly:assembly
-
-h1. Test
-
-To make use of the integrationTests install a fedora-3.6 and make the api.war available e.g.
-
-bc.. cd api
-mvn clean install war:war
-cp target/api.war /opt/regal/fedora/tomcat/webapps
-
-p. launch tests with
-
-bc.. cd integrationTests
-mvn clean install
-
-h1. Status
-
-!https://secure.travis-ci.org/jschnasse/edoweb2.png?branch=master!:https://travis-ci.org/jschnasse/edoweb2
 
 h1. License
 

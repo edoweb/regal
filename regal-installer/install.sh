@@ -114,18 +114,6 @@ echo >> $ARCHIVE_HOME/conf/setenv.sh
 echo -e "export CATALINA_OPTS" >> $ARCHIVE_HOME/conf/setenv.sh
 echo >> $ARCHIVE_HOME/conf/setenv.sh
 
-#echo "write web.properties"
-#
-#echo "security.ssl.api.management=REQUIRES_SECURE_CHANNEL" > $ARCHIVE_HOME/conf/web.properties
-#echo "security.auth.filters=AuthFilterJAAS" >> $ARCHIVE_HOME/conf/web.properties
-#echo "security.fesl.authN.jaas.apia.enabled=false" >> $ARCHIVE_HOME/conf/web.properties
-#echo "fedora.port=$TOMCAT_PORT" >> $ARCHIVE_HOME/conf/web.properties
-#echo "security.fesl.authZ.enabled=false" >>$ARCHIVE_HOME/conf/web.properties
-#echo "fedora.port.secure=8443" >> $ARCHIVE_HOME/conf/web.properties
-#echo "security.ssl.api.default=ANY_CHANNEL" >> $ARCHIVE_HOME/conf/web.properties
-#echo "security.ssl.api.access=ANY_CHANNEL" >> $ARCHIVE_HOME/conf/web.properties
-#echo  >> $ARCHIVE_HOME/conf/web.properties
-
 echo "write elasticsearch.yml"
 
 echo "cluster.name: $PREFIX$SERVER" > $ARCHIVE_HOME/conf/elasticsearch.yml
@@ -161,10 +149,17 @@ echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /fedora/(.*) http://localhost:$TOMCAT_PORT/fedora/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /search/(.*) http://localhost:$ELASTICSEARCH_PORT/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule ^/resources/(.*) http://localhost:$TOMCAT_PORT/api/resources/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /ejournal/(.*) http://localhost:$TOMCAT_PORT/api/ejournal/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /journal/(.*) http://localhost:$TOMCAT_PORT/api/journal/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /monograph/(.*) http://localhost:$TOMCAT_PORT/api/monograph/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /webpage/(.*) http://localhost:$TOMCAT_PORT/api/webpage/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /utils/(.*)  http://localhost:$TOMCAT_PORT/api/utils/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /volume/(.*)  http://localhost:$TOMCAT_PORT/api/volume/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /version/(.*)  http://localhost:$TOMCAT_PORT/api/version/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /file/(.*)  http://localhost:$TOMCAT_PORT/api/file/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /issue/(.*)  http://localhost:$TOMCAT_PORT/api/issue/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /article/(.*)  http://localhost:$TOMCAT_PORT/api/article/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule /supplement/(.*)  http://localhost:$TOMCAT_PORT/api/article/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+
 echo -e "RewriteRule /oai-pmh/(.*) http://localhost:$TOMCAT_PORT/oai-pmh/\$1 [P] " >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "</VirtualHost>" >> $ARCHIVE_HOME/conf/site.conf
@@ -174,42 +169,55 @@ echo -e "</VirtualHost>" >> $ARCHIVE_HOME/conf/site.conf
 function install()
 {
 echo "download some files"
-git clone https://github.com/jschnasse/regal.git $ARCHIVE_HOME/src
-wget http://repo1.maven.org/maven2/org/fcrepo/fcrepo-installer/3.6.1/fcrepo-installer-3.6.1.jar
-wget http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.19.11.tar.gz
+
+if [ -f $ARCHIVE_HOME/src/README.textile ]
+then
+	echo "regal src clone already exists. Stop cloning!"
+else
+	git clone https://github.com/jschnasse/regal.git $ARCHIVE_HOME/src
+fi
+
+if [ -f fcrepo-installer-3.6.1.jar ]
+then
+	echo "fcrepo is already here! Stop downloading!"
+else
+	wget http://repo1.maven.org/maven2/org/fcrepo/fcrepo-installer/3.6.1/fcrepo-installer-3.6.1.jar
+fi
+
+if [ -f elasticsearch-0.19.11.tar.gz ]
+then
+	echo "elasticsearch is already here! Stop downloading!"
+else
+	wget http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.19.11.tar.gz
+fi
 
 echo "install fedora"
 export FEDORA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora/tomcat
 java -jar fcrepo-installer-3.6.1.jar  $ARCHIVE_HOME/conf/install.properties
-cp  $ARCHIVE_HOME/conf/tomcat-users.xml $ARCHIVE_HOME/fedora/tomcat/conf
-cp  $ARCHIVE_HOME/conf/fedora-users.xml $ARCHIVE_HOME/fedora/server/config/
-cp  $ARCHIVE_HOME/conf/setenv.sh $ARCHIVE_HOME/fedora/tomcat/bin
-#cp  $ARCHIVE_HOME/conf/web.properties $ARCHIVE_HOME/fedora/server/config/spring/web/
 
 echo "install elasticsearch"
 tar -xzf elasticsearch-0.19.11.tar.gz
 mv elasticsearch-0.19.11 $ARCHIVE_HOME/elasticsearch
-mv $ARCHIVE_HOME/elasticsearch/config/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/elasticsearch.yml.bck
-cp $ARCHIVE_HOME/conf/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/
 $ARCHIVE_HOME/elasticsearch/bin/elasticsearch
-
-echo "install apache"
-cp $APACHE_CONF $ARCHIVE_HOME/conf/httpd.conf
-echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
-
-echo "install archive"
-cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
 pwd
 cp variables.sh $ARCHIVE_HOME/bin/
-#$ARCHIVE_HOME/src/ui/helper/rollout.sh
-
 }
 
-function cleanUp()
+function copyConfig()
 {
-rm fcrepo-installer-3.6.1.jar
-rm elasticsearch-0.19.11.tar.gz
+echo "copy tomcat config"
+cp  $ARCHIVE_HOME/conf/tomcat-users.xml $ARCHIVE_HOME/fedora/tomcat/conf
+cp  $ARCHIVE_HOME/conf/fedora-users.xml $ARCHIVE_HOME/fedora/server/config/
+cp  $ARCHIVE_HOME/conf/setenv.sh $ARCHIVE_HOME/fedora/tomcat/bin
+echo "copy elasticsearch config"
+mv $ARCHIVE_HOME/elasticsearch/config/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/elasticsearch.yml.bck
+cp $ARCHIVE_HOME/conf/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/
+echo "copy apache conf"
+cp $APACHE_CONF $ARCHIVE_HOME/conf/httpd.conf
+echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
+echo "install archive"
+cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
 }
 
 function rollout()
@@ -218,7 +226,6 @@ SRC=$ARCHIVE_HOME/src
 WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
 SYNCER_SRC=$SRC/${PREFIX}-sync/target/${PREFIX}-sync-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 SYNCER_DEST=$ARCHIVE_HOME/sync/${PREFIX}sync.jar
-
 
 export FEDORA_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_HOME=$FEDORA_HOME/tomcat
@@ -287,11 +294,14 @@ then
 	makeDir
 	createConfig
 	install
+	copyConfig
 	rollout
-	cleanUp
 else
     if [ $1 == "-u" ]
     then
+	makeDir
+	createConfig
+	copyConfig
 	rollout
     else
 	echo "Wrong usage! Only argument accepted is -u for update."

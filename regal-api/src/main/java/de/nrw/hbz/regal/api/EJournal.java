@@ -39,7 +39,7 @@ import com.sun.jersey.multipart.MultiPart;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-@Path("/ejournal")
+@Path("/journal")
 public class EJournal
 {
 	final static Logger logger = LoggerFactory.getLogger(EJournal.class);
@@ -192,8 +192,8 @@ public class EJournal
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("/resources/" + namespace + ":" + pid
-								+ "/about")).status(303).build();
+						new java.net.URI("../resources/" + namespace + ":"
+								+ pid + "/about")).status(303).build();
 	}
 
 	@GET
