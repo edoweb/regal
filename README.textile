@@ -1,3 +1,5 @@
+!https://raw.github.com/edoweb/regal/gh-pages/img/logo.png!
+
 h1. About
 
 regal - repository and graph-based api for library data 
