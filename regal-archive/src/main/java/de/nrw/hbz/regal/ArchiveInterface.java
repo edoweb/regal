@@ -63,13 +63,6 @@ public interface ArchiveInterface
 
 	/**
 	 * @param pid
-	 *            the pid of the node to read
-	 * @return the node
-	 */
-	public Node readObject(String pid);
-
-	/**
-	 * @param pid
 	 *            the pid of the object to read
 	 * @return A tree-like complex object
 	 */
@@ -81,14 +74,6 @@ public interface ArchiveInterface
 	 * @return the node
 	 */
 	public Node readNode(String pid);
-
-	/**
-	 * @param pid
-	 *            of the node to update
-	 * @param node
-	 *            the new version of the node
-	 */
-	public void updateObject(String pid, Node node);
 
 	/**
 	 * @param object
