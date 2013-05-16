@@ -6,10 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.regal.api.CreateObjectBean;
-import de.nrw.hbz.regal.api.Resources;
-import de.nrw.hbz.regal.api.Utils;
-
 public class TestWebpageApi
 {
 	@Before
@@ -44,7 +40,7 @@ public class TestWebpageApi
 		input.type = "webpage";
 
 		resources.create("1234", "test", input);
-		input.type = "webpageVersion";
+		input.type = "version";
 		input.parentPid = "test:1234";
 		resources.create("4567", "test", input);
 

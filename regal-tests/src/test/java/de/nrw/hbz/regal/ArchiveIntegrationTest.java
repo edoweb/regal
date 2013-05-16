@@ -33,8 +33,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.regal.ArchiveFactory;
-import de.nrw.hbz.regal.ArchiveInterface;
 import de.nrw.hbz.regal.datatypes.ComplexObject;
 import de.nrw.hbz.regal.datatypes.ComplexObjectNode;
 import de.nrw.hbz.regal.datatypes.ContentModel;
@@ -151,7 +149,7 @@ public class ArchiveIntegrationTest
 		try
 		{
 			archive.createComplexObject(object);
-			Node obj = archive.readObject(object.getRoot().getPID());
+			Node obj = archive.readNode(object.getRoot().getPID());
 
 			// System.out.println(obj.getPID());
 			Assert.assertEquals(0,
@@ -203,7 +201,7 @@ public class ArchiveIntegrationTest
 			String theString = writer.toString();
 			System.out.println(theString);
 
-			myObject = archive.readObject(myObject.getPID());
+			myObject = archive.readNode(myObject.getPID());
 
 			Assert.assertEquals(
 					0,

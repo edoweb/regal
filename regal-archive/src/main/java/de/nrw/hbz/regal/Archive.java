@@ -102,35 +102,6 @@ class Archive implements ArchiveInterface
 		return rootObject;
 	}
 
-	private Node createObject(Node object)
-	{
-		Node rootObject = null;
-
-		String pid = object.getPID();
-		if (nodeExists(pid))
-		{
-			throw new ArchiveException(pid + " already exists. Can't create.");
-		}
-
-		String namespace = object.getNamespace();
-		if (namespace == null)
-		{
-
-			throw new ArchiveException(pid + " has no namespace.");
-
-		}
-
-		if (pid == null)
-		{
-			pid = fedoraInterface.getPid(namespace);
-			object.setPID(pid);
-		}
-
-		fedoraInterface.createNode(object);
-
-		return rootObject;
-	}
-
 	@Override
 	public Node createNode(String parentPid)
 	{
@@ -208,7 +179,7 @@ class Archive implements ArchiveInterface
 	{
 		Node object = tree.getRoot();
 
-		createObject(object);
+		createNode(object);
 
 		for (int i = 0; i < tree.sizeOfChildren(); i++)
 		{
@@ -217,7 +188,7 @@ class Archive implements ArchiveInterface
 			iterateCreate(node, object);
 		}
 
-		return readObject(object.getPID());
+		return readNode(object.getPID());
 
 	}
 
@@ -230,17 +201,6 @@ class Archive implements ArchiveInterface
 			ComplexObjectNode n1 = tnode.getChild(i);
 			iterateCreate(n1, node);
 		}
-	}
-
-	@Override
-	public Node readObject(String rootPID)
-	{
-		if (!nodeExists(rootPID))
-		{
-			throw new NodeNotFoundException(rootPID + " doesn't exist.");
-		}
-		return fedoraInterface.readNode(rootPID);
-
 	}
 
 	@Override
@@ -396,19 +356,6 @@ class Archive implements ArchiveInterface
 	}
 
 	@Override
-	public void updateObject(String nodePid, Node object)
-
-	{
-		if (!nodeExists(nodePid))
-		{
-			throw new NodeNotFoundException(nodePid + " doesn't exist.");
-		}
-		updateNode(nodePid, object);
-		sesame.updateNode(object);
-
-	}
-
-	@Override
 	public void updateComplexObject(ComplexObject tree)
 	{
 
@@ -421,7 +368,7 @@ class Archive implements ArchiveInterface
 			iterateUpdate(node, object);
 		}
 
-		updateObject(object.getPID(), object);
+		updateNode(object.getPID(), object);
 
 	}
 
@@ -470,6 +417,34 @@ class Archive implements ArchiveInterface
 		fedoraInterface.updateContentModel(createEdowebMonographModel);
 	}
 
+	private Node createNode(Node object)
+	{
+		Node rootObject = null;
+
+		String pid = object.getPID();
+		if (nodeExists(pid))
+		{
+			throw new ArchiveException(pid + " already exists. Can't create.");
+		}
+
+		String namespace = object.getNamespace();
+		if (namespace == null)
+		{
+
+			throw new ArchiveException(pid + " has no namespace.");
+
+		}
+
+		if (pid == null)
+		{
+			pid = fedoraInterface.getPid(namespace);
+			object.setPID(pid);
+		}
+
+		fedoraInterface.createNode(object);
+
+		return rootObject;
+	}
 	/*
 	 * #How is the #earth so #small. #elliptic #rider, #spaceegg, #transport of
 	 * my #soul. #ahouuuuu
