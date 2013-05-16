@@ -174,7 +174,7 @@ if [ -f $ARCHIVE_HOME/src/README.textile ]
 then
 	echo "regal src clone already exists. Stop cloning!"
 else
-	git clone https://github.com/jschnasse/regal.git $ARCHIVE_HOME/src
+	git clone https://github.com/edoweb/regal.git $ARCHIVE_HOME/src
 fi
 
 if [ -f fcrepo-installer-3.6.1.jar ]
@@ -232,15 +232,21 @@ export CATALINA_HOME=$FEDORA_HOME/tomcat
 
 mkdir -v $ARCHIVE_HOME/${PREFIX}base
 ln -s $ARCHIVE_HOME/${PREFIX}base $ARCHIVE_HOME/html/${PREFIX}base
-$ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh
+$ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh > /dev/null 2>&1
+if [ $? -eq 0 ]
+then
+	echo "Tomcat successfully shutdown!"
+else
+	echo "Tomcat shutdown failed!"
+fi
 
 echo "Fetch source..."
 cd $SRC/
 git pull origin
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
 #cp variables.sh $ARCHIVE_HOME/src/ui/helper/
-echo "Compile..."
-mvn -q -e clean install -DskipTests --settings settings.xml
+echo "Start maven build. If this is your first regal installation, downloading all dependencies can take a lot of time."
+mvn -e clean install -DskipTests --settings settings.xml
 cd -
 
 cd $SRC/${PREFIX}-sync
