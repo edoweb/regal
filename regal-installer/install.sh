@@ -227,7 +227,7 @@ cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resou
 function updateMaster()
 {
 echo "Fetch source..."
-cd $SRC/
+cd $ARCHIVE_HOME/src
 git pull
 git checkout master
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
@@ -239,7 +239,7 @@ cd -
 function updateTest()
 {
 echo "Fetch source..."
-cd $SRC/
+cd $ARCHIVE_HOME/src
 git pull
 git checkout test
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
@@ -258,8 +258,11 @@ SYNCER_DEST=$ARCHIVE_HOME/sync/${PREFIX}sync.jar
 export FEDORA_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_HOME=$FEDORA_HOME/tomcat
 
-mkdir -v $ARCHIVE_HOME/${PREFIX}base
-ln -s $ARCHIVE_HOME/${PREFIX}base $ARCHIVE_HOME/html/${PREFIX}base
+if [ ! -d $ARCHIVE_HOME/${PREFIX}base ]
+then
+	mkdir -v $ARCHIVE_HOME/${PREFIX}base
+fi
+ln -s $ARCHIVE_HOME/${PREFIX}base $ARCHIVE_HOME/html/${PREFIX}base > /dev/null 2>&1
 $ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh > /dev/null 2>&1
 if [ $? -eq 0 ]
 then
@@ -320,6 +323,7 @@ then
 	createConfig
 	install
 	copyConfig
+        updateMaster
 	rollout
 elif [ $# -eq 1 ]
 then
