@@ -175,6 +175,10 @@ then
 	echo "regal src clone already exists. Stop cloning!"
 else
 	git clone https://github.com/edoweb/regal.git $ARCHIVE_HOME/src
+	cd $ARCHIVE_HOME/src
+ 	git checkout -b test origin/test
+	git checkout master
+	cd -
 fi
 
 if [ -f fcrepo-installer-3.6.1.jar ]
@@ -220,6 +224,30 @@ echo "install archive"
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
 }
 
+function updateMaster()
+{
+echo "Fetch source..."
+cd $SRC/
+git pull
+git checkout master
+cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
+echo "Start maven build. If this is your first regal installation, downloading all dependencies can take a lot of time."
+mvn -e clean install -DskipTests --settings settings.xml
+cd -
+}
+
+function updateTest()
+{
+echo "Fetch source..."
+cd $SRC/
+git pull
+git checkout test
+cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
+echo "Start maven build. If this is your first regal installation, downloading all dependencies can take a lot of time."
+mvn -e clean install -DskipTests --settings settings.xml
+cd -
+}
+
 function rollout()
 {
 SRC=$ARCHIVE_HOME/src
@@ -239,15 +267,6 @@ then
 else
 	echo "Tomcat shutdown failed!"
 fi
-
-echo "Fetch source..."
-cd $SRC/
-git pull origin
-cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
-#cp variables.sh $ARCHIVE_HOME/src/ui/helper/
-echo "Start maven build. If this is your first regal installation, downloading all dependencies can take a lot of time."
-mvn -e clean install -DskipTests --settings settings.xml
-cd -
 
 cd $SRC/${PREFIX}-sync
 mvn -q -e assembly:assembly -DskipTests --settings ../settings.xml
@@ -302,15 +321,30 @@ then
 	install
 	copyConfig
 	rollout
-else
+elif [ $# -eq 1 ]
+then
+    
     if [ $1 == "-u" ]
     then
 	makeDir
 	createConfig
 	copyConfig
+	updateMaster
 	rollout
     else
-	echo "Wrong usage! Only argument accepted is -u for update."
+	echo "Wrong usage! Only argument accepted is -u for update. And \"-u test\" for update to last testversion."
+    fi
+else
+
+    if [[ $1 == "-u" ]] && [[ $2 == "test" ]]
+    then
+	makeDir
+	createConfig
+	copyConfig
+	updateTest
+	rollout
+    else
+	echo "Wrong usage! Only argument accepted is -u for update. And \"-u test\" for update to last testversion."
     fi
 fi
 
