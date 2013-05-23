@@ -35,54 +35,56 @@ public class DigitalEntity
 	public static String THUMBNAIL = "THUMBNAIL";
 	public static String VIEW = "VIEW";
 	public static String VIEW_MAIN = "VIEW_MAIN";
-
 	public static String MANIFESTATION = "manifestation";
 	public static String INCLUDE = "include";
 	public static String PART_OF = "part_of";
 
-	boolean isParent = true;
-	String pid = null;
-	String usageType = null;
-	String location = null;
+	private boolean isParent = true;
+	private String pid = null;
+	private String usageType = null;
+	private String location = null;
 
-	String DC = "DC";
-	String PREMIS = "PREMIS";
-	String JHOVE = "JHOVE";
-	String RIGHTS = "RIGHTS";
-	String HIST = "HIST";
-	String TEXT = "TEXT";
-	String CONTROL = "CONTROL";
+	private String DC = "DC";
+	private String PREMIS = "PREMIS";
+	private String JHOVE = "JHOVE";
+	private String RIGHTS = "RIGHTS";
+	private String HIST = "HIST";
+	private String TEXT = "TEXT";
+	private String CONTROL = "CONTROL";
 
-	String MARC = "MARC";
-	String METS_HDR = "METS_HDR";
-	String STRUCT_MAP = "STRUCT_MAP";
-	String FILE_SEC = "FILE_SEC";
+	private String MARC = "MARC";
+	private String METS_HDR = "METS_HDR";
+	private String STRUCT_MAP = "STRUCT_MAP";
+	private String FILE_SEC = "FILE_SEC";
 
-	File dc = null;
-	File preservation = null;
-	File jhove = null;
-	File rights = null;
-	File history = null;
-	File text = null;
-	File control = null;
+	private File dc = null;
+	private File preservation = null;
+	private File jhove = null;
+	private File rights = null;
+	private File history = null;
+	private File text = null;
+	private File control = null;
 
-	File marc = null;
-	File metsHdr = null;
-	File structMap = null;
-	File fileSec = null;
+	private File marc = null;
+	private File metsHdr = null;
+	private File structMap = null;
+	private File fileSec = null;
 
-	String streamMime = null;
-	File stream = null;
-	File xml = null;
+	private String streamMime = null;
+	private File stream = null;
+	private File xml = null;
 
-	Vector<DigitalEntity> archiveLinks = null;
-	Vector<DigitalEntity> thumbnailLinks = null;
-	Vector<DigitalEntity> indexLinks = null;
-	Vector<DigitalEntity> viewLinks;
-	Vector<DigitalEntity> viewMainLinks = null;
+	private Vector<DigitalEntity> archiveLinks = null;
+	private Vector<DigitalEntity> thumbnailLinks = null;
+	private Vector<DigitalEntity> indexLinks = null;
+	private Vector<DigitalEntity> viewLinks = null;
+	private Vector<DigitalEntity> viewMainLinks = null;
+
+	private Vector<EntityRelation> related = null;
+
+	private String parentPid;
 
 	private String label = null;
-	private String parentPid;
 	private String type;
 
 	/**
@@ -97,6 +99,7 @@ public class DigitalEntity
 		indexLinks = new Vector<DigitalEntity>();
 		viewLinks = new Vector<DigitalEntity>();
 		viewMainLinks = new Vector<DigitalEntity>();
+		related = new Vector<EntityRelation>();
 
 	}
 
@@ -147,7 +150,7 @@ public class DigitalEntity
 		try
 		{
 			writer = new BufferedWriter(new FileWriter(file));
-			writer.write(str);
+			writer.write(str.replace("\n", " ").replace("  ", " "));
 		}
 		catch (IOException e)
 		{
@@ -554,5 +557,25 @@ public class DigitalEntity
 	public void setType(String type)
 	{
 		this.type = type;
+	}
+
+	public Vector<EntityRelation> getRelated()
+	{
+		return related;
+	}
+
+	public void setRelated(Vector<EntityRelation> related)
+	{
+		this.related = related;
+	}
+
+	public void addRelated(DigitalEntity entity, String relation)
+	{
+		addRelated(new EntityRelation(entity, relation));
+	}
+
+	public void addRelated(EntityRelation relation)
+	{
+		related.add(relation);
 	}
 }

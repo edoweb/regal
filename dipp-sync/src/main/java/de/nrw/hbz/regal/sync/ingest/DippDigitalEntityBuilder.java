@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URLEncoder;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,11 +47,18 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 	final static Logger logger = LoggerFactory
 			.getLogger(DippDigitalEntityBuilder.class);
 
+	HashMap<String, String> map = new HashMap<String, String>();
+
 	@Override
 	public DigitalEntity build(String baseDir, String pid) throws Exception
 	{
 		// String dir = URLEncoder.encode(baseDir);
-		return buildDigitalEntity(baseDir, pid);
+		if (!map.containsKey(pid))
+		{
+			map.put(pid, pid);
+			return buildDigitalEntity(baseDir, pid);
+		}
+		throw new Exception(pid + " already visited!");
 	}
 
 	private DigitalEntity buildDigitalEntity(String baseDir, String pid)
@@ -100,14 +107,23 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 
 			}
 		}
-		list = getDocument(relsExtFile).getElementsByTagName(
-				"rel:isMemberOfCollection");
 
-		if (list != null && list.getLength() > 0)
-		{
-			dtlDe.setParentPid(list.item(0).getTextContent()
-					.replace("info:fedora/", ""));
-		}
+		buildRelated("rel:isPartOf", dtlDe, baseDir);
+		buildRelated("rel:isConstituentOf", dtlDe, baseDir);
+		buildRelated("rel:isMemberOf", dtlDe, baseDir);
+		buildRelated("rel:isSubsetOf", dtlDe, baseDir);
+		buildRelated("rel:isMemberOfCollection", dtlDe, baseDir);
+		buildRelated("rel:isDerivationOf", dtlDe, baseDir);
+		buildRelated("rel:isDependentOf", dtlDe, baseDir);
+
+		buildRelated("rel:hasPart", dtlDe, baseDir);
+		buildRelated("rel:hasConstituent", dtlDe, baseDir);
+		buildRelated("rel:hasMember", dtlDe, baseDir);
+		buildRelated("rel:hasSubset", dtlDe, baseDir);
+		buildRelated("rel:hasCollectionMember", dtlDe, baseDir);
+		buildRelated("rel:hasDerivation", dtlDe, baseDir);
+		buildRelated("rel:hasDependent", dtlDe, baseDir);
+
 		File content = new File(baseDir + File.separator + "content.zip");
 
 		if (content.exists())
@@ -115,41 +131,47 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 			dtlDe.setStream(content);
 			dtlDe.setStreamMime("application/zip");
 		}
+		else
+		{
 
+		}
+
+		return dtlDe;
+
+	}
+
+	private void buildRelated(String relation, DigitalEntity dtlDe,
+			String baseDir)
+	{
 		try
 		{
-			// logger.debug(pid + " search for members!");
+			File relsExtFile = new File(baseDir + File.separator
+					+ "RELS-EXT.xml");
+			NodeList list = getDocument(relsExtFile).getElementsByTagName(
+					relation);
 
-			Element root = getDocument(relsExtFile);
-			NodeList constituents = root
-					.getElementsByTagName("rel:hasCollectionMember");
-			for (int i = 0; i < constituents.getLength(); i++)
+			for (int i = 0; i < list.getLength(); i++)
 			{
-				Element c = (Element) constituents.item(i);
-				String cPid = c.getAttribute("rdf:resource").replace(
-						"info:fedora/", "");
-				if (cPid.contains("temp"))
+				try
 				{
-					// logger.debug(cPid + " skip temporary object.");
-
+					Element n = (Element) list.item(i);
+					String np = n.getAttribute("rdf:resource");
+					String p = np.replace("info:fedora/", "");
+					logger.info(dtlDe.getPid() + " " + relation + " " + p);
+					logger.debug("BUILD-GRAPH: \"" + dtlDe.getPid() + "\"->\""
+							+ p + "\" [label=\"" + relation + "\"]");
+					dtlDe.addRelated(build(baseDir, p), "relation");
 				}
-				else
+				catch (Exception e)
 				{
-					String cDir = baseDir + File.separator
-							+ URLEncoder.encode(cPid);
-
-					dtlDe.addViewLink(buildDigitalEntity(cDir, cPid));
+					logger.warn(e.getMessage());
 				}
-
 			}
 		}
 		catch (Exception e)
 		{
 			logger.error(e.getMessage());
 		}
-
-		return dtlDe;
-
 	}
 
 	private Element getDocument(File digitalEntityFile)
