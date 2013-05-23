@@ -149,7 +149,7 @@ public class DippDownloader implements DownloaderInterface
 			}
 			catch (Exception e)
 			{
-				logger.error(e.getMessage());
+				logger.debug(e.getMessage());
 			}
 			setUpdated(false);
 			setDownloaded(true);
@@ -167,7 +167,7 @@ public class DippDownloader implements DownloaderInterface
 			}
 			catch (Exception e)
 			{
-				logger.error(e.getMessage());
+				logger.debug(e.getMessage());
 			}
 
 			setUpdated(true);
@@ -355,7 +355,7 @@ public class DippDownloader implements DownloaderInterface
 					logger.debug(pid + " " + relation + " " + cPid);
 					if (!cPid.contains("oai") && !cPid.contains("temp")
 							&& !pid.contains("oai") && !pid.contains("temp"))
-						logger.debug("DOWNLOAD-GRAPH: \"" + pid + "\"->\""
+						logger.info("DOWNLOAD-GRAPH: \"" + pid + "\"->\""
 								+ cPid + "\" [label=\"" + relation + "\"]");
 
 					if (cPid.contains("temp"))
