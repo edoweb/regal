@@ -153,7 +153,8 @@ public class Webclient
 
 		createResource(type, dtlBean);
 
-		if (dtlBean.getStreamMime().compareTo(expectedMime) != 0)
+		if (dtlBean.getStreamMime() != null
+				&& dtlBean.getStreamMime().compareTo(expectedMime) != 0)
 		{
 			DigitalEntity fulltextObject = null;
 			for (DigitalEntity view : dtlBean.getViewMainLinks())
@@ -205,12 +206,16 @@ public class Webclient
 	{
 
 		String pid = namespace + ":" + dtlBean.getPid();
-		String parentPid = namespace + ":" + dtlBean.getParentPid();
+		String ppid = dtlBean.getParentPid();
+
+		String parentPid = namespace + ":" + ppid;
 		String resourceUrl = endpoint + "/resources/" + pid;
 		WebResource resource = webclient.resource(resourceUrl);
 		CreateObjectBean input = new CreateObjectBean();
 		input.setType(type.toString());
-		input.setParentPid(parentPid);
+
+		if (ppid != null && !ppid.isEmpty())
+			input.setParentPid(parentPid);
 
 		try
 		{
