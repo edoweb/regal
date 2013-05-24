@@ -80,7 +80,7 @@ public class DippDownloader implements DownloaderInterface
 	final static Logger logger = LoggerFactory.getLogger(DippDownloader.class);
 
 	// DigitalEntityBeanBuilder beanBuilder = null;
-	String downloadLoaction = null;
+	String downloadLocation = null;
 	String objectDirectory = null;
 	String server = null;
 	boolean updated = false;
@@ -101,7 +101,7 @@ public class DippDownloader implements DownloaderInterface
 	 */
 	public void init(String server, String downloadLocation)
 	{
-		this.downloadLoaction = downloadLocation;
+		this.downloadLocation = downloadLocation;
 		this.server = server;
 		// beanBuilder = new DigitalEntityBeanBuilder();
 	}
@@ -134,7 +134,9 @@ public class DippDownloader implements DownloaderInterface
 			throws IOException
 	{
 
-		objectDirectory = downloadLoaction + File.separator
+		if (map.containsKey(pid))
+			throw new IOException(pid + " already visited!");
+		objectDirectory = downloadLocation + File.separator
 				+ URLEncoder.encode(pid);
 		File dir = new File(objectDirectory);
 		if (!dir.exists())
@@ -211,44 +213,44 @@ public class DippDownloader implements DownloaderInterface
 			downloadStreams(dir, pid);
 			downloadConstituent(dir, pid);
 			downloadRelatedObject(dir, pid, "rel:hasPart");
-			File downloadDir = new File(downloadLoaction);
+			File downloadDir = new File(downloadLocation);
 
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:hasMember");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:hasSubset");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:hasCollectionMember");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:hasDerivation");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:hasDependent");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:hasDescription");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:hasMetadata");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:hasAnnotation");
 
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:hasEquivalent");
 
 			downloadRelatedObject(dir, pid, "rel:isPartOf");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:isMemberOf");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:isSubsetOf");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:isMemberOfCollection");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:isDerivationOf");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:isDependentOf");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:isDescriptionOf");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:isMetadataFor");
-			downloadRelatedObject(new File(downloadLoaction), pid,
+			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:isAnnotationOf");
 
 		}
@@ -353,10 +355,10 @@ public class DippDownloader implements DownloaderInterface
 							"info:fedora/", "");
 
 					logger.debug(pid + " " + relation + " " + cPid);
-					if (!cPid.contains("oai") && !cPid.contains("temp")
-							&& !pid.contains("oai") && !pid.contains("temp"))
-						logger.info("DOWNLOAD-GRAPH: \"" + pid + "\"->\""
-								+ cPid + "\" [label=\"" + relation + "\"]");
+					// if (!cPid.contains("oai") && !cPid.contains("temp")
+					// && !pid.contains("oai") && !pid.contains("temp"))
+					logger.info("DOWNLOAD-GRAPH: \"" + pid + "\"->\"" + cPid
+							+ "\" [label=\"" + relation + "\"]");
 
 					if (cPid.contains("temp"))
 					{
@@ -712,7 +714,7 @@ public class DippDownloader implements DownloaderInterface
 			throw new IOException("Could not open " + propFile + "!");
 		}
 		this.server = properties.getProperty("piddownloader.server");
-		this.downloadLoaction = properties
+		this.downloadLocation = properties
 				.getProperty("piddownloader.downloadLocation");
 
 		PIDReporter pidreporter = new PIDReporter();

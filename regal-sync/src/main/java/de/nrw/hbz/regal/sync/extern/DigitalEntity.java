@@ -17,10 +17,9 @@
 package de.nrw.hbz.regal.sync.extern;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -146,11 +145,12 @@ public class DigitalEntity
 				+ streamId + ".xml");
 
 		file.createNewFile();
-		BufferedWriter writer = null;
+		FileOutputStream writer = null;
 		try
 		{
-			writer = new BufferedWriter(new FileWriter(file));
-			writer.write(str.replace("\n", " ").replace("  ", " "));
+			writer = new FileOutputStream(file);
+			writer.write(str.replace("\n", " ").replace("  ", " ")
+					.getBytes("utf-8"));
 		}
 		catch (IOException e)
 		{

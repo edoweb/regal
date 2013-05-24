@@ -99,6 +99,13 @@ public class TestEdoweb2Fedora
 	@Test
 	public void mainTest() throws IOException
 	{
+		String str = "<ns:title>Ein Title</ns:title><ns:type>Ein Title</ns:type>";
+
+		str = str.replaceAll("<ns\\:", "<dc:");
+		str = str.replaceAll("</ns\\:", "</dc:");
+		str = str.replaceAll("xmlns\\:ns", "xmlns:dc");
+		System.out.println(str);
+
 		System.out
 				.println("de.nrw.hbz.edoweb2.sync.TestEdoweb2Fedora.java : Please comment out to run this test!");
 		// Main main = new Main();
