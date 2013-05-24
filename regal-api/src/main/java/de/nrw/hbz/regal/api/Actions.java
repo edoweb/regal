@@ -1075,12 +1075,19 @@ class Actions
 			{
 				view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
 						+ pidWithoutNamespace);
+
+			}
+		}
+		if (pid.contains("edoweb") || pid.contains("ellinet")
+				|| pid.contains("dipp"))
+		{
+			if (pid.length() <= 17)
+			{
 				// TODO only if synced Resource
 				view.addCacheUrl(this.serverName + "/" + node.getNamespace()
 						+ "base/" + pidWithoutNamespace);
 			}
 		}
-
 		String query = "<info:fedora/" + pid + "> * *";
 		try
 		{

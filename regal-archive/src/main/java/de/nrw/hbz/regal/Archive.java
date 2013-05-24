@@ -153,7 +153,7 @@ class Archive implements ArchiveInterface
 		meToNode.setPredicate(node.getHasNodeType());
 		meToNode.setObject(addUriPrefix(node.getPID()), false);
 		parent.addRelation(meToNode);
-		System.out.println(node.getPID() + " has parent " + parent.getPID());
+		// System.out.println(node.getPID() + " has parent " + parent.getPID());
 		// node to parent
 		Link nodeToMe = new Link();
 		nodeToMe.setPredicate(node.getIsNodeTypeOf());

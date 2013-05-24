@@ -38,6 +38,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Vector;
@@ -56,7 +57,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 
 /**
  * Class DigitoolDownloader
@@ -80,11 +80,12 @@ public class DippDownloader implements DownloaderInterface
 	final static Logger logger = LoggerFactory.getLogger(DippDownloader.class);
 
 	// DigitalEntityBeanBuilder beanBuilder = null;
-	String downloadLoaction = null;
+	String downloadLocation = null;
 	String objectDirectory = null;
 	String server = null;
 	boolean updated = false;
 	boolean downloaded = false;
+	HashMap<String, String> map = new HashMap<String, String>();
 
 	public DippDownloader()
 	{
@@ -100,7 +101,7 @@ public class DippDownloader implements DownloaderInterface
 	 */
 	public void init(String server, String downloadLocation)
 	{
-		this.downloadLoaction = downloadLocation;
+		this.downloadLocation = downloadLocation;
 		this.server = server;
 		// beanBuilder = new DigitalEntityBeanBuilder();
 	}
@@ -114,7 +115,9 @@ public class DippDownloader implements DownloaderInterface
 	 */
 	public String download(String pid) throws IOException
 	{
+
 		return download(pid, true);
+
 	}
 
 	/**
@@ -131,7 +134,9 @@ public class DippDownloader implements DownloaderInterface
 			throws IOException
 	{
 
-		objectDirectory = downloadLoaction + File.separator
+		if (map.containsKey(pid))
+			throw new IOException(pid + " already visited!");
+		objectDirectory = downloadLocation + File.separator
 				+ URLEncoder.encode(pid);
 		File dir = new File(objectDirectory);
 		if (!dir.exists())
@@ -140,8 +145,14 @@ public class DippDownloader implements DownloaderInterface
 					+ " and start to Download files");
 			dir.mkdir();
 
-			downloadObject(dir, pid);
-
+			try
+			{
+				downloadObject(dir, pid);
+			}
+			catch (Exception e)
+			{
+				logger.debug(e.getMessage());
+			}
 			setUpdated(false);
 			setDownloaded(true);
 		}
@@ -152,7 +163,14 @@ public class DippDownloader implements DownloaderInterface
 			FileUtils.deleteDirectory(dir);
 			dir.mkdir();
 
-			downloadObject(dir, pid);
+			try
+			{
+				downloadObject(dir, pid);
+			}
+			catch (Exception e)
+			{
+				logger.debug(e.getMessage());
+			}
 
 			setUpdated(true);
 			setDownloaded(true);
@@ -165,153 +183,23 @@ public class DippDownloader implements DownloaderInterface
 			setUpdated(false);
 		}
 
-		String ppid = null;
-		if ((ppid = getParent(pid)) != null)
-		{
-			logger.info(pid + " has parent " + ppid);
-			String path = downloadLoaction + File.separator
-					+ URLEncoder.encode(ppid);
-			File parent = new File(path);
-			if (!parent.exists())
-			{
-				FileUtils.deleteDirectory(dir);
-				throw new IOException(
-						"Can't download part without downloading parent. Parent pid is "
-								+ ppid);
-			}
-			else
-			{
-				File tdir = new File(parent.getAbsolutePath());
-				if (!tdir.exists())
-				{
-					for (String file : dir.list())
-					{
-						File f = new File(dir.getAbsoluteFile()
-								+ File.separator + file);
-						if (f.isDirectory())
-						{
-							FileUtils.moveDirectoryToDirectory(f, tdir, true);
-						}
-						else
-						{
-							File test = new File(tdir + File.separator
-									+ f.getName());
-							if (test.exists())
-								test.delete();
-							FileUtils.moveFileToDirectory(f, tdir, true);
-
-						}
-					}
-
-					setUpdated(false);
-					setDownloaded(true);
-				}
-				else if (forceDownload)
-				{
-
-					for (String file : dir.list())
-					{
-						File f = new File(dir.getAbsoluteFile()
-								+ File.separator + file);
-						if (f.isDirectory())
-						{
-							File test = new File(tdir + File.separator
-									+ f.getName());
-							if (test.exists())
-								FileUtils.deleteDirectory(test);
-							FileUtils.moveDirectoryToDirectory(f, tdir, true);
-						}
-						else
-						{
-							File test = new File(tdir + File.separator
-									+ f.getName());
-							if (test.exists())
-								test.delete();
-							FileUtils.moveFileToDirectory(f, tdir, true);
-						}
-					}
-					setUpdated(true);
-					setDownloaded(true);
-				}
-				else
-				{
-					logger.info("Directory " + tdir.getAbsoluteFile()
-							+ " exists. Step over.");
-					setDownloaded(false);
-				}
-
-			}
-			FileUtils.deleteDirectory(dir);
-			return parent.getAbsolutePath();
-
-		}
 		return dir.getAbsolutePath();
+
 	}
 
-	private String getParent(String pid)
+	private void downloadObject(File dir, String pid) throws Exception
 	{
-		String ppid = null;
-
 		try
 		{
-			URL url = new URL(server + "get/" + pid + "/RELS-EXT");
-			String data = null;
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(url.openStream(), writer);
-			data = writer.toString();
-
-			Element root = stringToElement(data);
-			NodeList constituents = root
-					.getElementsByTagName("rel:isConstituentOf");
-
-			if (constituents == null || constituents.getLength() == 0)
+			if (!map.containsKey(pid))
 			{
-				NodeList collections = root
-						.getElementsByTagName("rel:isMemberOfCollection");
+				map.put(pid, pid);
 
-				if (collections == null || collections.getLength() == 0)
-				{
-					logger.info(pid
-							+ " is not member of collection or constituent.");
-				}
-				else if (collections.getLength() == 1)
-				{
-					return ((Element) collections.item(0)).getAttribute(
-							"rdf:resource").replace("info:fedora/", "");
-				}
-				else
-				{
-					logger.warn(pid + " is member of more then one collection.");
-					return ((Element) collections.item(0)).getAttribute(
-							"rdf:resource").replace("info:fedora/", "");
-				}
-
-			}
-			else if (constituents.getLength() == 1)
-			{
-				return ((Element) constituents.item(0)).getAttribute(
-						"rdf:resource").replace("info:fedora/", "");
 			}
 			else
 			{
-				logger.warn(pid + " is constituent of more then one object.");
-				return ((Element) constituents.item(0)).getAttribute(
-						"rdf:resource").replace("info:fedora/", "");
+				throw new Exception(pid + " already visited!");
 			}
-
-		}
-		catch (Exception e)
-		{
-			logger.error(e.getMessage());
-		}
-
-		return ppid;
-	}
-
-	private void downloadObject(File dir, String pid)
-	{
-		try
-		{
 			logger.debug(pid + " start download!");
 			URL url = new URL(server + "get/" + pid + "?xml=true");
 			File file = new File(dir.getAbsolutePath() + File.separator
@@ -323,8 +211,47 @@ public class DippDownloader implements DownloaderInterface
 			FileUtils.writeStringToFile(file, data, "utf-8");
 
 			downloadStreams(dir, pid);
-			downloadConstituents(dir, pid);
-			downloadCollectionMember(dir, pid);
+			downloadConstituent(dir, pid);
+			downloadRelatedObject(dir, pid, "rel:hasPart");
+			File downloadDir = new File(downloadLocation);
+
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:hasMember");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:hasSubset");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:hasCollectionMember");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:hasDerivation");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:hasDependent");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:hasDescription");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:hasMetadata");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:hasAnnotation");
+
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:hasEquivalent");
+
+			downloadRelatedObject(dir, pid, "rel:isPartOf");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isMemberOf");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isSubsetOf");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isMemberOfCollection");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isDerivationOf");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isDependentOf");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isDescriptionOf");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isMetadataFor");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isAnnotationOf");
 
 		}
 		catch (MalformedURLException e)
@@ -338,8 +265,10 @@ public class DippDownloader implements DownloaderInterface
 
 	}
 
-	private void downloadConstituents(File dir, String pid)
+	private void downloadConstituent(File dir, String pid)
 	{
+		String relation = "rel:hasConstituent";
+
 		try
 		{
 			URL url = new URL(server + "get/" + pid + "/RELS-EXT");
@@ -349,49 +278,14 @@ public class DippDownloader implements DownloaderInterface
 			data = writer.toString();
 
 			Element root = stringToElement(data);
-			NodeList constituents = root
-					.getElementsByTagName("rel:hasConstituent");
+			NodeList constituents = root.getElementsByTagName(relation);
+			if (constituents == null || constituents.getLength() == 0)
+				return;
+			File zipDir = new File(dir.getAbsolutePath() + File.separator
+					+ "content");
 			for (int i = 0; i < constituents.getLength(); i++)
 			{
-				Element c = (Element) constituents.item(i);
-				String cPid = c.getAttribute("rdf:resource").replace(
-						"info:fedora/", "");
-				File cDir = new File(dir.getAbsolutePath() + File.separator
-						+ URLEncoder.encode(cPid));
-				downloadObject(cDir, cPid);
 
-				cDir = new File(dir.getAbsolutePath() + File.separator
-						+ "content");
-				downloadObject(cDir, cPid);
-				File cFile = new File(dir.getAbsolutePath() + File.separator
-						+ "content.zip");
-				zip(cDir, cFile);
-
-			}
-		}
-		catch (Exception e)
-		{
-			logger.error(e.getMessage());
-		}
-
-	}
-
-	private void downloadCollectionMember(File dir, String pid)
-	{
-		try
-		{
-			logger.debug(pid + " search for members!");
-			URL url = new URL(server + "get/" + pid + "/RELS-EXT");
-			String data = null;
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(url.openStream(), writer);
-			data = writer.toString();
-
-			Element root = stringToElement(data);
-			NodeList constituents = root
-					.getElementsByTagName("rel:hasCollectionMember");
-			for (int i = 0; i < constituents.getLength(); i++)
-			{
 				Element c = (Element) constituents.item(i);
 				String cPid = c.getAttribute("rdf:resource").replace(
 						"info:fedora/", "");
@@ -403,9 +297,87 @@ public class DippDownloader implements DownloaderInterface
 				else
 				{
 					File cDir = new File(dir.getAbsolutePath() + File.separator
-							+ URLEncoder.encode(cPid));
 
-					downloadObject(cDir, cPid);
+					+ URLEncoder.encode(cPid));
+
+					try
+					{
+						downloadObject(cDir, cPid);
+					}
+					catch (Exception e)
+					{
+						logger.warn(e.getMessage());
+					}
+					try
+					{
+						map.remove(cPid);
+						downloadObject(zipDir, cPid);
+					}
+					catch (Exception e)
+					{
+						logger.warn(e.getMessage());
+					}
+				}
+
+			}
+			File cFile = new File(dir.getAbsolutePath() + File.separator
+					+ "content.zip");
+			logger.debug("I will zip now! " + zipDir.getAbsolutePath() + " to "
+					+ cFile.getAbsolutePath());
+			zip(zipDir, cFile);
+
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getMessage());
+		}
+
+	}
+
+	private void downloadRelatedObject(File dir, String pid, String relation)
+	{
+		try
+		{
+			URL url = new URL(server + "get/" + pid + "/RELS-EXT");
+			String data = null;
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(url.openStream(), writer);
+			data = writer.toString();
+
+			Element root = stringToElement(data);
+			NodeList constituents = root.getElementsByTagName(relation);
+			for (int i = 0; i < constituents.getLength(); i++)
+			{
+				try
+				{
+					Element c = (Element) constituents.item(i);
+					String cPid = c.getAttribute("rdf:resource").replace(
+							"info:fedora/", "");
+
+					logger.debug(pid + " " + relation + " " + cPid);
+					// if (!cPid.contains("oai") && !cPid.contains("temp")
+					// && !pid.contains("oai") && !pid.contains("temp"))
+					logger.info("DOWNLOAD-GRAPH: \"" + pid + "\"->\"" + cPid
+							+ "\" [label=\"" + relation + "\"]");
+
+					if (cPid.contains("temp"))
+					{
+						logger.debug(cPid + " skip temporary object.");
+
+					}
+					else
+					{
+						File cDir = new File(dir.getAbsolutePath()
+								+ File.separator
+
+								+ URLEncoder.encode(cPid));
+
+						downloadObject(cDir, cPid);
+					}
+				}
+				catch (Exception e)
+				{
+					logger.debug(e.getMessage());
 				}
 
 			}
@@ -742,7 +714,7 @@ public class DippDownloader implements DownloaderInterface
 			throw new IOException("Could not open " + propFile + "!");
 		}
 		this.server = properties.getProperty("piddownloader.server");
-		this.downloadLoaction = properties
+		this.downloadLocation = properties
 				.getProperty("piddownloader.downloadLocation");
 
 		PIDReporter pidreporter = new PIDReporter();

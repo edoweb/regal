@@ -137,6 +137,48 @@ public class Webclient
 	}
 
 	/**
+	 * Metadata performs typical metadata related api-actions like update the dc
+	 * stream enrich with catalogdata. Add the object to the searchindex and
+	 * provide it on the oai interface.
+	 * 
+	 * @param dtlBean
+	 *            A DigitalEntity to operate on
+	 */
+	public void metadata(DigitalEntity dtlBean, String metadata)
+	{
+		metadata(dtlBean);
+		String pid = namespace + ":" + dtlBean.getPid();
+		String resource = endpoint + "/resources/" + pid;
+		String m = "";
+		try
+		{
+			logger.info("Metadata: " + metadata);
+			m = readMetadata(resource + "/metadata", dtlBean);
+
+		}
+		catch (Exception e)
+		{
+			logger.error(dtlBean.getPid() + " " + e.getMessage());
+		}
+		try
+		{
+			String merge = mergeMetadata(m, metadata);
+			logger.info("MERGE: " + metadata);
+			updateMetadata(resource + "/metadata", merge);
+		}
+		catch (Exception e)
+		{
+			logger.error(dtlBean.getPid() + " " + e.getMessage());
+		}
+
+	}
+
+	private String mergeMetadata(String m, String metadata)
+	{
+		return m + "\n" + metadata;
+	}
+
+	/**
 	 * @param dtlBean
 	 *            A DigitalEntity to operate on.
 	 * @param expectedMime
@@ -153,7 +195,8 @@ public class Webclient
 
 		createResource(type, dtlBean);
 
-		if (dtlBean.getStreamMime().compareTo(expectedMime) != 0)
+		if (dtlBean.getStreamMime() != null
+				&& dtlBean.getStreamMime().compareTo(expectedMime) != 0)
 		{
 			DigitalEntity fulltextObject = null;
 			for (DigitalEntity view : dtlBean.getViewMainLinks())
@@ -205,12 +248,20 @@ public class Webclient
 	{
 
 		String pid = namespace + ":" + dtlBean.getPid();
-		String parentPid = namespace + ":" + dtlBean.getParentPid();
+		String ppid = dtlBean.getParentPid();
+
+		String parentPid = namespace + ":" + ppid;
 		String resourceUrl = endpoint + "/resources/" + pid;
 		WebResource resource = webclient.resource(resourceUrl);
 		CreateObjectBean input = new CreateObjectBean();
 		input.setType(type.toString());
-		input.setParentPid(parentPid);
+		logger.debug(pid + " type: " + input.getType());
+		if (ppid != null && !ppid.isEmpty())
+		{
+			logger.debug("Parent: " + dtlBean.getParentPid());
+			input.setParentPid(parentPid);
+
+		}
 
 		try
 		{
@@ -256,6 +307,18 @@ public class Webclient
 		{
 			logger.debug(pid + " " + e.getMessage());
 		}
+	}
+
+	private String readMetadata(String url, DigitalEntity dtlBean)
+	{
+		WebResource metadataRes = webclient.resource(url);
+		return metadataRes.get(String.class);
+	}
+
+	private void updateMetadata(String url, String metadata)
+	{
+		WebResource metadataRes = webclient.resource(url);
+		metadataRes.put(metadata);
 	}
 
 	private void updateLabel(String url, DigitalEntity dtlBean)

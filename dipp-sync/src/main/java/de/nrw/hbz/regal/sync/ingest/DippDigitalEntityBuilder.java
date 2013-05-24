@@ -17,11 +17,13 @@
 package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,67 +49,95 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 	final static Logger logger = LoggerFactory
 			.getLogger(DippDigitalEntityBuilder.class);
 
+	HashMap<String, DigitalEntity> map = new HashMap<String, DigitalEntity>();
+
 	@Override
 	public DigitalEntity build(String baseDir, String pid) throws Exception
 	{
-		// String dir = URLEncoder.encode(baseDir);
-		return buildDigitalEntity(baseDir, pid);
+
+		if (!map.containsKey(pid))
+		{
+			DigitalEntity e = new DigitalEntity(baseDir);
+			// store reference to e
+			map.put(pid, e);
+			// update Reference
+			e = buildDigitalEntity(baseDir, pid, e);
+			return e;
+		}
+		return map.get(pid);
 	}
 
-	private DigitalEntity buildDigitalEntity(String baseDir, String pid)
+	private DigitalEntity buildDigitalEntity(String baseDir, String pid,
+			DigitalEntity dtlDe)
 	{
-		DigitalEntity dtlDe = new DigitalEntity(baseDir);
+		// dtlDe = new DigitalEntity(baseDir);
 		File dcFile = new File(baseDir + File.separator + "QDC.xml");
+		if (!dcFile.exists())
+		{
+			dcFile = new File(baseDir + File.separator + "DC.xml");
+		}
 		File relsExtFile = new File(baseDir + File.separator + "RELS-EXT.xml");
 		dtlDe.setPid(pid);
+
 		try
 		{
-			String dcString = IOUtils.readStringFromStream(new FileInputStream(
-					dcFile));
-			dcString = dcString.replaceAll("<ns:", "<dc:");
-			dcString = dcString.replaceAll("</ns:", "</dc:");
-			dcString = dcString.replaceAll("xmlns:ns", "xmlns:dc");
+
+			FileInputStream fis = new FileInputStream(dcFile);
+			String dcString = IOUtils.toString(fis, "UTF-8");
+			dcString = dcString.replaceAll("<ns\\:", "<dc:");
+			dcString = dcString.replaceAll("</ns\\:", "</dc:");
+			dcString = dcString.replaceAll("xmlns\\:ns", "xmlns:dc");
 
 			dtlDe.setDc(dcString);
+			NodeList list = getDocument(dcString).getElementsByTagName(
+					"dc:title");
+
+			if (list != null && list.getLength() > 0)
+			{
+				dtlDe.setLabel(list.item(0).getTextContent());
+			}
+
+			list = getDocument(dcString).getElementsByTagName("dc:type");
+			if (list != null && list.getLength() > 0)
+			{
+				for (int i = 0; i < list.getLength(); i++)
+				{
+					Element el = (Element) list.item(i);
+					String type = el.getAttribute("xsi:type");
+					if (type.compareTo("oai:pub-type") == 0)
+					{
+						dtlDe.setType(el.getTextContent());
+					}
+
+				}
+			}
+
 		}
 		catch (FileNotFoundException e)
 		{
-			logger.error(e.getMessage());
+			logger.debug(e.getMessage());
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
-			logger.error(e.getMessage());
+			logger.debug(e.getMessage());
 		}
 
-		NodeList list = getDocument(dcFile).getElementsByTagName("ns:title");
+		buildRelated("rel:isPartOf", dtlDe, baseDir);
+		// buildRelated("rel:isConstituentOf", dtlDe, baseDir);
+		buildRelated("rel:isMemberOf", dtlDe, baseDir);
+		buildRelated("rel:isSubsetOf", dtlDe, baseDir);
+		buildRelated("rel:isMemberOfCollection", dtlDe, baseDir);
+		buildRelated("rel:isDerivationOf", dtlDe, baseDir);
+		buildRelated("rel:isDependentOf", dtlDe, baseDir);
 
-		if (list != null && list.getLength() > 0)
-		{
-			dtlDe.setLabel(list.item(0).getTextContent());
-		}
+		buildRelated("rel:hasPart", dtlDe, baseDir);
+		// buildRelated("rel:hasConstituent", dtlDe, baseDir);
+		buildRelated("rel:hasMember", dtlDe, baseDir);
+		buildRelated("rel:hasSubset", dtlDe, baseDir);
+		buildRelated("rel:hasCollectionMember", dtlDe, baseDir);
+		buildRelated("rel:hasDerivation", dtlDe, baseDir);
+		buildRelated("rel:hasDependent", dtlDe, baseDir);
 
-		list = getDocument(dcFile).getElementsByTagName("ns:type");
-		if (list != null && list.getLength() > 0)
-		{
-			for (int i = 0; i < list.getLength(); i++)
-			{
-				Element el = (Element) list.item(i);
-				String type = el.getAttribute("xsi:type");
-				if (type.compareTo("oai:pub-type") == 0)
-				{
-					dtlDe.setType(el.getTextContent());
-				}
-
-			}
-		}
-		list = getDocument(relsExtFile).getElementsByTagName(
-				"rel:isMemberOfCollection");
-
-		if (list != null && list.getLength() > 0)
-		{
-			dtlDe.setParentPid(list.item(0).getTextContent()
-					.replace("info:fedora/", ""));
-		}
 		File content = new File(baseDir + File.separator + "content.zip");
 
 		if (content.exists())
@@ -115,41 +145,56 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 			dtlDe.setStream(content);
 			dtlDe.setStreamMime("application/zip");
 		}
-
-		try
+		else
 		{
-			// logger.debug(pid + " search for members!");
 
-			Element root = getDocument(relsExtFile);
-			NodeList constituents = root
-					.getElementsByTagName("rel:hasCollectionMember");
-			for (int i = 0; i < constituents.getLength(); i++)
-			{
-				Element c = (Element) constituents.item(i);
-				String cPid = c.getAttribute("rdf:resource").replace(
-						"info:fedora/", "");
-				if (cPid.contains("temp"))
-				{
-					// logger.debug(cPid + " skip temporary object.");
-
-				}
-				else
-				{
-					String cDir = baseDir + File.separator
-							+ URLEncoder.encode(cPid);
-
-					dtlDe.addViewLink(buildDigitalEntity(cDir, cPid));
-				}
-
-			}
-		}
-		catch (Exception e)
-		{
-			logger.error(e.getMessage());
 		}
 
 		return dtlDe;
 
+	}
+
+	private void buildRelated(String relation, DigitalEntity dtlDe,
+			String baseDir)
+	{
+		try
+		{
+			File relsExtFile = new File(baseDir + File.separator
+					+ "RELS-EXT.xml");
+			logger.debug("Parse file: " + relsExtFile.getAbsolutePath());
+			NodeList list = getDocument(relsExtFile).getElementsByTagName(
+					relation);
+
+			logger.debug("found " + list.getLength() + " nodes with tagname "
+					+ relation);
+			for (int i = 0; i < list.getLength(); i++)
+			{
+				String p = null;
+				try
+				{
+					Element n = (Element) list.item(i);
+					logger.debug(n.getTagName());
+					String np = n.getAttribute("rdf:resource");
+					p = np.replace("info:fedora/", "");
+					logger.debug("BUILD-GRAPH: \"" + dtlDe.getPid() + "\"->\""
+							+ p + "\" [label=\"" + relation + "\"]");
+
+					int end = baseDir.lastIndexOf(File.separator);
+					String dir = baseDir.substring(0, end) + File.separator
+							+ URLEncoder.encode(p);
+					if (!p.contains("temp"))
+						dtlDe.addRelated(build(dir, p), relation);
+				}
+				catch (Exception e)
+				{
+					logger.debug(e.getMessage());
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			logger.debug(e.getMessage());
+		}
 	}
 
 	private Element getDocument(File digitalEntityFile)
@@ -173,26 +218,71 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 		catch (FileNotFoundException e)
 		{
 
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		catch (SAXException e)
 		{
 
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		catch (IOException e)
 		{
 
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		catch (ParserConfigurationException e)
 		{
 
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			logger.error(e.getMessage());
+		}
+		return null;
+	}
+
+	private Element getDocument(String str)
+	{
+		try
+		{
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder docBuilder;
+
+			docBuilder = factory.newDocumentBuilder();
+
+			Document doc;
+
+			doc = docBuilder.parse(new BufferedInputStream(
+					new ByteArrayInputStream(str.getBytes("UTF-8"))));
+			Element root = doc.getDocumentElement();
+			root.normalize();
+			return root;
+		}
+		catch (FileNotFoundException e)
+		{
+
+			logger.error(e.getMessage());
+		}
+		catch (SAXException e)
+		{
+
+			logger.error(e.getMessage());
+		}
+		catch (IOException e)
+		{
+
+			logger.error(e.getMessage());
+		}
+		catch (ParserConfigurationException e)
+		{
+
+			logger.error(e.getMessage());
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getMessage());
 		}
 		return null;
 	}

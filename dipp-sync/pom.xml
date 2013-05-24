@@ -64,22 +64,79 @@
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>dipp-downloader</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>sli4j-slf4j-log4j</artifactId>
+					<groupId>com.googlecode.sli4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>sli4j-log4j</artifactId>
+					<groupId>com.googlecode.sli4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>sli4j-slf4j</artifactId>
+					<groupId>com.googlecode.sli4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>sli4j-slf4j-log4j</artifactId>
+					<groupId>com.googlecode.sli4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>sli4j-slf4j</artifactId>
+					<groupId>com.googlecode.sli4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j-over-slf4j</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jcl-over-slf4j</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		
+
+
+
+
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
+			<groupId>com.googlecode.sli4j</groupId>
+			<artifactId>sli4j-slf4j-logback</artifactId>
+			<version>2.0</version>
 		</dependency>
 	</dependencies>
 </project>
