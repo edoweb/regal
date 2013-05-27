@@ -182,7 +182,7 @@ public class DippDownloader implements DownloaderInterface
 			setDownloaded(false);
 			setUpdated(false);
 		}
-
+		map.clear();
 		return dir.getAbsolutePath();
 
 	}
@@ -215,25 +215,25 @@ public class DippDownloader implements DownloaderInterface
 			downloadRelatedObject(dir, pid, "rel:hasPart");
 			File downloadDir = new File(downloadLocation);
 
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:hasMember");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:hasSubset");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:hasCollectionMember");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:hasDerivation");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:hasDependent");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:hasDescription");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:hasMetadata");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:hasAnnotation");
-
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:hasEquivalent");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasMember");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasSubset");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasCollectionMember");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasDerivation");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasDependent");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasDescription");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasMetadata");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasAnnotation");
+			//
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasEquivalent");
 
 			downloadRelatedObject(dir, pid, "rel:isPartOf");
 			downloadRelatedObject(new File(downloadLocation), pid,
@@ -242,16 +242,16 @@ public class DippDownloader implements DownloaderInterface
 					"rel:isSubsetOf");
 			downloadRelatedObject(new File(downloadLocation), pid,
 					"rel:isMemberOfCollection");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:isDerivationOf");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:isDependentOf");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:isDescriptionOf");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:isMetadataFor");
-			downloadRelatedObject(new File(downloadLocation), pid,
-					"rel:isAnnotationOf");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:isDerivationOf");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:isDependentOf");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:isDescriptionOf");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:isMetadataFor");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:isAnnotationOf");
 
 		}
 		catch (MalformedURLException e)

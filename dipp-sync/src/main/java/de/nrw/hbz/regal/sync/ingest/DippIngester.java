@@ -99,12 +99,12 @@ public class DippIngester implements IngestInterface
 		int count = 1;
 		// logger.info(pid + " Found " + num + " parts.");
 
-		if (isParent(dtlBean))
-			logger.info("\n-----------------------\n" + pid + " is a Journal!"
-					+ "\n-----------------------");
+		// if (isParent(dtlBean))
+		// logger.debug("\n-----------------------\n" + pid + " is a Journal!"
+		// + "\n-----------------------");
 		for (EntityRelation relation : related)
 		{
-			logger.info("INGEST-GRAPH: \"" + pid + "\"->\""
+			logger.debug("INGEST-GRAPH: \"" + pid + "\"->\""
 					+ relation.entity.getPid() + "\" [label=\""
 					+ relation.relation + "\"]");
 			if (relation.relation.compareTo("rel:isMemberOfCollection") == 0
