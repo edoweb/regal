@@ -34,6 +34,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -1086,7 +1087,7 @@ class Actions
 
 			// TODO only if synced Resource
 			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
-					+ "base/" + pid);
+					+ "base/" + URLEncoder.encode(pid));
 
 		}
 		String query = "<info:fedora/" + pid + "> * *";
