@@ -182,7 +182,7 @@ public class DippDownloader implements DownloaderInterface
 			setDownloaded(false);
 			setUpdated(false);
 		}
-
+		map.clear();
 		return dir.getAbsolutePath();
 
 	}
