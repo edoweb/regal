@@ -1047,7 +1047,9 @@ class Actions
 	{
 
 		String pid = node.getPID();
-		String uri = uriPrefix + pid;
+		String uri = pid;
+		String apiUrl = uriPrefix + pid;
+
 		View view = new View();
 		view.setLastModified(node.getLastModified());
 		view.setCreator(node.getCreator());
@@ -1063,7 +1065,8 @@ class Actions
 		if (label != null && !label.isEmpty())
 			view.addDescription(label);
 		view.setUri(uri);
-		view.addType(TypeType.contentType + ":" + node.getContentType());
+		view.setApiUrl(apiUrl);
+		view.setContentType(node.getContentType());
 
 		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
 
@@ -1086,8 +1089,10 @@ class Actions
 		{
 
 			// TODO only if synced Resource
+			view.addDigitoolUrl("http://193.30.112.23:9280/fedora/get/" + pid
+					+ "/QDC");
 			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
-					+ "base/" + URLEncoder.encode(pid));
+					+ "base/" + URLEncoder.encode(URLEncoder.encode(pid)));
 
 		}
 		String query = "<info:fedora/" + pid + "> * *";
@@ -1107,11 +1112,11 @@ class Actions
 		{
 			if (mime.compareTo("application/pdf") == 0)
 			{
-				view.addPdfUrl(uri + "/data");
+				view.addPdfUrl(apiUrl + "/data");
 			}
 			if (mime.compareTo("application/zip") == 0)
 			{
-				view.addZipUrl(uri + "/data");
+				view.addZipUrl(apiUrl + "/data");
 			}
 		}
 		for (String date : node.getDate())

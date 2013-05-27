@@ -167,7 +167,7 @@ class HtmlAdapter
 		Element searchLink = doc.createElement("a");
 		try
 		{
-			String host = new URI(view.getUri()).getHost();
+			String host = new URI(view.getApiUrl()).getHost();
 			searchLink.setAttribute("href", "http://" + host);
 			Element searchImage = doc.createElement("img");
 			searchImage.setAttribute("src", "/search.png");
@@ -189,7 +189,11 @@ class HtmlAdapter
 
 		addToTable(doc, table, "Fulltext", view.getPdfUrl());
 
-		addToTable(doc, table, "URI", view.getUri());
+		addToTable(doc, table, "Url", view.getApiUrl());
+
+		addToTable(doc, table, "Uri", view.getUri());
+
+		addToTable(doc, table, "Content-Type", view.getContentType());
 
 		addToTable(doc, table, "Aleph Id", view.getAlephid());
 
