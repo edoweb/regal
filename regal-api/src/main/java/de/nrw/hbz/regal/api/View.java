@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class View
 {
 	String uri = null;
+	String contentType = null;
+	String apiUrl = null;
 
 	Vector<String> title = null;
 	Vector<String> creator = null;
@@ -996,4 +998,25 @@ public class View
 	{
 		return lastModified;
 	}
+
+	public String getContentType()
+	{
+		return contentType;
+	}
+
+	public void setContentType(String contentType)
+	{
+		this.contentType = contentType;
+	}
+
+	public String getApiUrl()
+	{
+		return apiUrl;
+	}
+
+	public void setApiUrl(String apiUrl)
+	{
+		this.apiUrl = apiUrl;
+	}
+
 }
