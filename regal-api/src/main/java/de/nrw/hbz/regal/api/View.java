@@ -65,7 +65,7 @@ public class View
 	Vector<String> lobidUrl = null;
 	Vector<String> culturegraphUrl = null;
 	Vector<String> baseUrl = null;
-	Vector<String> digitoolUrl = null;
+	Vector<String> originalObjectUrl = null;
 	Vector<String> cacheUrl = null;
 	Vector<String> fedoraUrl = null;
 	Vector<String> risearchUrl = null;
@@ -116,7 +116,7 @@ public class View
 		dataciteUrl = new Vector<String>();
 		baseUrl = new Vector<String>();
 		zipUrl = new Vector<String>();
-		digitoolUrl = new Vector<String>();
+		originalObjectUrl = new Vector<String>();
 		cacheUrl = new Vector<String>();
 		fedoraUrl = new Vector<String>();
 		risearchUrl = new Vector<String>();
@@ -275,14 +275,14 @@ public class View
 		this.rights = rights;
 	}
 
-	public Vector<String> getDigitoolUrl()
+	public Vector<String> getOriginalObjectUrl()
 	{
-		return digitoolUrl;
+		return originalObjectUrl;
 	}
 
-	public void setDigitoolUrl(Vector<String> digitoolUrl)
+	public void setOriginalObjectUrl(Vector<String> originalObject)
 	{
-		this.digitoolUrl = digitoolUrl;
+		this.originalObjectUrl = originalObject;
 	}
 
 	public Vector<String> getCacheUrl()
@@ -712,9 +712,9 @@ public class View
 		return risearchUrl.add(e);
 	}
 
-	public boolean addDigitoolUrl(String e)
+	public boolean addOriginalObjectUrl(String e)
 	{
-		return digitoolUrl.add(e);
+		return originalObjectUrl.add(e);
 	}
 
 	public boolean addDescription(String e)
@@ -897,11 +897,11 @@ public class View
 		return str;
 	}
 
-	public String getFirstDigitoolUrl()
+	public String getFirstOriginalObjectUrl()
 	{
-		if (digitoolUrl.isEmpty())
+		if (originalObjectUrl.isEmpty())
 			return "";
-		String str = digitoolUrl.firstElement();
+		String str = originalObjectUrl.firstElement();
 		if (str == null)
 			str = "";
 		return str;
