@@ -301,13 +301,13 @@ class HtmlAdapter
 			td.appendChild(a);
 		}
 
-		if (view.getFirstDigitoolUrl() != null
-				&& !view.getFirstDigitoolUrl().isEmpty())
+		if (view.getFirstOriginalObjectUrl() != null
+				&& !view.getFirstOriginalObjectUrl().isEmpty())
 		{
 			a = doc.createElement("a");
-			a.setAttribute("href", view.getFirstDigitoolUrl());
+			a.setAttribute("href", view.getFirstOriginalObjectUrl());
 			a.setAttribute("id", "digitoolLink");
-			a.appendChild(doc.createTextNode("@ digitool.hbz-nrw.de"));
+			a.appendChild(doc.createTextNode("@ original object"));
 			td.appendChild(a);
 		}
 

@@ -1077,7 +1077,7 @@ class Actions
 		{
 			if (pid.length() <= 17)
 			{
-				view.addDigitoolUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
+				view.addOriginalObjectUrl("http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
 						+ pidWithoutNamespace);
 				// TODO only if synced Resource
 				view.addCacheUrl(this.serverName + "/" + node.getNamespace()
@@ -1089,8 +1089,8 @@ class Actions
 		{
 
 			// TODO only if synced Resource
-			view.addDigitoolUrl("http://193.30.112.23:9280/fedora/get/" + pid
-					+ "/QDC");
+			view.addOriginalObjectUrl("http://193.30.112.23:9280/fedora/get/"
+					+ pid + "/QDC");
 			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
 					+ "base/" + URLEncoder.encode(URLEncoder.encode(pid)));
 
