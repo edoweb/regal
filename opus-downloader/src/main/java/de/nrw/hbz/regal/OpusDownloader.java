@@ -222,9 +222,7 @@ public class OpusDownloader implements DownloaderInterface
 	private void downloadXMetaDissPlus(File dir, String pid) throws IOException
 	{
 
-		String url = server
-				+ "/oai2/oai2.php?verb=GetRecord&metadataPrefix=XMetaDissPlus&identifier=oai:ubm.opus.hbz-nrw.de:"
-				+ pid;
+		String url = server + pid;
 		logger.info("Download: " + url);
 		URL dataStreamUrl = new URL(url);
 		File dataStreamFile = new File(dir.getAbsolutePath() + File.separator

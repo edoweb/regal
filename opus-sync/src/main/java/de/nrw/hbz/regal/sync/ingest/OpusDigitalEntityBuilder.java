@@ -65,6 +65,7 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilder
 		if (!map.containsKey(pid))
 		{
 			DigitalEntity e = new DigitalEntity(baseDir);
+			e.setPid(pid);
 			// store reference to e
 			map.put(pid, e);
 			// update Reference
@@ -134,7 +135,7 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilder
 					i++;
 					dtlDe.addStream(new File(baseDir + File.separator + pid
 							+ "_" + i + ".pdf"));
-
+					dtlDe.setStreamMime("application/pdf");
 				}
 
 			}

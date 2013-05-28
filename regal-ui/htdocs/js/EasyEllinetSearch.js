@@ -79,8 +79,6 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 	if ($("#ellinet").attr("checked")) {
 		if (index == "edoweb/_search") {
 			index = "edoweb,ellinet/_search"
-		} else {
-			index = "ellinet/_search"
 		}
 	}
 	if ($("#dipp").attr("checked")) {
@@ -91,15 +89,81 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 		if (index == "edoweb/_search") {
 			index = "edoweb,dipp/_search"
 		}
-
 		if (index == "_search") {
 			index = "dipp/_search";
 		}
 
-		if (index == "edoweb,ellinet/_search") {
-			index = "_search";
+	}
+	if ($("#ubm").attr("checked")) {
+		if (index == "ellinet/_search") {
+			index = "ellinet,ubm/_search";
+		}
+		if (index == "edoweb/_search") {
+			index = "edoweb,ubm/_search"
 		}
 
+		if (index == "_search") {
+			index = "ubm/_search";
+		}
+
+		if (index == "edoweb,ellinet/_search") {
+			index = "edoweb,ellinet,ubm/_search";
+		}
+		
+		if (index == "edoweb,ellinet,dipp/_search") {
+			index = "edoweb,ellinet,dipp,ubm/_search";
+		}
+	}
+	if ($("#fhdd").attr("checked")) 
+	{
+		if (index == "ellinet/_search") {
+			index = "ellinet,fhdd/_search";
+		}
+		if (index == "edoweb/_search") {
+			index = "edoweb,fhdd/_search"
+		}
+
+		if (index == "_search") {
+			index = "fhdd/_search";
+		}
+
+		if (index == "edoweb,ellinet/_search") {
+			index = "edoweb,ellinet,fhdd/_search";
+		}
+		
+		if (index == "edoweb,ellinet,dipp/_search") {
+			index = "edoweb,ellinet,dipp,fhdd/_search";
+		}
+		if (index == "edoweb,ellinet,dipp,ubm/_search") {
+			index = "edoweb,ellinet,dipp,ubm,fhdd/_search";
+		}
+	}
+	
+	if ($("#kola").attr("checked")) {
+		if (index == "ellinet/_search") {
+			index = "ellinet,kola/_search";
+		}
+		if (index == "edoweb/_search") {
+			index = "edoweb,kola/_search"
+		}
+
+		if (index == "_search") {
+			index = "kola/_search";
+		}
+
+		if (index == "edoweb,ellinet/_search") {
+			index = "edoweb,ellinet,kola/_search";
+		}
+		
+		if (index == "edoweb,ellinet,dipp/_search") {
+			index = "edoweb,ellinet,dipp,kola/_search";
+		}
+		if (index == "edoweb,ellinet,dipp,ubm/_search") {
+			index = "edoweb,ellinet,dipp,ubm,kola/_search";
+		}
+		if (index == "edoweb,ellinet,dipp,ubm,fhdd/_search") {
+			index = "edoweb,ellinet,dipp,ubm,fhdd,kola/_search";
+		}
 	}
 
 	var request = {
@@ -139,7 +203,7 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 				var title = source.title;
 				var creator = source.creator;
 				var year = source.year;
-				var objectUrl = source.uri;
+				var objectUrl = source.apiUrl;
 				var thumbnailUrl = source.thumbnail;
 				var lobidUrl = source.lobidUrl;
 				var alephId = source.alephid;

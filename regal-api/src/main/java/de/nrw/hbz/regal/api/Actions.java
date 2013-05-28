@@ -1095,6 +1095,36 @@ class Actions
 					+ "base/" + URLEncoder.encode(URLEncoder.encode(pid)));
 
 		}
+		if (pid.contains("ubm"))
+		{
+
+			// TODO only if synced Resource
+			view.addOriginalObjectUrl("http://ubm.opus.hbz-nrw.de/frontdoor.php?source_opus="
+					+ pidWithoutNamespace + "&la=de");
+			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
+					+ "base/" + pid);
+
+		}
+		if (pid.contains("fhdd"))
+		{
+
+			// TODO only if synced Resource
+			view.addOriginalObjectUrl("http://fhdd.opus.hbz-nrw.de/frontdoor.php?source_opus="
+					+ pidWithoutNamespace + "&la=de");
+			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
+					+ "base/" + pid);
+
+		}
+		if (pid.contains("kola"))
+		{
+
+			// TODO only if synced Resource
+			view.addOriginalObjectUrl("http://kola.opus.hbz-nrw.de/frontdoor.php?source_opus="
+					+ pidWithoutNamespace + "&la=de");
+			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
+					+ "base/" + pid);
+
+		}
 		String query = "<info:fedora/" + pid + "> * *";
 		try
 		{
