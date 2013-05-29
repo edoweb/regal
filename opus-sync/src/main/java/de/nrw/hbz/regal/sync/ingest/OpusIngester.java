@@ -16,6 +16,8 @@
  */
 package de.nrw.hbz.regal.sync.ingest;
 
+import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +38,14 @@ import de.nrw.hbz.regal.sync.extern.DigitalEntity;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class EllinetIngester implements IngestInterface
+public class OpusIngester implements IngestInterface
 {
-	final static Logger logger = LoggerFactory.getLogger(EllinetIngester.class);
+	final static Logger logger = LoggerFactory.getLogger(OpusIngester.class);
 
-	private String namespace = "ellinet";
+	private String namespace = "opus";
 	String host = null;
 	Webclient webclient = null;
+	HashMap<String, String> map = new HashMap<String, String>();
 
 	@Override
 	public void init(String host, String user, String password, String ns)
@@ -61,40 +64,11 @@ public class EllinetIngester implements IngestInterface
 	@Override
 	public void ingest(DigitalEntity dtlBean)
 	{
-		logger.info("Start ingest: " + namespace + ":" + dtlBean.getPid());
+		String pid = dtlBean.getPid().substring(
+				dtlBean.getPid().lastIndexOf(':') + 1);
+		logger.info("Start ingest: " + namespace + ":" + pid);
 
-		String partitionC = null;
-		String pid = null;
-		pid = dtlBean.getPid();
-		try
-		{
-			ControlBean control = new ControlBean(dtlBean);
-			partitionC = control.getPartitionC().firstElement();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		try
-		{
-
-			if (partitionC.compareTo("HSS00DZM") == 0)
-			{
-				logger.info(pid + ": start ingesting ellinetObject");
-				updateMonographs(dtlBean);
-				logger.info(pid + ": end ingesting eJournal");
-			}
-			else
-			{
-				logger.warn("Unknown type: " + partitionC
-						+ ". No further actions performed.");
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			logger.info(e.getMessage());
-		}
+		updateMonograph(dtlBean);
 
 	}
 
@@ -104,20 +78,21 @@ public class EllinetIngester implements IngestInterface
 		ingest(dtlBean);
 	}
 
-	private void updateMonographs(DigitalEntity dtlBean)
+	private void updateMonograph(DigitalEntity dtlBean)
 	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		logger.info(pid + " Found monograph.");
+		String pid = dtlBean.getPid();
+
+		map.clear();
 		webclient
 				.createObject(dtlBean, "application/pdf", ObjectType.monograph);
-		webclient.metadata(dtlBean);
 		logger.info(pid + " " + "updated.\n");
+		webclient.metadata(dtlBean);
 	}
 
 	@Override
 	public void delete(String pid)
 	{
-		webclient.delete(pid);
+		webclient.delete(pid.substring(pid.lastIndexOf(':') + 1));
 	}
 
 	@Override

@@ -301,7 +301,7 @@ echo -e "cd \$ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
 echo -e "cp .oaitimestamp\$PREFIX oaitimestamp\${PREFIX}\`date +\"%Y%m%d\"\`" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "java -jar -Xms512m -Xmx512m \${PREFIX}sync.jar --mode INIT -list \$ARCHIVE_HOME/sync/pidlist.txt --user \$ARCHIVE_USER --password \$ARCHIVE_PASSWORD --dtl \$DOWNLOAD --cache \$ARCHIVE_HOME/\${PREFIX}base --oai  \$OAI --set \$SET --timestamp .oaitimestamp\$PREFIX --fedoraBase http://\$SERVER:\$TOMCAT_PORT/fedora --host http://\$SERVER >> ${PREFIX}log\`date +\"%Y%m%d\"\`.txt 2>&1" >> ${PREFIX}Sync.sh.tmpl
+echo -e "java -jar -Xms512m -Xmx512m \${PREFIX}sync.jar --mode INIT -list \$ARCHIVE_HOME/sync/pidlist.txt --user \$ARCHIVE_USER --password \$ARCHIVE_PASSWORD --dtl \$DOWNLOAD --cache \$ARCHIVE_HOME/\${PREFIX}base --oai  \$OAI --set \$SET --timestamp .oaitimestamp\$PREFIX --fedoraBase http://\$SERVER:\$TOMCAT_PORT/fedora --host http://\$SERVER --namespace \$PREFIX >> ${PREFIX}log\`date +\"%Y%m%d\"\`.txt 2>&1" >> ${PREFIX}Sync.sh.tmpl
 echo -e "" >> ${PREFIX}Sync.sh.tmpl
 echo -e "cd -" >> ${PREFIX}Sync.sh.tmpl
 

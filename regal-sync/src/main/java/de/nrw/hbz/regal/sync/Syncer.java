@@ -70,6 +70,7 @@ public class Syncer
 	private String host;
 	private String pidListFile;
 	private Options options;
+	private String namespace;
 
 	public Syncer(IngestInterface ingester, DownloaderInterface downloader,
 			DigitalEntityBuilder builder)
@@ -107,6 +108,8 @@ public class Syncer
 		options.addOption("fedoraBase", "fedoraBase", true,
 				"The Fedora Baseurl");
 		options.addOption("host", "host", true, "The Fedora Baseurl");
+		options.addOption("namespace", "namespace", true,
+				"The namespace to operate on.");
 		options.addOption(
 				"list",
 				"list",
@@ -134,7 +137,8 @@ public class Syncer
 					| !config.hasOption("oai") | !config.hasOption("set")
 					| !config.hasOption("timestamp")
 					| !config.hasOption("fedoraBase")
-					| !config.hasOption("host"))
+					| !config.hasOption("host")
+					| !config.hasOption("namespace"))
 
 			{
 				showHelp(options);
@@ -151,6 +155,7 @@ public class Syncer
 			timestamp = config.getOptionValue("timestamp");
 			fedoraBase = config.getOptionValue("fedoraBase");
 			host = config.getOptionValue("host");
+			namespace = config.getOptionValue("namespace");
 			pidListFile = null;
 			if (config.hasOption("list"))
 			{
@@ -159,7 +164,7 @@ public class Syncer
 
 			harvester = new de.nrw.hbz.regal.PIDReporter(oai, timestamp);
 			downloader.init(dtl, cache);
-			ingester.init(host, user, password);
+			ingester.init(host, user, password, namespace);
 		}
 		catch (ParseException e)
 		{

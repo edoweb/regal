@@ -63,12 +63,17 @@ public interface IngestInterface
 	 *            the users password
 	 * @param host
 	 *            the host of the webapi
+	 * @param ns
+	 *            the namespace to operate on
+	 * 
 	 */
-	public abstract void init(String host, String user, String password);
+	public abstract void init(String host, String user, String password,
+			String ns);
 
 	/**
 	 * @param namespace
 	 *            The namespace is used as prefix for all pids.
 	 */
 	public abstract void setNamespace(String namespace);
+
 }

@@ -357,8 +357,8 @@ public class Webclient
 			logger.info(pid + " Update data: " + dtlBean.getStreamMime());
 			MultiPart multiPart = new MultiPart();
 			multiPart.bodyPart(new StreamDataBodyPart("InputStream",
-					new FileInputStream(dtlBean.getStream()), dtlBean
-							.getStream().getName()));
+					new FileInputStream(dtlBean.getFirstStream()), dtlBean
+							.getFirstStream().getName()));
 			multiPart.bodyPart(new BodyPart(dtlBean.getStreamMime(),
 					MediaType.TEXT_PLAIN_TYPE));
 			data.type("multipart/mixed").post(multiPart);
@@ -371,7 +371,7 @@ public class Webclient
 		catch (FileNotFoundException e)
 		{
 			logger.error(pid + " " + "FileNotFound "
-					+ dtlBean.getStream().getAbsolutePath());
+					+ dtlBean.getFirstStream().getAbsolutePath());
 		}
 		catch (Exception e)
 		{

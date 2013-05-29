@@ -70,7 +70,7 @@ public class DigitalEntity
 	private File fileSec = null;
 
 	private String streamMime = null;
-	private File stream = null;
+	private Vector<File> streams = null;
 	private File xml = null;
 
 	private Vector<DigitalEntity> archiveLinks = null;
@@ -99,7 +99,7 @@ public class DigitalEntity
 		viewLinks = new Vector<DigitalEntity>();
 		viewMainLinks = new Vector<DigitalEntity>();
 		related = new Vector<EntityRelation>();
-
+		streams = new Vector<File>();
 	}
 
 	private String fileToString(File file, String streamId) throws Exception
@@ -389,9 +389,14 @@ public class DigitalEntity
 				+ "history: " + history + "\n" + "text: " + text + "\n";
 	}
 
-	public File getStream()
+	public File getFirstStream()
 	{
-		return stream;
+		return streams.firstElement();
+	}
+
+	public Vector<File> getStreams()
+	{
+		return streams;
 	}
 
 	public void setXml(File xml)
@@ -406,7 +411,7 @@ public class DigitalEntity
 
 	public void setStream(File stream)
 	{
-		this.stream = stream;
+		this.streams.set(0, stream);
 	}
 
 	public Vector<DigitalEntity> getArchiveLinks()
@@ -577,5 +582,11 @@ public class DigitalEntity
 	public void addRelated(EntityRelation relation)
 	{
 		related.add(relation);
+	}
+
+	public void addStream(File file)
+	{
+		streams.add(file);
+
 	}
 }

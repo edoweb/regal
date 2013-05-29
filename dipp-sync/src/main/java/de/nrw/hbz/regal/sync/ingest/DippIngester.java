@@ -50,8 +50,9 @@ public class DippIngester implements IngestInterface
 	HashMap<String, String> map = new HashMap<String, String>();
 
 	@Override
-	public void init(String host, String user, String password)
+	public void init(String host, String user, String password, String ns)
 	{
+		this.namespace = ns;
 		this.host = host;
 		webclient = new Webclient(namespace, user, password, host);
 	}
