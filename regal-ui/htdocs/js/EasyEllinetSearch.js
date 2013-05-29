@@ -351,7 +351,13 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 				var title = source.title;
 				var creator = source.creator;
 				var year = source.year;
+				
+			
 				var objectUrl = source.apiUrl;
+				if(!objectUrl)
+					{
+					objectUrl = source.uri;
+					}
 				var thumbnailUrl = source.thumbnail;
 				var lobidUrl = source.lobidUrl;
 				var alephId = source.alephid;
