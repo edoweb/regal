@@ -80,14 +80,20 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 		if (index == "edoweb/_search") {
 			index = "edoweb,ellinet/_search"
 		}
+		if (index == "_search") {
+			index = "ellinet/_search"
+		}
 	}
 	if ($("#dipp").attr("checked")) {
 
+		if (index == "edoweb/_search") {
+			index = "edoweb,dipp/_search"
+		}
 		if (index == "ellinet/_search") {
 			index = "ellinet,dipp/_search";
 		}
-		if (index == "edoweb/_search") {
-			index = "edoweb,dipp/_search"
+		if (index == "edoweb,ellinet/_search") {
+			index = "edoweb,ellinet,dipp/_search"
 		}
 		if (index == "_search") {
 			index = "dipp/_search";
@@ -95,75 +101,217 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 
 	}
 	if ($("#ubm").attr("checked")) {
-		if (index == "ellinet/_search") {
-			index = "ellinet,ubm/_search";
-		}
 		if (index == "edoweb/_search") {
 			index = "edoweb,ubm/_search"
 		}
-
+		if (index == "ellinet/_search") {
+			index = "ellinet,ubm/_search";
+		}
+		if (index == "edoweb,ellinet/_search") {
+			index = "edoweb,ellinet,ubm/_search"
+		}
 		if (index == "_search") {
 			index = "ubm/_search";
 		}
+		
+		if (index == "dipp/_search") {
+			index = "dipp,ubm/_search"
+		}
 
-		if (index == "edoweb,ellinet/_search") {
-			index = "edoweb,ellinet,ubm/_search";
+		if (index == "edoweb,dipp/_search") {
+			index = "edoweb,dipp,ubm/_search"
+		}
+		
+		if (index == "ellinet,dipp/_search") {
+			index = "ellinet,dipp,ubm/_search"
 		}
 		
 		if (index == "edoweb,ellinet,dipp/_search") {
-			index = "edoweb,ellinet,dipp,ubm/_search";
+			index = "edoweb,ellinet,dipp,ubm/_search"
 		}
+		
+		
 	}
 	if ($("#fhdd").attr("checked")) 
 	{
-		if (index == "ellinet/_search") {
-			index = "ellinet,fhdd/_search";
-		}
 		if (index == "edoweb/_search") {
 			index = "edoweb,fhdd/_search"
 		}
-
+		if (index == "ellinet/_search") {
+			index = "ellinet,fhdd/_search";
+		}
+		if (index == "edoweb,ellinet/_search") {
+			index = "edoweb,ellinet,fhdd/_search"
+		}
 		if (index == "_search") {
 			index = "fhdd/_search";
 		}
+		
+		if (index == "dipp/_search") {
+			index = "dipp,fhdd/_search"
+		}
 
-		if (index == "edoweb,ellinet/_search") {
-			index = "edoweb,ellinet,fhdd/_search";
+		if (index == "edoweb,dipp/_search") {
+			index = "edoweb,dipp,fhdd/_search"
+		}
+		
+		if (index == "ellinet,dipp/_search") {
+			index = "ellinet,dipp,fhdd/_search"
 		}
 		
 		if (index == "edoweb,ellinet,dipp/_search") {
-			index = "edoweb,ellinet,dipp,fhdd/_search";
+			index = "edoweb,ellinet,dipp,fhdd/_search"
 		}
+		
+		if (index == "ubm/_search") {
+			index = "ubm,fhdd/_search"
+		}
+		
+		if (index == "edoweb,ubm/_search") {
+			index = "edoweb,ubm,fhdd/_search"
+		}
+		
+		if (index == "ellinet,ubm/_search") {
+			index = "ellinet,ubm,fhdd/_search"
+		}
+		
+		if (index == "dipp,ubm/_search") {
+			index = "dipp,ubm,fhdd/_search"
+		}
+		
+		if (index == "edoweb,ellinet,ubm/_search") {
+			index = "edoweb,ellinet,ubm,fhdd/_search"
+		}
+		
+		
+		if (index == "edoweb,dipp,ubm/_search") {
+			index = "edoweb,dipp,ubm,fhdd/_search"
+		}
+		
+		if (index == "ellinet,dipp,ubm/_search") {
+			index = "ellinet,dipp,ubm,fhdd/_search"
+		}
+		
 		if (index == "edoweb,ellinet,dipp,ubm/_search") {
-			index = "edoweb,ellinet,dipp,ubm,fhdd/_search";
+			index = "edoweb,ellinet,dipp,ubm,fhdd/_search"
 		}
 	}
 	
 	if ($("#kola").attr("checked")) {
-		if (index == "ellinet/_search") {
-			index = "ellinet,kola/_search";
-		}
 		if (index == "edoweb/_search") {
 			index = "edoweb,kola/_search"
 		}
-
+		if (index == "ellinet/_search") {
+			index = "ellinet,kola/_search";
+		}
+		if (index == "edoweb,ellinet/_search") {
+			index = "edoweb,ellinet,kola/_search"
+		}
 		if (index == "_search") {
 			index = "kola/_search";
 		}
+		
+		if (index == "dipp/_search") {
+			index = "dipp,kola/_search"
+		}
 
-		if (index == "edoweb,ellinet/_search") {
-			index = "edoweb,ellinet,kola/_search";
+		if (index == "edoweb,dipp/_search") {
+			index = "edoweb,dipp,kola/_search"
+		}
+		
+		if (index == "ellinet,dipp/_search") {
+			index = "ellinet,dipp,kola/_search"
 		}
 		
 		if (index == "edoweb,ellinet,dipp/_search") {
-			index = "edoweb,ellinet,dipp,kola/_search";
+			index = "edoweb,ellinet,dipp,kola/_search"
 		}
+		
+		if (index == "ubm/_search") {
+			index = "ubm,kola/_search"
+		}
+		
+		if (index == "edoweb,ubm/_search") {
+			index = "edoweb,ubm,kola/_search"
+		}
+		
+		if (index == "ellinet,ubm/_search") {
+			index = "ellinet,ubm,kola/_search"
+		}
+		
+		if (index == "dipp,ubm/_search") {
+			index = "dipp,ubm,kola/_search"
+		}
+		
+		if (index == "edoweb,ellinet,ubm/_search") {
+			index = "edoweb,ellinet,ubm,kola/_search"
+		}
+		
+		
+		if (index == "edoweb,dipp,ubm/_search") {
+			index = "edoweb,dipp,ubm,kola/_search"
+		}
+		
+		if (index == "ellinet,dipp,ubm/_search") {
+			index = "ellinet,dipp,ubm,kola/_search"
+		}
+		
 		if (index == "edoweb,ellinet,dipp,ubm/_search") {
-			index = "edoweb,ellinet,dipp,ubm,kola/_search";
+			index = "edoweb,ellinet,dipp,ubm,kola/_search"
 		}
+		
+		
+		if (index == "fhdd/_search") {
+			index = "fhdd,kola/_search"
+		}
+		
+		if (index == "edoweb,fhdd/_search") {
+			index = "edoweb,fhdd,kola/_search"
+		}
+		
+		if (index == "ellinet,fhdd/_search") {
+			index = "ellinet,fhdd,kola/_search"
+		}
+		
+		if (index == "dipp,fhdd/_search") {
+			index = "dipp,fhdd,kola/_search"
+		}
+		
+		if (index == "ubm,fhdd/_search") {
+			index = "ubm,fhdd,kola/_search"
+		}
+		
+		if (index == "edoweb,ellinet,fhdd/_search") {
+			index = "edoweb,ellinet,ubmfhdd,kola/_search"
+		}
+		
+		
+		if (index == "edoweb,dipp,fhdd/_search") {
+			index = "edoweb,dipp,fhdd,kola/_search"
+		}
+		
+		if (index == "ellinet,dipp,fhdd/_search") {
+			index = "ellinet,dipp,fhdd,kola/_search"
+		}
+		
+		
+		if (index == "dipp,ubm,fhdd/_search") {
+			index = "dipp,ubm,fhdd,kola/_search"
+		}
+		
+		if (index == "ellinet,dipp,ubm,fhdd/_search") {
+			index = "ellinet,dipp,ubm,fhdd,kola/_search"
+		}
+		if (index == "edoweb,ellinet,dipp,fhdd/_search") {
+			index = "edoweb,ellinet,dipp,fhdd,kola/_search"
+		}
+		
 		if (index == "edoweb,ellinet,dipp,ubm,fhdd/_search") {
-			index = "edoweb,ellinet,dipp,ubm,fhdd,kola/_search";
+			index = "edoweb,ellinet,dipp,ubm,fhdd,kola/_search"
 		}
+		
+		
+		
 	}
 
 	var request = {

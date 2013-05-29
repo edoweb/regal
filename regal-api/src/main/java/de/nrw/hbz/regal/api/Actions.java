@@ -1102,7 +1102,7 @@ class Actions
 			view.addOriginalObjectUrl("http://ubm.opus.hbz-nrw.de/frontdoor.php?source_opus="
 					+ pidWithoutNamespace + "&la=de");
 			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
-					+ "base/" + pid);
+					+ "base/" + pidWithoutNamespace);
 
 		}
 		if (pid.contains("fhdd"))
@@ -1112,7 +1112,7 @@ class Actions
 			view.addOriginalObjectUrl("http://fhdd.opus.hbz-nrw.de/frontdoor.php?source_opus="
 					+ pidWithoutNamespace + "&la=de");
 			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
-					+ "base/" + pid);
+					+ "base/" + pidWithoutNamespace);
 
 		}
 		if (pid.contains("kola"))
@@ -1122,7 +1122,7 @@ class Actions
 			view.addOriginalObjectUrl("http://kola.opus.hbz-nrw.de/frontdoor.php?source_opus="
 					+ pidWithoutNamespace + "&la=de");
 			view.addCacheUrl(this.serverName + "/" + node.getNamespace()
-					+ "base/" + pid);
+					+ "base/" + pidWithoutNamespace);
 
 		}
 		String query = "<info:fedora/" + pid + "> * *";
