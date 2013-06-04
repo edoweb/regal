@@ -351,8 +351,6 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 				var title = source.title;
 				var creator = source.creator;
 				var year = source.year;
-				
-			
 				var objectUrl = source.apiUrl;
 				if(!objectUrl)
 					{
