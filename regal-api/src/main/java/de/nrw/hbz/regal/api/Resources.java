@@ -374,6 +374,13 @@ public class Resources
 		{
 			String mimeType = multiPart.getBodyParts().get(1)
 					.getEntityAs(String.class);
+
+			String name = "data";
+			if (multiPart.getBodyParts().size() == 3)
+			{
+				name = multiPart.getBodyParts().get(2)
+						.getEntityAs(String.class);
+			}
 			// if (mimeType.compareTo("application/pdf") == 0)
 			// {
 			// Node node = actions.readNode(namespace + ":" + pid);
@@ -383,7 +390,7 @@ public class Resources
 			// }
 			return actions.updateData(namespace + ":" + pid, multiPart
 					.getBodyParts().get(0).getEntityAs(InputStream.class),
-					mimeType);
+					mimeType, name);
 		}
 		catch (ArchiveException e)
 		{
