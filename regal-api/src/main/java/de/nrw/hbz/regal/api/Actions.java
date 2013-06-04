@@ -517,6 +517,43 @@ class Actions
 
 	}
 
+	// /**
+	// * @param pid
+	// * the pid that must be updated
+	// * @param content
+	// * the data as byte array
+	// * @param mimeType
+	// * the mimetype of the data
+	// * @return A short message
+	// * @throws IOException
+	// * if data can not be written to a tmp file
+	// */
+	// String updateData(String pid, byte[] content, String mimeType, String
+	// name)
+	// throws IOException
+	// {
+	//
+	// if (content == null || content.length == 0)
+	// {
+	// throw new ArchiveException(pid
+	// + " you've tried to upload an empty byte array."
+	// + " This action is not supported. Use HTTP DELETE instead.");
+	// }
+	// File tmp = File.createTempFile("Datafile", "tmp");
+	// tmp.deleteOnExit();
+	//
+	// FileUtils.writeByteArrayToFile(tmp, content);
+	// Node node = readNode(pid);
+	// if (node != null)
+	// {
+	// node.setUploadData(tmp.getAbsolutePath(), "data", mimeType);
+	// archive.updateNode(pid, node);
+	// }
+	//
+	// return pid + " data successfully updated!";
+	//
+	// }
+
 	/**
 	 * @param pid
 	 *            the pid that must be updated
@@ -528,44 +565,8 @@ class Actions
 	 * @throws IOException
 	 *             if data can not be written to a tmp file
 	 */
-	String updateData(String pid, byte[] content, String mimeType)
-			throws IOException
-	{
-
-		if (content == null || content.length == 0)
-		{
-			throw new ArchiveException(pid
-					+ " you've tried to upload an empty byte array."
-					+ " This action is not supported. Use HTTP DELETE instead.");
-		}
-		File tmp = File.createTempFile("Datafile", "tmp");
-		tmp.deleteOnExit();
-
-		FileUtils.writeByteArrayToFile(tmp, content);
-		Node node = readNode(pid);
-		if (node != null)
-		{
-			node.setUploadData(tmp.getAbsolutePath(), "data", mimeType);
-			archive.updateNode(pid, node);
-		}
-
-		return pid + " data successfully updated!";
-
-	}
-
-	/**
-	 * @param pid
-	 *            the pid that must be updated
-	 * @param content
-	 *            the data as byte array
-	 * @param mimeType
-	 *            the mimetype of the data
-	 * @return A short message
-	 * @throws IOException
-	 *             if data can not be written to a tmp file
-	 */
-	String updateData(String pid, InputStream content, String mimeType)
-			throws IOException
+	String updateData(String pid, InputStream content, String mimeType,
+			String name) throws IOException
 	{
 
 		if (content == null)
@@ -574,10 +575,8 @@ class Actions
 					+ " you've tried to upload an empty stream."
 					+ " This action is not supported. Use HTTP DELETE instead.");
 		}
-		File tmp = File.createTempFile("Datafile", "tmp");
+		File tmp = new File(name);
 		tmp.deleteOnExit();
-
-		// File tmp = new File("/tmp/edoweb.zip");
 
 		// THIS DOESN'T WORK and will end in large Files
 		// TODO find out what happens here
