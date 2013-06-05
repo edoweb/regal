@@ -49,6 +49,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -228,20 +229,28 @@ public class OpusDownloader implements DownloaderInterface
 		File dataStreamFile = new File(dir.getAbsolutePath() + File.separator
 				+ "" + pid + ".xml");
 		// dataStreamFile.createNewFile();
-		logger.info("Save: " + dataStreamFile.getAbsolutePath());
-		InputStream in = null;
-		URLConnection uc = dataStreamUrl.openConnection();
-		uc.connect();
-		in = uc.getInputStream();
-		FileOutputStream out = new FileOutputStream(dataStreamFile);
 
-		byte[] buffer = new byte[1024];
-		int bytesRead = -1;
-		while ((bytesRead = in.read(buffer)) > -1)
-		{
-			out.write(buffer, 0, bytesRead);
-		}
-		in.close();
+		logger.info("Save: " + dataStreamFile.getAbsolutePath());
+
+		String data = null;
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(dataStreamUrl.openStream(), writer);
+		data = writer.toString();
+		FileUtils.writeStringToFile(dataStreamFile, data, "utf-8");
+
+		// InputStream in = null;
+		// URLConnection uc = dataStreamUrl.openConnection();
+		// uc.connect();
+		// in = uc.getInputStream();
+		// FileOutputStream out = new FileOutputStream(dataStreamFile);
+		//
+		// byte[] buffer = new byte[1024];
+		// int bytesRead = -1;
+		// while ((bytesRead = in.read(buffer)) > -1)
+		// {
+		// out.write(buffer, 0, bytesRead);
+		// }
+		// in.close();
 
 	}
 
