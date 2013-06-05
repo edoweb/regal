@@ -101,7 +101,8 @@ public class Syncer
 		Option setOption = new Option("set", "set", true,
 				"Specify an OAI setSpec");
 		setOption.setValueSeparator(',');
-
+		setOption.setRequired(false);
+		setOption.setOptionalArg(true);
 		options.addOption(setOption);
 		options.addOption("timestamp", "timestamp", true,
 				"Specify a local file e.g. .oaitimestamp");
@@ -134,8 +135,7 @@ public class Syncer
 			if (config.hasOption("help") | !config.hasOption("mode")
 					| !config.hasOption("user") | !config.hasOption("password")
 					| !config.hasOption("dtl") | !config.hasOption("cache")
-					| !config.hasOption("oai") | !config.hasOption("set")
-					| !config.hasOption("timestamp")
+					| !config.hasOption("oai") | !config.hasOption("timestamp")
 					| !config.hasOption("fedoraBase")
 					| !config.hasOption("host")
 					| !config.hasOption("namespace"))
