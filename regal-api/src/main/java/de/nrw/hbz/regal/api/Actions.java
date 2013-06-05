@@ -112,7 +112,7 @@ class Actions
 	private String fedoraExtern = null;
 	private String serverName = null;
 	private String uriPrefix = null;
-	private String _lobidUrl = null;
+	private String lobidUrl = null;
 	private String verbundUrl = null;
 	private String dataciteUrl;
 	private String baseUrl;
@@ -138,7 +138,7 @@ class Actions
 
 		properties.load(getClass().getResourceAsStream(
 				"/externalLinks.properties"));
-		_lobidUrl = properties.getProperty("lobidUrl");
+		lobidUrl = properties.getProperty("lobidUrl");
 		verbundUrl = properties.getProperty("verbundUrl");
 		dataciteUrl = properties.getProperty("dataciteUrl");
 		baseUrl = properties.getProperty("baseUrl");
@@ -1208,7 +1208,7 @@ class Actions
 			{
 				view.addAlephId(id);
 				view.addCulturegraphUrl(culturegraphUrl + id);
-				view.addLobidUrl(_lobidUrl + id);
+				view.addLobidUrl(lobidUrl + id);
 				view.addVerbundUrl(verbundUrl + id);
 				break;
 			}
@@ -1216,7 +1216,7 @@ class Actions
 			{
 				view.addAlephId(id);
 				view.addCulturegraphUrl(culturegraphUrl + id);
-				view.addLobidUrl(_lobidUrl + id);
+				view.addLobidUrl(lobidUrl + id);
 				view.addVerbundUrl(verbundUrl + id);
 				break;
 			}
@@ -2019,7 +2019,6 @@ class Actions
 					+ "/datastreams/data/content");
 			pdfFile = File.createTempFile("pdf", "pdf");
 			pdfFile.deleteOnExit();
-			URL url = new URL(_lobidUrl);
 
 			URLConnection uc = content.openConnection();
 			uc.connect();
@@ -2111,7 +2110,6 @@ class Actions
 					+ "/datastreams/data/content");
 			pdfFile = File.createTempFile("pdf", "pdf");
 			pdfFile.deleteOnExit();
-			URL url = new URL(_lobidUrl);
 
 			URLConnection uc = content.openConnection();
 			uc.connect();
