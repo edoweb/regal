@@ -20,7 +20,6 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Vector;
 
@@ -134,14 +133,14 @@ class HtmlAdapter
 		Element li1 = doc.createElement("li");
 		Element a = doc.createElement("a");
 		a.setAttribute("href", "#tabs-1");
-		a.appendChild(doc.createTextNode("Repository"));
+		a.appendChild(doc.createTextNode("Metadata"));
 		li1.appendChild(a);
 
-		Element li2 = doc.createElement("li");
-		Element a2 = doc.createElement("a");
-		a2.setAttribute("href", "#tabs-2");
-		a2.appendChild(doc.createTextNode("Catalog"));
-		li2.appendChild(a2);
+		// Element li2 = doc.createElement("li");
+		// Element a2 = doc.createElement("a");
+		// a2.setAttribute("href", "#tabs-2");
+		// a2.appendChild(doc.createTextNode("Catalog"));
+		// li2.appendChild(a2);
 
 		Element li3 = doc.createElement("li");
 		Element a3 = doc.createElement("a");
@@ -156,7 +155,7 @@ class HtmlAdapter
 		li4.appendChild(a4);
 
 		tabul.appendChild(li1);
-		tabul.appendChild(li2);
+		// tabul.appendChild(li2);
 		tabul.appendChild(li3);
 		tabul.appendChild(li4);
 
@@ -167,7 +166,7 @@ class HtmlAdapter
 		Element searchLink = doc.createElement("a");
 		try
 		{
-			String host = new URI(view.getUri()).getHost();
+			String host = new URI(view.getApiUrl()).getHost();
 			searchLink.setAttribute("href", "http://" + host);
 			Element searchImage = doc.createElement("img");
 			searchImage.setAttribute("src", "/search.png");
@@ -189,7 +188,11 @@ class HtmlAdapter
 
 		addToTable(doc, table, "Fulltext", view.getPdfUrl());
 
-		addToTable(doc, table, "URI", view.getUri());
+		addToTable(doc, table, "Url", view.getApiUrl());
+
+		addToTable(doc, table, "Uri", view.getUri());
+
+		addToTable(doc, table, "Content-Type", view.getContentType());
 
 		addToTable(doc, table, "Aleph Id", view.getAlephid());
 
@@ -223,33 +226,36 @@ class HtmlAdapter
 
 		addToTable(doc, table, "Related Url", view.getUrl());
 
+		addToTable(doc, table, "Last Modified", view.getLastModified()
+				.toString());
+
+		// divTab1.appendChild(table);
+		// Element divTab2 = doc.createElement("div");
+		// divTab2.setAttribute("id", "tabs-2");
+		// div.appendChild(divTab2);
+		//
+		// table = doc.createElement("table");
+
+		// Element tr = doc.createElement("tr");
+		// Element td = doc.createElement("td");
+		// td.setAttribute("class", "tablelabel");
+		// td.setAttribute("colspan", "4");
+		//
+		// tr = doc.createElement("tr");
+		//
+		// td.setAttribute("colspan", "4");
+		//
+		// td.appendChild(doc.createTextNode("About: " + view.getUri()));
+		// tr.appendChild(td);
+		// table.appendChild(tr);
+		//
+		// for (SimpleEntry entry : view.getPredicates())
+		// {
+		// addToTable(doc, table, entry.getKey().toString(), entry.getValue()
+		// .toString());
+		// }
+
 		divTab1.appendChild(table);
-		Element divTab2 = doc.createElement("div");
-		divTab2.setAttribute("id", "tabs-2");
-		div.appendChild(divTab2);
-
-		table = doc.createElement("table");
-
-		Element tr = doc.createElement("tr");
-		Element td = doc.createElement("td");
-		td.setAttribute("class", "tablelabel");
-		td.setAttribute("colspan", "4");
-
-		tr = doc.createElement("tr");
-
-		td.setAttribute("colspan", "4");
-
-		td.appendChild(doc.createTextNode("About: " + view.getUri()));
-		tr.appendChild(td);
-		table.appendChild(tr);
-
-		for (SimpleEntry entry : view.getPredicates())
-		{
-			addToTable(doc, table, entry.getKey().toString(), entry.getValue()
-					.toString());
-		}
-
-		divTab2.appendChild(table);
 
 		Element divTab3 = doc.createElement("div");
 		divTab3.setAttribute("id", "tabs-3");
@@ -270,8 +276,8 @@ class HtmlAdapter
 		table = doc.createElement("table");
 		divTab4.appendChild(table);
 
-		tr = doc.createElement("tr");
-		td = doc.createElement("td");
+		Element tr = doc.createElement("tr");
+		Element td = doc.createElement("td");
 		Element td0 = doc.createElement("td");
 
 		td0.setAttribute("class", "plabel");
@@ -297,13 +303,13 @@ class HtmlAdapter
 			td.appendChild(a);
 		}
 
-		if (view.getFirstDigitoolUrl() != null
-				&& !view.getFirstDigitoolUrl().isEmpty())
+		if (view.getFirstOriginalObjectUrl() != null
+				&& !view.getFirstOriginalObjectUrl().isEmpty())
 		{
 			a = doc.createElement("a");
-			a.setAttribute("href", view.getFirstDigitoolUrl());
+			a.setAttribute("href", view.getFirstOriginalObjectUrl());
 			a.setAttribute("id", "digitoolLink");
-			a.appendChild(doc.createTextNode("@ digitool.hbz-nrw.de"));
+			a.appendChild(doc.createTextNode("@ original object"));
 			td.appendChild(a);
 		}
 

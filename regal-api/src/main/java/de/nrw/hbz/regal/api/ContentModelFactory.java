@@ -62,11 +62,9 @@ public class ContentModelFactory
 	public static ContentModel createMonographModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:edowebMonographObjectModel");
-		cm.setServiceDefinitionPID(namespace
-				+ "CM:edowebMonographServiceDefinition");
-		cm.setServiceDeploymentPID(namespace
-				+ "CM:edowebMonographServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:MonographObjectModel");
+		cm.setServiceDefinitionPID(namespace + "CM:MonographServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + "CM:MonographServiceDeployment");
 
 		return cm;
 	}
@@ -77,11 +75,9 @@ public class ContentModelFactory
 	public static ContentModel createWebpageModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:edowebWebpageObjectModel");
-		cm.setServiceDefinitionPID(namespace
-				+ "CM:edowebWebpageServiceDefinition");
-		cm.setServiceDeploymentPID(namespace
-				+ "CM:edowebWebpageServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:WebpageObjectModel");
+		cm.setServiceDefinitionPID(namespace + "CM:WebpageServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + "CM:WebpageServiceDeployment");
 
 		return cm;
 	}
@@ -92,11 +88,9 @@ public class ContentModelFactory
 	public static ContentModel createEJournalModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:edowebEJournalObjectModel");
-		cm.setServiceDefinitionPID(namespace
-				+ "CM:edowebEJournalServiceDefinition");
-		cm.setServiceDeploymentPID(namespace
-				+ "CM:edowebEJournalServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:EJournalObjectModel");
+		cm.setServiceDefinitionPID(namespace + "CM:EJournalServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + "CM:EJournalServiceDeployment");
 
 		return cm;
 	}
@@ -107,11 +101,9 @@ public class ContentModelFactory
 	public static ContentModel createVolumeModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:edowebVolumeObjectModel");
-		cm.setServiceDefinitionPID(namespace
-				+ "CM:edowebVolumeServiceDefinition");
-		cm.setServiceDeploymentPID(namespace
-				+ "CM:edowebVolumeServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:VolumeObjectModel");
+		cm.setServiceDefinitionPID(namespace + "CM:VolumeServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + "CM:VolumeServiceDeployment");
 
 		return cm;
 	}
@@ -122,11 +114,9 @@ public class ContentModelFactory
 	public static ContentModel createVersionModel(String namespace)
 	{
 		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:edowebVersionObjectModel");
-		cm.setServiceDefinitionPID(namespace
-				+ "CM:edowebVersionServiceDefinition");
-		cm.setServiceDeploymentPID(namespace
-				+ "CM:edowebVersionServiceDeployment");
+		cm.setContentModelPID(namespace + "CM:VersionObjectModel");
+		cm.setServiceDefinitionPID(namespace + "CM:VersionServiceDefinition");
+		cm.setServiceDeploymentPID(namespace + "CM:VersionServiceDeployment");
 
 		return cm;
 	}

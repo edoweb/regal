@@ -4,7 +4,7 @@
 # schnasse@hbz-nrw.de
 #
 
-source variables.sh
+source variables.conf
 
 
 function makeDir()
@@ -14,7 +14,7 @@ mkdir -v -p $ARCHIVE_HOME/src
 mkdir -v $ARCHIVE_HOME/html
 mkdir -v $ARCHIVE_HOME/sync
 mkdir -v $ARCHIVE_HOME/fedora
-mkdir -v $ARCHIVE_HOME/${PREFIX}base
+mkdir -v $ARCHIVE_HOME/${MODULE}base
 mkdir -v $ARCHIVE_HOME/logs
 mkdir -v $ARCHIVE_HOME/conf
 mkdir -v $ARCHIVE_HOME/bin
@@ -116,7 +116,7 @@ echo >> $ARCHIVE_HOME/conf/setenv.sh
 
 echo "write elasticsearch.yml"
 
-echo "cluster.name: $PREFIX$SERVER" > $ARCHIVE_HOME/conf/elasticsearch.yml
+echo "cluster.name: $MODULE$SERVER" > $ARCHIVE_HOME/conf/elasticsearch.yml
 echo >> $ARCHIVE_HOME/conf/elasticsearch.yml
 
 echo "write site.conf"
@@ -205,7 +205,7 @@ tar -xzf elasticsearch-0.19.11.tar.gz
 mv elasticsearch-0.19.11 $ARCHIVE_HOME/elasticsearch
 $ARCHIVE_HOME/elasticsearch/bin/elasticsearch
 pwd
-cp variables.sh $ARCHIVE_HOME/bin/
+cp variables.conf $ARCHIVE_HOME/bin/
 }
 
 function copyConfig()
@@ -217,9 +217,9 @@ cp  $ARCHIVE_HOME/conf/setenv.sh $ARCHIVE_HOME/fedora/tomcat/bin
 echo "copy elasticsearch config"
 mv $ARCHIVE_HOME/elasticsearch/config/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/elasticsearch.yml.bck
 cp $ARCHIVE_HOME/conf/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/
-echo "copy apache conf"
-cp $APACHE_CONF $ARCHIVE_HOME/conf/httpd.conf
-echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
+#echo "copy apache conf"
+#cp $APACHE_CONF $ARCHIVE_HOME/conf/httpd.conf
+#echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
 echo "install archive"
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
 }
@@ -252,17 +252,17 @@ function rollout()
 {
 SRC=$ARCHIVE_HOME/src
 WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
-SYNCER_SRC=$SRC/${PREFIX}-sync/target/${PREFIX}-sync-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-SYNCER_DEST=$ARCHIVE_HOME/sync/${PREFIX}sync.jar
+SYNCER_SRC=$SRC/${MODULE}-sync/target/${MODULE}-sync-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+SYNCER_DEST=$ARCHIVE_HOME/sync/${MODULE}sync.jar
 
 export FEDORA_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_HOME=$FEDORA_HOME/tomcat
 
-if [ ! -d $ARCHIVE_HOME/${PREFIX}base ]
+if [ ! -d $ARCHIVE_HOME/${MODULE}base ]
 then
-	mkdir -v $ARCHIVE_HOME/${PREFIX}base
+	mkdir -v $ARCHIVE_HOME/${MODULE}base
 fi
-ln -s $ARCHIVE_HOME/${PREFIX}base $ARCHIVE_HOME/html/${PREFIX}base > /dev/null 2>&1
+ln -s $ARCHIVE_HOME/${MODULE}base $ARCHIVE_HOME/html/${MODULE}base > /dev/null 2>&1
 $ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh > /dev/null 2>&1
 if [ $? -eq 0 ]
 then
@@ -271,52 +271,55 @@ else
 	echo "Tomcat shutdown failed!"
 fi
 
-cd $SRC/${PREFIX}-sync
-mvn -q -e assembly:assembly -DskipTests --settings ../settings.xml
-cd -
 
 cd $SRC/regal-api
 echo "Install Webapi"
-echo "install archive"
 mvn -q -e war:war -DskipTests --settings ../settings.xml
 cd -
-
-echo "Rollout..."
 rm -rf  $WEBAPPS/api*
 cp $SRC/regal-api/target/api.war $WEBAPPS/api.war
-cp $SYNCER_SRC $SYNCER_DEST 
+
 
 rm -rf  $WEBAPPS/oai-pmh*
 
 cp $SRC/regal-ui/bin/oai-pmh.war $WEBAPPS
 $ARCHIVE_HOME/fedora/tomcat/bin/startup.sh
-echo "Generate sync template"
 
-echo -e "#! /bin/bash" > ${PREFIX}Sync.sh.tmpl
-echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "source $ARCHIVE_HOME/sync/${PREFIX}Variables.sh" >> ${PREFIX}Sync.sh.tmpl
-echo -e "export LANG=en_US.UTF-8" >> ${PREFIX}Sync.sh.tmpl
-echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "cd \$ARCHIVE_HOME/sync" >> ${PREFIX}Sync.sh.tmpl
-echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "cp .oaitimestamp\$PREFIX oaitimestamp\${PREFIX}\`date +\"%Y%m%d\"\`" >> ${PREFIX}Sync.sh.tmpl
-echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "java -jar -Xms512m -Xmx512m \${PREFIX}sync.jar --mode INIT -list \$ARCHIVE_HOME/sync/pidlist.txt --user \$ARCHIVE_USER --password \$ARCHIVE_PASSWORD --dtl \$DOWNLOAD --cache \$ARCHIVE_HOME/\${PREFIX}base --oai  \$OAI --set \$SET --timestamp .oaitimestamp\$PREFIX --fedoraBase http://\$SERVER:\$TOMCAT_PORT/fedora --host http://\$SERVER >> ${PREFIX}log\`date +\"%Y%m%d\"\`.txt 2>&1" >> ${PREFIX}Sync.sh.tmpl
-echo -e "" >> ${PREFIX}Sync.sh.tmpl
-echo -e "cd -" >> ${PREFIX}Sync.sh.tmpl
+if [ -n "$MODULE" ]
+then
+	echo "Generate Module $MODULE, templates can be found in $ARCHIVE_HOME/sync"
+	cd $SRC/${MODULE}-sync
+	mvn -q -e assembly:assembly -DskipTests --settings ../settings.xml
+	cd -
+	cp $SYNCER_SRC $SYNCER_DEST 
+	
 
-mv ${PREFIX}Sync.sh.tmpl $ARCHIVE_HOME/sync
-cp variables.sh $ARCHIVE_HOME/sync/${PREFIX}Variables.sh.tmpl
+	echo -e "#! /bin/bash" > ${NAMESPACE}Sync.sh.tmpl
+	echo -e "" >> ${NAMESPACE}Sync.sh.tmpl
+	echo -e "source $ARCHIVE_HOME/sync/${NAMESPACE}Variables.conf" >> ${NAMESPACE}Sync.sh.tmpl
+	echo -e "export LANG=en_US.UTF-8" >> ${NAMESPACE}Sync.sh.tmpl
+	echo -e "" >> ${NAMESPACE}Sync.sh.tmpl
+	echo -e "cd \$ARCHIVE_HOME/sync" >> ${NAMESPACE}Sync.sh.tmpl
+	echo -e "" >> ${NAMESPACE}Sync.sh.tmpl
+	echo -e "cp .oaitimestamp\$NAMESPACE oaitimestamp\${NAMESPACE}\`date +\"%Y%m%d\"\`" >> ${NAMESPACE}Sync.sh.tmpl
+	echo -e "" >> ${NAMESPACE}Sync.sh.tmpl
+	echo -e "java -jar -Xms512m -Xmx512m \${MODULE}sync.jar --mode INIT -list \$ARCHIVE_HOME/sync/pidlist.txt --user \$ARCHIVE_USER --password \$ARCHIVE_PASSWORD --dtl \$DOWNLOAD --cache \$ARCHIVE_HOME/\${NAMESPACE}base --oai  \$OAI --set \$SET --timestamp .oaitimestamp\$NAMESPACE --fedoraBase http://\$SERVER:\$TOMCAT_PORT/fedora --host http://\$SERVER --namespace \$NAMESPACE >> ${NAMESPACE}log\`date +\"%Y%m%d\"\`.txt 2>&1" >> ${NAMESPACE}Sync.sh.tmpl
+	echo -e "" >> ${NAMESPACE}Sync.sh.tmpl
+	echo -e "cd -" >> ${NAMESPACE}Sync.sh.tmpl
 
+	mv ${NAMESPACE}Sync.sh.tmpl $ARCHIVE_HOME/sync
+	cat $MODULE_CONF variables.conf > $ARCHIVE_HOME/sync/${NAMESPACE}Variables.conf.tmpl
+fi
 
 echo "copy html"
 cp -r $ARCHIVE_HOME/src/regal-ui/htdocs/* $ARCHIVE_HOME/html/
 sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/EasyEllinetSearch.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/EasyEllinetSearch.js"
 
-cp $SRC/regal-ui/conf/proai.properties $WEBAPPS/oai-pmh/WEB-INF/classes
+#cp $SRC/regal-ui/conf/proai.properties $WEBAPPS/oai-pmh/WEB-INF/classes
 cp $SRC/regal-installer/install.sh $ARCHIVE_HOME/bin/
 }
 
+usage="Wrong usage! Please try with: \n -u to update to last release \n -u test to update to last test build. \n -ext <sync.conf>. to create a sync module.";
 if [ $# -eq 0 ]
 then
 	makeDir
@@ -334,9 +337,9 @@ then
 	createConfig
 	copyConfig
 	updateMaster
-	rollout
+	rollout     
     else
-	echo "Wrong usage! Only argument accepted is -u for update. And \"-u test\" for update to last testversion."
+	echo -e $usage
     fi
 else
 
@@ -347,8 +350,13 @@ else
 	copyConfig
 	updateTest
 	rollout
+    elif [[ $1 == "-ext" ]] && [[ -n "$2" ]]
+    then
+	MODULE_CONF=$2
+	source $MODULE_CONF
+	rollout
     else
-	echo "Wrong usage! Only argument accepted is -u for update. And \"-u test\" for update to last testversion."
+	echo -e $usage
     fi
 fi
 

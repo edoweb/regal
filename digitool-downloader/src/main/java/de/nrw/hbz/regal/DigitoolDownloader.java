@@ -50,7 +50,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-
 /**
  * Class DigitoolDownloader
  * 
@@ -131,7 +130,7 @@ public class DigitoolDownloader implements DownloaderInterface
 		{
 			logger.info("Create Directory " + dir.getAbsoluteFile()
 					+ " and start to Download files");
-			dir.mkdir();
+			dir.mkdirs();
 			digitalEntityFile = getView(pid);
 			getRelated(digitalEntityFile, pid);
 			try
@@ -151,7 +150,7 @@ public class DigitoolDownloader implements DownloaderInterface
 			logger.info("Directory " + dir.getAbsoluteFile()
 					+ " exists. Force override.");
 			FileUtils.deleteDirectory(dir);
-			dir.mkdir();
+			dir.mkdirs();
 			digitalEntityFile = getView(pid);
 			getRelated(digitalEntityFile, pid);
 			try
