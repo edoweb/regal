@@ -411,7 +411,7 @@ public class DigitalEntity
 
 	public void setStream(File stream)
 	{
-		this.streams.set(0, stream);
+		streams.insertElementAt(stream, 0);
 	}
 
 	public Vector<DigitalEntity> getArchiveLinks()

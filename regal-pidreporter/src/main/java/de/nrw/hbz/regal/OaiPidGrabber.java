@@ -62,11 +62,15 @@ class OaiPidGrabber
 
 	Vector<String> harvest(String set, boolean harvestFromScratch)
 	{
-
 		String[] sets = null;
-		if (set.compareTo("null") != 0)
+
+		if (set != null && !set.isEmpty())
 		{
-			sets = set.split(",");
+
+			if (set.compareTo("null") != 0)
+			{
+				sets = set.split(",");
+			}
 		}
 		return harvest(sets, harvestFromScratch);
 	}

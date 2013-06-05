@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal;
+package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -36,6 +36,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -57,8 +58,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.nrw.hbz.regal.DownloaderInterface;
+import de.nrw.hbz.regal.PIDReporter;
+
 /**
- * 
+ * Class DigitoolDownloader
  * 
  * http://193.30.112.23:9280/fedora/get/dipp:1001?xml=true
  * http://193.30.112.23:9280/fedora/listDatastreams/dipp:1001?xml=true
@@ -74,9 +78,9 @@ import org.xml.sax.SAXException;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class OpusDownloader implements DownloaderInterface
+public class DippDownloader implements DownloaderInterface
 {
-	final static Logger logger = LoggerFactory.getLogger(OpusDownloader.class);
+	final static Logger logger = LoggerFactory.getLogger(DippDownloader.class);
 
 	// DigitalEntityBeanBuilder beanBuilder = null;
 	String downloadLocation = null;
@@ -86,7 +90,7 @@ public class OpusDownloader implements DownloaderInterface
 	boolean downloaded = false;
 	HashMap<String, String> map = new HashMap<String, String>();
 
-	public OpusDownloader()
+	public DippDownloader()
 	{
 		// beanBuilder = new DigitalEntityBeanBuilder();
 
@@ -135,21 +139,17 @@ public class OpusDownloader implements DownloaderInterface
 
 		if (map.containsKey(pid))
 			throw new IOException(pid + " already visited!");
-
-		objectDirectory = downloadLocation + File.separator + pid;
-
+		objectDirectory = downloadLocation + File.separator
+				+ URLEncoder.encode(pid);
 		File dir = new File(objectDirectory);
-
 		if (!dir.exists())
 		{
-
 			logger.info("Create Directory " + dir.getAbsoluteFile()
 					+ " and start to Download files");
-			dir.mkdirs();
+			dir.mkdir();
 
 			try
 			{
-
 				downloadObject(dir, pid);
 			}
 			catch (Exception e)
@@ -164,7 +164,7 @@ public class OpusDownloader implements DownloaderInterface
 			logger.info("Directory " + dir.getAbsoluteFile()
 					+ " exists. Force override.");
 			FileUtils.deleteDirectory(dir);
-			dir.mkdirs();
+			dir.mkdir();
 
 			try
 			{
@@ -203,119 +203,275 @@ public class OpusDownloader implements DownloaderInterface
 			{
 				throw new Exception(pid + " already visited!");
 			}
+			logger.debug(pid + " start download!");
+			URL url = new URL(server + "get/" + pid + "?xml=true");
+			File file = new File(dir.getAbsolutePath() + File.separator
+					+ URLEncoder.encode(pid) + ".xml");
+			String data = null;
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(url.openStream(), writer);
+			data = writer.toString();
+			FileUtils.writeStringToFile(file, data, "utf-8");
 
-			downloadXMetaDissPlus(dir, pid);
-			downloadPdfs(dir, pid);
+			downloadStreams(dir, pid);
+			downloadConstituent(dir, pid);
+			downloadRelatedObject(dir, pid, "rel:hasPart");
+			File downloadDir = new File(downloadLocation);
+
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasMember");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasSubset");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasCollectionMember");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasDerivation");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasDependent");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasDescription");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasMetadata");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasAnnotation");
+			//
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:hasEquivalent");
+
+			downloadRelatedObject(dir, pid, "rel:isPartOf");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isMemberOf");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isSubsetOf");
+			downloadRelatedObject(new File(downloadLocation), pid,
+					"rel:isMemberOfCollection");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:isDerivationOf");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:isDependentOf");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:isDescriptionOf");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:isMetadataFor");
+			// downloadRelatedObject(new File(downloadLocation), pid,
+			// "rel:isAnnotationOf");
 
 		}
 		catch (MalformedURLException e)
 		{
 			logger.error(e.getMessage());
-
 		}
 		catch (IOException e)
 		{
-
+			logger.error(e.getMessage());
 		}
 
 	}
 
-	private void downloadXMetaDissPlus(File dir, String pid) throws IOException
+	private void downloadConstituent(File dir, String pid)
 	{
+		String relation = "rel:hasConstituent";
 
-		String url = server + pid;
-		logger.info("Download: " + url);
-		URL dataStreamUrl = new URL(url);
-		File dataStreamFile = new File(dir.getAbsolutePath() + File.separator
-				+ "" + pid + ".xml");
-		// dataStreamFile.createNewFile();
-
-		logger.info("Save: " + dataStreamFile.getAbsolutePath());
-
-		String data = null;
-		StringWriter writer = new StringWriter();
-		IOUtils.copy(dataStreamUrl.openStream(), writer);
-		data = writer.toString();
-		FileUtils.writeStringToFile(dataStreamFile, data, "utf-8");
-
-		// InputStream in = null;
-		// URLConnection uc = dataStreamUrl.openConnection();
-		// uc.connect();
-		// in = uc.getInputStream();
-		// FileOutputStream out = new FileOutputStream(dataStreamFile);
-		//
-		// byte[] buffer = new byte[1024];
-		// int bytesRead = -1;
-		// while ((bytesRead = in.read(buffer)) > -1)
-		// {
-		// out.write(buffer, 0, bytesRead);
-		// }
-		// in.close();
-
-	}
-
-	private void downloadPdfs(File dir, String pid)
-	{
-		Vector<String> files = new Vector<String>();
-		String identifier = null;
-		Element xMetaDissPlus = getDocument(new File(dir.getAbsolutePath()
-				+ File.separator + pid + ".xml"));
-
-		NodeList identifiers = xMetaDissPlus
-				.getElementsByTagName("ddb:identifier");
-
-		for (int i = 0; i < identifiers.getLength(); i++)
+		try
 		{
-			Element id = (Element) identifiers.item(i);
-			identifier = id.getTextContent();
-		}
-		NodeList fileProperties = xMetaDissPlus
-				.getElementsByTagName("ddb:fileProperties");
+			URL url = new URL(server + "get/" + pid + "/RELS-EXT");
+			String data = null;
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(url.openStream(), writer);
+			data = writer.toString();
 
-		for (int i = 0; i < fileProperties.getLength(); i++)
-		{
-			Element fileProperty = (Element) fileProperties.item(i);
-			String filename = fileProperty.getAttribute("ddb:fileName");
-			files.add(filename);
-		}
-
-		int i = 0;
-		for (String file : files)
-		{
-
-			try
+			Element root = stringToElement(data);
+			NodeList constituents = root.getElementsByTagName(relation);
+			if (constituents == null || constituents.getLength() == 0)
+				return;
+			File zipDir = new File(dir.getAbsolutePath() + File.separator
+					+ "content");
+			for (int i = 0; i < constituents.getLength(); i++)
 			{
-				if (file.endsWith("pdf"))
+
+				Element c = (Element) constituents.item(i);
+				String cPid = c.getAttribute("rdf:resource").replace(
+						"info:fedora/", "");
+				if (cPid.contains("temp"))
 				{
-					i++;
-					download(dir.getAbsoluteFile() + File.separator + pid + "_"
-							+ i + ".pdf", identifier + "/pdf/" + file);
+					logger.debug(cPid + " skip temporary object.");
+
 				}
+				else
+				{
+					File cDir = new File(dir.getAbsolutePath() + File.separator
+
+					+ URLEncoder.encode(cPid));
+
+					try
+					{
+						downloadObject(cDir, cPid);
+					}
+					catch (Exception e)
+					{
+						logger.warn(e.getMessage());
+					}
+					try
+					{
+						map.remove(cPid);
+						downloadObject(zipDir, cPid);
+					}
+					catch (Exception e)
+					{
+						logger.warn(e.getMessage());
+					}
+				}
+
 			}
-			catch (IOException e)
+			File cFile = new File(dir.getAbsolutePath() + File.separator
+					+ "content.zip");
+			logger.debug("I will zip now! " + zipDir.getAbsolutePath() + " to "
+					+ cFile.getAbsolutePath());
+			zip(zipDir, cFile);
+
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getMessage());
+		}
+
+	}
+
+	private void downloadRelatedObject(File dir, String pid, String relation)
+	{
+		try
+		{
+			URL url = new URL(server + "get/" + pid + "/RELS-EXT");
+			String data = null;
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(url.openStream(), writer);
+			data = writer.toString();
+
+			Element root = stringToElement(data);
+			NodeList constituents = root.getElementsByTagName(relation);
+			for (int i = 0; i < constituents.getLength(); i++)
 			{
-				logger.error(e.getMessage());
+				try
+				{
+					Element c = (Element) constituents.item(i);
+					String cPid = c.getAttribute("rdf:resource").replace(
+							"info:fedora/", "");
+
+					logger.debug(pid + " " + relation + " " + cPid);
+					// if (!cPid.contains("oai") && !cPid.contains("temp")
+					// && !pid.contains("oai") && !pid.contains("temp"))
+					logger.info("DOWNLOAD-GRAPH: \"" + pid + "\"->\"" + cPid
+							+ "\" [label=\"" + relation + "\"]");
+
+					if (cPid.contains("temp"))
+					{
+						logger.debug(cPid + " skip temporary object.");
+
+					}
+					else
+					{
+						File cDir = new File(dir.getAbsolutePath()
+								+ File.separator
+
+								+ URLEncoder.encode(cPid));
+
+						downloadObject(cDir, cPid);
+					}
+				}
+				catch (Exception e)
+				{
+					logger.debug(e.getMessage());
+				}
+
 			}
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getMessage());
 		}
 	}
 
-	private void download(String file, String url) throws IOException
+	private void downloadStreams(File dir, String pid)
 	{
-		URL dataStreamUrl = new URL(url);
-
-		InputStream in = null;
-		URLConnection uc = dataStreamUrl.openConnection();
-		uc.connect();
-		in = uc.getInputStream();
-		FileOutputStream out = new FileOutputStream(file);
-
-		byte[] buffer = new byte[1024];
-		int bytesRead = -1;
-		while ((bytesRead = in.read(buffer)) > -1)
+		try
 		{
-			out.write(buffer, 0, bytesRead);
+			URL url = new URL(server + "listDatastreams/" + pid + "?xml=true");
+			String data = null;
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(url.openStream(), writer);
+			data = writer.toString();
+
+			Element root = stringToElement(data);
+			NodeList dss = root.getElementsByTagName("datastream");
+
+			for (int i = 0; i < dss.getLength(); i++)
+			{
+				Element dsel = (Element) dss.item(i);
+				String datastreamName = dsel.getAttribute("dsid");
+				String fileName = dsel.getAttribute("label");
+				String mimeType = dsel.getAttribute("mimeType");
+
+				if (mimeType.contains("xml"))
+				{
+					fileName = datastreamName + ".xml";
+				}
+				if (mimeType.contains("html"))
+				{
+					fileName = fileName + ".html";
+				}
+
+				URL dataStreamUrl = new URL(server + "get/" + pid + "/"
+						+ datastreamName);
+				File dataStreamFile = new File(dir.getAbsolutePath()
+						+ File.separator + "" + fileName);
+
+				InputStream in = null;
+				try
+				{
+					URLConnection uc = dataStreamUrl.openConnection();
+					uc.connect();
+					in = uc.getInputStream();
+					FileOutputStream out = new FileOutputStream(dataStreamFile);
+
+					byte[] buffer = new byte[1024];
+					int bytesRead = -1;
+					while ((bytesRead = in.read(buffer)) > -1)
+					{
+						out.write(buffer, 0, bytesRead);
+					}
+					in.close();
+
+				}
+				catch (IOException e)
+				{
+					logger.error(pid + " problem downloading stream "
+							+ datastreamName);
+				}
+				finally
+				{
+					try
+					{
+						if (in != null)
+							in.close();
+					}
+					catch (IOException e)
+					{
+						logger.error(pid + " problem downloading stream "
+								+ datastreamName);
+					}
+				}
+
+			}
+
 		}
-		in.close();
+		catch (MalformedURLException e)
+		{
+			logger.error(e.getMessage());
+		}
+		catch (IOException e)
+		{
+			logger.error(e.getMessage());
+		}
 	}
 
 	private Element stringToElement(String data)
@@ -594,7 +750,7 @@ public class OpusDownloader implements DownloaderInterface
 			System.exit(1);
 		}
 
-		OpusDownloader main = new OpusDownloader();
+		DippDownloader main = new DippDownloader();
 		try
 		{
 			main.run(argv[0]);

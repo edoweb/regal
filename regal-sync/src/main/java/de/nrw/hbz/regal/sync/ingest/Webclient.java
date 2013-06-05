@@ -361,6 +361,10 @@ public class Webclient
 							.getFirstStream().getName()));
 			multiPart.bodyPart(new BodyPart(dtlBean.getStreamMime(),
 					MediaType.TEXT_PLAIN_TYPE));
+
+			logger.info("Upload: " + dtlBean.getFirstStream().getName());
+			multiPart.bodyPart(new BodyPart(dtlBean.getFirstStream().getName(),
+					MediaType.TEXT_PLAIN_TYPE));
 			data.type("multipart/mixed").post(multiPart);
 
 		}

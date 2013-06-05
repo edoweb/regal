@@ -29,7 +29,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -60,7 +62,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.culturegraph.mf.Flux;
+import org.openrdf.OpenRDFException;
 import org.openrdf.model.Statement;
+import org.openrdf.model.Value;
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -490,22 +498,45 @@ class Actions
 
 		String result = null;
 		Node node = readNode(pid);
-
+		InputStream is = null;
 		if (node != null)
 		{
 
-			InputStream in = null;
 			try
 			{
-				in = new URL(fedoraExtern + "/objects/" + pid
-						+ "/datastreams/metadata/content").openStream();
-				result = IOUtils.toString(in);
+				URL url = new URL(fedoraExtern + "/objects/" + pid
+						+ "/datastreams/metadata/content");
+
+				URLConnection connection = url.openConnection();
+
+				try
+				{
+					is = connection.getInputStream();
+					result = IOUtils.toString(is);
+				}
+				catch (IOException ioe)
+				{
+					if (connection instanceof HttpURLConnection)
+					{
+						HttpURLConnection httpConn = (HttpURLConnection) connection;
+						int statusCode = httpConn.getResponseCode();
+						if (statusCode != 200)
+						{
+							throw new HttpArchiveException(statusCode,
+									httpConn.getResponseMessage());
+						}
+						else
+						{
+
+						}
+					}
+				}
 
 			}
 			finally
 			{
-				if (in != null)
-					IOUtils.closeQuietly(in);
+				if (is != null)
+					IOUtils.closeQuietly(is);
 			}
 
 		}
@@ -1044,7 +1075,6 @@ class Actions
 	 */
 	View getView(Node node)
 	{
-
 		String pid = node.getPID();
 		String uri = pid;
 		String apiUrl = uriPrefix + pid;
@@ -1482,6 +1512,7 @@ class Actions
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(in, writer, "UTF-8");
 			String str = writer.toString();
+
 			str = Pattern.compile(lobidUrl).matcher(str)
 					.replaceAll(Matcher.quoteReplacement(pid))
 					+ "<"
@@ -1489,6 +1520,10 @@ class Actions
 					+ "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
 					+ lobidUrl + "> .";
 
+			if (str.contains("http://www.w3.org/2002/07/owl#sameAs"))
+			{
+				str = includeSameAs(str, pid);
+			}
 			updateMetadata(pid, str);
 		}
 		catch (IOException e)
@@ -1512,6 +1547,110 @@ class Actions
 
 		return pid + " lobid metadata successfully loaded!";
 
+	}
+
+	private String includeSameAs(String str, String pid)
+	{
+		// <edoweb:4245081> <http://www.w3.org/2002/07/owl#sameAs>
+		// <http://lobid.org/resource/ZDB2502002-X>
+		System.out.println(pid + " include sameAs");
+		URL url = null;
+		try
+		{
+			Repository myRepository = new SailRepository(new MemoryStore());
+			myRepository.initialize();
+
+			String baseURI = "http://example.org/example/local";
+
+			RepositoryConnection con = myRepository.getConnection();
+			try
+			{
+				con.add(new StringReader(str), baseURI, RDFFormat.NTRIPLES);
+
+				String queryString = "SELECT x, y FROM {x} <http://www.w3.org/2002/07/owl#sameAs> {y}";
+
+				TupleQuery tupleQuery = con.prepareTupleQuery(
+						QueryLanguage.SERQL, queryString);
+				TupleQueryResult result = tupleQuery.evaluate();
+				try
+				{
+					while (result.hasNext())
+					{
+						BindingSet bindingSet = result.next();
+						Value valueOfY = bindingSet.getValue("y");
+						System.out.println(pid + " is same as "
+								+ valueOfY.stringValue());
+						url = new URL(valueOfY.stringValue());
+
+					}
+				}
+				catch (MalformedURLException e)
+				{
+					logger.warn("Not able to include sameAs data.");
+				}
+				finally
+				{
+					result.close();
+				}
+			}
+			catch (IOException e)
+			{
+				logger.error(e.getMessage());
+			}
+			finally
+			{
+				con.close();
+			}
+		}
+		catch (OpenRDFException e)
+		{
+			logger.error(e.getMessage());
+		}
+
+		if (url == null)
+		{
+			System.out.println("Not able to include sameAs data.");
+			logger.warn("Not able to include sameAs data.");
+			return str;
+		}
+
+		InputStream in = null;
+		try
+		{
+
+			URLConnection con = url.openConnection();
+			con.setRequestProperty("Accept", "text/plain");
+			con.connect();
+
+			in = con.getInputStream();
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(in, writer, "UTF-8");
+			String str1 = writer.toString();
+
+			str1 = Pattern.compile(url.toString()).matcher(str1)
+					.replaceAll(Matcher.quoteReplacement(pid));
+			return str + "\n" + str1;
+
+		}
+		catch (IOException e)
+		{
+			throw new ArchiveException(pid
+					+ " IOException happens during copy operation.", e);
+		}
+		finally
+		{
+			try
+			{
+				if (in != null)
+					in.close();
+			}
+			catch (IOException e)
+			{
+				throw new ArchiveException(pid
+						+ " wasn't able to close stream.", e);
+			}
+		}
+		// throw new ArchiveException("Not able to include sameAs data.");
 	}
 
 	/**
@@ -1880,7 +2019,6 @@ class Actions
 					+ "/datastreams/data/content");
 			pdfFile = File.createTempFile("pdf", "pdf");
 			pdfFile.deleteOnExit();
-			URL url = new URL(lobidUrl);
 
 			URLConnection uc = content.openConnection();
 			uc.connect();
@@ -1972,7 +2110,6 @@ class Actions
 					+ "/datastreams/data/content");
 			pdfFile = File.createTempFile("pdf", "pdf");
 			pdfFile.deleteOnExit();
-			URL url = new URL(lobidUrl);
 
 			URLConnection uc = content.openConnection();
 			uc.connect();
