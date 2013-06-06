@@ -120,7 +120,7 @@ public class TestActions
 	{
 		try
 		{
-			Resources resources = new Resources();
+			Resource resources = new Resource();
 			CreateObjectBean input = new CreateObjectBean();
 			input.setType("monograph");
 			resources.create("123", "test", input);

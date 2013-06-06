@@ -42,12 +42,12 @@ public class Issue
 {
 	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
 
-	Resources resources = null;
+	Resource resources = null;
 
 	public Issue() throws IOException
 	{
 
-		resources = new Resources();
+		resources = new Resource();
 
 	}
 

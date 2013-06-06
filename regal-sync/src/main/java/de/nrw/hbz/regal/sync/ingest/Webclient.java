@@ -100,7 +100,7 @@ public class Webclient
 	public void metadata(DigitalEntity dtlBean)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
-		String resource = endpoint + "/resources/" + pid;
+		String resource = endpoint + "/resource/" + pid;
 		try
 		{
 			updateDC(resource + "/dc", dtlBean);
@@ -148,7 +148,7 @@ public class Webclient
 	{
 		metadata(dtlBean);
 		String pid = namespace + ":" + dtlBean.getPid();
-		String resource = endpoint + "/resources/" + pid;
+		String resource = endpoint + "/resource/" + pid;
 		String m = "";
 		try
 		{
@@ -190,7 +190,7 @@ public class Webclient
 			ObjectType type)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
-		String resource = endpoint + "/resources/" + pid;
+		String resource = endpoint + "/resource/" + pid;
 		String data = resource + "/data";
 
 		createResource(type, dtlBean);
@@ -251,7 +251,7 @@ public class Webclient
 		String ppid = dtlBean.getParentPid();
 
 		String parentPid = namespace + ":" + ppid;
-		String resourceUrl = endpoint + "/resources/" + pid;
+		String resourceUrl = endpoint + "/resource/" + pid;
 		WebResource resource = webclient.resource(resourceUrl);
 		CreateObjectBean input = new CreateObjectBean();
 		input.setType(type.toString());
@@ -470,7 +470,7 @@ public class Webclient
 	{
 		String pid = namespace + ":" + p;
 
-		WebResource delete = webclient.resource(endpoint + "/resources/" + pid);
+		WebResource delete = webclient.resource(endpoint + "/resource/" + pid);
 		try
 		{
 			delete.delete();

@@ -34,7 +34,7 @@ public class TestWebpageApi
 	@Test
 	public void testResources() throws IOException
 	{
-		Resources resources = new Resources();
+		Resource resources = new Resource();
 
 		CreateObjectBean input = new CreateObjectBean();
 		input.type = "webpage";
