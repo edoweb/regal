@@ -19,8 +19,8 @@ package de.nrw.hbz.regal.sync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.nrw.hbz.regal.OpusDownloader;
 import de.nrw.hbz.regal.sync.ingest.OpusDigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.ingest.OpusDownloader;
 import de.nrw.hbz.regal.sync.ingest.OpusIngester;
 
 /**

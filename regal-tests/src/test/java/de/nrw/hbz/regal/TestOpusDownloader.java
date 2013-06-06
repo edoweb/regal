@@ -10,6 +10,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.nrw.hbz.regal.sync.ingest.OpusDownloader;
+
 public class TestOpusDownloader
 {
 	Properties properties = new Properties();
