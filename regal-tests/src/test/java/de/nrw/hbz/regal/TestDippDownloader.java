@@ -27,6 +27,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.nrw.hbz.regal.sync.ingest.DippDownloader;
+
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 

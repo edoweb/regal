@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal;
+package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.IOException;
 

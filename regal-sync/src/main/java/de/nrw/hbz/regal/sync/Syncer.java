@@ -30,10 +30,10 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.nrw.hbz.regal.DownloaderInterface;
 import de.nrw.hbz.regal.PIDReporter;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.ingest.DownloaderInterface;
 import de.nrw.hbz.regal.sync.ingest.IngestInterface;
 
 /**

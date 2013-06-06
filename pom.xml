@@ -172,7 +172,6 @@
 		<module>regal-downloader</module>
 		<module>regal-pidreporter</module>
 		<module>digitool-downloader</module>
-		<module>dipp-downloader</module>
 		<module>regal-sync</module>
 		<module>edoweb-sync</module>
 		<module>ellinet-sync</module>
@@ -180,7 +179,6 @@
 		<module>regal-api</module>
 		<module>edoweb-oai</module>
 		<module>ellinet-oai</module>
-		<module>opus-downloader</module>
 		<module>opus-sync</module>
 	</modules>
 

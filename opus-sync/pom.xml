@@ -60,33 +60,7 @@
 			<version>20040117.000000</version>
 		</dependency>
 
-		<dependency>
-			<groupId>de.nrw.hbz.regal</groupId>
-			<artifactId>opus-downloader</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>sli4j-slf4j-log4j</artifactId>
-					<groupId>com.googlecode.sli4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sli4j-log4j</artifactId>
-					<groupId>com.googlecode.sli4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sli4j-slf4j</artifactId>
-					<groupId>com.googlecode.sli4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+		
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-api</artifactId>
