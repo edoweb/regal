@@ -46,12 +46,12 @@ public class Monograph
 {
 	final static Logger logger = LoggerFactory.getLogger(Monograph.class);
 
-	Resources resources = null;
+	Resource resources = null;
 
 	public Monograph() throws IOException
 	{
 
-		resources = new Resources();
+		resources = new Resource();
 
 	}
 

@@ -54,11 +54,11 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-@Path("/resources")
-public class Resources
+@Path("/resource")
+public class Resource
 {
 
-	final static Logger logger = LoggerFactory.getLogger(Resources.class);
+	final static Logger logger = LoggerFactory.getLogger(Resource.class);
 
 	Actions actions = null;
 
@@ -68,7 +68,7 @@ public class Resources
 	 * @throws IOException
 	 *             if properties of the Actions class can't get loaded
 	 */
-	public Resources() throws IOException
+	public Resource() throws IOException
 	{
 		actions = new Actions();
 	}
@@ -133,6 +133,23 @@ public class Resources
 		View view = actions.getView(pid);
 		ResponseBuilder res = Response.ok()
 				.lastModified(view.getLastModified()).entity(view);
+
+		return res.build();
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 */
+	@GET
+	@Path("/{pid}.rdf")
+	@Produces({ "application/rdf+xml" })
+	public Response getReM(@PathParam("pid") String pid)
+	{
+		String rem = actions.getReM(pid);
+		ResponseBuilder res = Response.ok()
+				.lastModified(actions.getLastModified(pid)).entity(rem);
 
 		return res.build();
 	}
