@@ -42,12 +42,12 @@ public class Volume
 {
 	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
 
-	Resources resources = null;
+	Resource resources = null;
 
 	public Volume() throws IOException
 	{
 
-		resources = new Resources();
+		resources = new Resource();
 
 	}
 

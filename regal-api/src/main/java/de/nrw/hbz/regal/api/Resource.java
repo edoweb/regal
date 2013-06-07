@@ -54,11 +54,11 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-@Path("/resources")
-public class Resources
+@Path("/resource")
+public class Resource
 {
 
-	final static Logger logger = LoggerFactory.getLogger(Resources.class);
+	final static Logger logger = LoggerFactory.getLogger(Resource.class);
 
 	Actions actions = null;
 
@@ -68,7 +68,7 @@ public class Resources
 	 * @throws IOException
 	 *             if properties of the Actions class can't get loaded
 	 */
-	public Resources() throws IOException
+	public Resource() throws IOException
 	{
 		actions = new Actions();
 	}
@@ -136,6 +136,110 @@ public class Resources
 
 		return res.build();
 	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 */
+
+	@Path("/{namespace}:{pid}.rdf")
+	@Produces({ "text/plain" })
+	public Response getReMAsNtriple(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
+	{
+		String rem = actions.getReM(namespace + ":" + pid, "text/plain");
+		ResponseBuilder res = Response.ok()
+				.lastModified(actions.getLastModified(namespace + ":" + pid))
+				.entity(rem);
+
+		return res.build();
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 */
+	@GET
+	@Path("/{namespace}:{pid}.rdf")
+	@Produces({ "application/rdf+xml" })
+	public Response getReMAsRdfXml(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
+	{
+		String rem = actions.getReM(namespace + ":" + pid,
+				"application/rdf+xml");
+		ResponseBuilder res = Response.ok()
+				.lastModified(actions.getLastModified(namespace + ":" + pid))
+				.entity(rem);
+
+		return res.build();
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 */
+	@GET
+	@Path("/{namespace}:{pid}.json")
+	@Produces({ "application/json" })
+	public Response getReMAsJson(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
+	{
+		String rem = actions.getReM(namespace + ":" + pid, "application/json");
+		ResponseBuilder res = Response.ok()
+				.lastModified(actions.getLastModified(namespace + ":" + pid))
+				.entity(rem);
+
+		return res.build();
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 */
+	@GET
+	@Path("/{namespace}:{pid}.dc")
+	@Produces({ "application/xml" })
+	public Response getDC(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
+	{
+		return getOAI_DC(pid, namespace);
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 */
+	@GET
+	@Path("/{namespace}:{pid}.html")
+	@Produces({ "text/html" })
+	public Response getHtml(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
+	{
+		String rem = actions.getReM(namespace + ":" + pid, "text/html");
+		ResponseBuilder res = Response.ok()
+				.lastModified(actions.getLastModified(namespace + ":" + pid))
+				.entity(rem);
+		return res.build();
+	}
+
+	// @Path("/{namespace}:{pid}.rdf")
+	// @Produces({ "application/rdf+xml" })
+	// public Response getReM(@PathParam("pid") String pid,
+	// @PathParam("namespace") String namespace)
+	// {
+	// String rem = actions.getReM(namespace + ":" + pid,
+	// "application/rdf+xml");
+	// ResponseBuilder res = Response.ok()
+	// .lastModified(actions.getLastModified(namespace + ":" + pid))
+	// .entity(rem);
+	//
+	// return res.build();
+	// }
 
 	/**
 	 * @param pid

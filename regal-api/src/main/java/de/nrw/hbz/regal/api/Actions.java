@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -63,8 +64,11 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.culturegraph.mf.Flux;
 import org.openrdf.OpenRDFException;
+import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
 import org.openrdf.model.Value;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
@@ -75,7 +79,13 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
+import org.openrdf.rio.RDFWriter;
+import org.openrdf.rio.Rio;
+import org.openrdf.rio.helpers.BasicWriterSettings;
+import org.openrdf.rio.helpers.JSONLDMode;
+import org.openrdf.rio.helpers.JSONLDSettings;
 import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +144,7 @@ class Actions
 				properties.getProperty("fedoraIntern"),
 				properties.getProperty("user"),
 				properties.getProperty("password"));
-		uriPrefix = serverName + "/" + "resources" + "/";
+		uriPrefix = serverName + "/" + "resource" + "/";
 
 		properties.load(getClass().getResourceAsStream(
 				"/externalLinks.properties"));
@@ -2247,4 +2257,317 @@ class Actions
 
 	}
 
+	public Date getLastModified(String pid)
+	{
+		Node node = readNode(pid);
+		return node.getLastModified();
+	}
+
+	public String getReM(String pid, String format)
+	{
+		String result = null;
+		Node node = readNode(pid);
+
+		String dcNamespace = "http://purl.org/dc/elements/1.1/";
+		String dctermsNamespace = "http://purl.org/dc/terms/";
+		String foafNamespace = "http://xmlns.com/foaf/0.1/";
+		String oreNamespace = "http://www.openarchives.org/ore/terms/";
+		String rdfNamespace = " http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+		String rdfsNamespace = "http://www.w3.org/2000/01/rdf-schema#";
+		String regalNamespace = "http://hbz-nrw.de/regal#";
+
+		InputStream in = null;
+		RepositoryConnection con = null;
+		try
+		{
+			SailRepository myRepository = new SailRepository(new MemoryStore());
+
+			myRepository.initialize();
+			con = myRepository.getConnection();
+			String baseURI = "";
+			try
+			{
+				URL metadata = new URL(fedoraExtern + "/objects/" + pid
+						+ "/datastreams/metadata/content");
+				in = metadata.openStream();
+				con.add(in, baseURI, RDFFormat.N3);
+			}
+			catch (Exception e)
+			{
+				logger.warn(e.getMessage());
+			}
+
+			// Graph remGraph = new org.openrdf.model.impl.GraphImpl();
+			ValueFactory myFactory = myRepository.getValueFactory();
+			// Links
+			View view = getExternalLinks(pid);
+			// Things
+			URI aggregation = myFactory.createURI(uriPrefix + pid);
+			URI rem = myFactory.createURI(uriPrefix + pid + ".rdf");
+			URI regal = myFactory.createURI("https://github.com/edoweb/regal/");
+			URI data = myFactory.createURI(aggregation.stringValue() + "/data");
+			URI fulltext = myFactory.createURI(aggregation.stringValue()
+					+ "/fulltext");
+			URI cType = myFactory.createURI(regalNamespace, "contentType");
+
+			// Predicates
+			URI describes = myFactory.createURI(oreNamespace, "describes");
+			URI isDescribedBy = myFactory.createURI(oreNamespace,
+					"isDescribedBy");
+			URI modified = myFactory.createURI(dctermsNamespace, "modified");
+			URI creator = myFactory.createURI(dctermsNamespace, "creator");
+			Literal lastTimeModified = myFactory
+					.createLiteral(getLastModified(pid));
+			URI aggregates = myFactory.createURI(oreNamespace, "aggregates");
+			URI isAggregatedBy = myFactory.createURI(oreNamespace,
+					"isAggregatedBy");
+			URI similarTo = myFactory.createURI(oreNamespace, "similarTo");
+
+			URI isPartOf = myFactory.createURI(dctermsNamespace, "isPartOf");
+			URI hasPart = myFactory.createURI(dctermsNamespace, "hasPart");
+			URI contentType = myFactory.createURI(dctermsNamespace,
+					"contentType");
+
+			// Statements
+			String str = getOriginalUri(pid);
+			if (str != null && !str.isEmpty())
+			{
+				URI originalObject = myFactory.createURI(str);
+				con.add(aggregation, similarTo, originalObject);
+
+			}
+			str = view.getFirstLobidUrl();
+			if (str != null && !str.isEmpty())
+			{
+				URI lobidResource = myFactory.createURI(str);
+				con.add(aggregation, similarTo, lobidResource);
+
+			}
+			str = view.getFirstVerbundUrl();
+			if (str != null && !str.isEmpty())
+			{
+				URI catalogResource = myFactory.createURI(str);
+				con.add(aggregation, similarTo, catalogResource);
+
+			}
+			str = getCacheUri(pid);
+			if (str != null && !str.isEmpty())
+			{
+				URI cacheResource = myFactory.createURI(str);
+				con.add(aggregation, similarTo, cacheResource);
+			}
+			URI fedoraObject = myFactory.createURI(this.fedoraExtern
+					+ "/objects/" + pid);
+
+			con.add(rem, describes, aggregation);
+			con.add(rem, modified, lastTimeModified);
+			con.add(rem, creator, regal);
+
+			con.add(aggregation, isDescribedBy, rem);
+			con.add(aggregation, aggregates, data);
+			con.add(aggregation, aggregates, fulltext);
+			con.add(aggregation, similarTo, fedoraObject);
+			con.add(aggregation, contentType, cType);
+
+			for (String relPid : findObject(pid, IS_PART_OF))
+			{
+				URI relUrl = myFactory.createURI(uriPrefix + relPid);
+
+				con.add(aggregation, isAggregatedBy, relUrl);
+				con.add(aggregation, isPartOf, relUrl);
+			}
+
+			for (String relPid : findObject(pid, HAS_PART))
+			{
+				URI relUrl = myFactory.createURI(uriPrefix + relPid);
+
+				con.add(aggregation, aggregates, relUrl);
+				con.add(aggregation, hasPart, relUrl);
+
+			}
+			StringWriter out = new StringWriter();
+
+			RDFWriter writer = null;
+			if (format.compareTo("application/rdf+xml") == 0)
+			{
+				writer = Rio.createWriter(RDFFormat.RDFXML, out);
+			}
+			if (format.compareTo("text/plain") == 0)
+			{
+				writer = Rio.createWriter(RDFFormat.NTRIPLES, out);
+			}
+			if (format.compareTo("application/json") == 0)
+			{
+				writer = Rio.createWriter(RDFFormat.JSONLD, out);
+
+				writer.getWriterConfig().set(JSONLDSettings.JSONLD_MODE,
+						JSONLDMode.EXPAND);
+				writer.getWriterConfig().set(BasicWriterSettings.PRETTY_PRINT,
+						true);
+			}
+
+			try
+			{
+
+				writer.startRDF();
+				for (Statement st : con.getStatements(null, null, null, false)
+						.asList())
+				{
+					writer.handleStatement(st);
+				}
+				writer.endRDF();
+				result = out.toString();
+
+			}
+			catch (RDFHandlerException e)
+			{
+				logger.error(e.getMessage());
+			}
+		}
+		catch (RepositoryException e)
+		{
+
+			logger.error(e.getMessage());
+		}
+		finally
+		{
+			if (con != null)
+			{
+				try
+				{
+					con.close();
+				}
+				catch (RepositoryException e)
+				{
+					logger.error(e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}
+		return result;
+
+	}
+
+	private String getCacheUri(String pid)
+	{
+		String cacheUri = null;
+		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
+		String namespace = pid.substring(0, pid.indexOf(':'));
+
+		if (pid.contains("edoweb") || pid.contains("ellinet"))
+		{
+			if (pid.length() <= 17)
+			{
+				cacheUri = this.serverName + "/" + namespace + "base/"
+						+ pidWithoutNamespace;
+
+			}
+		}
+		if (pid.contains("dipp"))
+		{
+			cacheUri = this.serverName + "/" + namespace + "base/"
+					+ URLEncoder.encode(URLEncoder.encode(pid));
+
+		}
+		if (pid.contains("ubm"))
+		{
+			cacheUri = this.serverName + "/" + namespace + "base/"
+					+ pidWithoutNamespace;
+
+		}
+		if (pid.contains("fhdd"))
+		{
+			cacheUri = this.serverName + "/" + namespace + "base/"
+					+ pidWithoutNamespace;
+
+		}
+		if (pid.contains("kola"))
+		{
+			cacheUri = this.serverName + "/" + namespace + "base/"
+					+ pidWithoutNamespace;
+
+		}
+		return cacheUri;
+	}
+
+	private View getExternalLinks(String pid)
+	{
+		View view = new View();
+		Node node = readNode(pid);
+		for (String id : node.getIdentifier())
+		{
+			if (id.startsWith("doi"))
+			{
+				view.addDoi(id);
+				view.addDataciteUrl(dataciteUrl + id);
+				view.addBaseUrl(baseUrl + id);
+			}
+			else if (id.startsWith("urn"))
+			{
+				view.addUrn(id);
+				break;
+			}
+			else if (id.startsWith("HT"))
+			{
+				view.addAlephId(id);
+				view.addCulturegraphUrl(culturegraphUrl + id);
+				view.addLobidUrl(lobidUrl + id);
+				view.addVerbundUrl(verbundUrl + id);
+				break;
+			}
+			else if (id.startsWith("TT"))
+			{
+				view.addAlephId(id);
+				view.addCulturegraphUrl(culturegraphUrl + id);
+				view.addLobidUrl(lobidUrl + id);
+				view.addVerbundUrl(verbundUrl + id);
+				break;
+			}
+			else
+			{
+				view.addIdentifier(id);
+			}
+		}
+		return view;
+	}
+
+	private String getOriginalUri(String pid)
+	{
+		String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
+		String originalUri = null;
+		if (pid.contains("edoweb") || pid.contains("ellinet"))
+		{
+			if (pid.length() <= 17)
+			{
+				originalUri = "http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid="
+						+ pidWithoutNamespace;
+
+			}
+		}
+		if (pid.contains("dipp"))
+		{
+			originalUri = "http://193.30.112.23:9280/fedora/get/" + pid
+					+ "/QDC";
+
+		}
+		if (pid.contains("ubm"))
+		{
+			originalUri = "http://ubm.opus.hbz-nrw.de/frontdoor.php?source_opus="
+					+ pidWithoutNamespace + "&la=de";
+
+		}
+		if (pid.contains("fhdd"))
+		{
+			originalUri = "http://fhdd.opus.hbz-nrw.de/frontdoor.php?source_opus="
+					+ pidWithoutNamespace + "&la=de";
+
+		}
+		if (pid.contains("kola"))
+		{
+			originalUri = "http://kola.opus.hbz-nrw.de/frontdoor.php?source_opus="
+					+ pidWithoutNamespace + "&la=de";
+
+		}
+		return originalUri;
+	}
 }

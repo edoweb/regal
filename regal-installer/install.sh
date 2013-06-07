@@ -122,7 +122,7 @@ echo >> $ARCHIVE_HOME/conf/elasticsearch.yml
 echo "write site.conf"
 
 echo -e "<VirtualHost *:80>" > $ARCHIVE_HOME/conf/site.conf
-echo -e "    ServerName api.$SERVER" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "    ServerName $SERVER" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "    ServerAdmin $EMAIL" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "    DocumentRoot $ARCHIVE_HOME/html" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "    <Directory />" >> $ARCHIVE_HOME/conf/site.conf
@@ -149,7 +149,8 @@ echo -e "RewriteEngine on" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /fedora/(.*) http://localhost:$TOMCAT_PORT/fedora/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /search/(.*) http://localhost:$ELASTICSEARCH_PORT/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/resources/(.*) http://localhost:$TOMCAT_PORT/api/resources/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/resource/(.*) http://localhost:$TOMCAT_PORT/api/resource/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/resources/(.*) http://localhost:$TOMCAT_PORT/api/resource/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /journal/(.*) http://localhost:$TOMCAT_PORT/api/journal/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /monograph/(.*) http://localhost:$TOMCAT_PORT/api/monograph/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule /webpage/(.*) http://localhost:$TOMCAT_PORT/api/webpage/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
@@ -314,7 +315,7 @@ fi
 
 echo "copy html"
 cp -r $ARCHIVE_HOME/src/regal-ui/htdocs/* $ARCHIVE_HOME/html/
-sed "s/localhost/api.$SERVER/g" $ARCHIVE_HOME/html/js/EasyEllinetSearch.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/EasyEllinetSearch.js"
+sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/EasyEllinetSearch.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/EasyEllinetSearch.js"
 
 #cp $SRC/regal-ui/conf/proai.properties $WEBAPPS/oai-pmh/WEB-INF/classes
 cp $SRC/regal-installer/install.sh $ARCHIVE_HOME/bin/

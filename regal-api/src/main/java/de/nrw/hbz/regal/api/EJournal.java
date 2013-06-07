@@ -44,12 +44,12 @@ public class EJournal
 {
 	final static Logger logger = LoggerFactory.getLogger(EJournal.class);
 
-	Resources resources = null;
+	Resource resources = null;
 
 	public EJournal() throws IOException
 	{
 
-		resources = new Resources();
+		resources = new Resource();
 
 	}
 

@@ -9,7 +9,7 @@
 	<artifactId>regal-api</artifactId>
 	<packaging>jar</packaging>
 	<name>regal-api</name>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.marc4j</groupId>
@@ -136,6 +136,16 @@
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 			<version>5.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.jsonld-java</groupId>
+			<artifactId>jsonld-java</artifactId>
+			<version>0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.jsonld-java</groupId>
+			<artifactId>jsonld-java-sesame</artifactId>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
