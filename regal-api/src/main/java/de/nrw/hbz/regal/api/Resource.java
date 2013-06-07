@@ -227,19 +227,19 @@ public class Resource
 		return res.build();
 	}
 
-	@Path("/{namespace}:{pid}.rdf")
-	@Produces({ "application/rdf+xml" })
-	public Response getReM(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace)
-	{
-		String rem = actions.getReM(namespace + ":" + pid,
-				"application/rdf+xml");
-		ResponseBuilder res = Response.ok()
-				.lastModified(actions.getLastModified(namespace + ":" + pid))
-				.entity(rem);
-
-		return res.build();
-	}
+	// @Path("/{namespace}:{pid}.rdf")
+	// @Produces({ "application/rdf+xml" })
+	// public Response getReM(@PathParam("pid") String pid,
+	// @PathParam("namespace") String namespace)
+	// {
+	// String rem = actions.getReM(namespace + ":" + pid,
+	// "application/rdf+xml");
+	// ResponseBuilder res = Response.ok()
+	// .lastModified(actions.getLastModified(namespace + ":" + pid))
+	// .entity(rem);
+	//
+	// return res.build();
+	// }
 
 	/**
 	 * @param pid
