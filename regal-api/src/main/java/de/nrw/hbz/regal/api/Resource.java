@@ -143,6 +143,7 @@ public class Resource
 	 * @return an aggregated representation of the resource
 	 */
 	@GET
+<<<<<<< HEAD:regal-api/src/main/java/de/nrw/hbz/regal/api/Resource.java
 	@Path("/{namespace}:{pid}.rdf")
 	@Produces({ "text/plain" })
 	public Response getReMAsNtriple(@PathParam("pid") String pid,
@@ -224,6 +225,15 @@ public class Resource
 		ResponseBuilder res = Response.ok()
 				.lastModified(actions.getLastModified(namespace + ":" + pid))
 				.entity(rem);
+=======
+	@Path("/{pid}.rdf")
+	@Produces({ "application/rdf+xml" })
+	public Response getReM(@PathParam("pid") String pid)
+	{
+		String rem = actions.getReM(pid);
+		ResponseBuilder res = Response.ok()
+				.lastModified(actions.getLastModified(pid)).entity(rem);
+>>>>>>> 574b307e9d5e28c7a01d93e0ed1caa4ea331cd9b:regal-api/src/main/java/de/nrw/hbz/regal/api/Resource.java
 
 		return res.build();
 	}
