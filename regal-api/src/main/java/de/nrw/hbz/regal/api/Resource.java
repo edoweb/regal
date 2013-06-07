@@ -142,13 +142,14 @@ public class Resource
 	 *            the pid of the resource
 	 * @return an aggregated representation of the resource
 	 */
-
+	@GET
 	@Path("/{namespace}:{pid}.rdf")
-	@Produces({ "text/plain" })
-	public Response getReMAsNtriple(@PathParam("pid") String pid,
+	@Produces({ "application/rdf+xml" })
+	public Response getReMAsRdfXml(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace)
 	{
-		String rem = actions.getReM(namespace + ":" + pid, "text/plain");
+		String rem = actions.getReM(namespace + ":" + pid,
+				"application/rdf+xml");
 		ResponseBuilder res = Response.ok()
 				.lastModified(actions.getLastModified(namespace + ":" + pid))
 				.entity(rem);
@@ -163,12 +164,11 @@ public class Resource
 	 */
 	@GET
 	@Path("/{namespace}:{pid}.rdf")
-	@Produces({ "application/rdf+xml" })
-	public Response getReMAsRdfXml(@PathParam("pid") String pid,
+	@Produces({ "text/plain" })
+	public Response getReMAsNTriple(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace)
 	{
-		String rem = actions.getReM(namespace + ":" + pid,
-				"application/rdf+xml");
+		String rem = actions.getReM(namespace + ":" + pid, "text/plain");
 		ResponseBuilder res = Response.ok()
 				.lastModified(actions.getLastModified(namespace + ":" + pid))
 				.entity(rem);
