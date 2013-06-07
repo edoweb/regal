@@ -2298,66 +2298,78 @@ class Actions
 			}
 
 			// Graph remGraph = new org.openrdf.model.impl.GraphImpl();
-			ValueFactory myFactory = myRepository.getValueFactory();
+			ValueFactory f = myRepository.getValueFactory();
 			// Links
 			View view = getExternalLinks(pid);
 			// Things
-			URI aggregation = myFactory.createURI(uriPrefix + pid);
-			URI rem = myFactory.createURI(uriPrefix + pid + ".rdf");
-			URI regal = myFactory.createURI("https://github.com/edoweb/regal/");
-			URI data = myFactory.createURI(aggregation.stringValue() + "/data");
-			URI fulltext = myFactory.createURI(aggregation.stringValue()
-					+ "/fulltext");
-			URI cType = myFactory.createURI(regalNamespace, "contentType");
+			URI aggregation = f.createURI(uriPrefix + pid);
+			URI rem = f.createURI(uriPrefix + pid + ".rdf");
+			URI regal = f.createURI("https://github.com/edoweb/regal/");
+			URI data = f.createURI(aggregation.stringValue() + "/data");
+			URI fulltext = f.createURI(aggregation.stringValue() + "/fulltext");
+			URI cType = f.createURI(regalNamespace, "contentType");
+			Literal lastTimeModified = f.createLiteral(getLastModified(pid));
+			String mime = node.getMimeType();
 
 			// Predicates
-			URI describes = myFactory.createURI(oreNamespace, "describes");
-			URI isDescribedBy = myFactory.createURI(oreNamespace,
-					"isDescribedBy");
-			URI modified = myFactory.createURI(dctermsNamespace, "modified");
-			URI creator = myFactory.createURI(dctermsNamespace, "creator");
-			Literal lastTimeModified = myFactory
-					.createLiteral(getLastModified(pid));
-			URI aggregates = myFactory.createURI(oreNamespace, "aggregates");
-			URI isAggregatedBy = myFactory.createURI(oreNamespace,
-					"isAggregatedBy");
-			URI similarTo = myFactory.createURI(oreNamespace, "similarTo");
-
-			URI isPartOf = myFactory.createURI(dctermsNamespace, "isPartOf");
-			URI hasPart = myFactory.createURI(dctermsNamespace, "hasPart");
-			URI contentType = myFactory.createURI(dctermsNamespace,
-					"contentType");
+			// ore
+			URI describes = f.createURI(oreNamespace, "describes");
+			URI isDescribedBy = f.createURI(oreNamespace, "isDescribedBy");
+			URI aggregates = f.createURI(oreNamespace, "aggregates");
+			URI isAggregatedBy = f.createURI(oreNamespace, "isAggregatedBy");
+			URI similarTo = f.createURI(oreNamespace, "similarTo");
+			// dc
+			URI isPartOf = f.createURI(dctermsNamespace, "isPartOf");
+			URI hasPart = f.createURI(dctermsNamespace, "hasPart");
+			URI modified = f.createURI(dctermsNamespace, "modified");
+			URI creator = f.createURI(dctermsNamespace, "creator");
+			URI dcFormat = f.createURI(dctermsNamespace, "format");
+			URI dcHasFormat = f.createURI(dctermsNamespace, "hasFormat");
+			// regal
+			URI contentType = f.createURI(regalNamespace, "contentType");
 
 			// Statements
+
+			if (mime != null && !mime.isEmpty())
+			{
+				Literal dataMime = f.createLiteral(mime);
+				con.add(data, dcFormat, dataMime);
+				if (dataMime.toString().compareTo("application/pdf") == 0)
+				{
+					con.add(aggregation, aggregates, fulltext);
+					con.add(data, dcHasFormat, fulltext);
+				}
+			}
+
 			String str = getOriginalUri(pid);
 			if (str != null && !str.isEmpty())
 			{
-				URI originalObject = myFactory.createURI(str);
+				URI originalObject = f.createURI(str);
 				con.add(aggregation, similarTo, originalObject);
 
 			}
 			str = view.getFirstLobidUrl();
 			if (str != null && !str.isEmpty())
 			{
-				URI lobidResource = myFactory.createURI(str);
+				URI lobidResource = f.createURI(str);
 				con.add(aggregation, similarTo, lobidResource);
 
 			}
 			str = view.getFirstVerbundUrl();
 			if (str != null && !str.isEmpty())
 			{
-				URI catalogResource = myFactory.createURI(str);
+				URI catalogResource = f.createURI(str);
 				con.add(aggregation, similarTo, catalogResource);
 
 			}
 			str = getCacheUri(pid);
 			if (str != null && !str.isEmpty())
 			{
-				URI cacheResource = myFactory.createURI(str);
+				URI cacheResource = f.createURI(str);
 				con.add(aggregation, similarTo, cacheResource);
 			}
-			URI fedoraObject = myFactory.createURI(this.fedoraExtern
-					+ "/objects/" + pid);
+			URI fedoraObject = f.createURI(this.fedoraExtern + "/objects/"
+					+ pid);
 
 			con.add(rem, describes, aggregation);
 			con.add(rem, modified, lastTimeModified);
@@ -2365,13 +2377,12 @@ class Actions
 
 			con.add(aggregation, isDescribedBy, rem);
 			con.add(aggregation, aggregates, data);
-			con.add(aggregation, aggregates, fulltext);
 			con.add(aggregation, similarTo, fedoraObject);
 			con.add(aggregation, contentType, cType);
 
 			for (String relPid : findObject(pid, IS_PART_OF))
 			{
-				URI relUrl = myFactory.createURI(uriPrefix + relPid);
+				URI relUrl = f.createURI(uriPrefix + relPid);
 
 				con.add(aggregation, isAggregatedBy, relUrl);
 				con.add(aggregation, isPartOf, relUrl);
@@ -2379,7 +2390,7 @@ class Actions
 
 			for (String relPid : findObject(pid, HAS_PART))
 			{
-				URI relUrl = myFactory.createURI(uriPrefix + relPid);
+				URI relUrl = f.createURI(uriPrefix + relPid);
 
 				con.add(aggregation, aggregates, relUrl);
 				con.add(aggregation, hasPart, relUrl);
