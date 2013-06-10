@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+<head>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<link href="/css/jquery-ui.css" rel="stylesheet" />
+<script src="/js/jquery-1.9.1.js">
+<!--workaround-->
+	
+</script>
+<script src="/js/jquery-ui.js">
+<!--workaround-->
+	
+</script>
+<script>
+	\$(function() {
+		\$("#tabs").tabs();
+	});
+</script>
+</head>
+<body>
+	<div class="logo">
+		<image src="/logo.gif" />
+	</div>
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabs-1">Metadata</a></li>
+			<li><a href="#tabs-3">Relations</a></li>
+			<li><a href="#tabs-4">Links</a></li>
+		</ul>
+		<div id="tabheader">
+			<a href="$serverRoot$"><img height="40" src="/search.png" /></a>
+		</div>
+		<div id="tabs-1">
+			<table>
+				$data$
+				
+				$statements;separator="\n"$
+			</table>
+		</div>
+		<div id="tabs-3">
+			<table>
+				<!--avoid empty elements for firefox-->
+				$relations;separator="\n"$
+			</table>
+		</div>
+		<div id="tabs-4">
+			<table>
+				<!--avoid empty elements for firefox-->
+				$links;separator="\n"$
+			</table>
+		</div>
+	</div>
+</body>
+</html>

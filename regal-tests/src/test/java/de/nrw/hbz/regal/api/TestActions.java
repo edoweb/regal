@@ -55,7 +55,7 @@ public class TestActions
 
 	}
 
-	@Test
+	// @Test
 	public void testFindByType() throws IOException
 	{
 		// TODO implement
@@ -115,7 +115,7 @@ public class TestActions
 
 	}
 
-	@Test
+	// @Test
 	public void testCreation()
 	{
 		try
@@ -133,7 +133,7 @@ public class TestActions
 
 	}
 
-	@Test
+	// @Test
 	public void epicur() throws IOException
 	{
 		Actions actions = new Actions();
@@ -149,6 +149,14 @@ public class TestActions
 		str = Pattern.compile("http://lobid.org/resource/HT015456932")
 				.matcher(str)
 				.replaceAll(Matcher.quoteReplacement("edoweb:1234"));
+		System.out.println(str);
+	}
+
+	@Test
+	public void html() throws IOException
+	{
+		Actions actions = new Actions();
+		String str = actions.getReM("edoweb:2470307", "text/html");
 		System.out.println(str);
 	}
 

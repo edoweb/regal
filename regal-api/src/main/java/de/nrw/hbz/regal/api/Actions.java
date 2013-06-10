@@ -89,6 +89,7 @@ import org.openrdf.rio.helpers.JSONLDSettings;
 import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stringtemplate.v4.ST;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -1238,14 +1239,14 @@ class Actions
 
 		for (String relPid : findObject(pid, IS_PART_OF))
 		{
-			String relUrl = serverName + "/resources/" + relPid;
+			String relUrl = serverName + "/resource/" + relPid;
 
 			view.addIsPartOf(relUrl, relPid);
 		}
 
 		for (String relPid : findObject(pid, HAS_PART))
 		{
-			String relUrl = serverName + "/resources/" + relPid;
+			String relUrl = serverName + "/resource/" + relPid;
 
 			List<String> desc = findObject(relPid,
 					"http://purl.org/dc/elements/1.1/description");
@@ -1401,7 +1402,7 @@ class Actions
 			WebResource index = c.resource("http://localhost:9200/" + namespace
 					+ "/titel/" + pid);
 			index.accept(MediaType.APPLICATION_JSON);
-			URL url = new URL("http://localhost/resources/" + pid + "/about");
+			URL url = new URL("http://localhost/resource/" + pid + ".json");
 			URLConnection con = url.openConnection();
 			con.setRequestProperty("Accept", "application/json");
 			con.connect();
@@ -1675,7 +1676,7 @@ class Actions
 		if (node == null)
 			return "No node with pid " + pid + " found";
 
-		String metadata = "http://localhost/resources/" + pid + "/metadata";
+		String metadata = "http://localhost/resource/" + pid + "/metadata";
 		try
 		{
 			File outfile = File.createTempFile("oaidc", "xml");
@@ -2334,11 +2335,13 @@ class Actions
 			{
 				Literal dataMime = f.createLiteral(mime);
 				con.add(data, dcFormat, dataMime);
+				con.add(aggregation, aggregates, data);
 				if (dataMime.toString().compareTo("application/pdf") == 0)
 				{
 					con.add(aggregation, aggregates, fulltext);
 					con.add(data, dcHasFormat, fulltext);
 				}
+
 			}
 
 			String str = getOriginalUri(pid);
@@ -2376,7 +2379,7 @@ class Actions
 			con.add(rem, creator, regal);
 
 			con.add(aggregation, isDescribedBy, rem);
-			con.add(aggregation, aggregates, data);
+
 			con.add(aggregation, similarTo, fedoraObject);
 			con.add(aggregation, contentType, cType);
 
@@ -2403,11 +2406,11 @@ class Actions
 			{
 				writer = Rio.createWriter(RDFFormat.RDFXML, out);
 			}
-			if (format.compareTo("text/plain") == 0)
+			else if (format.compareTo("text/plain") == 0)
 			{
 				writer = Rio.createWriter(RDFFormat.NTRIPLES, out);
 			}
-			if (format.compareTo("application/json") == 0)
+			else if (format.compareTo("application/json") == 0)
 			{
 				writer = Rio.createWriter(RDFFormat.JSONLD, out);
 
@@ -2415,6 +2418,36 @@ class Actions
 						JSONLDMode.EXPAND);
 				writer.getWriterConfig().set(BasicWriterSettings.PRETTY_PRINT,
 						true);
+			}
+			else if (format.compareTo("text/html") == 0)
+			{
+				// TODO: This will work one day
+				// writer = Rio.createWriter(RDFFormat.RDFA, out);
+				writer = Rio.createWriter(RDFFormat.NTRIPLES, out);
+				try
+				{
+
+					writer.startRDF();
+					for (Statement st : con.getStatements(null, null, null,
+							false).asList())
+					{
+						writer.handleStatement(st);
+					}
+					writer.endRDF();
+					result = out.toString();
+
+				}
+				catch (RDFHandlerException e)
+				{
+					logger.error(e.getMessage());
+				}
+				return getHtml(result, mime, pid);
+
+			}
+			else
+			{
+				throw new HttpArchiveException(406, format
+						+ " is not supported");
 			}
 
 			try
@@ -2440,6 +2473,129 @@ class Actions
 
 			logger.error(e.getMessage());
 		}
+		finally
+		{
+			if (con != null)
+			{
+				try
+				{
+					con.close();
+				}
+				catch (RepositoryException e)
+				{
+					logger.error(e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}
+		return result;
+
+	}
+
+	private String getHtml(String rdf, String mime, String pid)
+	{
+
+		String result = "";
+		RepositoryConnection con = null;
+		try
+		{
+			java.net.URL fileLocation = Thread.currentThread()
+					.getContextClassLoader().getResource("html.html");
+
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(fileLocation.openStream(), writer);
+			String data = writer.toString();
+
+			ST st = new ST(data, '$', '$');
+			st.add("serverRoot", serverName);
+
+			if (mime != null)
+			{
+				String dataLink = serverName + "/resource/" + pid + "/data";
+				String logoLink = "";
+				if (mime.compareTo("application/pdf") == 0)
+				{
+					logoLink = "/pdflogo.svg";
+				}
+				else
+				{
+					logoLink = "/zip.png";
+				}
+				st.add("data", "<tr><td class=\"textlink\"><a	href=\""
+						+ dataLink + "\"><img src=\"" + logoLink
+						+ "\" width=\"100\" /></a></td></tr>");
+			}
+			else
+			{
+				st.add("data", "");
+			}
+
+			SailRepository myRepository = new SailRepository(new MemoryStore());
+
+			myRepository.initialize();
+			con = myRepository.getConnection();
+			String baseURI = "";
+			try
+			{
+				con.add(new StringReader(rdf), baseURI, RDFFormat.N3);
+				RepositoryResult<Statement> statements = con.getStatements(
+						null, null, null, false);
+				while (statements.hasNext())
+				{
+					Statement statement = statements.next();
+					String subject = statement.getSubject().stringValue();
+					String predicate = statement.getPredicate().stringValue();
+					String object = statement.getObject().stringValue();
+					if (subject.compareTo(pid) == 0)
+					{
+						subject = serverName + "/resource/" + pid;
+					}
+					MyTriple triple = new MyTriple(subject, predicate, object);
+
+					if (predicate.compareTo("http://purl.org/dc/terms/hasPart") == 0
+							|| predicate
+									.compareTo("http://purl.org/dc/terms/isPartOf") == 0)
+					{
+						st.add("relations", triple);
+					}
+					else if (predicate
+							.compareTo("http://www.openarchives.org/ore/terms/aggregates") == 0
+							|| predicate
+									.compareTo("http://www.openarchives.org/ore/terms/isAggregatedBy") == 0)
+
+					{
+						// do nothing!;
+					}
+					else if (predicate
+							.compareTo("http://www.openarchives.org/ore/terms/similarTo") == 0)
+					{
+						st.add("links", triple);
+					}
+					else
+					{
+						st.add("statements", triple);
+					}
+
+				}
+				result = st.render();
+			}
+			catch (Exception e)
+			{
+				logger.warn(e.getMessage());
+			}
+
+		}
+		catch (RepositoryException e)
+		{
+
+			logger.error(e.getMessage());
+		}
+
+		catch (IOException e)
+		{
+			logger.error(e.getMessage());
+		}
+
 		finally
 		{
 			if (con != null)
@@ -2580,5 +2736,28 @@ class Actions
 
 		}
 		return originalUri;
+	}
+
+	private class MyTriple
+	{
+		String subject;
+		String predicate;
+		String object;
+
+		public MyTriple(String subject, String predicate, String object)
+		{
+			this.subject = subject;
+			this.predicate = predicate;
+			this.object = object;
+		}
+
+		public String toString()
+		{
+			return "<tr><td><a href=\"" + subject + "\">" + subject
+					+ "</a></td><td><a href=\"" + predicate + "\">" + predicate
+					+ "</a></td><td about=\"" + subject + "\"><a property=\""
+					+ predicate + "\" href=\"" + object + "\">" + object
+					+ "</a></td></tr>";
+		}
 	}
 }
