@@ -1401,8 +1401,8 @@ class Actions
 			// TODO configure port and host
 			WebResource index = c.resource("http://localhost:9200/" + namespace
 					+ "/titel/" + pid);
-			index.accept(MediaType.APPLICATION_JSON);
-			URL url = new URL("http://localhost/resource/" + pid + ".json");
+			index.accept("application/json");
+			URL url = new URL("http://localhost/resource/" + pid + "/about");
 			URLConnection con = url.openConnection();
 			con.setRequestProperty("Accept", "application/json");
 			con.connect();
@@ -1524,9 +1524,15 @@ class Actions
 			IOUtils.copy(in, writer, "UTF-8");
 			String str = writer.toString();
 
-			str = Pattern.compile(lobidUrl).matcher(str)
-					.replaceAll(Matcher.quoteReplacement(pid))
+			str = Pattern
+					.compile(lobidUrl)
+					.matcher(str)
+					.replaceAll(
+							Matcher.quoteReplacement(serverName + "/resource/"
+									+ pid))
 					+ "<"
+					+ serverName
+					+ "/resource/"
 					+ pid
 					+ "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
 					+ lobidUrl + "> .";
@@ -1638,8 +1644,12 @@ class Actions
 			IOUtils.copy(in, writer, "UTF-8");
 			String str1 = writer.toString();
 
-			str1 = Pattern.compile(url.toString()).matcher(str1)
-					.replaceAll(Matcher.quoteReplacement(pid));
+			str1 = Pattern
+					.compile(url.toString())
+					.matcher(str1)
+					.replaceAll(
+							Matcher.quoteReplacement(serverName + "/resource/"
+									+ pid));
 			return str + "\n" + str1;
 
 		}
@@ -2416,8 +2426,10 @@ class Actions
 
 				writer.getWriterConfig().set(JSONLDSettings.JSONLD_MODE,
 						JSONLDMode.EXPAND);
+
 				writer.getWriterConfig().set(BasicWriterSettings.PRETTY_PRINT,
 						true);
+
 			}
 			else if (format.compareTo("text/html") == 0)
 			{
@@ -2442,6 +2454,36 @@ class Actions
 					logger.error(e.getMessage());
 				}
 				return getHtml(result, mime, pid);
+
+			}
+			else if (format.compareTo("application/json+elasticsearch") == 0)
+			{
+				writer = Rio.createWriter(RDFFormat.JSONLD, out);
+
+				writer.getWriterConfig().set(JSONLDSettings.JSONLD_MODE,
+						JSONLDMode.EXPAND);
+
+				writer.getWriterConfig().set(BasicWriterSettings.PRETTY_PRINT,
+						true);
+				try
+				{
+
+					writer.startRDF();
+					for (Statement st : con.getStatements(null, null, null,
+							false).asList())
+					{
+						if (st.getSubject().stringValue().endsWith(pid))
+							writer.handleStatement(st);
+					}
+					writer.endRDF();
+					result = out.toString();
+					result = result.substring(1, result.length() - 1);
+					return result;
+				}
+				catch (RDFHandlerException e)
+				{
+					logger.error(e.getMessage());
+				}
 
 			}
 			else
@@ -2546,10 +2588,7 @@ class Actions
 					String subject = statement.getSubject().stringValue();
 					String predicate = statement.getPredicate().stringValue();
 					String object = statement.getObject().stringValue();
-					if (subject.compareTo(pid) == 0)
-					{
-						subject = serverName + "/resource/" + pid;
-					}
+
 					MyTriple triple = new MyTriple(subject, predicate, object);
 
 					if (predicate.compareTo("http://purl.org/dc/terms/hasPart") == 0

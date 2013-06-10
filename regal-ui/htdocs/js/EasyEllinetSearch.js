@@ -479,7 +479,8 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 
 		},
 		error : function(xhr, message, error) {
-			callback(message, xhr, error);
+			console.log(message);
+			console.log(error);
 		}
 	};
 	jQuery.ajax(request);

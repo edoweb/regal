@@ -132,7 +132,11 @@ public class Resource
 	public Response about(@PathParam("pid") String pid,
 			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
-		return getJson(pid, namespace);
+		View view = actions.getView(namespace + ":" + pid);
+		ResponseBuilder res = Response.ok()
+				.lastModified(actions.getLastModified(namespace + ":" + pid))
+				.entity(view);
+		return res.build();
 	}
 
 	/**
@@ -201,6 +205,26 @@ public class Resource
 	{
 		String rem = actions.getReM(namespace + ":" + pid, "text/html");
 		// return rem;
+		ResponseBuilder res = Response.ok()
+				.lastModified(actions.getLastModified(namespace + ":" + pid))
+				.entity(rem);
+
+		return res.build();
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 */
+	@GET
+	@Path("/{namespace}:{pid}.search")
+	@Produces({ "application/json" })
+	public Response getSearch(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
+	{
+		String rem = actions.getReM(namespace + ":" + pid,
+				"application/json+elasticsearch");
 		ResponseBuilder res = Response.ok()
 				.lastModified(actions.getLastModified(namespace + ":" + pid))
 				.entity(rem);
