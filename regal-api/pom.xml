@@ -147,6 +147,13 @@
 			<artifactId>jsonld-java-sesame</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
+
+
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4</artifactId>
+			<version>4.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>api</finalName>

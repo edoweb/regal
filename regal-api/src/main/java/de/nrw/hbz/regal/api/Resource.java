@@ -124,17 +124,15 @@ public class Resource
 	 * @param pid
 	 *            the pid of the resource
 	 * @return an aggregated representation of the resource
+	 * @throws URISyntaxException
 	 */
 	@GET
-	@Path("/{pid}/about")
-	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response about(@PathParam("pid") String pid)
+	@Path("/{namespace}:{pid}/about")
+	@Produces({ "application/json" })
+	public Response about(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
 	{
-		View view = actions.getView(pid);
-		ResponseBuilder res = Response.ok()
-				.lastModified(view.getLastModified()).entity(view);
-
-		return res.build();
+		return getJson(pid, namespace);
 	}
 
 	/**
@@ -195,6 +193,81 @@ public class Resource
 		return res.build();
 	}
 
+	@GET
+	@Path("/{namespace}:{pid}.html")
+	@Produces({ "text/html" })
+	public Response getReMAsHtml(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace)
+	{
+		String rem = actions.getReM(namespace + ":" + pid, "text/html");
+		// return rem;
+		ResponseBuilder res = Response.ok()
+				.lastModified(actions.getLastModified(namespace + ":" + pid))
+				.entity(rem);
+
+		return res.build();
+	}
+
+	@GET
+	@Path("/{namespace}:{pid}")
+	@Produces({ "application/json" })
+	public Response getJson(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
+	{
+		// return about(namespace + ":" + pid);
+		return Response
+				.temporaryRedirect(
+						new java.net.URI("../resource/" + namespace + ":" + pid
+								+ ".json")).status(303).build();
+	}
+
+	@GET
+	@Path("/{namespace}:{pid}")
+	@Produces({ "application/rdf+xml" })
+	public Response getRdfXml(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
+	{
+		// return about(namespace + ":" + pid);
+		return Response
+				.temporaryRedirect(
+						new java.net.URI("../resource/" + namespace + ":" + pid
+								+ ".rdf"))
+				.header("accept", "application/rdf+xml").status(303).build();
+	}
+
+	/**
+	 * @param pid
+	 *            the pid of the resource
+	 * @return an aggregated representation of the resource
+	 * @throws URISyntaxException
+	 */
+	@GET
+	@Path("/{namespace}:{pid}")
+	@Produces({ "text/html" })
+	public Response getHtml(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
+	{
+		// return about(namespace + ":" + pid);
+		return Response
+				.temporaryRedirect(
+						new java.net.URI("../resource/" + namespace + ":" + pid
+								+ ".html")).status(303).build();
+	}
+
+	@GET
+	@Path("/{namespace}:{pid}")
+	@Produces({ "text/plain" })
+	public Response getNtriple(@PathParam("pid") String pid,
+			@PathParam("namespace") String namespace) throws URISyntaxException
+	{
+		// return about(namespace + ":" + pid);
+		return Response
+				.temporaryRedirect(
+						new java.net.URI("../resource/" + namespace + ":" + pid
+								+ ".rdf")).header("accept", "text/plain")
+				.status(303).build();
+	}
+
 	/**
 	 * @param pid
 	 *            the pid of the resource
@@ -207,57 +280,6 @@ public class Resource
 			@PathParam("namespace") String namespace)
 	{
 		return getOAI_DC(pid, namespace);
-	}
-
-	/**
-	 * @param pid
-	 *            the pid of the resource
-	 * @return an aggregated representation of the resource
-	 */
-	@GET
-	@Path("/{namespace}:{pid}.html")
-	@Produces({ "text/html" })
-	public Response getHtml(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace)
-	{
-		String rem = actions.getReM(namespace + ":" + pid, "text/html");
-		ResponseBuilder res = Response.ok()
-				.lastModified(actions.getLastModified(namespace + ":" + pid))
-				.entity(rem);
-		return res.build();
-	}
-
-	// @Path("/{namespace}:{pid}.rdf")
-	// @Produces({ "application/rdf+xml" })
-	// public Response getReM(@PathParam("pid") String pid,
-	// @PathParam("namespace") String namespace)
-	// {
-	// String rem = actions.getReM(namespace + ":" + pid,
-	// "application/rdf+xml");
-	// ResponseBuilder res = Response.ok()
-	// .lastModified(actions.getLastModified(namespace + ":" + pid))
-	// .entity(rem);
-	//
-	// return res.build();
-	// }
-
-	/**
-	 * @param pid
-	 *            the pid of the resource
-	 * @return an aggregated representation of the resource
-	 * @throws URISyntaxException
-	 */
-	@GET
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response get(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace) throws URISyntaxException
-	{
-		// return about(namespace + ":" + pid);
-		return Response
-				.temporaryRedirect(
-						new java.net.URI("../resources/" + namespace + ":"
-								+ pid + "/about")).status(303).build();
 	}
 
 	/**
