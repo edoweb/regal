@@ -216,9 +216,7 @@ td
 }
 #regal
 {
-position:fixed;
-top:100px;
-right:20px;
--moz-transform:rotate(45deg)
-	
+
+margin-left:50%;
+margin-right:50%;
 }

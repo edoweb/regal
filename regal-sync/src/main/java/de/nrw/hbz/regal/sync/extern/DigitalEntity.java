@@ -79,7 +79,7 @@ public class DigitalEntity
 	private Vector<DigitalEntity> viewLinks = null;
 	private Vector<DigitalEntity> viewMainLinks = null;
 
-	private Vector<EntityRelation> related = null;
+	private Vector<RelatedDigitalEntity> related = null;
 
 	private String parentPid;
 
@@ -98,7 +98,7 @@ public class DigitalEntity
 		indexLinks = new Vector<DigitalEntity>();
 		viewLinks = new Vector<DigitalEntity>();
 		viewMainLinks = new Vector<DigitalEntity>();
-		related = new Vector<EntityRelation>();
+		related = new Vector<RelatedDigitalEntity>();
 		streams = new Vector<File>();
 	}
 
@@ -564,22 +564,22 @@ public class DigitalEntity
 		this.type = type;
 	}
 
-	public Vector<EntityRelation> getRelated()
+	public Vector<RelatedDigitalEntity> getRelated()
 	{
 		return related;
 	}
 
-	public void setRelated(Vector<EntityRelation> related)
+	public void setRelated(Vector<RelatedDigitalEntity> related)
 	{
 		this.related = related;
 	}
 
 	public void addRelated(DigitalEntity entity, String relation)
 	{
-		addRelated(new EntityRelation(entity, relation));
+		addRelated(new RelatedDigitalEntity(entity, relation));
 	}
 
-	public void addRelated(EntityRelation relation)
+	public void addRelated(RelatedDigitalEntity relation)
 	{
 		related.add(relation);
 	}
