@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import de.nrw.hbz.regal.api.ObjectType;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
-import de.nrw.hbz.regal.sync.extern.EntityRelation;
+import de.nrw.hbz.regal.sync.extern.RelatedDigitalEntity;
 
 /**
  * Class FedoraIngester
@@ -95,7 +95,7 @@ public class DippIngester implements IngestInterface
 		{
 			map.put(pid, pid);
 		}
-		Vector<EntityRelation> related = dtlBean.getRelated();
+		Vector<RelatedDigitalEntity> related = dtlBean.getRelated();
 		int num = related.size();
 		int count = 1;
 		// logger.info(pid + " Found " + num + " parts.");
@@ -103,7 +103,7 @@ public class DippIngester implements IngestInterface
 		// if (isParent(dtlBean))
 		// logger.debug("\n-----------------------\n" + pid + " is a Journal!"
 		// + "\n-----------------------");
-		for (EntityRelation relation : related)
+		for (RelatedDigitalEntity relation : related)
 		{
 			logger.debug("INGEST-GRAPH: \"" + pid + "\"->\""
 					+ relation.entity.getPid() + "\" [label=\""
@@ -127,10 +127,10 @@ public class DippIngester implements IngestInterface
 	{
 		if (dtlBean.getPid().contains("oai"))
 			return false;
-		Vector<EntityRelation> related = dtlBean.getRelated();
+		Vector<RelatedDigitalEntity> related = dtlBean.getRelated();
 		int num = related.size();
 		int count = 1;
-		for (EntityRelation relation : related)
+		for (RelatedDigitalEntity relation : related)
 		{
 			String rel = relation.relation;
 

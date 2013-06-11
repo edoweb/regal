@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import de.nrw.hbz.regal.api.ObjectType;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
+import de.nrw.hbz.regal.sync.extern.Stream;
+import de.nrw.hbz.regal.sync.extern.StreamType;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -314,7 +316,8 @@ public class EdowebIngester implements IngestInterface
 			{
 				String versionPid = namespace + ":" + b.getPid();
 				b.setParentPid(dtlBean.getPid());
-				if (b.getStreamMime().compareTo("application/zip") == 0)
+				Stream dataStream = b.getStream(StreamType.DATA);
+				if (dataStream.getMimeType().compareTo("application/zip") == 0)
 				{
 					webclient.createObject(b, "application/zip",
 							ObjectType.version);
