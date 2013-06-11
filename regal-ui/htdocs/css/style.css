@@ -4,7 +4,7 @@ body {
 	font-size: 1em;
 	margin-left: 60px;
 	margin-right: 60px;
-	background-image:url(images/background_gradient.jpg);
+	//background-image:url(images/background_gradient.jpg);
 	background-repeat: repeat-x;
 
 }
@@ -213,4 +213,12 @@ td
 	position:absolute;
 	top:40;
 	right:40;
+}
+#regal
+{
+position:fixed;
+top:100px;
+right:20px;
+-moz-transform:rotate(45deg)
+	
 }
