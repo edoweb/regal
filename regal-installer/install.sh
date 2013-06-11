@@ -116,7 +116,7 @@ echo >> $ARCHIVE_HOME/conf/setenv.sh
 
 echo "write elasticsearch.yml"
 
-echo "cluster.name: $MODULE$SERVER" > $ARCHIVE_HOME/conf/elasticsearch.yml
+echo "cluster.name: $SERVER" > $ARCHIVE_HOME/conf/elasticsearch.yml
 echo >> $ARCHIVE_HOME/conf/elasticsearch.yml
 
 echo "write site.conf"
