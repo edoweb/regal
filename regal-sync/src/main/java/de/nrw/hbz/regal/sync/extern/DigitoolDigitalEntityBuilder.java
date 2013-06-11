@@ -168,7 +168,7 @@ public class DigitoolDigitalEntityBuilder implements DigitalEntityBuilder
 		return dtlDe;
 	}
 
-	private Element getDocument(File digitalEntityFile)
+	protected Element getDocument(File digitalEntityFile)
 	{
 		try
 		{
@@ -223,7 +223,7 @@ public class DigitoolDigitalEntityBuilder implements DigitalEntityBuilder
 	 * @param relPid
 	 * @return
 	 */
-	private Element getDocument(String relPid)
+	protected Element getDocument(String relPid)
 	{
 		File digitalEntityFile = new File(this.baseDir + File.separator
 				+ relPid + ".xml");
