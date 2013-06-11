@@ -2318,7 +2318,7 @@ class Actions
 			URI regal = f.createURI("https://github.com/edoweb/regal/");
 			URI data = f.createURI(aggregation.stringValue() + "/data");
 			URI fulltext = f.createURI(aggregation.stringValue() + "/fulltext");
-			URI cType = f.createURI(regalNamespace, "contentType");
+			URI cType = f.createURI(node.getContentType());
 			Literal lastTimeModified = f.createLiteral(getLastModified(pid));
 			String mime = node.getMimeType();
 
