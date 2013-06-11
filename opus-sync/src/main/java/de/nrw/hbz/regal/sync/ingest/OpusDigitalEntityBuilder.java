@@ -46,6 +46,7 @@ import org.xml.sax.SAXException;
 
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.extern.StreamType;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -134,8 +135,9 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilder
 				{
 					i++;
 					dtlDe.addStream(new File(baseDir + File.separator + pid
-							+ "_" + i + ".pdf"));
-					dtlDe.setStreamMime("application/pdf");
+							+ "_" + i + ".pdf"), "application/pdf",
+							StreamType.DATA);
+
 				}
 
 			}
@@ -185,7 +187,7 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilder
 					+ "RELS-EXT.xml");
 			logger.debug("Parse file: " + relsExtFile.getAbsolutePath());
 			NodeList list = getDocument(relsExtFile).getElementsByTagName(
-					relation);
+					relation.toString());
 
 			logger.debug("found " + list.getLength() + " nodes with tagname "
 					+ relation);

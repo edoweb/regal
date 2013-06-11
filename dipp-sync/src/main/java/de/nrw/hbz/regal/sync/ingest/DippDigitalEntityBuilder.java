@@ -39,6 +39,7 @@ import org.xml.sax.SAXException;
 
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.extern.StreamType;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -142,8 +143,7 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 
 		if (content.exists())
 		{
-			dtlDe.setStream(content);
-			dtlDe.setStreamMime("application/zip");
+			dtlDe.addStream(content, "application/zip", StreamType.DATA);
 		}
 		else
 		{

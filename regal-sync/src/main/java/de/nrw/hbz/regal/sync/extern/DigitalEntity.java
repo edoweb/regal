@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -29,62 +30,20 @@ import java.util.Vector;
  */
 public class DigitalEntity
 {
-	public static String INDEX = "INDEX";
-	public static String ARCHIVE = "ARCHIVE";
-	public static String THUMBNAIL = "THUMBNAIL";
-	public static String VIEW = "VIEW";
-	public static String VIEW_MAIN = "VIEW_MAIN";
-	public static String MANIFESTATION = "manifestation";
-	public static String INCLUDE = "include";
-	public static String PART_OF = "part_of";
 
 	private boolean isParent = true;
 	private String pid = null;
 	private String usageType = null;
 	private String location = null;
 
-	private String DC = "DC";
-	private String PREMIS = "PREMIS";
-	private String JHOVE = "JHOVE";
-	private String RIGHTS = "RIGHTS";
-	private String HIST = "HIST";
-	private String TEXT = "TEXT";
-	private String CONTROL = "CONTROL";
-
-	private String MARC = "MARC";
-	private String METS_HDR = "METS_HDR";
-	private String STRUCT_MAP = "STRUCT_MAP";
-	private String FILE_SEC = "FILE_SEC";
-
-	private File dc = null;
-	private File preservation = null;
-	private File jhove = null;
-	private File rights = null;
-	private File history = null;
-	private File text = null;
-	private File control = null;
-
-	private File marc = null;
-	private File metsHdr = null;
-	private File structMap = null;
-	private File fileSec = null;
-
-	private String streamMime = null;
-	private Vector<File> streams = null;
-	private File xml = null;
-
-	private Vector<DigitalEntity> archiveLinks = null;
-	private Vector<DigitalEntity> thumbnailLinks = null;
-	private Vector<DigitalEntity> indexLinks = null;
-	private Vector<DigitalEntity> viewLinks = null;
-	private Vector<DigitalEntity> viewMainLinks = null;
-
+	private HashMap<StreamType, Stream> streams = null;
 	private Vector<RelatedDigitalEntity> related = null;
 
 	private String parentPid;
-
 	private String label = null;
 	private String type;
+
+	private File xml = null;
 
 	/**
 	 * @param location
@@ -93,13 +52,9 @@ public class DigitalEntity
 	public DigitalEntity(String location)
 	{
 		this.location = location;
-		archiveLinks = new Vector<DigitalEntity>();
-		thumbnailLinks = new Vector<DigitalEntity>();
-		indexLinks = new Vector<DigitalEntity>();
-		viewLinks = new Vector<DigitalEntity>();
-		viewMainLinks = new Vector<DigitalEntity>();
+
 		related = new Vector<RelatedDigitalEntity>();
-		streams = new Vector<File>();
+		streams = new HashMap<StreamType, Stream>();
 	}
 
 	private String fileToString(File file, String streamId) throws Exception
@@ -173,16 +128,24 @@ public class DigitalEntity
 		return file;
 	}
 
+	public File getMarcFile()
+	{
+		return streams.get(StreamType.MARC).getStream();
+	}
+
 	public String getMarc() throws Exception
 	{
-		return fileToString(marc, MARC);
+		return fileToString(streams.get(StreamType.MARC).getStream(),
+				StreamType.MARC.toString());
 	}
 
 	public void setMarc(String marc)
 	{
 		try
 		{
-			this.marc = stringToFile(marc, MARC);
+			streams.put(StreamType.MARC,
+					new Stream(stringToFile(marc, StreamType.MARC.toString()),
+							"application/xml", StreamType.MARC));
 		}
 		catch (Exception e)
 		{
@@ -192,144 +155,173 @@ public class DigitalEntity
 
 	public String getDc() throws Exception
 	{
-		return fileToString(dc, DC);
+		return fileToString(streams.get(StreamType.DC).getStream(),
+				StreamType.DC.toString());
 	}
 
 	public void setDc(String dc)
 	{
 		try
 		{
-			this.dc = stringToFile(dc, DC);
+			streams.put(StreamType.DC,
+					new Stream(stringToFile(dc, StreamType.DC.toString()),
+							"application/xml", StreamType.DC));
 		}
 		catch (Exception e)
 		{
-
 			e.printStackTrace();
 		}
 	}
 
 	public String getMetsHdr() throws Exception
 	{
-		return fileToString(metsHdr, METS_HDR);
+		return fileToString(streams.get(StreamType.METS_HDR).getStream(),
+				StreamType.METS_HDR.toString());
 	}
 
 	public void setMetsHdr(String metsHdr)
 	{
 		try
 		{
-			this.metsHdr = stringToFile(metsHdr, METS_HDR);
+			streams.put(
+					StreamType.METS_HDR,
+					new Stream(stringToFile(metsHdr,
+							StreamType.METS_HDR.toString()), "application/xml",
+							StreamType.METS_HDR));
 		}
 		catch (Exception e)
 		{
-
 			e.printStackTrace();
 		}
 	}
 
 	public String getStructMap() throws Exception
 	{
-		return fileToString(structMap, STRUCT_MAP);
+		return fileToString(streams.get(StreamType.STRUCT_MAP).getStream(),
+				StreamType.STRUCT_MAP.toString());
 	}
 
 	public void setStructMap(String structMap)
 	{
 		try
 		{
-			this.structMap = stringToFile(structMap, STRUCT_MAP);
+			streams.put(
+					StreamType.STRUCT_MAP,
+					new Stream(stringToFile(structMap,
+							StreamType.STRUCT_MAP.toString()),
+							"application/xml", StreamType.STRUCT_MAP));
 		}
 		catch (Exception e)
 		{
-
 			e.printStackTrace();
 		}
 	}
 
 	public String getFileSec() throws Exception
 	{
-		return fileToString(fileSec, FILE_SEC);
+		return fileToString(streams.get(StreamType.FILE_SEC).getStream(),
+				StreamType.FILE_SEC.toString());
 	}
 
 	public void setFileSec(String fileSec)
 	{
 		try
 		{
-			this.fileSec = stringToFile(fileSec, FILE_SEC);
+			streams.put(
+					StreamType.FILE_SEC,
+					new Stream(stringToFile(fileSec,
+							StreamType.FILE_SEC.toString()), "application/xml",
+							StreamType.FILE_SEC));
 		}
 		catch (Exception e)
 		{
-
 			e.printStackTrace();
 		}
 	}
 
 	public String getJhove() throws Exception
 	{
-		return fileToString(jhove, JHOVE);
+		return fileToString(streams.get(StreamType.JHOVE).getStream(),
+				StreamType.JHOVE.toString());
 	}
 
 	public void setJhove(String jhove)
 	{
 		try
 		{
-			this.jhove = stringToFile(jhove, JHOVE);
+			streams.put(StreamType.JHOVE,
+					new Stream(
+							stringToFile(jhove, StreamType.JHOVE.toString()),
+							"application/xml", StreamType.JHOVE));
 		}
 		catch (Exception e)
 		{
-
 			e.printStackTrace();
 		}
 	}
 
 	public String getRights() throws Exception
 	{
-		return fileToString(rights, RIGHTS);
+		return fileToString(streams.get(StreamType.RIGHTS).getStream(),
+				StreamType.RIGHTS.toString());
 	}
 
 	public void setRights(String rights)
 	{
 		try
 		{
-			this.rights = stringToFile(rights, RIGHTS);
+			streams.put(
+					StreamType.RIGHTS,
+					new Stream(stringToFile(rights,
+							StreamType.RIGHTS.toString()), "application/xml",
+							StreamType.RIGHTS));
 		}
 		catch (Exception e)
 		{
-
 			e.printStackTrace();
 		}
 	}
 
 	public String getHistory() throws Exception
 	{
-		return fileToString(history, HIST);
+		return fileToString(streams.get(StreamType.HIST).getStream(),
+				StreamType.HIST.toString());
 	}
 
 	public void setHistory(String history)
 	{
 		try
 		{
-			this.history = stringToFile(history, HIST);
+			streams.put(StreamType.HIST,
+					new Stream(
+							stringToFile(history, StreamType.HIST.toString()),
+							"application/xml", StreamType.HIST));
 		}
 		catch (Exception e)
 		{
-
 			e.printStackTrace();
 		}
 	}
 
 	public String getControl() throws Exception
 	{
-		return fileToString(control, CONTROL);
+		return fileToString(streams.get(StreamType.CONTROL).getStream(),
+				StreamType.CONTROL.toString());
+
 	}
 
 	public void setControl(String control)
 	{
 		try
 		{
-			this.control = stringToFile(control, CONTROL);
+			streams.put(
+					StreamType.CONTROL,
+					new Stream(stringToFile(control,
+							StreamType.CONTROL.toString()), "application/xml",
+							StreamType.CONTROL));
 		}
 		catch (Exception e)
 		{
-
 			e.printStackTrace();
 		}
 	}
@@ -346,57 +338,59 @@ public class DigitalEntity
 
 	public String getPreservation() throws Exception
 	{
-		return fileToString(preservation, PREMIS);
+		return fileToString(streams.get(StreamType.PREMIS).getStream(),
+				StreamType.PREMIS.toString());
+
 	}
 
 	public void setPreservation(String preservation)
 	{
 		try
 		{
-			this.preservation = stringToFile(preservation, PREMIS);
+			streams.put(
+					StreamType.PREMIS,
+					new Stream(stringToFile(preservation,
+							StreamType.PREMIS.toString()), "application/xml",
+							StreamType.PREMIS));
 		}
 		catch (Exception e)
 		{
-
 			e.printStackTrace();
 		}
 	}
 
 	public String getText() throws Exception
 	{
-		return fileToString(text, TEXT);
+		return fileToString(streams.get(StreamType.TEXT).getStream(),
+				StreamType.TEXT.toString());
 	}
 
 	public void setText(String text)
 	{
 		try
 		{
-			this.text = stringToFile(text, TEXT);
+			streams.put(StreamType.TEXT,
+					new Stream(stringToFile(text, StreamType.TEXT.toString()),
+							"application/xml", StreamType.TEXT));
 		}
 		catch (Exception e)
 		{
-
 			e.printStackTrace();
 		}
 	}
 
-	@Override
-	public String toString()
-	{
-		return "pid: " + pid + "\n" + "control: " + control + "\n" + "dc: "
-				+ dc + "\n" + "preservation: " + preservation + "\n"
-				+ "jhove: " + jhove + "\n" + "rights: " + rights + "\n"
-				+ "history: " + history + "\n" + "text: " + text + "\n";
-	}
+	// @Override
+	// public String toString()
+	// {
+	// // return "pid: " + pid + "\n" + "control: " + control + "\n" + "dc: "
+	// // + dc + "\n" + "preservation: " + preservation + "\n"
+	// // + "jhove: " + jhove + "\n" + "rights: " + rights + "\n"
+	// // + "history: " + history + "\n" + "text: " + text + "\n";
+	// }
 
-	public File getFirstStream()
+	public Stream getStream(StreamType type)
 	{
-		return streams.firstElement();
-	}
-
-	public Vector<File> getStreams()
-	{
-		return streams;
+		return streams.get(type);
 	}
 
 	public void setXml(File xml)
@@ -409,59 +403,48 @@ public class DigitalEntity
 		return xml;
 	}
 
-	public void setStream(File stream)
-	{
-		streams.insertElementAt(stream, 0);
-	}
-
 	public Vector<DigitalEntity> getArchiveLinks()
 	{
-		return archiveLinks;
-	}
-
-	public void setArchiveLink(DigitalEntity archiveLink)
-	{
-		archiveLinks = new Vector<DigitalEntity>();
-		archiveLinks.add(archiveLink);
+		Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+		for (RelatedDigitalEntity rel : related)
+		{
+			if (rel.relation == DigitalEntityRelation.ARCHIVE.toString())
+				links.add(rel.entity);
+		}
+		return links;
 	}
 
 	public Vector<DigitalEntity> getThumbnailLinks()
 	{
-		return thumbnailLinks;
-	}
-
-	public void setThumbnailLink(DigitalEntity thumbnailLink)
-	{
-		thumbnailLinks = new Vector<DigitalEntity>();
-		thumbnailLinks.add(thumbnailLink);
-	}
-
-	public void setViewLink(DigitalEntity viewLink)
-	{
-		viewLinks = new Vector<DigitalEntity>();
-		viewLinks.add(viewLink);
-	}
-
-	public void setViewMainLink(DigitalEntity viewLink)
-	{
-		viewMainLinks = new Vector<DigitalEntity>();
-		viewMainLinks.add(viewLink);
+		Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+		for (RelatedDigitalEntity rel : related)
+		{
+			if (rel.relation == DigitalEntityRelation.THUMBNAIL.toString())
+				links.add(rel.entity);
+		}
+		return links;
 	}
 
 	public Vector<DigitalEntity> getViewLinks()
 	{
-		return viewLinks;
+		Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+		for (RelatedDigitalEntity rel : related)
+		{
+			if (rel.relation == DigitalEntityRelation.VIEW.toString())
+				links.add(rel.entity);
+		}
+		return links;
 	}
 
 	public Vector<DigitalEntity> getIndexLinks()
 	{
-		return indexLinks;
-	}
-
-	public void setIndexLink(DigitalEntity indexLink)
-	{
-		indexLinks = new Vector<DigitalEntity>();
-		indexLinks.add(indexLink);
+		Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+		for (RelatedDigitalEntity rel : related)
+		{
+			if (rel.relation == DigitalEntityRelation.INDEX.toString())
+				links.add(rel.entity);
+		}
+		return links;
 	}
 
 	public String getUsageType()
@@ -481,32 +464,46 @@ public class DigitalEntity
 
 	public void addViewMainLink(DigitalEntity b)
 	{
-		viewMainLinks.add(b);
+		related.add(new RelatedDigitalEntity(b, DigitalEntityRelation.VIEW_MAIN
+				.toString()));
 	}
 
 	public void addViewLink(DigitalEntity b)
 	{
-		viewLinks.add(b);
+		related.add(new RelatedDigitalEntity(b, DigitalEntityRelation.VIEW
+				.toString()));
+
 	}
 
 	public void addIndexLink(DigitalEntity b)
 	{
-		indexLinks.add(b);
+		related.add(new RelatedDigitalEntity(b, DigitalEntityRelation.INDEX
+				.toString()));
+
 	}
 
 	public void addArchiveLink(DigitalEntity b)
 	{
-		archiveLinks.add(b);
+		related.add(new RelatedDigitalEntity(b, DigitalEntityRelation.ARCHIVE
+				.toString()));
+
 	}
 
 	public void addThumbnailLink(DigitalEntity b)
 	{
-		thumbnailLinks.add(b);
+		related.add(new RelatedDigitalEntity(b, DigitalEntityRelation.THUMBNAIL
+				.toString()));
 	}
 
 	public Vector<DigitalEntity> getViewMainLinks()
 	{
-		return viewMainLinks;
+		Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+		for (RelatedDigitalEntity rel : related)
+		{
+			if (rel.relation == DigitalEntityRelation.VIEW_MAIN.toString())
+				links.add(rel.entity);
+		}
+		return links;
 	}
 
 	public void setLabel(String label)
@@ -517,21 +514,6 @@ public class DigitalEntity
 	public String getLabel()
 	{
 		return label;
-	}
-
-	public String getStreamMime()
-	{
-		return streamMime;
-	}
-
-	public void setStreamMime(String streamMime)
-	{
-		this.streamMime = streamMime;
-	}
-
-	public File getMarcFile()
-	{
-		return this.marc;
 	}
 
 	public boolean isParent()
@@ -584,9 +566,14 @@ public class DigitalEntity
 		related.add(relation);
 	}
 
-	public void addStream(File file)
+	public void addStream(File file, String mime, StreamType type)
 	{
-		streams.add(file);
+		streams.put(type, new Stream(file, mime, type));
 
+	}
+
+	public File getStream()
+	{
+		return streams.get(StreamType.DATA).getStream();
 	}
 }

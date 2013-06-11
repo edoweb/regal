@@ -100,56 +100,65 @@ public class DigitoolDigitalEntityBuilder implements DigitalEntityBuilder
 						+ pid);
 				return null;
 			}
-			if (type.compareTo(DigitalEntity.MANIFESTATION) == 0)
+			if (type.compareTo(DigitalEntityRelation.manifestation.toString()) == 0)
 			{
 				DigitalEntity b = buildSimpleBean(relPid, usageType, relRoot);
 
-				if (usageType.compareTo(DigitalEntity.INDEX) == 0)
+				if (usageType.compareTo(DigitalEntityRelation.INDEX.toString()) == 0)
 				{
 					dtlDe.addIndexLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntity.ARCHIVE) == 0)
+				else if (usageType.compareTo(DigitalEntityRelation.ARCHIVE
+						.toString()) == 0)
 				{
 					dtlDe.addArchiveLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntity.THUMBNAIL) == 0)
+				else if (usageType.compareTo(DigitalEntityRelation.THUMBNAIL
+						.toString()) == 0)
 				{
 					dtlDe.addThumbnailLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntity.VIEW) == 0)
+				else if (usageType.compareTo(DigitalEntityRelation.VIEW
+						.toString()) == 0)
 				{
 					dtlDe.addViewLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntity.VIEW_MAIN) == 0)
+				else if (usageType.compareTo(DigitalEntityRelation.VIEW_MAIN
+						.toString()) == 0)
 				{
 					dtlDe.addViewMainLink(b);
 				}
 			}
-			else if (type.compareTo(DigitalEntity.INCLUDE) == 0)
+			else if (type.compareTo(DigitalEntityRelation.include.toString()) == 0)
 			{
 				DigitalEntity b = build(baseDir, relPid);
-				if (usageType.compareTo(DigitalEntity.VIEW_MAIN) == 0)
+				if (usageType.compareTo(DigitalEntityRelation.VIEW_MAIN
+						.toString()) == 0)
 				{
 					dtlDe.addViewMainLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntity.INDEX) == 0)
+				else if (usageType.compareTo(DigitalEntityRelation.INDEX
+						.toString()) == 0)
 				{
 					dtlDe.addIndexLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntity.ARCHIVE) == 0)
+				else if (usageType.compareTo(DigitalEntityRelation.ARCHIVE
+						.toString()) == 0)
 				{
 					dtlDe.addArchiveLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntity.THUMBNAIL) == 0)
+				else if (usageType.compareTo(DigitalEntityRelation.THUMBNAIL
+						.toString()) == 0)
 				{
 					dtlDe.addThumbnailLink(b);
 				}
-				else if (usageType.compareTo(DigitalEntity.VIEW) == 0)
+				else if (usageType.compareTo(DigitalEntityRelation.VIEW
+						.toString()) == 0)
 				{
 					dtlDe.addViewLink(b);
 				}
 			}
-			else if (type.compareTo(DigitalEntity.PART_OF) == 0)
+			else if (type.compareTo(DigitalEntityRelation.part_of.toString()) == 0)
 			{
 				dtlDe.setIsParent(false);
 				dtlDe.setParentPid(relPid);
@@ -301,9 +310,10 @@ public class DigitoolDigitalEntityBuilder implements DigitalEntityBuilder
 				.getElementsByTagName("file_name").item(0).getTextContent();
 		File file = new File(baseDir + File.separator + pid + File.separator
 				+ filename);
-		dtlDe.setStream(file);
-		dtlDe.setStreamMime(((Element) streamRef)
-				.getElementsByTagName("mime_type").item(0).getTextContent());
+		String mime = ((Element) streamRef).getElementsByTagName("mime_type")
+				.item(0).getTextContent();
+		dtlDe.addStream(file, mime, StreamType.DATA);
+
 		File xmlFile = new File(baseDir + File.separator + pid + ".xml");
 		dtlDe.setXml(xmlFile);
 
