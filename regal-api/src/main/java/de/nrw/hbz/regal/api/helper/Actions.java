@@ -1225,6 +1225,44 @@ public class Actions
 
 	}
 
+	public String itext(Node node)
+	{
+		String pid = node.getPID();
+
+		String mimeType = node.getMimeType();
+		if (mimeType == null)
+			throw new HttpArchiveException(
+					404,
+					"The node "
+							+ pid
+							+ " does not provide a mime type. It may not even contain data at all!");
+		if (mimeType.compareTo("application/pdf") != 0)
+			throw new HttpArchiveException(406,
+					"Wrong mime type. Cannot extract text from " + mimeType);
+
+		URL content = null;
+		try
+		{
+			content = new URL(fedoraExtern + "/objects/" + pid
+					+ "/datastreams/data/content");
+
+			File pdfFile = download(content);
+			PdfText pdf = new PdfText();
+			return pdf.itext(pdfFile);
+		}
+		catch (MalformedURLException e)
+		{
+			throw new HttpArchiveException(500, e.getMessage());
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(500, "Not able to download "
+					+ content);
+
+		}
+
+	}
+
 	public String contentModelsInit(String namespace)
 	{
 		try

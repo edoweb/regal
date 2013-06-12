@@ -31,7 +31,7 @@ public class TestTextExtraction
 			{
 				String pdfBox = actions.pdfbox(actions.readNode(pid));
 
-				String itext = actions.itext(pid);
+				String itext = actions.itext(actions.readNode(pid));
 
 				System.out.print("pdfbox:\t");
 				Counter pdfBoxCount = wordCount(pdfBox);
