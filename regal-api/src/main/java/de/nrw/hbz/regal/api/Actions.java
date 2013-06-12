@@ -1524,15 +1524,14 @@ class Actions
 			IOUtils.copy(in, writer, "UTF-8");
 			String str = writer.toString();
 
-			str = Pattern
-					.compile(lobidUrl)
-					.matcher(str)
-					.replaceAll(
-							Matcher.quoteReplacement(serverName + "/resource/"
-									+ pid))
+			str = Pattern.compile(lobidUrl).matcher(str)
+					.replaceAll(Matcher.quoteReplacement(// serverName +
+															// "/resource/"
+							// +
+							pid))
 					+ "<"
-					+ serverName
-					+ "/resource/"
+					// + serverName
+					// + "/resource/"
 					+ pid
 					+ "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
 					+ lobidUrl + "> .";
@@ -2313,8 +2312,8 @@ class Actions
 			// Links
 			View view = getExternalLinks(pid);
 			// Things
-			URI aggregation = f.createURI(uriPrefix + pid);
-			URI rem = f.createURI(uriPrefix + pid + ".rdf");
+			URI aggregation = f.createURI(/* uriPrefix + */pid);
+			URI rem = f.createURI(/* uriPrefix + */pid + ".rdf");
 			URI regal = f.createURI("https://github.com/edoweb/regal/");
 			URI data = f.createURI(aggregation.stringValue() + "/data");
 			URI fulltext = f.createURI(aggregation.stringValue() + "/fulltext");
@@ -2395,7 +2394,7 @@ class Actions
 
 			for (String relPid : findObject(pid, IS_PART_OF))
 			{
-				URI relUrl = f.createURI(uriPrefix + relPid);
+				URI relUrl = f.createURI(/* uriPrefix + */relPid);
 
 				con.add(aggregation, isAggregatedBy, relUrl);
 				con.add(aggregation, isPartOf, relUrl);
@@ -2403,7 +2402,7 @@ class Actions
 
 			for (String relPid : findObject(pid, HAS_PART))
 			{
-				URI relUrl = f.createURI(uriPrefix + relPid);
+				URI relUrl = f.createURI(/* uriPrefix + */relPid);
 
 				con.add(aggregation, aggregates, relUrl);
 				con.add(aggregation, hasPart, relUrl);
