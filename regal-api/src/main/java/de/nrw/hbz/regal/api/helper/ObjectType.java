@@ -14,8 +14,12 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal.api;
+package de.nrw.hbz.regal.api.helper;
 
-public enum TypeType {
-	docType, contentType, edowebType
+/**
+ * @author Jan Schnasse, schnasse@hbz-nrw.de
+ * 
+ */
+public enum ObjectType {
+	monograph, journal, volume, webpage, version, file, supplement, article, issue
 }

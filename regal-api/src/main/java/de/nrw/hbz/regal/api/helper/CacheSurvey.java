@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal.api;
+package de.nrw.hbz.regal.api.helper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,18 +34,18 @@ import org.marc4j.marc.Subfield;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class CacheSurvey
+public class CacheSurvey
 {
 	final static Logger logger = LoggerFactory.getLogger(CacheSurvey.class);
 	String cacheDir = "/opt/edoweb/edobase/";
 	String uriBase = "http://orthos.hbz-nrw.de/objects";
 
-	CacheSurvey()
+	public CacheSurvey()
 	{
 
 	}
 
-	List<View> survey()
+	public List<View> survey()
 	{
 		List<View> rows = new Vector<View>();
 		File cacheDirFile = new File(cacheDir);

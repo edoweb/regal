@@ -19,7 +19,7 @@ package de.nrw.hbz.regal.sync.ingest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.nrw.hbz.regal.api.ObjectType;
+import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 

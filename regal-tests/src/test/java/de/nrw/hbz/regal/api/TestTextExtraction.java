@@ -8,6 +8,9 @@ import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 
+import de.nrw.hbz.regal.api.helper.Actions;
+import de.nrw.hbz.regal.api.helper.HttpArchiveException;
+
 public class TestTextExtraction
 {
 	// @Test

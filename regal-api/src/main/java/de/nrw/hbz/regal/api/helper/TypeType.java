@@ -14,29 +14,8 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal.api;
+package de.nrw.hbz.regal.api.helper;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-
-/**
- * @author Jan Schnasse
- * 
- */
-public class HttpArchiveException extends WebApplicationException
-{
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param status
-	 *            a http status code
-	 * @param message
-	 *            a human readable message
-	 */
-	public HttpArchiveException(int status, String message)
-	{
-		super(Response.status(status).entity(message).build());
-
-	}
-
+public enum TypeType {
+	docType, contentType, edowebType
 }

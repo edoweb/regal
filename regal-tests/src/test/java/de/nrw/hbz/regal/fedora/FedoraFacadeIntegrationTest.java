@@ -27,7 +27,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.regal.api.ContentModelFactory;
+import de.nrw.hbz.regal.api.helper.ContentModelFactory;
 import de.nrw.hbz.regal.datatypes.Node;
 
 /**
