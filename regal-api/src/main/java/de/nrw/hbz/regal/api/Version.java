@@ -119,8 +119,8 @@ public class Version
 	@Produces({ "text/html" })
 	public Response getAllAsHtml()
 	{
-		String rem = resources.getAllOfTypeAsHtml(ObjectType.supplement
-				.toString());
+		String rem = resources
+				.getAllOfTypeAsHtml(ObjectType.version.toString());
 		ResponseBuilder res = Response.ok().entity(rem);
 		return res.build();
 	}
