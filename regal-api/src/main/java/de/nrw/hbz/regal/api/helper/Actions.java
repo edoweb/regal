@@ -2439,7 +2439,7 @@ public class Actions
 		{
 			String subjectLink = null;
 			String objectLink = null;
-			String namespace = pid.substring(pid.indexOf(":"));
+			String namespace = pid.substring(0, pid.indexOf(":"));
 			if (subject.startsWith(pid))
 			{
 				subjectLink = uriPrefix + subject;
