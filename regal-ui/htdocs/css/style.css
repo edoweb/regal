@@ -207,6 +207,18 @@ td
 
 
 }
+#list
+{
+	border-style: solid;
+	border-width: 0px;
+	padding: 30px;
+	list-style: none;
+	background-color: #ffffff;
+	box-shadow: 5px 5px 7px #999999;
+	border-radius: 15px;
+
+
+}
 
 #tabheader
 {

@@ -120,9 +120,20 @@ public class Resource
 	 */
 	@GET
 	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAll()
+	public Response getAll()
 	{
-		return new ObjectList(actions.getAll());
+		ObjectList rem = new ObjectList(actions.getAll());
+		ResponseBuilder res = Response.ok().entity(rem);
+		return res.build();
+	}
+
+	@GET
+	@Produces({ "text/html" })
+	public Response getAllAsHtml()
+	{
+		String rem = actions.getAllAsHtml();
+		ResponseBuilder res = Response.ok().entity(rem);
+		return res.build();
 	}
 
 	/**
@@ -1049,6 +1060,11 @@ public class Resource
 					e.getMessage());
 		}
 
+	}
+
+	public String getAllOfTypeAsHtml(String type)
+	{
+		return actions.getAllOfTypeAsHtml(type);
 	}
 
 }
