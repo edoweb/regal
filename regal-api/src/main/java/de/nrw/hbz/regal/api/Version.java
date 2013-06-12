@@ -28,6 +28,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,16 @@ public class Version
 	public ObjectList getAll()
 	{
 		return resources.getAllOfType(ObjectType.version.toString());
+	}
+
+	@GET
+	@Produces({ "text/html" })
+	public Response getAllAsHtml()
+	{
+		String rem = resources.getAllOfTypeAsHtml(ObjectType.supplement
+				.toString());
+		ResponseBuilder res = Response.ok().entity(rem);
+		return res.build();
 	}
 
 	/**

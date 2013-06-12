@@ -2456,11 +2456,79 @@ public class Actions
 			{
 				objectLink = object;
 			}
+			if (predicate.compareTo("http://hbz-nrw.de/regal#contentType") == 0)
+			{
+				objectLink = "/" + object + "/";
+			}
 			return "<tr><td><a href=\"" + subjectLink + "\">" + subject
 					+ "</a></td><td><a href=\"" + predicate + "\">" + predicate
 					+ "</a></td><td about=\"" + subject + "\"><a property=\""
 					+ predicate + "\" href=\"" + objectLink + "\">" + object
 					+ "</a></td></tr>";
 		}
+	}
+
+	public String getAllAsHtml()
+	{
+		String result = "";
+		try
+		{
+			java.net.URL fileLocation = Thread.currentThread()
+					.getContextClassLoader().getResource("list.html");
+
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(fileLocation.openStream(), writer);
+			String data = writer.toString();
+
+			ST st = new ST(data, '$', '$');
+			st.add("type", "resource");
+			List<String> list = getAll();
+			for (String item : list)
+			{
+				st.add("items", "<li><a href=\"" + uriPrefix + item + "\">"
+						+ item + "</a></li>");
+			}
+			result = st.render();
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(500,
+					"IOException during html creation");
+		}
+
+		return result;
+	}
+
+	public String getAllOfTypeAsHtml(String type)
+	{
+
+		String result = "";
+		try
+		{
+			java.net.URL fileLocation = Thread.currentThread()
+					.getContextClassLoader().getResource("list.html");
+
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(fileLocation.openStream(), writer);
+			String data = writer.toString();
+
+			ST st = new ST(data, '$', '$');
+			st.add("type", type);
+			List<String> list = findByType(type);
+			for (String item : list)
+			{
+				st.add("items", "<li><a href=\"" + uriPrefix + item + "\">"
+						+ item + "</a></li>");
+
+			}
+			result = st.render();
+		}
+		catch (IOException e)
+		{
+			throw new HttpArchiveException(500,
+					"IOException during html creation");
+		}
+
+		return result;
 	}
 }
