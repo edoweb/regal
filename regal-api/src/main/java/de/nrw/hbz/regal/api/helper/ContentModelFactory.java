@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal.api;
+package de.nrw.hbz.regal.api.helper;
 
 import de.nrw.hbz.regal.datatypes.ContentModel;
 

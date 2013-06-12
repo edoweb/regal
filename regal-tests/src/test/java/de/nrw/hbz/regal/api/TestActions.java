@@ -12,6 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.nrw.hbz.regal.api.helper.Actions;
+import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.datatypes.Node;
 
 public class TestActions

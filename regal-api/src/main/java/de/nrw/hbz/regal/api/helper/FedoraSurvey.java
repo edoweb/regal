@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal.api;
+package de.nrw.hbz.regal.api.helper;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-class FedoraSurvey
+public class FedoraSurvey
 {
 	final static Logger logger = LoggerFactory.getLogger(FedoraSurvey.class);
 	String cacheDir = "/opt/edoweb/edobase/";
@@ -35,12 +35,12 @@ class FedoraSurvey
 
 	Actions actions = null;
 
-	FedoraSurvey() throws IOException
+	public FedoraSurvey() throws IOException
 	{
 		actions = new Actions();
 	}
 
-	List<View> survey()
+	public List<View> survey()
 	{
 		System.out.println("Hole alle pids");
 		List<String> pids = actions.getAll();

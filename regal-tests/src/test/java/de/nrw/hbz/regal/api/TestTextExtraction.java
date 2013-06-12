@@ -8,6 +8,9 @@ import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 
+import de.nrw.hbz.regal.api.helper.Actions;
+import de.nrw.hbz.regal.api.helper.HttpArchiveException;
+
 public class TestTextExtraction
 {
 	// @Test
@@ -28,7 +31,7 @@ public class TestTextExtraction
 			{
 				String pdfBox = actions.pdfbox(actions.readNode(pid));
 
-				String itext = actions.itext(pid);
+				String itext = actions.itext(actions.readNode(pid));
 
 				System.out.print("pdfbox:\t");
 				Counter pdfBoxCount = wordCount(pdfBox);

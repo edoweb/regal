@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.multipart.MultiPart;
 
+import de.nrw.hbz.regal.api.helper.ObjectType;
+
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 

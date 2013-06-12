@@ -33,6 +33,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import de.nrw.hbz.regal.api.helper.Actions;
+import de.nrw.hbz.regal.api.helper.CacheSurvey;
+import de.nrw.hbz.regal.api.helper.FedoraSurvey;
+import de.nrw.hbz.regal.api.helper.HttpArchiveException;
+import de.nrw.hbz.regal.api.helper.View;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
@@ -242,23 +247,6 @@ public class Utils
 			return builder.cacheControl(cacheControl)
 					.lastModified(node.getLastModified()).tag(eTag).build();
 
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
-
-	@GET
-	@Path("/itext/{pid}")
-	@Produces({ "text/plain" })
-	public String itext(@PathParam("pid") String pid)
-	{
-		try
-		{
-			return actions.itext(pid);
 		}
 		catch (ArchiveException e)
 		{

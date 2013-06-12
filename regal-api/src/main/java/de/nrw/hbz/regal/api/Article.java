@@ -32,6 +32,8 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.nrw.hbz.regal.api.helper.ObjectType;
+
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 

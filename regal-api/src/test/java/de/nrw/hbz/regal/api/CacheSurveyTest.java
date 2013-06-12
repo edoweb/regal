@@ -2,10 +2,10 @@ package de.nrw.hbz.regal.api;
 
 import java.util.List;
 
-import de.nrw.hbz.regal.api.CacheSurvey;
 import de.nrw.hbz.regal.api.CollectionProfile;
 import de.nrw.hbz.regal.api.TypeObjectDictionary;
-import de.nrw.hbz.regal.api.View;
+import de.nrw.hbz.regal.api.helper.CacheSurvey;
+import de.nrw.hbz.regal.api.helper.View;
 
 public class CacheSurveyTest
 {
