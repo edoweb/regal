@@ -2242,14 +2242,14 @@ public class Actions
 
 		for (String relPid : findObject(pid, IS_PART_OF))
 		{
-			String relUrl = apiUrl + relPid;
+			String relUrl = serverName + "/resources/" + relPid;
 
 			view.addIsPartOf(relUrl, relPid);
 		}
 
 		for (String relPid : findObject(pid, HAS_PART))
 		{
-			String relUrl = apiUrl + relPid;
+			String relUrl = serverName + "/resources/" + relPid;
 
 			List<String> desc = findObject(relPid,
 					"http://purl.org/dc/elements/1.1/description");
