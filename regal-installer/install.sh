@@ -147,22 +147,22 @@ echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteEngine on" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /fedora/(.*) http://localhost:$TOMCAT_PORT/fedora/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /search/(.*) http://localhost:$ELASTICSEARCH_PORT/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/fedora/(.*) http://localhost:$TOMCAT_PORT/fedora/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/search/(.*) http://localhost:$ELASTICSEARCH_PORT/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule ^/resource/(.*) http://localhost:$TOMCAT_PORT/api/resource/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteRule ^/resources/(.*) http://localhost:$TOMCAT_PORT/api/resource/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /journal/(.*) http://localhost:$TOMCAT_PORT/api/journal/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /monograph/(.*) http://localhost:$TOMCAT_PORT/api/monograph/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /webpage/(.*) http://localhost:$TOMCAT_PORT/api/webpage/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /utils/(.*)  http://localhost:$TOMCAT_PORT/api/utils/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /volume/(.*)  http://localhost:$TOMCAT_PORT/api/volume/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /version/(.*)  http://localhost:$TOMCAT_PORT/api/version/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /file/(.*)  http://localhost:$TOMCAT_PORT/api/file/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /issue/(.*)  http://localhost:$TOMCAT_PORT/api/issue/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /article/(.*)  http://localhost:$TOMCAT_PORT/api/article/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule /supplement/(.*)  http://localhost:$TOMCAT_PORT/api/article/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/journal/(.*) http://localhost:$TOMCAT_PORT/api/journal/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/monograph/(.*) http://localhost:$TOMCAT_PORT/api/monograph/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/webpage/(.*) http://localhost:$TOMCAT_PORT/api/webpage/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/utils/(.*)  http://localhost:$TOMCAT_PORT/api/utils/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/volume/(.*)  http://localhost:$TOMCAT_PORT/api/volume/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/version/(.*)  http://localhost:$TOMCAT_PORT/api/version/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/file/(.*)  http://localhost:$TOMCAT_PORT/api/file/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/issue/(.*)  http://localhost:$TOMCAT_PORT/api/issue/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/article/(.*)  http://localhost:$TOMCAT_PORT/api/article/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/supplement/(.*)  http://localhost:$TOMCAT_PORT/api/article/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
 
-echo -e "RewriteRule /oai-pmh/(.*) http://localhost:$TOMCAT_PORT/oai-pmh/\$1 [P] " >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/oai-pmh/(.*) http://localhost:$TOMCAT_PORT/oai-pmh/\$1 [P] " >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "</VirtualHost>" >> $ARCHIVE_HOME/conf/site.conf
 
