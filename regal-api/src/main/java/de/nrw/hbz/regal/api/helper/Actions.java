@@ -2091,7 +2091,7 @@ public class Actions
 	{
 		String pid = node.getPID();
 		String uri = pid;
-		String apiUrl = uriPrefix + pid;
+		String apiUrl = serverName+ "/resources/" + pid;
 
 		View view = new View();
 		view.setLastModified(node.getLastModified());
@@ -2242,14 +2242,14 @@ public class Actions
 
 		for (String relPid : findObject(pid, IS_PART_OF))
 		{
-			String relUrl = serverName + "/resource/" + relPid;
+			String relUrl = apiUrl + relPid;
 
 			view.addIsPartOf(relUrl, relPid);
 		}
 
 		for (String relPid : findObject(pid, HAS_PART))
 		{
-			String relUrl = serverName + "/resource/" + relPid;
+			String relUrl = apiUrl + relPid;
 
 			List<String> desc = findObject(relPid,
 					"http://purl.org/dc/elements/1.1/description");
