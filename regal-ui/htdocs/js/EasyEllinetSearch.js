@@ -10,7 +10,7 @@ EasyEllinetSearch.prototype.buildIndexSelection = function(parameter) {
 
 	var request = {
 		type : "GET",
-		url : this.host+"/search/_status",
+		url : "http://localhost/search/_status",
 
 		processData : false,
 		dataType : "json",
@@ -114,7 +114,7 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 
 	var request = {
 		type : "POST",
-		url : this.host+"/search/" + indexStr,
+		url : "http://localhost/search/" + indexStr,
 		data : myQuery,
 		processData : false,
 		dataType : "json",
