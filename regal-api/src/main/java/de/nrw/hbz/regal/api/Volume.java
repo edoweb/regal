@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 @Path("/volume")
 public class Volume
 {
-	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
+	final static Logger logger = LoggerFactory.getLogger(Volume.class);
 
 	Resources resources = null;
 

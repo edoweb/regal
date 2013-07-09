@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 @Path("/issue")
 public class Issue
 {
-	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
+	final static Logger logger = LoggerFactory.getLogger(Issue.class);
 
 	Resources resources = null;
 
