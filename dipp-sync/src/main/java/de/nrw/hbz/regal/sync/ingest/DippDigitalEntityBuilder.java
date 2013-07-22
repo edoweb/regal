@@ -16,35 +16,27 @@
  */
 package de.nrw.hbz.regal.sync.ingest;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
-import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.extern.DigitoolDigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.extern.StreamType;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public class DippDigitalEntityBuilder implements DigitalEntityBuilder
+public class DippDigitalEntityBuilder extends DigitoolDigitalEntityBuilder
 {
 	final static Logger logger = LoggerFactory
 			.getLogger(DippDigitalEntityBuilder.class);
@@ -142,8 +134,7 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 
 		if (content.exists())
 		{
-			dtlDe.setStream(content);
-			dtlDe.setStreamMime("application/zip");
+			dtlDe.addStream(content, "application/zip", StreamType.DATA);
 		}
 		else
 		{
@@ -197,93 +188,4 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilder
 		}
 	}
 
-	private Element getDocument(File digitalEntityFile)
-	{
-		try
-		{
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder docBuilder;
-
-			docBuilder = factory.newDocumentBuilder();
-
-			Document doc;
-
-			doc = docBuilder.parse(new BufferedInputStream(new FileInputStream(
-					digitalEntityFile)));
-			Element root = doc.getDocumentElement();
-			root.normalize();
-			return root;
-		}
-		catch (FileNotFoundException e)
-		{
-
-			logger.error(e.getMessage());
-		}
-		catch (SAXException e)
-		{
-
-			logger.error(e.getMessage());
-		}
-		catch (IOException e)
-		{
-
-			logger.error(e.getMessage());
-		}
-		catch (ParserConfigurationException e)
-		{
-
-			logger.error(e.getMessage());
-		}
-		catch (Exception e)
-		{
-			logger.error(e.getMessage());
-		}
-		return null;
-	}
-
-	private Element getDocument(String str)
-	{
-		try
-		{
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder docBuilder;
-
-			docBuilder = factory.newDocumentBuilder();
-
-			Document doc;
-
-			doc = docBuilder.parse(new BufferedInputStream(
-					new ByteArrayInputStream(str.getBytes("UTF-8"))));
-			Element root = doc.getDocumentElement();
-			root.normalize();
-			return root;
-		}
-		catch (FileNotFoundException e)
-		{
-
-			logger.error(e.getMessage());
-		}
-		catch (SAXException e)
-		{
-
-			logger.error(e.getMessage());
-		}
-		catch (IOException e)
-		{
-
-			logger.error(e.getMessage());
-		}
-		catch (ParserConfigurationException e)
-		{
-
-			logger.error(e.getMessage());
-		}
-		catch (Exception e)
-		{
-			logger.error(e.getMessage());
-		}
-		return null;
-	}
 }

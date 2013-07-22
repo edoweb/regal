@@ -27,13 +27,15 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.multipart.MultiPart;
+
+import de.nrw.hbz.regal.api.helper.ObjectType;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -44,12 +46,12 @@ public class EJournal
 {
 	final static Logger logger = LoggerFactory.getLogger(EJournal.class);
 
-	Resources resources = null;
+	Resource resources = null;
 
 	public EJournal() throws IOException
 	{
 
-		resources = new Resources();
+		resources = new Resource();
 
 	}
 
@@ -59,6 +61,16 @@ public class EJournal
 	{
 		return resources.getAllOfType(ObjectType.journal.toString());
 
+	}
+
+	@GET
+	@Produces({ "text/html" })
+	public Response getAllAsHtml()
+	{
+		String rem = resources
+				.getAllOfTypeAsHtml(ObjectType.journal.toString());
+		ResponseBuilder res = Response.ok().entity(rem);
+		return res.build();
 	}
 
 	@DELETE
@@ -170,14 +182,6 @@ public class EJournal
 		return resources.create(volumePid, namespace, input);
 	}
 
-	@GET
-	@Path("/{pid}/about")
-	@Produces({ "application/json", "application/xml", MediaType.TEXT_HTML })
-	public Response getView(@PathParam("pid") String pid)
-	{
-		return resources.about(pid);
-	}
-
 	/**
 	 * @param pid
 	 *            the pid of the resource
@@ -192,8 +196,8 @@ public class EJournal
 	{
 		return Response
 				.temporaryRedirect(
-						new java.net.URI("../resources/" + namespace + ":"
-								+ pid + "/about")).status(303).build();
+						new java.net.URI("../resource/" + namespace + ":" + pid
+								+ "/about")).status(303).build();
 	}
 
 	@GET

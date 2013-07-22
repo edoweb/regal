@@ -10,78 +10,65 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestOpusDownloader
-{
-	Properties properties = new Properties();
-	/*
-	 * 1637992 4676380 2258539 1638892 4628526
-	 */
-	String pid = "1";// "3237397";//
-	private final String piddownloaderServer;
-	private final String piddownloaderDownloadLocation;
+import de.nrw.hbz.regal.sync.ingest.OpusDownloader;
 
-	public TestOpusDownloader()
-	{
-		try
-		{
-			properties = new Properties();
-			properties.load(getClass().getResourceAsStream(
-					"/testOpusDownloader.properties"));
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+public class TestOpusDownloader {
+    Properties properties = new Properties();
+    /*
+     * 1637992 4676380 2258539 1638892 4628526
+     */
+    String pid = "1";// "3237397";//
+    private final String piddownloaderServer;
+    private final String piddownloaderDownloadLocation;
 
-		piddownloaderServer = properties.getProperty("piddownloader.server");
-		piddownloaderDownloadLocation = properties
-				.getProperty("piddownloader.downloadLocation");
+    public TestOpusDownloader() {
+	try {
+	    properties = new Properties();
+	    properties.load(getClass().getResourceAsStream(
+		    "/testOpusDownloader.properties"));
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
 
-	@Before
-	public void setUp()
-	{
-		try
-		{
+	piddownloaderServer = properties.getProperty("piddownloader.server");
+	piddownloaderDownloadLocation = properties
+		.getProperty("piddownloader.downloadLocation");
+    }
 
-			FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
+    @Before
+    public void setUp() {
+	try {
 
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+	    FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
+
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @Test
+    public void downloadPid() {
+
+	System.out
+		.println("de.nrw.hbz.dipp.downloader.TestOpusDownloader.java: To run this test please uncomment code.");
+
+	OpusDownloader downloader = new OpusDownloader();
+	downloader.init(piddownloaderServer, piddownloaderDownloadLocation);
+
+	try {
+	    downloader.download(pid);
+	    File file = new File(piddownloaderDownloadLocation + File.separator
+		    + pid);
+	    Assert.assertTrue(file.exists());
+	    FileUtils.deleteDirectory(file);
+	    Assert.assertTrue(!file.exists());
+
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
 
-	@Test
-	public void downloadPid()
-	{
-
-		System.out
-				.println("de.nrw.hbz.dipp.downloader.TestOpusDownloader.java: To run this test please uncomment code.");
-
-		OpusDownloader downloader = new OpusDownloader();
-		downloader.init(piddownloaderServer, piddownloaderDownloadLocation);
-
-		try
-		{
-			downloader.download(pid);
-			File file = new File(piddownloaderDownloadLocation + File.separator
-					+ pid);
-			Assert.assertTrue(file.exists());
-			FileUtils.deleteDirectory(file);
-			Assert.assertTrue(!file.exists());
-
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-	}
+    }
 
 }

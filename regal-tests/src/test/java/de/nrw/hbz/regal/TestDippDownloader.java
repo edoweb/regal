@@ -27,6 +27,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.nrw.hbz.regal.sync.ingest.DippDownloader;
+
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
@@ -37,7 +39,7 @@ public class TestDippDownloader
 	/*
 	 * 1637992 4676380 2258539 1638892 4628526
 	 */
-	String pid = "dipp:1";// "3237397";//
+	String pid = "dipp:1010";// "3237397";//
 	private final String piddownloaderServer;
 	private final String piddownloaderDownloadLocation;
 

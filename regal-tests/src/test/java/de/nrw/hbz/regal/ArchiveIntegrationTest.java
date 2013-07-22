@@ -44,223 +44,197 @@ import de.nrw.hbz.regal.fedora.FedoraVocabulary;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class ArchiveIntegrationTest
-{
+public class ArchiveIntegrationTest {
 
-	ArchiveInterface archive = null;
+    ArchiveInterface archive = null;
 
-	Properties properties = null;
-	Node rootObject = null;
-	ComplexObject object = null;
+    Properties properties = null;
+    Node rootObject = null;
+    ComplexObject object = null;
 
-	@Before
-	public void setUp()
-	{
+    @Before
+    public void setUp() {
 
-		try
-		{
-			properties = new Properties();
-			properties.load(getClass().getResourceAsStream("/test.properties"));
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		archive = ArchiveFactory.getArchiveImpl(
-				properties.getProperty("fedoraUrl"),
-				properties.getProperty("user"),
-				properties.getProperty("password"));
-
-		rootObject = new Node();
-		rootObject.setNodeType(TYPE_OBJECT);
-		Link link = new Link();
-		link.setPredicate(REL_IS_NODE_TYPE);
-		link.setObject(TYPE_OBJECT, true);
-		rootObject.addRelation(link);
-		rootObject.setNamespace("test").setPID("test:234")
-				.addCreator("Jan Schnasse")
-				.setLabel("Ein komplexes Testobjekt").addTitle("Ein Testtitel");
-
-		ContentModel cm = new ContentModel();
-
-		cm.addPrescribedDs("DC", "http://www.openarchives.org/OAI/2.0/oai_dc/",
-				"text/xml");
-		cm.addPrescribedDs("RELS-EXT",
-				"info:fedora/fedora-system:FedoraRELSExt-1.0",
-				"application/rdf+xml");
-
-		cm.setContentModelPID("test:HBZNodeModel");
-		cm.setServiceDefinitionPID("test:HBZNodeServiceDefinition");
-		cm.setServiceDeploymentPID("test:HBZNodeServiceDeployment");
-		cm.addMethod(
-				"listParents",
-				"http://localhost:8080/AdditionalServices/services/HBZNodeServices/ListParents?pid=(pid)");
-		cm.addMethod(
-				"dc",
-				"http://localhost:8080/AdditionalServices/services/HBZNodeServices/ListDCStream?pid=(pid)");
-		cm.addMethod(
-				"listChildren",
-				"http://localhost:8181/AdditionalServices/services/HBZNodeServices/ListChildren?pid=(pid)");
-
-		rootObject.addContentModel(cm);
-
-		object = new ComplexObject(rootObject);
-		object.addChild(new ComplexObjectNode(new Node().addCreator(
-				"Der kleine Jan").setLabel("Ein Kindobjekt")));
-
-		List<String> objects = archive.findNodes("test:*");
-		for (String pid : objects)
-		{
-			archive.deleteNode(pid);
-		}
-
-		objects = archive.findNodes("testCM:*");
-		for (String pid : objects)
-		{
-			archive.deleteNode(pid);
-		}
-
+	try {
+	    properties = new Properties();
+	    properties.load(getClass().getResourceAsStream("/test.properties"));
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
 
-	@Test
-	public void createObject()
-	{
-		try
-		{
-			archive.createComplexObject(object);
-			Assert.assertTrue(archive.nodeExists(object.getRoot().getPID()));
-			Assert.assertEquals(5, archive.findNodes("test:*").size());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			Assert.fail(e.getMessage());
-		}
+	archive = ArchiveFactory.getArchiveImpl(
+		properties.getProperty("fedoraUrl"),
+		properties.getProperty("user"),
+		properties.getProperty("password"));
+
+	rootObject = new Node();
+	rootObject.setNodeType(TYPE_OBJECT);
+	Link link = new Link();
+	link.setPredicate(REL_IS_NODE_TYPE);
+	link.setObject(TYPE_OBJECT, true);
+	rootObject.addRelation(link);
+	rootObject.setNamespace("test").setPID("test:234")
+		.addCreator("Jan Schnasse")
+		.setLabel("Ein komplexes Testobjekt").addTitle("Ein Testtitel");
+
+	ContentModel cm = new ContentModel();
+
+	cm.addPrescribedDs("DC", "http://www.openarchives.org/OAI/2.0/oai_dc/",
+		"text/xml");
+	cm.addPrescribedDs("RELS-EXT",
+		"info:fedora/fedora-system:FedoraRELSExt-1.0",
+		"application/rdf+xml");
+
+	cm.setContentModelPID("test:HBZNodeModel");
+	cm.setServiceDefinitionPID("test:HBZNodeServiceDefinition");
+	cm.setServiceDeploymentPID("test:HBZNodeServiceDeployment");
+	cm.addMethod(
+		"listParents",
+		"http://localhost:8080/AdditionalServices/services/HBZNodeServices/ListParents?pid=(pid)");
+	cm.addMethod(
+		"dc",
+		"http://localhost:8080/AdditionalServices/services/HBZNodeServices/ListDCStream?pid=(pid)");
+	cm.addMethod(
+		"listChildren",
+		"http://localhost:8181/AdditionalServices/services/HBZNodeServices/ListChildren?pid=(pid)");
+
+	rootObject.addContentModel(cm);
+
+	object = new ComplexObject(rootObject);
+	object.addChild(new ComplexObjectNode(new Node().addCreator(
+		"Der kleine Jan").setLabel("Ein Kindobjekt")));
+
+	List<String> objects = archive.findNodes("test:*");
+	for (String pid : objects) {
+	    archive.deleteNode(pid);
 	}
 
-	@Test
-	public void readObject()
-	{
-		try
-		{
-			archive.createComplexObject(object);
-			Node obj = archive.readNode(object.getRoot().getPID());
-
-			// System.out.println(obj.getPID());
-			Assert.assertEquals(0,
-					object.getRoot().getNodeType().compareTo(obj.getNodeType()));
-			Assert.assertEquals(0, "test:234".compareTo(obj.getPID()));
-			// System.out.println(obj.getNamespace());
-			Assert.assertEquals(0, "test".compareTo(obj.getNamespace()));
-			// System.out.println(obj.getCreator()[0]);
-			Assert.assertEquals(0,
-					"Jan Schnasse".compareTo(obj.getFirstCreator()));
-			// System.out.println(obj.getLabel());
-			Assert.assertEquals(0,
-					"Ein komplexes Testobjekt".compareTo(obj.getLabel()));
-			// System.out.println(obj.getTitle()[0]);
-			Assert.assertEquals(0,
-					"Ein Testtitel".compareTo(obj.getFirstTitle()));
-
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			Assert.fail(e.getMessage());
-		}
+	objects = archive.findNodes("testCM:*");
+	for (String pid : objects) {
+	    archive.deleteNode(pid);
 	}
 
-	@Test
-	public void updateObject()
-	{
-		try
-		{
+    }
 
-			Node myObject = archive.createComplexObject(object);
-			// Node node1 =
-			archive.createNode(myObject.getPID());
-
-			Node node2 = new Node();
-			node2.addTitle("NEUER KNOTEN").setLabel("Cooler neuer Knoten");
-			archive.createNode(myObject, node2);
-
-			Thread.sleep(10000);
-
-			InputStream stream = archive.findTriples(
-					"<http://127.0.0.1:8080/fedora/objects/"
-							+ myObject.getPID() + "> <"
-							+ FedoraVocabulary.HAS_PART + "> *",
-					FedoraVocabulary.SPO, FedoraVocabulary.N3);
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(stream, writer, "utf-8");
-			String theString = writer.toString();
-			System.out.println(theString);
-
-			myObject = archive.readNode(myObject.getPID());
-
-			Assert.assertEquals(
-					0,
-					object.getRoot().getNodeType()
-							.compareTo(myObject.getNodeType()));
-
-			URL data = this.getClass().getResource("/test.pdf");
-			URL metadata = this.getClass().getResource("/test.ttl");
-
-			ComplexObject complexObject = archive.readComplexObject(object
-					.getRoot().getPID());
-			complexObject.getRoot().setUploadData(data.getPath(), "test",
-					"application/pdf");
-			complexObject.getRoot().setMetadataFile(metadata.getPath());
-
-			archive.updateComplexObject(complexObject);
-
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			Assert.fail(e.getMessage());
-		}
+    @Test
+    public void createObject() {
+	try {
+	    archive.createComplexObject(object);
+	    Assert.assertTrue(archive.nodeExists(object.getRoot().getPID()));
+	    Assert.assertEquals(5, archive.findNodes("test:*").size());
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    Assert.fail(e.getMessage());
 	}
+    }
 
-	@Test
-	public void deleteObject()
-	{
-		try
-		{
-			archive.createComplexObject(object);
-			Thread.sleep(10000);
-			archive.deleteComplexObject(object.getRoot().getPID());
+    @Test
+    public void readObject() {
+	try {
+	    archive.createComplexObject(object);
+	    Node obj = archive.readNode(object.getRoot().getPID());
 
-			Assert.assertFalse(archive.nodeExists(object.getRoot().getPID()));
-			Assert.assertEquals(3, archive.findNodes("test:*").size());
+	    // System.out.println(obj.getPID());
+	    Assert.assertEquals(0,
+		    object.getRoot().getNodeType().compareTo(obj.getNodeType()));
+	    Assert.assertEquals(0, "test:234".compareTo(obj.getPID()));
+	    // System.out.println(obj.getNamespace());
+	    Assert.assertEquals(0, "test".compareTo(obj.getNamespace()));
+	    // System.out.println(obj.getCreator()[0]);
+	    Assert.assertEquals(0,
+		    "Jan Schnasse".compareTo(obj.getFirstCreator()));
+	    // System.out.println(obj.getLabel());
+	    Assert.assertEquals(0,
+		    "Ein komplexes Testobjekt".compareTo(obj.getLabel()));
+	    // System.out.println(obj.getTitle()[0]);
+	    Assert.assertEquals(0,
+		    "Ein Testtitel".compareTo(obj.getFirstTitle()));
 
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			Assert.fail(e.getMessage());
-		}
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    Assert.fail(e.getMessage());
 	}
+    }
 
-	@After
-	public void tearDown()
-	{
-		// List<String> objects = archive.findNodes("test:*");
-		// for (String pid : objects)
-		// {
-		// archive.deleteNode(pid);
-		// }
-		//
-		// objects = archive.findNodes("testCM:*");
-		// for (String pid : objects)
-		// {
-		// archive.deleteNode(pid);
-		// }
+    @Test
+    public void updateObject() {
+	try {
 
+	    Node myObject = archive.createComplexObject(object);
+	    // Node node1 =
+	    archive.createNode(myObject.getPID());
+
+	    Node node2 = new Node();
+	    node2.addTitle("NEUER KNOTEN").setLabel("Cooler neuer Knoten");
+	    archive.createNode(myObject, node2);
+
+	    Thread.sleep(10000);
+
+	    InputStream stream = archive.findTriples(
+		    "<http://127.0.0.1:8080/fedora/objects/"
+			    + myObject.getPID() + "> <"
+			    + FedoraVocabulary.HAS_PART + "> *",
+		    FedoraVocabulary.SPO, FedoraVocabulary.N3);
+	    StringWriter writer = new StringWriter();
+	    IOUtils.copy(stream, writer, "utf-8");
+	    String theString = writer.toString();
+	    System.out.println(theString);
+
+	    myObject = archive.readNode(myObject.getPID());
+
+	    Assert.assertEquals(
+		    0,
+		    object.getRoot().getNodeType()
+			    .compareTo(myObject.getNodeType()));
+
+	    URL data = this.getClass().getResource("/test.pdf");
+	    URL metadata = this.getClass().getResource("/test.ttl");
+
+	    ComplexObject complexObject = archive.readComplexObject(object
+		    .getRoot().getPID());
+	    complexObject.getRoot().setUploadData(data.getPath(),
+		    "application/pdf");
+	    complexObject.getRoot().setMetadataFile(metadata.getPath());
+
+	    archive.updateComplexObject(complexObject);
+
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    Assert.fail(e.getMessage());
 	}
+    }
+
+    @Test
+    public void deleteObject() {
+	try {
+	    archive.createComplexObject(object);
+	    Thread.sleep(10000);
+	    archive.deleteComplexObject(object.getRoot().getPID());
+
+	    Assert.assertFalse(archive.nodeExists(object.getRoot().getPID()));
+	    Assert.assertEquals(3, archive.findNodes("test:*").size());
+
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    Assert.fail(e.getMessage());
+	}
+    }
+
+    @After
+    public void tearDown() {
+	// List<String> objects = archive.findNodes("test:*");
+	// for (String pid : objects)
+	// {
+	// archive.deleteNode(pid);
+	// }
+	//
+	// objects = archive.findNodes("testCM:*");
+	// for (String pid : objects)
+	// {
+	// archive.deleteNode(pid);
+	// }
+
+    }
 }

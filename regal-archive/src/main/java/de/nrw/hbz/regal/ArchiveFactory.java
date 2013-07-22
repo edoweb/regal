@@ -28,8 +28,6 @@ public class ArchiveFactory
 	 *            A user to operate in the archive
 	 * @param passwd
 	 *            The users password
-	 * @param sesameNativeStore
-	 *            The webadress of the connected sesame triple store
 	 * @return An archive object implementing the ArchivInterface.java
 	 */
 	public static ArchiveInterface getArchiveImpl(String host, String user,

@@ -3,8 +3,38 @@ function EasyEllinetSearch(step) {
 	this.step = step;
 	this.from = 0;
 	this.to = this.step;
+	this.buildIndexSelection();
+	this.indices;
 }
+EasyEllinetSearch.prototype.buildIndexSelection = function(parameter) {
 
+	var request = {
+		type : "GET",
+		url : "http://localhost/search/_status",
+
+		processData : false,
+		dataType : "json",
+		context : this,
+		success : function(data, statusText, xhr) {
+
+			var obj = jQuery.parseJSON(JSON.stringify(data, null, '  '));
+			this.indices = obj.indices;
+			var i = 0;
+			for (index in obj.indices) {
+
+				if (i % 3 == 0) {
+					$("#searchform").append("<br/>");
+				}
+				i++;
+				$("#searchform").append(
+						"<input	type=\"checkbox\" id=\"" + index
+								+ "\" value=\"" + index + "\">" + index
+								+ "</input>");
+			}
+		}
+	};
+	jQuery.ajax(request);
+}
 EasyEllinetSearch.prototype.alert = function(parameter) {
 	alert("Hello " + parameter);
 }
@@ -71,252 +101,20 @@ EasyEllinetSearch.prototype.htmlDecode = function(value) {
 
 EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 
-	var index = "_search";
+	var indexStr = "";
 
-	if ($("#edoweb").attr("checked")) {
-		index = "edoweb/_search";
-	}
-	if ($("#ellinet").attr("checked")) {
-		if (index == "edoweb/_search") {
-			index = "edoweb,ellinet/_search"
-		}
-		if (index == "_search") {
-			index = "ellinet/_search"
+	for (index in this.indices) {
+		if ($("#" + index).attr("checked")) {
+			indexStr = indexStr + "," + index
 		}
 	}
-	if ($("#dipp").attr("checked")) {
 
-		if (index == "edoweb/_search") {
-			index = "edoweb,dipp/_search"
-		}
-		if (index == "ellinet/_search") {
-			index = "ellinet,dipp/_search";
-		}
-		if (index == "edoweb,ellinet/_search") {
-			index = "edoweb,ellinet,dipp/_search"
-		}
-		if (index == "_search") {
-			index = "dipp/_search";
-		}
-
-	}
-	if ($("#ubm").attr("checked")) {
-		if (index == "edoweb/_search") {
-			index = "edoweb,ubm/_search"
-		}
-		if (index == "ellinet/_search") {
-			index = "ellinet,ubm/_search";
-		}
-		if (index == "edoweb,ellinet/_search") {
-			index = "edoweb,ellinet,ubm/_search"
-		}
-		if (index == "_search") {
-			index = "ubm/_search";
-		}
-		
-		if (index == "dipp/_search") {
-			index = "dipp,ubm/_search"
-		}
-
-		if (index == "edoweb,dipp/_search") {
-			index = "edoweb,dipp,ubm/_search"
-		}
-		
-		if (index == "ellinet,dipp/_search") {
-			index = "ellinet,dipp,ubm/_search"
-		}
-		
-		if (index == "edoweb,ellinet,dipp/_search") {
-			index = "edoweb,ellinet,dipp,ubm/_search"
-		}
-		
-		
-	}
-	if ($("#fhdd").attr("checked")) 
-	{
-		if (index == "edoweb/_search") {
-			index = "edoweb,fhdd/_search"
-		}
-		if (index == "ellinet/_search") {
-			index = "ellinet,fhdd/_search";
-		}
-		if (index == "edoweb,ellinet/_search") {
-			index = "edoweb,ellinet,fhdd/_search"
-		}
-		if (index == "_search") {
-			index = "fhdd/_search";
-		}
-		
-		if (index == "dipp/_search") {
-			index = "dipp,fhdd/_search"
-		}
-
-		if (index == "edoweb,dipp/_search") {
-			index = "edoweb,dipp,fhdd/_search"
-		}
-		
-		if (index == "ellinet,dipp/_search") {
-			index = "ellinet,dipp,fhdd/_search"
-		}
-		
-		if (index == "edoweb,ellinet,dipp/_search") {
-			index = "edoweb,ellinet,dipp,fhdd/_search"
-		}
-		
-		if (index == "ubm/_search") {
-			index = "ubm,fhdd/_search"
-		}
-		
-		if (index == "edoweb,ubm/_search") {
-			index = "edoweb,ubm,fhdd/_search"
-		}
-		
-		if (index == "ellinet,ubm/_search") {
-			index = "ellinet,ubm,fhdd/_search"
-		}
-		
-		if (index == "dipp,ubm/_search") {
-			index = "dipp,ubm,fhdd/_search"
-		}
-		
-		if (index == "edoweb,ellinet,ubm/_search") {
-			index = "edoweb,ellinet,ubm,fhdd/_search"
-		}
-		
-		
-		if (index == "edoweb,dipp,ubm/_search") {
-			index = "edoweb,dipp,ubm,fhdd/_search"
-		}
-		
-		if (index == "ellinet,dipp,ubm/_search") {
-			index = "ellinet,dipp,ubm,fhdd/_search"
-		}
-		
-		if (index == "edoweb,ellinet,dipp,ubm/_search") {
-			index = "edoweb,ellinet,dipp,ubm,fhdd/_search"
-		}
-	}
-	
-	if ($("#kola").attr("checked")) {
-		if (index == "edoweb/_search") {
-			index = "edoweb,kola/_search"
-		}
-		if (index == "ellinet/_search") {
-			index = "ellinet,kola/_search";
-		}
-		if (index == "edoweb,ellinet/_search") {
-			index = "edoweb,ellinet,kola/_search"
-		}
-		if (index == "_search") {
-			index = "kola/_search";
-		}
-		
-		if (index == "dipp/_search") {
-			index = "dipp,kola/_search"
-		}
-
-		if (index == "edoweb,dipp/_search") {
-			index = "edoweb,dipp,kola/_search"
-		}
-		
-		if (index == "ellinet,dipp/_search") {
-			index = "ellinet,dipp,kola/_search"
-		}
-		
-		if (index == "edoweb,ellinet,dipp/_search") {
-			index = "edoweb,ellinet,dipp,kola/_search"
-		}
-		
-		if (index == "ubm/_search") {
-			index = "ubm,kola/_search"
-		}
-		
-		if (index == "edoweb,ubm/_search") {
-			index = "edoweb,ubm,kola/_search"
-		}
-		
-		if (index == "ellinet,ubm/_search") {
-			index = "ellinet,ubm,kola/_search"
-		}
-		
-		if (index == "dipp,ubm/_search") {
-			index = "dipp,ubm,kola/_search"
-		}
-		
-		if (index == "edoweb,ellinet,ubm/_search") {
-			index = "edoweb,ellinet,ubm,kola/_search"
-		}
-		
-		
-		if (index == "edoweb,dipp,ubm/_search") {
-			index = "edoweb,dipp,ubm,kola/_search"
-		}
-		
-		if (index == "ellinet,dipp,ubm/_search") {
-			index = "ellinet,dipp,ubm,kola/_search"
-		}
-		
-		if (index == "edoweb,ellinet,dipp,ubm/_search") {
-			index = "edoweb,ellinet,dipp,ubm,kola/_search"
-		}
-		
-		
-		if (index == "fhdd/_search") {
-			index = "fhdd,kola/_search"
-		}
-		
-		if (index == "edoweb,fhdd/_search") {
-			index = "edoweb,fhdd,kola/_search"
-		}
-		
-		if (index == "ellinet,fhdd/_search") {
-			index = "ellinet,fhdd,kola/_search"
-		}
-		
-		if (index == "dipp,fhdd/_search") {
-			index = "dipp,fhdd,kola/_search"
-		}
-		
-		if (index == "ubm,fhdd/_search") {
-			index = "ubm,fhdd,kola/_search"
-		}
-		
-		if (index == "edoweb,ellinet,fhdd/_search") {
-			index = "edoweb,ellinet,ubmfhdd,kola/_search"
-		}
-		
-		
-		if (index == "edoweb,dipp,fhdd/_search") {
-			index = "edoweb,dipp,fhdd,kola/_search"
-		}
-		
-		if (index == "ellinet,dipp,fhdd/_search") {
-			index = "ellinet,dipp,fhdd,kola/_search"
-		}
-		
-		
-		if (index == "dipp,ubm,fhdd/_search") {
-			index = "dipp,ubm,fhdd,kola/_search"
-		}
-		
-		if (index == "ellinet,dipp,ubm,fhdd/_search") {
-			index = "ellinet,dipp,ubm,fhdd,kola/_search"
-		}
-		if (index == "edoweb,ellinet,dipp,fhdd/_search") {
-			index = "edoweb,ellinet,dipp,fhdd,kola/_search"
-		}
-		
-		if (index == "edoweb,ellinet,dipp,ubm,fhdd/_search") {
-			index = "edoweb,ellinet,dipp,ubm,fhdd,kola/_search"
-		}
-		
-		
-		
-	}
+	indexStr = indexStr + "/_search"
+	indexStr = indexStr.substring(1);
 
 	var request = {
 		type : "POST",
-		url : "http://localhost/search/" + index,
+		url : "http://localhost/search/" + indexStr,
 		data : myQuery,
 		processData : false,
 		dataType : "json",
@@ -352,10 +150,9 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 				var creator = source.creator;
 				var year = source.year;
 				var objectUrl = source.apiUrl;
-				if(!objectUrl)
-					{
+				if (!objectUrl) {
 					objectUrl = source.uri;
-					}
+				}
 				var thumbnailUrl = source.thumbnail;
 				var lobidUrl = source.lobidUrl;
 				var alephId = source.alephid;
@@ -479,7 +276,8 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 
 		},
 		error : function(xhr, message, error) {
-			callback(message, xhr, error);
+			console.log(message);
+			console.log(error);
 		}
 	};
 	jQuery.ajax(request);

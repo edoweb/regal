@@ -160,12 +160,12 @@
 		</dependency>
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
-			<artifactId>dipp-downloader</artifactId>
+			<artifactId>dipp-sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
-			<artifactId>opus-downloader</artifactId>
+			<artifactId>opus-sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

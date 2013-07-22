@@ -43,8 +43,10 @@ import com.sun.jersey.multipart.impl.MultiPartWriter;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
-import de.nrw.hbz.regal.api.ObjectType;
+import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
+import de.nrw.hbz.regal.sync.extern.Stream;
+import de.nrw.hbz.regal.sync.extern.StreamType;
 
 /**
  * Webclient collects typical api-calls and make them available in the
@@ -100,7 +102,7 @@ public class Webclient
 	public void metadata(DigitalEntity dtlBean)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
-		String resource = endpoint + "/resources/" + pid;
+		String resource = endpoint + "/resource/" + pid;
 		try
 		{
 			updateDC(resource + "/dc", dtlBean);
@@ -148,7 +150,7 @@ public class Webclient
 	{
 		metadata(dtlBean);
 		String pid = namespace + ":" + dtlBean.getPid();
-		String resource = endpoint + "/resources/" + pid;
+		String resource = endpoint + "/resource/" + pid;
 		String m = "";
 		try
 		{
@@ -190,19 +192,22 @@ public class Webclient
 			ObjectType type)
 	{
 		String pid = namespace + ":" + dtlBean.getPid();
-		String resource = endpoint + "/resources/" + pid;
+		String resource = endpoint + "/resource/" + pid;
 		String data = resource + "/data";
 
 		createResource(type, dtlBean);
 
-		if (dtlBean.getStreamMime() != null
-				&& dtlBean.getStreamMime().compareTo(expectedMime) != 0)
+		Stream dataStream = dtlBean.getStream(StreamType.DATA);
+
+		if (dataStream.getMimeType() != null
+				&& dataStream.getMimeType().compareTo(expectedMime) != 0)
 		{
 			DigitalEntity fulltextObject = null;
 			for (DigitalEntity view : dtlBean.getViewMainLinks())
 			{
 
-				if (view.getStreamMime().compareTo(expectedMime) == 0)
+				Stream viewData = view.getStream(StreamType.DATA);
+				if (viewData.getMimeType().compareTo(expectedMime) == 0)
 				{
 					fulltextObject = view;
 					break;
@@ -213,7 +218,8 @@ public class Webclient
 				for (DigitalEntity view : dtlBean.getViewLinks())
 				{
 
-					if (view.getStreamMime().compareTo(expectedMime) == 0)
+					Stream viewData = view.getStream(StreamType.DATA);
+					if (viewData.getMimeType().compareTo(expectedMime) == 0)
 					{
 						fulltextObject = view;
 						break;
@@ -228,7 +234,7 @@ public class Webclient
 			{
 				logger.warn(pid + " found no valid data.");
 				logger.info(pid + " expected " + expectedMime + " , found "
-						+ dtlBean.getStreamMime());
+						+ dataStream.getMimeType());
 			}
 		}
 		else
@@ -251,7 +257,7 @@ public class Webclient
 		String ppid = dtlBean.getParentPid();
 
 		String parentPid = namespace + ":" + ppid;
-		String resourceUrl = endpoint + "/resources/" + pid;
+		String resourceUrl = endpoint + "/resource/" + pid;
 		WebResource resource = webclient.resource(resourceUrl);
 		CreateObjectBean input = new CreateObjectBean();
 		input.setType(type.toString());
@@ -352,18 +358,20 @@ public class Webclient
 		String pid = namespace + ":" + dtlBean.getPid();
 		WebResource data = webclient.resource(url);
 
+		Stream dataStream = dtlBean.getStream(StreamType.DATA);
+
 		try
 		{
-			logger.info(pid + " Update data: " + dtlBean.getStreamMime());
+			logger.info(pid + " Update data: " + dataStream.getMimeType());
 			MultiPart multiPart = new MultiPart();
 			multiPart.bodyPart(new StreamDataBodyPart("InputStream",
-					new FileInputStream(dtlBean.getFirstStream()), dtlBean
-							.getFirstStream().getName()));
-			multiPart.bodyPart(new BodyPart(dtlBean.getStreamMime(),
+					new FileInputStream(dataStream.getStream()), dataStream
+							.getStream().getName()));
+			multiPart.bodyPart(new BodyPart(dataStream.getMimeType(),
 					MediaType.TEXT_PLAIN_TYPE));
 
-			logger.info("Upload: " + dtlBean.getFirstStream().getName());
-			multiPart.bodyPart(new BodyPart(dtlBean.getFirstStream().getName(),
+			logger.info("Upload: " + dataStream.getStream().getName());
+			multiPart.bodyPart(new BodyPart(dataStream.getStream().getName(),
 					MediaType.TEXT_PLAIN_TYPE));
 			data.type("multipart/mixed").post(multiPart);
 
@@ -375,7 +383,7 @@ public class Webclient
 		catch (FileNotFoundException e)
 		{
 			logger.error(pid + " " + "FileNotFound "
-					+ dtlBean.getFirstStream().getAbsolutePath());
+					+ dataStream.getStream().getAbsolutePath());
 		}
 		catch (Exception e)
 		{
@@ -470,7 +478,7 @@ public class Webclient
 	{
 		String pid = namespace + ":" + p;
 
-		WebResource delete = webclient.resource(endpoint + "/resources/" + pid);
+		WebResource delete = webclient.resource(endpoint + "/resource/" + pid);
 		try
 		{
 			delete.delete();
