@@ -42,7 +42,7 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
 @Path("/volume")
 public class Volume
 {
-	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
+	final static Logger logger = LoggerFactory.getLogger(Volume.class);
 
 	Resource resources = null;
 

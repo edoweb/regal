@@ -42,7 +42,7 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
 @Path("/supplement")
 public class Supplement
 {
-	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
+	final static Logger logger = LoggerFactory.getLogger(Supplement.class);
 
 	Resource resources = null;
 

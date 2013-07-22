@@ -41,7 +41,7 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
  */
 @Path("/file")
 public class FileResource {
-    final static Logger logger = LoggerFactory.getLogger(Webpage.class);
+    final static Logger logger = LoggerFactory.getLogger(FileResource.class);
 
     Resource resources = null;
 

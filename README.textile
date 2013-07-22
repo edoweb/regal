@@ -1,5 +1,5 @@
 !https://raw.github.com/edoweb/regal/gh-pages/img/logo.png!
-!https://secure.travis-ci.org/jschnasse/edoweb2.png?branch=master!:https://travis-ci.org/jschnasse/edoweb2
+!https://travis-ci.org/edoweb/regal.png?branch=stable!:https://travis-ci.org/edoweb/regal
 
 h1. About
 
