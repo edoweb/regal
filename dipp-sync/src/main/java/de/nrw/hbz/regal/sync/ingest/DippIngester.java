@@ -149,8 +149,11 @@ public class DippIngester implements IngestInterface
 				dtlBean.getPid().lastIndexOf(':') + 1);
 		dtlBean.setPid(ppid);
 
-		String metadata = printRelations(dtlBean, dtlBean);
-		// logger.info(metadata);
+//		DippMapping mapper = new DippMapping();
+//	
+//		String metadata = mapper.map(new File(dtlBean.getLocation()+File.separator+"QDC.xml"), dtlBean.getPid());//printRelations(dtlBean, dtlBean);
+//		// logger.info(metadata);
+		String metadata ="";
 		map.clear();
 		logger.info(pid + " " + "Found eJournal article.");
 		webclient.createObject(dtlBean, "application/zip", ObjectType.article);

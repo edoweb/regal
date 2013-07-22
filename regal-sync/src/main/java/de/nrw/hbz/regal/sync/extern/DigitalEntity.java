@@ -576,4 +576,9 @@ public class DigitalEntity
 	{
 		return streams.get(StreamType.DATA).getStream();
 	}
+
+	public String getLocation()
+	{
+		return location;
+	}
 }
