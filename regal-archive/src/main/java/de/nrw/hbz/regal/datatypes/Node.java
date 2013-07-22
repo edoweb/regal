@@ -602,6 +602,13 @@ public class Node {
     }
 
     /**
+     * @return dc:title
+     */
+    public String getFirstTitle() {
+	return bean.getFirstTitle();
+    }
+
+    /**
      * @return dc:type
      */
     public String getFirstType() {
@@ -828,4 +835,12 @@ public class Node {
     public Vector<String> getType() {
 	return bean.getType();
     }
+
+    /**
+     * @return dc:Relation
+     */
+    public Vector<String> getDCRelation() {
+	return bean.getRelation();
+    }
+
 }
