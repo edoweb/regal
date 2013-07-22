@@ -137,7 +137,7 @@ public abstract class Downloader implements DownloaderInterface {
 	if (map.containsKey(pid))
 	    throw new IOException(pid + " already visited!");
 	objectDirectory = downloadLocation + File.separator
-		+ URLEncoder.encode(pid);
+		+ URLEncoder.encode(pid, "utf-8");
 	File dir = new File(objectDirectory);
 	if (!dir.exists()) {
 	    logger.info("Create Directory " + dir.getAbsoluteFile()
@@ -333,6 +333,7 @@ public abstract class Downloader implements DownloaderInterface {
 	return null;
     }
 
+    @SuppressWarnings("resource")
     protected void zip(File directory, File zipfile) throws IOException {
 	URI base = directory.toURI();
 	Deque<File> queue = new LinkedList<File>();
@@ -359,6 +360,7 @@ public abstract class Downloader implements DownloaderInterface {
 	    }
 	} finally {
 	    res.close();
+
 	}
     }
 
