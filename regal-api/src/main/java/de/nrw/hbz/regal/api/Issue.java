@@ -42,7 +42,7 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
 @Path("/issue")
 public class Issue
 {
-	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
+	final static Logger logger = LoggerFactory.getLogger(Issue.class);
 
 	Resource resources = null;
 

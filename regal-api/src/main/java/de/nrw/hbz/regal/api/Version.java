@@ -42,7 +42,7 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
 @Path("/version")
 public class Version
 {
-	final static Logger logger = LoggerFactory.getLogger(Webpage.class);
+	final static Logger logger = LoggerFactory.getLogger(Version.class);
 
 	Resource resources = null;
 
