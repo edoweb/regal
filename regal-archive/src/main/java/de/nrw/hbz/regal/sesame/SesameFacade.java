@@ -35,6 +35,7 @@ import org.openrdf.sail.nativerdf.NativeStore;
 
 import de.nrw.hbz.regal.datatypes.Node;
 
+@SuppressWarnings("javadoc")
 public class SesameFacade
 {
 
@@ -42,6 +43,11 @@ public class SesameFacade
 	String fedoraPwd = null;
 	String sesameRepository = null;
 
+	/**
+	 * @param fedoraUser
+	 * @param fedoraPwd
+	 * @param sesameRepository
+	 */
 	public SesameFacade(String fedoraUser, String fedoraPwd,
 			String sesameRepository)
 	{
