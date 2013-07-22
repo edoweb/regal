@@ -251,8 +251,11 @@ public class EJournal {
     /**
      * @param pid
      *            the pid of the resource
+     * @param namespace
+     *            the namespace of the resource
      * @return an aggregated representation of the resource
      * @throws URISyntaxException
+     *             in case of wrong coded redirect
      */
     @GET
     @Path("/{namespace}:{pid}")
@@ -267,9 +270,12 @@ public class EJournal {
 
     /**
      * @param pid
+     *            the journal's pid
      * @param volumePid
+     *            the volume's pid
      * @param namespace
-     * @return
+     *            the namespace
+     * @return return the data
      */
     @GET
     @Path("/{pid}/volume/{namespace}:{volumePid}/data")
@@ -282,10 +288,14 @@ public class EJournal {
 
     /**
      * @param pid
+     *            journal's pid
      * @param volumePid
+     *            volume's pid
      * @param namespace
+     *            namespace of volume
      * @param multiPart
-     * @return
+     *            the data as multipart
+     * @return a message
      */
     @POST
     @Path("/{pid}/volume/{namespace}:{volumePid}/data")
@@ -299,8 +309,10 @@ public class EJournal {
 
     /**
      * @param pid
+     *            journal pid
      * @param volumePid
-     * @return
+     *            volume pid
+     * @return dublin core for the resource
      */
     @GET
     @Path("/{pid}/volume/{volumePid}/dc")
@@ -312,9 +324,12 @@ public class EJournal {
 
     /**
      * @param pid
+     *            journal pid
      * @param volumePid
+     *            volume pid
      * @param content
-     * @return
+     *            dublin core for the resource
+     * @return a message
      */
     @POST
     @Path("/{pid}/volume/{volumePid}/dc")
@@ -327,8 +342,10 @@ public class EJournal {
 
     /**
      * @param pid
+     *            journal pid
      * @param volumePid
-     * @return
+     *            volume pid
+     * @return n-triple metadata for the resource
      */
     @GET
     @Path("/{pid}/volume/{volumePid}/metadata")
@@ -340,9 +357,12 @@ public class EJournal {
 
     /**
      * @param pid
+     *            journal pid
      * @param volumePid
+     *            volume pid
      * @param content
-     * @return
+     *            n-triple metadata for the resource
+     * @return a message
      */
     @PUT
     @Path("/{pid}/volume/{volumePid}/metadata")
@@ -355,9 +375,12 @@ public class EJournal {
 
     /**
      * @param pid
+     *            journal pid
      * @param volumePid
+     *            volume pid
      * @param content
-     * @return
+     *            n-triple metadata for the resource
+     * @return a message
      */
     @Deprecated
     @POST
