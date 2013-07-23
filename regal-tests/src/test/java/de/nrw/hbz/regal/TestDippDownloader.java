@@ -33,78 +33,64 @@ import de.nrw.hbz.regal.sync.ingest.DippDownloader;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class TestDippDownloader
-{
-	Properties properties = new Properties();
-	/*
-	 * 1637992 4676380 2258539 1638892 4628526
-	 */
-	String pid = "dipp:1010";// "3237397";//
-	private final String piddownloaderServer;
-	private final String piddownloaderDownloadLocation;
+@SuppressWarnings("javadoc")
+public class TestDippDownloader {
+    Properties properties = new Properties();
+    /*
+     * 1637992 4676380 2258539 1638892 4628526
+     */
+    String pid = "dipp:1010";// "3237397";//
+    private final String piddownloaderServer;
+    private final String piddownloaderDownloadLocation;
 
-	public TestDippDownloader()
-	{
-		try
-		{
-			properties = new Properties();
-			properties.load(getClass().getResourceAsStream(
-					"/testDippDownloader.properties"));
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		piddownloaderServer = properties.getProperty("piddownloader.server");
-		piddownloaderDownloadLocation = properties
-				.getProperty("piddownloader.downloadLocation");
+    public TestDippDownloader() {
+	try {
+	    properties = new Properties();
+	    properties.load(getClass().getResourceAsStream(
+		    "/testDippDownloader.properties"));
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
 
-	@Before
-	public void setUp()
-	{
-		try
-		{
+	piddownloaderServer = properties.getProperty("piddownloader.server");
+	piddownloaderDownloadLocation = properties
+		.getProperty("piddownloader.downloadLocation");
+    }
 
-			FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
+    @Before
+    public void setUp() {
+	try {
 
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+	    FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
+
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @Test
+    public void downloadPid() {
+
+	System.out
+		.println("de.nrw.hbz.dipp.downloader.TestDippDownloader.java: To run this test please uncomment code.");
+
+	DippDownloader downloader = new DippDownloader();
+	downloader.init(piddownloaderServer, piddownloaderDownloadLocation);
+
+	try {
+	    downloader.download(pid);
+	    File file = new File(piddownloaderDownloadLocation + File.separator
+		    + URLEncoder.encode(pid, "utf-8"));
+	    Assert.assertTrue(file.exists());
+	    FileUtils.deleteDirectory(file);
+	    Assert.assertTrue(!file.exists());
+
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
 
-	@Test
-	public void downloadPid()
-	{
-
-		System.out
-				.println("de.nrw.hbz.dipp.downloader.TestDippDownloader.java: To run this test please uncomment code.");
-
-		DippDownloader downloader = new DippDownloader();
-		downloader.init(piddownloaderServer, piddownloaderDownloadLocation);
-
-		try
-		{
-			downloader.download(pid);
-			File file = new File(piddownloaderDownloadLocation + File.separator
-					+ URLEncoder.encode(pid));
-			Assert.assertTrue(file.exists());
-			FileUtils.deleteDirectory(file);
-			Assert.assertTrue(!file.exists());
-
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-	}
+    }
 
 }

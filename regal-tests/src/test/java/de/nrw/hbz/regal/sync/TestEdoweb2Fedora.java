@@ -26,105 +26,87 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-//import java.text.ParseException;
-//import java.util.Date;
-//import de.nrw.hbz.dtl2fedora.util.ISO8601DateParser;
 
 /**
- * Class TestDigitool2Fedora
  * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
- * 
- * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 09.06.2011
+ * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public class TestEdoweb2Fedora
-{
+@SuppressWarnings("javadoc")
+public class TestEdoweb2Fedora {
 
-	Properties properties = null;
-	private final String pidreporterServer;
-	private final String pidreporterSet;
-	private String pidreporterPidFile = null;
-	private final String pidreporterTimestampFile;
-	private final String piddownloaderServer;
-	private final String piddownloaderDownloadLocation;
-	private final String user;
-	private final String password;
-	private final String fedoraUrl;
+    Properties properties = null;
+    private final String pidreporterServer;
+    private final String pidreporterSet;
+    private String pidreporterPidFile = null;
+    private final String pidreporterTimestampFile;
+    private final String piddownloaderServer;
+    private final String piddownloaderDownloadLocation;
+    private final String user;
+    private final String password;
+    private final String fedoraUrl;
 
-	public TestEdoweb2Fedora()
-	{
-		try
-		{
-			properties = new Properties();
-			properties.load(getClass().getResourceAsStream("/test.properties"));
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		user = properties.getProperty("user");
-		password = properties.getProperty("password");
-		fedoraUrl = properties.getProperty("fedoraUrl");
-		pidreporterServer = properties.getProperty("pidreporter.server");
-		pidreporterSet = properties.getProperty("pidreporter.set");
-
-		pidreporterTimestampFile = properties
-				.getProperty("pidreporter.timestampFile");
-		piddownloaderServer = properties.getProperty("piddownloader.server");
-		piddownloaderDownloadLocation = properties
-				.getProperty("piddownloader.downloadLocation");
+    public TestEdoweb2Fedora() {
+	try {
+	    properties = new Properties();
+	    properties.load(getClass().getResourceAsStream("/test.properties"));
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
 
-	@Before
-	@After
-	public void cleanUp() throws IOException
-	{
-		File dir = new File("/tmp/edoweb/test");
-		if (dir.exists())
-			FileUtils.deleteDirectory(dir);
-		dir.mkdirs();
-	}
+	user = properties.getProperty("user");
+	password = properties.getProperty("password");
+	fedoraUrl = properties.getProperty("fedoraUrl");
+	pidreporterServer = properties.getProperty("pidreporter.server");
+	pidreporterSet = properties.getProperty("pidreporter.set");
 
-	@Test
-	public void mainTest() throws IOException
-	{
-		Main main = new Main();
-		pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();
+	pidreporterTimestampFile = properties
+		.getProperty("pidreporter.timestampFile");
+	piddownloaderServer = properties.getProperty("piddownloader.server");
+	piddownloaderDownloadLocation = properties
+		.getProperty("piddownloader.downloadLocation");
+    }
 
-		main.main(new String[] { "--mode", "PIDL", "--user", user,
-				"--password", password, "--dtl", piddownloaderServer, "-cache",
-				piddownloaderDownloadLocation, "--oai", pidreporterServer,
-				"--set", pidreporterSet, "--timestamp",
-				pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
-				"http://localhost", "-list", pidreporterPidFile, "-namespace",
-				"test" });
+    @Before
+    @After
+    public void cleanUp() throws IOException {
+	File dir = new File("/tmp/edoweb/test");
+	if (dir.exists())
+	    FileUtils.deleteDirectory(dir);
+	dir.mkdirs();
+    }
 
-		main.main(new String[] { "--mode", "UPDT", "--user", user,
-				"--password", password, "--dtl", piddownloaderServer, "-cache",
-				piddownloaderDownloadLocation, "--oai", pidreporterServer,
-				"--set", pidreporterSet, "--timestamp",
-				pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
-				"http://localhost", "-list", pidreporterPidFile, "-namespace",
-				"test" });
+    @SuppressWarnings("static-access")
+    @Test
+    public void mainTest() throws IOException {
+	Main main = new Main();
+	pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();
 
-		main.main(new String[] { "--mode", "DELE", "--user", user,
-				"--password", password, "--dtl", piddownloaderServer, "-cache",
-				piddownloaderDownloadLocation, "--oai", pidreporterServer,
-				"--set", pidreporterSet, "--timestamp",
-				pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
-				"http://localhost", "-list", pidreporterPidFile, "-namespace",
-				"test" });
+	main.main(new String[] { "--mode", "PIDL", "--user", user,
+		"--password", password, "--dtl", piddownloaderServer, "-cache",
+		piddownloaderDownloadLocation, "--oai", pidreporterServer,
+		"--set", pidreporterSet, "--timestamp",
+		pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+		"http://localhost", "-list", pidreporterPidFile, "-namespace",
+		"test" });
 
-	}
+	main.main(new String[] { "--mode", "UPDT", "--user", user,
+		"--password", password, "--dtl", piddownloaderServer, "-cache",
+		piddownloaderDownloadLocation, "--oai", pidreporterServer,
+		"--set", pidreporterSet, "--timestamp",
+		pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+		"http://localhost", "-list", pidreporterPidFile, "-namespace",
+		"test" });
+
+	main.main(new String[] { "--mode", "DELE", "--user", user,
+		"--password", password, "--dtl", piddownloaderServer, "-cache",
+		piddownloaderDownloadLocation, "--oai", pidreporterServer,
+		"--set", pidreporterSet, "--timestamp",
+		pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+		"http://localhost", "-list", pidreporterPidFile, "-namespace",
+		"test" });
+
+    }
 }

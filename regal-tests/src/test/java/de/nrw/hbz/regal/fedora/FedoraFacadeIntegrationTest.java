@@ -31,18 +31,11 @@ import de.nrw.hbz.regal.api.helper.ContentModelFactory;
 import de.nrw.hbz.regal.datatypes.Node;
 
 /**
- * Class TestUsersInit
  * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
- * 
- * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 09.11.2010
+ * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
+@SuppressWarnings("javadoc")
 public class FedoraFacadeIntegrationTest {
 
     Properties properties = null;

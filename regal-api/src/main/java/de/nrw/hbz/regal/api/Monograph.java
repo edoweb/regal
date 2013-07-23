@@ -44,151 +44,213 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
  * 
  */
 @Path("/monograph")
-public class Monograph
-{
-	final static Logger logger = LoggerFactory.getLogger(Monograph.class);
+public class Monograph {
+    final static Logger logger = LoggerFactory.getLogger(Monograph.class);
 
-	Resource resources = null;
+    Resource resources = null;
 
-	public Monograph() throws IOException
-	{
+    /**
+     * @throws IOException
+     *             if resources failed to initialise
+     */
+    public Monograph() throws IOException {
 
-		resources = new Resource();
+	resources = new Resource();
 
-	}
+    }
 
-	@PUT
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public String createMonograph(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace)
-	{
-		CreateObjectBean input = new CreateObjectBean();
-		input.type = ObjectType.monograph.toString();
-		return resources.create(pid, namespace, input);
+    /**
+     * @param pid
+     *            the pid of the resource th monograph pid
+     * @param namespace
+     *            the namespace of the resources the namespace of the resources
+     * @return a message
+     */
+    @PUT
+    @Path("/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String createMonograph(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	CreateObjectBean input = new CreateObjectBean();
+	input.type = ObjectType.monograph.toString();
+	return resources.create(pid, namespace, input);
 
-	}
+    }
 
-	@Deprecated
-	@POST
-	@Path("/{pid}/dc")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
-	public String updateMonographDC(@PathParam("pid") String pid,
-			DCBeanAnnotated content)
-	{
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param content
+     *            dublin core
+     * @return a message
+     */
+    @Deprecated
+    @POST
+    @Path("/{pid}/dc")
+    @Produces({ "application/json", "application/xml" })
+    @Consumes({ "application/json", "application/xml" })
+    public String updateMonographDC(@PathParam("pid") String pid,
+	    DCBeanAnnotated content) {
 
-		return resources.updateDC(pid, content);
+	return resources.updateDC(pid, content);
 
-	}
+    }
 
-	@GET
-	@Path("/{namespace}:{pid}/data")
-	@Produces({ "application/*", "application/json" })
-	public Response readMonographData(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace)
-	{
-		return resources.readData(pid, namespace);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param namespace
+     *            the namespace of the resources
+     * @return the data
+     */
+    @GET
+    @Path("/{namespace}:{pid}/data")
+    @Produces({ "application/*", "application/json" })
+    public Response readMonographData(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	return resources.readData(pid, namespace);
+    }
 
-	@GET
-	@Path("/{pid}/metadata")
-	@Produces({ "text/plain" })
-	public String readMonographMetadata(@PathParam("pid") String pid)
-	{
-		return resources.readMetadata(pid);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @return a message
+     */
+    @GET
+    @Path("/{pid}/metadata")
+    @Produces({ "text/plain" })
+    public String readMonographMetadata(@PathParam("pid") String pid) {
+	return resources.readMetadata(pid);
+    }
 
-	@GET
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAll()
-	{
-		return resources.getAllOfType(ObjectType.monograph.toString());
+    /**
+     * @return a list of all monographs
+     */
+    @GET
+    @Produces({ "application/json", "application/xml" })
+    public ObjectList getAll() {
+	return resources.getAllOfType(ObjectType.monograph.toString());
 
-	}
+    }
 
-	@GET
-	@Produces({ "text/html" })
-	public Response getAllAsHtml()
-	{
-		String rem = resources.getAllOfTypeAsHtml(ObjectType.monograph
-				.toString());
-		ResponseBuilder res = Response.ok().entity(rem);
-		return res.build();
-	}
+    /**
+     * @return a list of all monographs in html
+     */
+    @GET
+    @Produces({ "text/html" })
+    public Response getAllAsHtml() {
+	String rem = resources.getAllOfTypeAsHtml(ObjectType.monograph
+		.toString());
+	ResponseBuilder res = Response.ok().entity(rem);
+	return res.build();
+    }
 
-	/**
-	 * @param pid
-	 *            the pid of the resource
-	 * @return an aggregated representation of the resource
-	 * @throws URISyntaxException
-	 */
-	@GET
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response getResource(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace) throws URISyntaxException
-	{
-		return Response
-				.temporaryRedirect(
-						new java.net.URI("../resource/" + namespace + ":" + pid
-								+ "/about")).status(303).build();
-	}
+    /**
+     * @param pid
+     *            the pid of the resource the pid of the resource
+     * @param namespace
+     *            the namespace of the resources
+     * @return an aggregated representation of the resource
+     * @throws URISyntaxException
+     *             if redirection has been coded wrong
+     */
+    @GET
+    @Path("/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml", "text/html" })
+    public Response getResource(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) throws URISyntaxException {
+	return Response
+		.temporaryRedirect(
+			new java.net.URI("../resource/" + namespace + ":" + pid
+				+ "/about")).status(303).build();
+    }
 
-	@GET
-	@Path("/{pid}/dc")
-	@Produces({ "application/xml", "application/json" })
-	public DCBeanAnnotated readMonographDC(@PathParam("pid") String pid)
-	{
-		return resources.readDC(pid);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @return dublin core
+     */
+    @GET
+    @Path("/{pid}/dc")
+    @Produces({ "application/xml", "application/json" })
+    public DCBeanAnnotated readMonographDC(@PathParam("pid") String pid) {
+	return resources.readDC(pid);
+    }
 
-	@PUT
-	@Path("/{pid}/metadata")
-	@Consumes({ "text/plain" })
-	@Produces({ "text/plain" })
-	public String updateMonographMetadata(@PathParam("pid") String pid,
-			String content)
-	{
-		return resources.updateMetadata(pid, content);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param content
+     *            n-triple metadata
+     * @return a message
+     */
+    @PUT
+    @Path("/{pid}/metadata")
+    @Consumes({ "text/plain" })
+    @Produces({ "text/plain" })
+    public String updateMonographMetadata(@PathParam("pid") String pid,
+	    String content) {
+	return resources.updateMetadata(pid, content);
+    }
 
-	@POST
-	@Path("/{namespace}:{pid}/data")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes("multipart/mixed")
-	public String updateMonographData(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace, MultiPart multiPart)
-	{
-		return resources.updateData(pid, namespace, multiPart);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param namespace
+     *            the namespace of the resources
+     * @param multiPart
+     *            the data as multipart encoded chunks
+     * @return a message
+     */
+    @POST
+    @Path("/{namespace}:{pid}/data")
+    @Produces({ "application/json", "application/xml" })
+    @Consumes("multipart/mixed")
+    public String updateMonographData(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace, MultiPart multiPart) {
+	return resources.updateData(pid, namespace, multiPart);
+    }
 
-	@POST
-	@Path("/{pid}/metadata")
-	@Consumes({ "text/plain" })
-	@Produces({ "text/plain" })
-	public String updateMonographMetadataPost(@PathParam("pid") String pid,
-			String content)
-	{
-		return resources.updateMetadata(pid, content);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param content
+     *            n-triple metadata
+     * @return a message
+     */
+    @POST
+    @Path("/{pid}/metadata")
+    @Consumes({ "text/plain" })
+    @Produces({ "text/plain" })
+    public String updateMonographMetadataPost(@PathParam("pid") String pid,
+	    String content) {
+	return resources.updateMetadata(pid, content);
+    }
 
-	@DELETE
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public String deleteMonograph(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace)
-	{
-		return resources.delete(pid, namespace);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param namespace
+     *            the namespace of the resources
+     * @return a message
+     */
+    @DELETE
+    @Path("/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String deleteMonograph(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	return resources.delete(pid, namespace);
+    }
 
-	@DELETE
-	@Produces({ "application/json", "application/xml" })
-	public String deleteAll()
-	{
-		return resources.deleteAllOfType(ObjectType.monograph.toString());
+    /**
+     * @return a message
+     */
+    @DELETE
+    @Produces({ "application/json", "application/xml" })
+    public String deleteAll() {
+	return resources.deleteAllOfType(ObjectType.monograph.toString());
 
-	}
+    }
 
-	// be it hot or be it not
+    // be it hot or be it not
 }

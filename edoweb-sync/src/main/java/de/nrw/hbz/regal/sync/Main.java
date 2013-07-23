@@ -27,14 +27,16 @@ import de.nrw.hbz.regal.sync.ingest.EdowebIngester;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class Main
-{
-	final static Logger logger = LoggerFactory.getLogger(Main.class);
+public class Main {
+    final static Logger logger = LoggerFactory.getLogger(Main.class);
 
-	public static void main(String[] args)
-	{
-		Syncer syncer = new Syncer(new EdowebIngester(),
-				new DigitoolDownloader(), new DigitoolDigitalEntityBuilder());
-		syncer.main(args);
-	}
+    /**
+     * @param args
+     *            standard args see Syncer
+     */
+    public static void main(String[] args) {
+	Syncer syncer = new Syncer(new EdowebIngester(),
+		new DigitoolDownloader(), new DigitoolDigitalEntityBuilder());
+	syncer.main(args);
+    }
 }

@@ -22,103 +22,110 @@ import de.nrw.hbz.regal.datatypes.ContentModel;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class ContentModelFactory
-{
-	/**
-	 * @return a ContentModel object
-	 */
-	public static ContentModel createHeadModel(String namespace)
-	{
-		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:headObjectModel");
-		cm.setServiceDefinitionPID(namespace + "CM:headServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + "CM:headServiceDeployment");
+public class ContentModelFactory {
+    /**
+     * @param namespace
+     *            the namespace. Contentmodels live in their own namespaces
+     * @return a ContentModel object
+     */
+    public static ContentModel createHeadModel(String namespace) {
+	ContentModel cm = new ContentModel();
+	cm.setContentModelPID(namespace + "CM:headObjectModel");
+	cm.setServiceDefinitionPID(namespace + "CM:headServiceDefinition");
+	cm.setServiceDeploymentPID(namespace + "CM:headServiceDeployment");
 
-		cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
-		cm.addMethod("epicur", "http://localhost/utils/epicur/(pid)");
+	cm.addMethod("oai_dc", "http://localhost/utils/oaidc/(pid)");
+	cm.addMethod("epicur", "http://localhost/utils/epicur/(pid)");
 
-		return cm;
-	}
+	return cm;
+    }
 
-	/**
-	 * @return a ContentModel object
-	 */
-	public static ContentModel createPdfModel(String namespace)
-	{
-		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:pdfObjectModel");
-		cm.setServiceDefinitionPID(namespace + "CM:pdfServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + "CM:pdfServiceDeployment");
+    /**
+     * @param namespace
+     *            a namespace for the model.Contentmodels live in their own
+     *            namespaces
+     * @return a ContentModel object
+     */
+    public static ContentModel createPdfModel(String namespace) {
+	ContentModel cm = new ContentModel();
+	cm.setContentModelPID(namespace + "CM:pdfObjectModel");
+	cm.setServiceDefinitionPID(namespace + "CM:pdfServiceDefinition");
+	cm.setServiceDeploymentPID(namespace + "CM:pdfServiceDeployment");
 
-		cm.addMethod("pdfbox", "http://localhost/utils/pdfbox/(pid)");
-		cm.addMethod("itext", "http://localhost/utils/itext/(pid)");
+	cm.addMethod("pdfbox", "http://localhost/utils/pdfbox/(pid)");
+	cm.addMethod("itext", "http://localhost/utils/itext/(pid)");
 
-		return cm;
-	}
+	return cm;
+    }
 
-	/**
-	 * @return a ContentModel object
-	 */
-	public static ContentModel createMonographModel(String namespace)
-	{
-		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:MonographObjectModel");
-		cm.setServiceDefinitionPID(namespace + "CM:MonographServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + "CM:MonographServiceDeployment");
+    /**
+     * @param namespace
+     *            Contentmodels live in their own namespaces
+     * @return a ContentModel object
+     */
+    public static ContentModel createMonographModel(String namespace) {
+	ContentModel cm = new ContentModel();
+	cm.setContentModelPID(namespace + "CM:MonographObjectModel");
+	cm.setServiceDefinitionPID(namespace + "CM:MonographServiceDefinition");
+	cm.setServiceDeploymentPID(namespace + "CM:MonographServiceDeployment");
 
-		return cm;
-	}
+	return cm;
+    }
 
-	/**
-	 * @return a ContentModel object
-	 */
-	public static ContentModel createWebpageModel(String namespace)
-	{
-		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:WebpageObjectModel");
-		cm.setServiceDefinitionPID(namespace + "CM:WebpageServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + "CM:WebpageServiceDeployment");
+    /**
+     * @param namespace
+     *            Contentmodels live in their own namespaces
+     * @return a ContentModel object
+     */
+    public static ContentModel createWebpageModel(String namespace) {
+	ContentModel cm = new ContentModel();
+	cm.setContentModelPID(namespace + "CM:WebpageObjectModel");
+	cm.setServiceDefinitionPID(namespace + "CM:WebpageServiceDefinition");
+	cm.setServiceDeploymentPID(namespace + "CM:WebpageServiceDeployment");
 
-		return cm;
-	}
+	return cm;
+    }
 
-	/**
-	 * @return a ContentModel object
-	 */
-	public static ContentModel createEJournalModel(String namespace)
-	{
-		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:EJournalObjectModel");
-		cm.setServiceDefinitionPID(namespace + "CM:EJournalServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + "CM:EJournalServiceDeployment");
+    /**
+     * @param namespace
+     *            Contentmodels live in their own namespaces
+     * @return a ContentModel object
+     */
+    public static ContentModel createEJournalModel(String namespace) {
+	ContentModel cm = new ContentModel();
+	cm.setContentModelPID(namespace + "CM:EJournalObjectModel");
+	cm.setServiceDefinitionPID(namespace + "CM:EJournalServiceDefinition");
+	cm.setServiceDeploymentPID(namespace + "CM:EJournalServiceDeployment");
 
-		return cm;
-	}
+	return cm;
+    }
 
-	/**
-	 * @return a ContentModel object
-	 */
-	public static ContentModel createVolumeModel(String namespace)
-	{
-		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:VolumeObjectModel");
-		cm.setServiceDefinitionPID(namespace + "CM:VolumeServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + "CM:VolumeServiceDeployment");
+    /**
+     * @param namespace
+     *            Contentmodels live in their own namespaces
+     * @return a ContentModel object
+     */
+    public static ContentModel createVolumeModel(String namespace) {
+	ContentModel cm = new ContentModel();
+	cm.setContentModelPID(namespace + "CM:VolumeObjectModel");
+	cm.setServiceDefinitionPID(namespace + "CM:VolumeServiceDefinition");
+	cm.setServiceDeploymentPID(namespace + "CM:VolumeServiceDeployment");
 
-		return cm;
-	}
+	return cm;
+    }
 
-	/**
-	 * @return a ContentModel object
-	 */
-	public static ContentModel createVersionModel(String namespace)
-	{
-		ContentModel cm = new ContentModel();
-		cm.setContentModelPID(namespace + "CM:VersionObjectModel");
-		cm.setServiceDefinitionPID(namespace + "CM:VersionServiceDefinition");
-		cm.setServiceDeploymentPID(namespace + "CM:VersionServiceDeployment");
+    /**
+     * @param namespace
+     *            Contentmodels live in their own namespaces
+     * @return a ContentModel object
+     */
+    public static ContentModel createVersionModel(String namespace) {
+	ContentModel cm = new ContentModel();
+	cm.setContentModelPID(namespace + "CM:VersionObjectModel");
+	cm.setServiceDefinitionPID(namespace + "CM:VersionServiceDefinition");
+	cm.setServiceDeploymentPID(namespace + "CM:VersionServiceDeployment");
 
-		return cm;
-	}
+	return cm;
+    }
 
 }

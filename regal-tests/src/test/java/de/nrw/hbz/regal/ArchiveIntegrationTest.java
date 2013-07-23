@@ -44,6 +44,7 @@ import de.nrw.hbz.regal.fedora.FedoraVocabulary;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
+@SuppressWarnings("javadoc")
 public class ArchiveIntegrationTest {
 
     ArchiveInterface archive = null;

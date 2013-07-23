@@ -21,5 +21,52 @@ package de.nrw.hbz.regal.api.helper;
  * 
  */
 public enum ObjectType {
-	monograph, journal, volume, webpage, version, file, supplement, article, issue
+    /**
+     * A Monograph consists of one node with one datastream, and one metadata
+     * stream. To generate a multiple file monograph the file and supplement
+     * resource types can be used.
+     */
+    monograph,
+    /**
+     * A Journal consists of volumes, issues and articles
+     */
+    journal,
+    /**
+     * A volume consists of issues and articles
+     * 
+     */
+    volume,
+    /**
+     * A issue can contain articles.
+     * 
+     */
+    issue,
+    /**
+     * A article consist of one node with one datastream, and one metadata
+     * stream.To generate a multiple file articles the file and supplement
+     * resource types can be used.
+     * 
+     */
+    article,
+    /**
+     * A webpage consists of versions
+     */
+    webpage,
+    /**
+     * A version consists of one node with one datastream and one
+     * metadatastream.
+     * 
+     */
+    version,
+    /**
+     * A file resource can be attached to each of the above resource types
+     * 
+     */
+    file,
+    /**
+     * A supplement resource can be attached to each of the above resource
+     * types.
+     */
+    supplement
+
 }

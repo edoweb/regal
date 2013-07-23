@@ -21,29 +21,44 @@ import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * A Simple Bean to list resources.
+ * 
+ * @author Jan Schnasse schnasse@hbz-nrw.de
+ * 
+ */
 @XmlRootElement
-public class ObjectList
-{
-	List<String> list = null;
+public class ObjectList {
+    List<String> list = null;
 
-	public ObjectList()
-	{
-		list = new Vector<String>();
-	}
+    /**
+     * Default constructor creates an empty list.
+     */
+    public ObjectList() {
+	list = new Vector<String>();
+    }
 
-	public ObjectList(List<String> v)
-	{
-		list = v;
-	}
+    /**
+     * @param v
+     *            initialises with the passed list
+     */
+    public ObjectList(List<String> v) {
+	list = v;
+    }
 
-	public List<String> getList()
-	{
-		return list;
-	}
+    /**
+     * @return returns the list
+     */
+    public List<String> getList() {
+	return list;
+    }
 
-	public void setList(List<String> list)
-	{
-		this.list = list;
-	}
+    /**
+     * @param list
+     *            sets the list
+     */
+    public void setList(List<String> list) {
+	this.list = list;
+    }
 
 }

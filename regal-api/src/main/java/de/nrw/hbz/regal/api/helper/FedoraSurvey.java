@@ -27,35 +27,38 @@ import org.slf4j.LoggerFactory;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public class FedoraSurvey
-{
-	final static Logger logger = LoggerFactory.getLogger(FedoraSurvey.class);
-	String cacheDir = "/opt/edoweb/edobase/";
-	String uriBase = "http://orthos.hbz-nrw.de/objects";
+public class FedoraSurvey {
+    final static Logger logger = LoggerFactory.getLogger(FedoraSurvey.class);
+    String cacheDir = "/opt/edoweb/edobase/";
+    String uriBase = "http://orthos.hbz-nrw.de/objects";
 
-	Actions actions = null;
+    Actions actions = null;
 
-	public FedoraSurvey() throws IOException
-	{
-		actions = new Actions();
+    /**
+     * @throws IOException
+     *             if actions can't be initialised
+     */
+    public FedoraSurvey() throws IOException {
+	actions = new Actions();
+    }
+
+    /**
+     * @return views for all fedora objects
+     */
+    public List<View> survey() {
+	System.out.println("Hole alle pids");
+	List<String> pids = actions.getAll();
+	Vector<View> rows = new Vector<View>();
+
+	System.out.println("Hole infos für: " + pids.size() + " pids.");
+	int count = 0;
+	for (String pid : pids) {
+	    System.out.println("Pid: " + (++count));
+	    View view = actions.getView(pid);
+	    if (view != null)
+		rows.add(view);
 	}
 
-	public List<View> survey()
-	{
-		System.out.println("Hole alle pids");
-		List<String> pids = actions.getAll();
-		Vector<View> rows = new Vector<View>();
-
-		System.out.println("Hole infos für: " + pids.size() + " pids.");
-		int count = 0;
-		for (String pid : pids)
-		{
-			System.out.println("Pid: " + (++count));
-			View view = actions.getView(pid);
-			if (view != null)
-				rows.add(view);
-		}
-
-		return rows;
-	}
+	return rows;
+    }
 }

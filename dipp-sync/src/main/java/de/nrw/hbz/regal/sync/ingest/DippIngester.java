@@ -40,138 +40,125 @@ import de.nrw.hbz.regal.sync.extern.RelatedDigitalEntity;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class DippIngester implements IngestInterface
-{
-	final static Logger logger = LoggerFactory.getLogger(DippIngester.class);
+public class DippIngester implements IngestInterface {
+    final static Logger logger = LoggerFactory.getLogger(DippIngester.class);
 
-	private String namespace = "dipp";
-	String host = null;
-	Webclient webclient = null;
-	HashMap<String, String> map = new HashMap<String, String>();
+    private String namespace = "dipp";
+    String host = null;
+    Webclient webclient = null;
+    HashMap<String, String> map = new HashMap<String, String>();
 
-	@Override
-	public void init(String host, String user, String password, String ns)
-	{
-		this.namespace = ns;
-		this.host = host;
-		webclient = new Webclient(namespace, user, password, host);
+    @Override
+    public void init(String host, String user, String password, String ns) {
+	this.namespace = ns;
+	this.host = host;
+	webclient = new Webclient(namespace, user, password, host);
+    }
+
+    @Override
+    public ContentModel createContentModel() {
+	return null;
+    }
+
+    @Override
+    public void ingest(DigitalEntity dtlBean) {
+	String pid = dtlBean.getPid().substring(
+		dtlBean.getPid().lastIndexOf(':') + 1);
+	logger.info("Start ingest: " + namespace + ":" + pid);
+
+	if (dtlBean.getType().compareTo("article") == 0) {
+	    updateArticle(dtlBean);
 	}
+    }
 
-	@Override
-	public ContentModel createContentModel()
-	{
-		return null;
+    @Override
+    public void update(DigitalEntity dtlBean) {
+	ingest(dtlBean);
+    }
+
+    @SuppressWarnings("unused")
+    private String printRelations(DigitalEntity subject, DigitalEntity dtlBean) {
+
+	StringBuffer result = new StringBuffer();
+	String pid = dtlBean.getPid();
+	if (map.containsKey(pid)) {
+	    return "";
+	} else {
+	    map.put(pid, pid);
 	}
+	Vector<RelatedDigitalEntity> related = dtlBean.getRelated();
+	int num = related.size();
+	int count = 1;
+	// logger.info(pid + " Found " + num + " parts.");
 
-	@Override
-	public void ingest(DigitalEntity dtlBean)
-	{
-		String pid = dtlBean.getPid().substring(
-				dtlBean.getPid().lastIndexOf(':') + 1);
-		logger.info("Start ingest: " + namespace + ":" + pid);
-
-		if (dtlBean.getType().compareTo("article") == 0)
-		{
-			updateArticle(dtlBean);
-		}
-	}
-
-	@Override
-	public void update(DigitalEntity dtlBean)
-	{
-		ingest(dtlBean);
-	}
-
-	private String printRelations(DigitalEntity subject, DigitalEntity dtlBean)
-	{
-
-		StringBuffer result = new StringBuffer();
-		String pid = dtlBean.getPid();
-		if (map.containsKey(pid))
-		{
-			return "";
-		}
-		else
-		{
-			map.put(pid, pid);
-		}
-		Vector<RelatedDigitalEntity> related = dtlBean.getRelated();
-		int num = related.size();
-		int count = 1;
-		// logger.info(pid + " Found " + num + " parts.");
-
-		// if (isParent(dtlBean))
-		// logger.debug("\n-----------------------\n" + pid + " is a Journal!"
-		// + "\n-----------------------");
-		for (RelatedDigitalEntity relation : related)
-		{
-			logger.debug("INGEST-GRAPH: \"" + pid + "\"->\""
-					+ relation.entity.getPid() + "\" [label=\""
-					+ relation.relation + "\"]");
-			if (relation.relation.compareTo("rel:isMemberOfCollection") == 0
-					|| relation.relation.compareTo("rel:isSubsetOf") == 0)
-			{
-				String str = "<" + namespace + ":" + subject.getPid() + ">"
-						+ " <http://purl.org/dc/elements/1.1/relation> \""
-						+ relation.entity.getLabel() + "\" .\n";
-				// logger.info(str);
-				result.append(str);
-				result.append(printRelations(subject, relation.entity));
-			}
-
-		}
-		return result.toString();
-	}
-
-	private boolean isParent(DigitalEntity dtlBean)
-	{
-		if (dtlBean.getPid().contains("oai"))
-			return false;
-		Vector<RelatedDigitalEntity> related = dtlBean.getRelated();
-		int num = related.size();
-		int count = 1;
-		for (RelatedDigitalEntity relation : related)
-		{
-			String rel = relation.relation;
-
-			if (rel.compareTo("rel:isSubsetOf") == 0)
-				return false;
-			if (rel.compareTo("rel:isMemberOfCollection") == 0)
-				return false;
-		}
-		return true;
-	}
-
-	private void updateArticle(DigitalEntity dtlBean)
-	{
-		String pid = dtlBean.getPid();
-		String ppid = dtlBean.getPid().substring(
-				dtlBean.getPid().lastIndexOf(':') + 1);
-		dtlBean.setPid(ppid);
-
-//		DippMapping mapper = new DippMapping();
-//	
-//		String metadata = mapper.map(new File(dtlBean.getLocation()+File.separator+"QDC.xml"), dtlBean.getPid());//printRelations(dtlBean, dtlBean);
-//		// logger.info(metadata);
-		String metadata ="";
-		map.clear();
-		logger.info(pid + " " + "Found eJournal article.");
-		webclient.createObject(dtlBean, "application/zip", ObjectType.article);
-		logger.info(pid + " " + "updated.\n");
-		webclient.metadata(dtlBean, metadata);
-		logger.info(pid + " " + "and all related updated.\n");
-	}
-
-	@Override
-	public void delete(String pid)
-	{
-		webclient.delete(pid.substring(pid.lastIndexOf(':') + 1));
-	}
-
-	@Override
-	public void setNamespace(String namespace)
-	{
-		this.namespace = namespace;
+	// if (isParent(dtlBean))
+	// logger.debug("\n-----------------------\n" + pid + " is a Journal!"
+	// + "\n-----------------------");
+	for (RelatedDigitalEntity relation : related) {
+	    logger.debug("INGEST-GRAPH: \"" + pid + "\"->\""
+		    + relation.entity.getPid() + "\" [label=\""
+		    + relation.relation + "\"]");
+	    if (relation.relation.compareTo("rel:isMemberOfCollection") == 0
+		    || relation.relation.compareTo("rel:isSubsetOf") == 0) {
+		String str = "<" + namespace + ":" + subject.getPid() + ">"
+			+ " <http://purl.org/dc/elements/1.1/relation> \""
+			+ relation.entity.getLabel() + "\" .\n";
+		// logger.info(str);
+		result.append(str);
+		result.append(printRelations(subject, relation.entity));
+	    }
 
 	}
+	return result.toString();
+    }
+
+    @SuppressWarnings("unused")
+    private boolean isParent(DigitalEntity dtlBean) {
+	if (dtlBean.getPid().contains("oai"))
+	    return false;
+	Vector<RelatedDigitalEntity> related = dtlBean.getRelated();
+	int num = related.size();
+	int count = 1;
+	for (RelatedDigitalEntity relation : related) {
+	    String rel = relation.relation;
+
+	    if (rel.compareTo("rel:isSubsetOf") == 0)
+		return false;
+	    if (rel.compareTo("rel:isMemberOfCollection") == 0)
+		return false;
+	}
+	return true;
+    }
+
+    private void updateArticle(DigitalEntity dtlBean) {
+	String pid = dtlBean.getPid();
+	String ppid = dtlBean.getPid().substring(
+		dtlBean.getPid().lastIndexOf(':') + 1);
+	dtlBean.setPid(ppid);
+
+	// DippMapping mapper = new DippMapping();
+	//
+	// String metadata = mapper.map(new
+	// File(dtlBean.getLocation()+File.separator+"QDC.xml"),
+	// dtlBean.getPid());//printRelations(dtlBean, dtlBean);
+	// // logger.info(metadata);
+	String metadata = "";
+	map.clear();
+	logger.info(pid + " " + "Found eJournal article.");
+	webclient.createObject(dtlBean, "application/zip", ObjectType.article);
+	logger.info(pid + " " + "updated.\n");
+	webclient.metadata(dtlBean, metadata);
+	logger.info(pid + " " + "and all related updated.\n");
+    }
+
+    @Override
+    public void delete(String pid) {
+	webclient.delete(pid.substring(pid.lastIndexOf(':') + 1));
+    }
+
+    @Override
+    public void setNamespace(String namespace) {
+	this.namespace = namespace;
+
+    }
 }

@@ -46,231 +46,235 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  * 
  */
 @Path("/utils")
-public class Utils
-{
-	Actions actions = null;
+public class Utils {
+    Actions actions = null;
 
-	/**
-	 * @throws IOException
-	 *             if properties cannot be loaded
-	 * 
-	 */
-	public Utils() throws IOException
-	{
+    /**
+     * @throws IOException
+     *             if properties cannot be loaded
+     * 
+     */
+    public Utils() throws IOException {
 
-		actions = new Actions();
+	actions = new Actions();
+    }
+
+    /**
+     * @param namespace
+     *            the namespace to delete.
+     * @return A message or an ArchiveException
+     */
+    @DELETE
+    @Path("/deleteNamespace/{namespace}")
+    @Produces({ "application/json", "application/xml" })
+    public String deleteNamespace(@PathParam("namespace") String namespace) {
+	try {
+	    return actions.deleteNamespace(namespace);
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
 	}
 
-	/**
-	 * @param pid
-	 *            The pid to delete
-	 * @return A message or an ArchiveException
-	 */
-	@DELETE
-	@Path("/deleteNamespace/{namespace}")
-	@Produces({ "application/json", "application/xml" })
-	public String deleteNamespace(@PathParam("namespace") String namespace)
-	{
-		try
-		{
-			return actions.deleteNamespace(namespace);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
+    }
 
+    /**
+     * @param pid
+     *            the pid of the object, that must be published in a oai set.
+     * @return a message
+     */
+    @POST
+    @Path("/makeOaiSet/{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String makeOaiSet(@PathParam("pid") String pid) {
+	try {
+	    return actions.makeOAISet(pid);
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
 	}
 
-	@POST
-	@Path("/makeOaiSet/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public String makeOaiSet(@PathParam("pid") String pid)
-	{
-		try
-		{
-			return actions.makeOAISet(pid);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
+    }
 
+    /**
+     * @param pid
+     *            the pid to be indexed
+     * @param namespace
+     *            the namespace of the resource
+     * @return a message
+     */
+    @POST
+    @Path("/index/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String index(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	try {
+	    return actions.index(pid, namespace);
+	} catch (ArchiveException e) {
+
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
 	}
+    }
 
-	@POST
-	@Path("/index/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public String index(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace)
-	{
-		try
-		{
-			return actions.index(pid, namespace);
-		}
-		catch (ArchiveException e)
-		{
-
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
+    /**
+     * @return a profile
+     */
+    @GET
+    @Path("/profile/cache")
+    @Produces({ "application/json", "application/xml" })
+    public CollectionProfile profileCache() {
+	CacheSurvey survey = new CacheSurvey();
+	List<View> rows = survey.survey();
+	try {
+	    return new CollectionProfile(rows);
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
 	}
+    }
 
-	@GET
-	@Path("/profile/cache")
-	@Produces({ "application/json", "application/xml" })
-	public CollectionProfile profileCache()
-	{
-		CacheSurvey survey = new CacheSurvey();
-		List<View> rows = survey.survey();
-		try
-		{
-			return new CollectionProfile(rows);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
+    /**
+     * @return a profile
+     */
+    @GET
+    @Path("/profile/fedora")
+    @Produces({ "application/json", "application/xml" })
+    public CollectionProfile profileFedora() {
+	try {
+	    FedoraSurvey survey = new FedoraSurvey();
+	    List<View> rows = survey.survey();
+
+	    return new CollectionProfile(rows);
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
+	} catch (IOException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
 	}
+    }
 
-	@GET
-	@Path("/profile/fedora")
-	@Produces({ "application/json", "application/xml" })
-	public CollectionProfile profileFedora()
-	{
-		try
-		{
-			FedoraSurvey survey = new FedoraSurvey();
-			List<View> rows = survey.survey();
-
-			return new CollectionProfile(rows);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-		catch (IOException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
+    /**
+     * @param pid
+     *            the pid that must be enriched with lobid data
+     * @return a message
+     */
+    @POST
+    @Path("/lobidify/{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String lobidify(@PathParam("pid") String pid) {
+	try {
+	    return actions.lobidify(pid);
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
 	}
+    }
 
-	@POST
-	@Path("/lobidify/{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public String lobidify(@PathParam("pid") String pid)
-	{
-		try
-		{
-			return actions.lobidify(pid);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
+    /**
+     * @param pid
+     *            the metadata of the identified resource will be transformed to
+     *            oaidc
+     * @return the oai_dc xml
+     */
+    @GET
+    @Path("/oaidc/{pid}")
+    @Produces({ "application/xml" })
+    public String oaidc(@PathParam("pid") String pid) {
+	try {
+	    return actions.oaidc(pid);
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
 	}
+    }
 
-	@GET
-	@Path("/oaidc/{pid}")
-	@Produces({ "application/xml" })
-	public String oaidc(@PathParam("pid") String pid)
-	{
-		try
-		{
-			return actions.oaidc(pid);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
+    /**
+     * @param pid
+     *            epicur transformation for this pid
+     * @param namespace
+     *            the namespace
+     * @return epicur xml
+     */
+    @GET
+    @Path("/epicur/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String epicur(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	try {
+	    return actions.epicur(pid, namespace);
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
 	}
+    }
 
-	@GET
-	@Path("/epicur/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public String epicur(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace)
-	{
-		try
-		{
-			return actions.epicur(pid, namespace);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
+    /**
+     * @param pid
+     *            the pid must contain a data stream with mime type
+     *            application/pdf
+     * @param request
+     *            lastModified is checked.
+     * @return a text/plain message containing the extracted text
+     */
+    @GET
+    @Path("/pdfbox/{pid}")
+    @Produces({ "text/plain" })
+    public Response pdfbox(@PathParam("pid") String pid,
+	    @Context Request request) {
+	try {
+	    Node node = actions.readNode(pid);
+
+	    final EntityTag eTag = new EntityTag(node.getPID() + "_"
+		    + node.getLastModified().getTime());
+
+	    final CacheControl cacheControl = new CacheControl();
+	    cacheControl.setMaxAge(-1);
+
+	    ResponseBuilder builder = request.evaluatePreconditions(
+		    node.getLastModified(), eTag);
+
+	    // the user's information was modified, return it
+	    if (builder == null) {
+		builder = Response.ok(actions.pdfbox(node));
+	    }
+
+	    // the user's information was not modified, return a 304
+	    return builder.cacheControl(cacheControl)
+		    .lastModified(node.getLastModified()).tag(eTag).build();
+
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
 	}
+    }
 
-	@GET
-	@Path("/pdfbox/{pid}")
-	@Produces({ "text/plain" })
-	public Response pdfbox(@PathParam("pid") String pid,
-			@Context Request request)
-	{
-		try
-		{
-			Node node = actions.readNode(pid);
-
-			final EntityTag eTag = new EntityTag(node.getPID() + "_"
-					+ node.getLastModified().getTime());
-
-			final CacheControl cacheControl = new CacheControl();
-			cacheControl.setMaxAge(-1);
-
-			ResponseBuilder builder = request.evaluatePreconditions(
-					node.getLastModified(), eTag);
-
-			// the user's information was modified, return it
-			if (builder == null)
-			{
-				builder = Response.ok(actions.pdfbox(node));
-			}
-
-			// the user's information was not modified, return a 304
-			return builder.cacheControl(cacheControl)
-					.lastModified(node.getLastModified()).tag(eTag).build();
-
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
+    /**
+     * @param namespace
+     *            namespace of the model
+     * @return a message
+     */
+    @POST
+    @Path("/contentModels/{namespace}/init")
+    @Produces({ "text/plain" })
+    public String contentModelsInit(@PathParam("namespace") String namespace) {
+	try {
+	    return actions.contentModelsInit(namespace);
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+		    e.getMessage());
 	}
-
-	@POST
-	@Path("/contentModels/{namespace}/init")
-	@Produces({ "text/plain" })
-	public String contentModelsInit(@PathParam("namespace") String namespace)
-	{
-		try
-		{
-			return actions.contentModelsInit(namespace);
-		}
-		catch (ArchiveException e)
-		{
-			throw new HttpArchiveException(
-					Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-					e.getMessage());
-		}
-	}
+    }
 
 }

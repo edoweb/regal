@@ -1,3 +1,19 @@
+/*
+ * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package de.nrw.hbz.regal.api;
 
 import java.io.FileNotFoundException;
@@ -24,149 +40,133 @@ import com.sun.jersey.multipart.BodyPart;
 import com.sun.jersey.multipart.MultiPart;
 import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
-public class TestJournalApi
-{
+/**
+ * 
+ * @author Jan Schnasse schnasse@hbz-nrw.de
+ * 
+ */
+@SuppressWarnings("javadoc")
+public class TestJournalApi {
 
-	Properties properties;
+    Properties properties;
 
-	@Before
-	public void setUp()
-	{
-		try
-		{
-			properties = new Properties();
-			properties.load(getClass().getResourceAsStream("/test.properties"));
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
+    @Before
+    public void setUp() {
+	try {
+	    properties = new Properties();
+	    properties.load(getClass().getResourceAsStream("/test.properties"));
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
 
-	@Test
-	public void testJournal() throws FileNotFoundException, IOException
-	{
-		try
-		{
-			// ----------------Init------------------
-			ClientConfig cc = new DefaultClientConfig();
-			cc.getProperties()
-					.put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-			cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
-					true);
-			Client c = Client.create(cc);
-			c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
-					properties.getProperty("password")));
+    }
 
-			WebResource deleteNs = c.resource(properties.getProperty("apiUrl")
-					+ "/utils/deleteNamespace/test");
+    @Test
+    public void testJournal() throws FileNotFoundException, IOException {
+	try {
+	    // ----------------Init------------------
+	    ClientConfig cc = new DefaultClientConfig();
+	    cc.getProperties()
+		    .put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+	    cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
+		    true);
+	    Client c = Client.create(cc);
+	    c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
+		    properties.getProperty("password")));
 
-			WebResource journals = c.resource(properties.getProperty("apiUrl")
-					+ "/journal/");
-			WebResource aJournal = c.resource(journals.toString() + "test:123");
+	    WebResource deleteNs = c.resource(properties.getProperty("apiUrl")
+		    + "/utils/deleteNamespace/test");
 
-			WebResource aJournalMetadata = c.resource(aJournal.toString()
-					+ "/metadata");
-			WebResource aJournalDc = c.resource(aJournal.toString() + "/dc");
+	    WebResource journals = c.resource(properties.getProperty("apiUrl")
+		    + "/journal/");
+	    WebResource aJournal = c.resource(journals.toString() + "test:123");
 
-			try
-			{
-				deleteNs.delete();
-			}
-			catch (UniformInterfaceException e)
-			{
-				System.out.println(e.getMessage());
-			}
-			String request = "content";
-			String response = "";
-			try
-			{
-				response = aJournal.put(String.class, request);
-				System.out.println(response);
-			}
-			catch (UniformInterfaceException e)
-			{
-				System.out.println(e.getResponse().getEntity(String.class));
-			}
+	    WebResource aJournalMetadata = c.resource(aJournal.toString()
+		    + "/metadata");
+	    WebResource aJournalDc = c.resource(aJournal.toString() + "/dc");
 
-			byte[] metadata = IOUtils.toByteArray(Thread.currentThread()
-					.getContextClassLoader().getResourceAsStream("test.ttl"));
-			aJournalMetadata.type("text/plain").put(metadata);
+	    try {
+		deleteNs.delete();
+	    } catch (UniformInterfaceException e) {
+		System.out.println(e.getMessage());
+	    }
+	    String request = "content";
+	    String response = "";
+	    try {
+		response = aJournal.put(String.class, request);
+		System.out.println(response);
+	    } catch (UniformInterfaceException e) {
+		System.out.println(e.getResponse().getEntity(String.class));
+	    }
 
-			try
-			{
-				DCBeanAnnotated dc = aJournalDc.get(DCBeanAnnotated.class);
+	    byte[] metadata = IOUtils.toByteArray(Thread.currentThread()
+		    .getContextClassLoader().getResourceAsStream("test.ttl"));
+	    aJournalMetadata.type("text/plain").put(metadata);
 
-				Vector<String> v = new Vector<String>();
-				v.add("Test");
-				dc.setCreator(v);
-				aJournalDc.post(DCBeanAnnotated.class, dc);
+	    try {
+		DCBeanAnnotated dc = aJournalDc.get(DCBeanAnnotated.class);
 
-				dc = aJournalDc.get(DCBeanAnnotated.class);
-				Assert.assertEquals("Test", dc.getCreator().get(0));
-				dc = aJournalDc.get(DCBeanAnnotated.class);
+		Vector<String> v = new Vector<String>();
+		v.add("Test");
+		dc.setCreator(v);
+		aJournalDc.post(DCBeanAnnotated.class, dc);
 
-			}
-			catch (Exception e)
-			{
+		dc = aJournalDc.get(DCBeanAnnotated.class);
+		Assert.assertEquals("Test", dc.getCreator().get(0));
+		dc = aJournalDc.get(DCBeanAnnotated.class);
 
-			}
+	    } catch (Exception e) {
 
-			WebResource aJournalVolumes = c.resource(aJournal.toString()
-					+ "/volume/");
-			WebResource aJournalVolume = c.resource(aJournal.toString()
-					+ "/volume/test:345");
-			WebResource aJournalVolumeMetadata = c.resource(aJournalVolume
-					.toString() + "/metadata");
-			WebResource aJournalVolumeDc = c.resource(aJournalVolume.toString()
-					+ "/dc");
-			WebResource aJournalVolumeData = c.resource(aJournalVolume
-					.toString() + "/data");
+	    }
 
-			response = aJournalVolume.put(String.class);
-			System.out.println(response);
+	    c.resource(aJournal.toString() + "/volume/");
+	    WebResource aJournalVolume = c.resource(aJournal.toString()
+		    + "/volume/test:345");
+	    WebResource aJournalVolumeMetadata = c.resource(aJournalVolume
+		    .toString() + "/metadata");
+	    WebResource aJournalVolumeDc = c.resource(aJournalVolume.toString()
+		    + "/dc");
+	    WebResource aJournalVolumeData = c.resource(aJournalVolume
+		    .toString() + "/data");
 
-			metadata = IOUtils.toByteArray(Thread.currentThread()
-					.getContextClassLoader().getResourceAsStream("test.ttl"));
-			aJournalVolumeMetadata.type("text/plain").post(metadata);
+	    response = aJournalVolume.put(String.class);
+	    System.out.println(response);
 
-			MultiPart multiPart = new MultiPart();
-			multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
-					.currentThread().getContextClassLoader()
-					.getResourceAsStream("test.pdf"), "test.pdf"));
-			multiPart.bodyPart(new BodyPart("application/pdf",
-					MediaType.TEXT_PLAIN_TYPE));
-			aJournalVolumeData.type("multipart/mixed").post(multiPart);
+	    metadata = IOUtils.toByteArray(Thread.currentThread()
+		    .getContextClassLoader().getResourceAsStream("test.ttl"));
+	    aJournalVolumeMetadata.type("text/plain").post(metadata);
 
-			DCBeanAnnotated dc = aJournalVolumeDc.get(DCBeanAnnotated.class);
-			Vector<String> v = new Vector<String>();
-			v.add("TestVolume");
-			dc.setCreator(v);
-			aJournalVolumeDc.post(dc);
+	    MultiPart multiPart = new MultiPart();
+	    multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
+		    .currentThread().getContextClassLoader()
+		    .getResourceAsStream("test.pdf"), "test.pdf"));
+	    multiPart.bodyPart(new BodyPart("application/pdf",
+		    MediaType.TEXT_PLAIN_TYPE));
+	    aJournalVolumeData.type("multipart/mixed").post(multiPart);
 
-			dc = aJournalVolumeDc.get(DCBeanAnnotated.class);
-			Assert.assertEquals("TestVolume", dc.getCreator().get(0));
+	    DCBeanAnnotated dc = aJournalVolumeDc.get(DCBeanAnnotated.class);
+	    Vector<String> v = new Vector<String>();
+	    v.add("TestVolume");
+	    dc.setCreator(v);
+	    aJournalVolumeDc.post(dc);
 
-			response = deleteNs.delete(String.class);
-			System.out.println(response);
+	    dc = aJournalVolumeDc.get(DCBeanAnnotated.class);
+	    Assert.assertEquals("TestVolume", dc.getCreator().get(0));
 
-		}
-		catch (UniformInterfaceException e)
-		{
+	    response = deleteNs.delete(String.class);
+	    System.out.println(response);
 
-			e.printStackTrace();
-			System.out.println(e.getResponse().getEntity(String.class));
-		}
+	} catch (UniformInterfaceException e) {
+
+	    e.printStackTrace();
+	    System.out.println(e.getResponse().getEntity(String.class));
 	}
+    }
 
-	@After
-	public void tearDown()
-	{
+    @After
+    public void tearDown() {
 
-	}
+    }
 }

@@ -22,11 +22,14 @@ import com.sun.jersey.api.core.PackagesResourceConfig;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class MyApplication extends PackagesResourceConfig
-{
+public class MyApplication extends PackagesResourceConfig {
 
-	public MyApplication()
-	{
-		super("de.nrw.hbz.edoweb2.api");
-	}
+    /**
+     * Configures the rest endpoint TODO: I think this class is not needed any
+     * longer
+     * 
+     */
+    public MyApplication() {
+	super("de.nrw.hbz.edoweb2.api");
+    }
 }

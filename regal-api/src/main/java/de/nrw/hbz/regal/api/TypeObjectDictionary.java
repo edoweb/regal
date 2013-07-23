@@ -21,41 +21,57 @@ import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * This class is used to list resources of a certain type.
+ * 
+ * @author Jan Schnasse schnasse@hbz-nrw.de
+ * 
+ */
 @XmlRootElement
-public class TypeObjectDictionary
-{
-	String type;
-	List<String> uris;
+public class TypeObjectDictionary {
+    String type;
+    List<String> uris;
 
-	public TypeObjectDictionary()
-	{
-		uris = new Vector<String>();
-	}
+    /**
+     * creates an empty object.
+     */
+    public TypeObjectDictionary() {
+	uris = new Vector<String>();
+    }
 
-	TypeObjectDictionary(String type, List<String> uris)
-	{
-		this.type = type;
-		this.uris = uris;
-	}
+    TypeObjectDictionary(String type, List<String> uris) {
+	this.type = type;
+	this.uris = uris;
+    }
 
-	public String getType()
-	{
-		return type;
-	}
+    /**
+     * @return the type that is listed in the dicitonary
+     */
+    public String getType() {
+	return type;
+    }
 
-	public void setType(String type)
-	{
-		this.type = type;
-	}
+    /**
+     * @param type
+     *            set the type
+     */
+    public void setType(String type) {
+	this.type = type;
+    }
 
-	public List<String> getUris()
-	{
-		return uris;
-	}
+    /**
+     * @return get the Uris
+     */
+    public List<String> getUris() {
+	return uris;
+    }
 
-	public void setUris(List<String> uris)
-	{
-		this.uris = uris;
-	}
+    /**
+     * @param uris
+     *            set the uris
+     */
+    public void setUris(List<String> uris) {
+	this.uris = uris;
+    }
 
 }

@@ -16,6 +16,21 @@
  */
 package de.nrw.hbz.regal.api.helper;
 
+/**
+ * @author Jan Schnasse schnasse@hbz-nrw.de
+ * 
+ */
 public enum TypeType {
-	docType, contentType, edowebType
+    /**
+     * aka publication type
+     */
+    docType,
+    /**
+     * the ingest type
+     */
+    contentType,
+    /**
+     * the edoweb type (used in digitool)
+     */
+    edowebType
 }

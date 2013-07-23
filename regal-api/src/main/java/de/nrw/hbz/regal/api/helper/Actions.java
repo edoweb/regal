@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -98,6 +99,9 @@ import de.nrw.hbz.regal.exceptions.NodeNotFoundException;
 import de.nrw.hbz.regal.fedora.FedoraVocabulary;
 
 /**
+ * Actions provide a single class to access the archive. All endpoints are using
+ * this class.
+ * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
@@ -209,6 +213,11 @@ public class Actions {
 	return pid + " successfully deleted! " + msg;
     }
 
+    /**
+     * @param pid
+     *            the pid of the object
+     * @return a message
+     */
     public String deleteMetadata(String pid) {
 
 	archive.deleteDatastream(pid, "metadata");
@@ -216,6 +225,11 @@ public class Actions {
 	return pid + ": metadata - datastream successfully deleted! ";
     }
 
+    /**
+     * @param pid
+     *            the pid og the object
+     * @return a message
+     */
     public String deleteData(String pid) {
 	archive.deleteDatastream(pid, "data");
 	return pid + ": data - datastream successfully deleted! ";
@@ -417,6 +431,17 @@ public class Actions {
 
     }
 
+    /**
+     * @param pid
+     *            the pid of the object
+     * @return n-triple metadata
+     * @throws URISyntaxException
+     *             if the fedora link is misconfigured
+     * @throws MalformedURLException
+     *             if the fedora link is misconfigured
+     * @throws IOException
+     *             if reading fails
+     */
     public String readMetadata(String pid) throws URISyntaxException,
 	    MalformedURLException, IOException {
 
@@ -667,7 +692,6 @@ public class Actions {
      */
     public String makeOAISet(String pid) {
 
-	String ddc = null;
 	Node node = readNode(pid);
 	try {
 	    URL metadata = new URL(fedoraExtern + "/objects/" + pid
@@ -964,6 +988,13 @@ public class Actions {
 
     }
 
+    /**
+     * @param pid
+     *            the pid of the object
+     * @param namespace
+     *            the namespace
+     * @return a epicur display for the pid
+     */
     public String epicur(String pid, String namespace) {
 	String status = "urn_new";
 	String result = "<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xmlns:xsi=\"http://www.w3.com/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
@@ -992,6 +1023,15 @@ public class Actions {
 	return result;
     }
 
+    /**
+     * Generates a urn or returns an existing urn.
+     * 
+     * @param pid
+     *            the pid of an object
+     * @param namespace
+     *            the namespace
+     * @return the urn
+     */
     public String generateUrn(String pid, String namespace) {
 	try {
 	    List<String> urns = getView(pid).getUrn();
@@ -1014,6 +1054,11 @@ public class Actions {
 
     }
 
+    /**
+     * @param node
+     *            the node with pdf data
+     * @return the plain text content of the pdf
+     */
     public String pdfbox(Node node) {
 	String pid = node.getPID();
 
@@ -1046,6 +1091,11 @@ public class Actions {
 
     }
 
+    /**
+     * @param node
+     *            the node with pdf data
+     * @return the plain text content of the pdf
+     */
     public String itext(Node node) {
 	String pid = node.getPID();
 
@@ -1078,6 +1128,13 @@ public class Actions {
 
     }
 
+    /**
+     * Initialises all content models for one namespace
+     * 
+     * @param namespace
+     *            a namespace
+     * @return a message
+     */
     public String contentModelsInit(String namespace) {
 	try {
 
@@ -1104,6 +1161,11 @@ public class Actions {
 	}
     }
 
+    /**
+     * @param pid
+     *            the pid
+     * @return the node for the pid
+     */
     public Node readNode(String pid) {
 	try {
 	    return archive.readNode(pid);
@@ -1112,11 +1174,25 @@ public class Actions {
 	}
     }
 
+    /**
+     * @param namespace
+     *            the namespace will be deleted
+     * @return a message
+     */
     public String deleteNamespace(String namespace) {
 	List<String> objects = archive.findNodes(namespace + ":*");
 	return deleteAll(objects, false);
     }
 
+    /**
+     * @param pid
+     *            the pid with pdf data
+     * @param namespace
+     *            the namespace
+     * @return the result of a pdfbox call
+     * @throws URISyntaxException
+     *             if redirect is wrongly configured
+     */
     public Response getFulltext(String pid, String namespace)
 	    throws URISyntaxException {
 
@@ -1127,6 +1203,15 @@ public class Actions {
 
     }
 
+    /**
+     * @param pid
+     *            the plain pid
+     * @param namespace
+     *            namespace of the pid
+     * @return a epicur yml
+     * @throws URISyntaxException
+     *             if redirect coded wrong
+     */
     public Response getEpicur(String pid, String namespace)
 	    throws URISyntaxException {
 
@@ -1137,6 +1222,15 @@ public class Actions {
 
     }
 
+    /**
+     * @param pid
+     *            the plain pid
+     * @param namespace
+     *            namespace of the pid
+     * @return oai dc yml
+     * @throws URISyntaxException
+     *             if coded wrong
+     */
     public Response getOAI_DC(String pid, String namespace)
 	    throws URISyntaxException {
 
@@ -1147,6 +1241,11 @@ public class Actions {
 
     }
 
+    /**
+     * @param pid
+     *            the pid
+     * @return the last modified date
+     */
     public Date getLastModified(String pid) {
 	Node node = readNode(pid);
 	return node.getLastModified();
@@ -1161,6 +1260,13 @@ public class Actions {
 	return archive.nodeExists(pid);
     }
 
+    /**
+     * @param pid
+     *            the pid
+     * @param format
+     *            application/rdf+xml text/plain application/json
+     * @return a oai_ore resource map
+     */
     public String getReM(String pid, String format) {
 	String result = null;
 	Node node = readNode(pid);
@@ -1256,10 +1362,14 @@ public class Actions {
 		con.add(aggregation, similarTo, catalogResource);
 
 	    }
-	    str = getCacheUri(pid);
-	    if (str != null && !str.isEmpty()) {
-		URI cacheResource = f.createURI(str);
-		con.add(aggregation, similarTo, cacheResource);
+	    try {
+		str = getCacheUri(pid);
+		if (str != null && !str.isEmpty()) {
+		    URI cacheResource = f.createURI(str);
+		    con.add(aggregation, similarTo, cacheResource);
+		}
+	    } catch (UnsupportedEncodingException e) {
+
 	    }
 	    URI fedoraObject = f.createURI(this.fedoraExtern + "/objects/"
 		    + pid);
@@ -1513,7 +1623,7 @@ public class Actions {
 	archive.updateNode(node.getPID(), node);
     }
 
-    private String getCacheUri(String pid) {
+    private String getCacheUri(String pid) throws UnsupportedEncodingException {
 	String cacheUri = null;
 	String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
 	String namespace = pid.substring(0, pid.indexOf(':'));
@@ -1526,8 +1636,12 @@ public class Actions {
 	    }
 	}
 	if (pid.contains("dipp")) {
-	    cacheUri = this.serverName + "/" + namespace + "base/"
-		    + URLEncoder.encode(URLEncoder.encode(pid));
+	    cacheUri = this.serverName
+		    + "/"
+		    + namespace
+		    + "base/"
+		    + URLEncoder.encode(URLEncoder.encode(pid, "utf-8"),
+			    "utf-8");
 
 	}
 	if (pid.contains("ubm")) {
@@ -1743,9 +1857,7 @@ public class Actions {
     /**
      * @param pid
      *            The pid of an existing object.
-     * @param type
-     *            the type of the object.
-     * @return the typed view of the object
+     * @return the view of the object
      */
     public View getView(String pid) {
 
@@ -1804,8 +1916,18 @@ public class Actions {
 	    // TODO only if synced Resource
 	    view.addOriginalObjectUrl("http://193.30.112.23:9280/fedora/get/"
 		    + pid + "/QDC");
-	    view.addCacheUrl(this.serverName + "/" + node.getNamespace()
-		    + "base/" + URLEncoder.encode(URLEncoder.encode(pid)));
+
+	    try {
+		view.addCacheUrl(this.serverName
+			+ "/"
+			+ node.getNamespace()
+			+ "base/"
+			+ URLEncoder.encode(URLEncoder.encode(pid, "utf-8"),
+				"utf-8"));
+	    } catch (UnsupportedEncodingException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 
 	}
 	if (pid.contains("ubm")) {
@@ -2073,6 +2195,9 @@ public class Actions {
 	}
     }
 
+    /**
+     * @return all objects in a html list
+     */
     public String getAllAsHtml() {
 	String result = "";
 	try {
@@ -2099,6 +2224,11 @@ public class Actions {
 	return result;
     }
 
+    /**
+     * @param type
+     *            the type to be displaye
+     * @return html listing of all objects
+     */
     public String getAllOfTypeAsHtml(String type) {
 
 	String result = "";

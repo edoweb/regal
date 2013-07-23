@@ -40,114 +40,158 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
  * 
  */
 @Path("/version")
-public class Version
-{
-	final static Logger logger = LoggerFactory.getLogger(Version.class);
+public class Version {
+    final static Logger logger = LoggerFactory.getLogger(Version.class);
 
-	Resource resources = null;
+    Resource resources = null;
 
-	public Version() throws IOException
-	{
+    /**
+     * @throws IOException
+     *             if resources can't be initilised
+     */
+    public Version() throws IOException {
 
-		resources = new Resource();
+	resources = new Resource();
 
-	}
+    }
 
-	@DELETE
-	@Produces({ "application/json", "application/xml" })
-	public String deleteAll()
-	{
-		return resources.deleteAllOfType(ObjectType.version.toString());
-	}
+    /**
+     * @return a message
+     */
+    @DELETE
+    @Produces({ "application/json", "application/xml" })
+    public String deleteAll() {
+	return resources.deleteAllOfType(ObjectType.version.toString());
+    }
 
-	@PUT
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public String create(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace)
-	{
-		CreateObjectBean input = new CreateObjectBean();
-		input.type = ObjectType.version.toString();
-		return resources.create(pid, namespace, input);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param namespace
+     *            the namespace of the resource
+     * @return a message
+     */
+    @PUT
+    @Path("/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String create(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	CreateObjectBean input = new CreateObjectBean();
+	input.type = ObjectType.version.toString();
+	return resources.create(pid, namespace, input);
+    }
 
-	@DELETE
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml" })
-	public String delete(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace)
-	{
-		return resources.delete(pid, namespace);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param namespace
+     *            the namespace of the resource
+     * @return a message
+     */
+    @DELETE
+    @Path("/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String delete(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	return resources.delete(pid, namespace);
+    }
 
-	@POST
-	@Path("/{pid}/dc")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
-	public String updateDC(@PathParam("pid") String pid, DCBeanAnnotated content)
-	{
-		return resources.updateDC(pid, content);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param content
+     *            dublin core
+     * @return a message
+     */
+    @POST
+    @Path("/{pid}/dc")
+    @Produces({ "application/json", "application/xml" })
+    @Consumes({ "application/json", "application/xml" })
+    public String updateDC(@PathParam("pid") String pid, DCBeanAnnotated content) {
+	return resources.updateDC(pid, content);
+    }
 
-	@PUT
-	@Path("/{pid}/metadata")
-	@Consumes({ "text/plain" })
-	@Produces({ "text/plain" })
-	public String updateMetadata(@PathParam("pid") String pid, String content)
-	{
-		return resources.updateMetadata(pid, content);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param content
+     *            n-triple metadata
+     * @return a message
+     */
+    @PUT
+    @Path("/{pid}/metadata")
+    @Consumes({ "text/plain" })
+    @Produces({ "text/plain" })
+    public String updateMetadata(@PathParam("pid") String pid, String content) {
+	return resources.updateMetadata(pid, content);
+    }
 
-	@POST
-	@Path("/{pid}/metadata")
-	@Consumes({ "text/plain" })
-	@Produces({ "text/plain" })
-	public String updateMetadataPost(@PathParam("pid") String pid,
-			String content)
-	{
-		return resources.updateMetadata(pid, content);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @param content
+     *            n-triple metadata
+     * @return a message
+     */
+    @POST
+    @Path("/{pid}/metadata")
+    @Consumes({ "text/plain" })
+    @Produces({ "text/plain" })
+    public String updateMetadataPost(@PathParam("pid") String pid,
+	    String content) {
+	return resources.updateMetadata(pid, content);
+    }
 
-	@GET
-	@Produces({ "application/json", "application/xml" })
-	public ObjectList getAll()
-	{
-		return resources.getAllOfType(ObjectType.version.toString());
-	}
+    /**
+     * @return a list of versions
+     */
+    @GET
+    @Produces({ "application/json", "application/xml" })
+    public ObjectList getAll() {
+	return resources.getAllOfType(ObjectType.version.toString());
+    }
 
-	@GET
-	@Produces({ "text/html" })
-	public Response getAllAsHtml()
-	{
-		String rem = resources
-				.getAllOfTypeAsHtml(ObjectType.version.toString());
-		ResponseBuilder res = Response.ok().entity(rem);
-		return res.build();
-	}
+    /**
+     * @return list of versions as html
+     */
+    @GET
+    @Produces({ "text/html" })
+    public Response getAllAsHtml() {
+	String rem = resources
+		.getAllOfTypeAsHtml(ObjectType.version.toString());
+	ResponseBuilder res = Response.ok().entity(rem);
+	return res.build();
+    }
 
-	/**
-	 * @param pid
-	 *            the pid of the resource
-	 * @return an aggregated representation of the resource
-	 * @throws URISyntaxException
-	 */
-	@GET
-	@Path("/{namespace}:{pid}")
-	@Produces({ "application/json", "application/xml", "text/html" })
-	public Response read(@PathParam("pid") String pid,
-			@PathParam("namespace") String namespace) throws URISyntaxException
-	{
-		return Response
-				.temporaryRedirect(
-						new java.net.URI("../resource/" + namespace + ":" + pid
-								+ "/about")).status(303).build();
-	}
+    /**
+     * @param pid
+     *            the pid of the resource the pid of the resource
+     * @param namespace
+     *            the namespace of the resource
+     * @return an aggregated representation of the resource
+     * @throws URISyntaxException
+     *             if redirection is misconfiguered
+     */
+    @GET
+    @Path("/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml", "text/html" })
+    public Response read(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) throws URISyntaxException {
+	return Response
+		.temporaryRedirect(
+			new java.net.URI("../resource/" + namespace + ":" + pid
+				+ "/about")).status(303).build();
+    }
 
-	@GET
-	@Path("/{pid}/dc")
-	@Produces({ "application/xml", "application/json" })
-	public DCBeanAnnotated readDC(@PathParam("pid") String pid)
-	{
-		return resources.readDC(pid);
-	}
+    /**
+     * @param pid
+     *            the pid of the resource
+     * @return dublin core
+     */
+    @GET
+    @Path("/{pid}/dc")
+    @Produces({ "application/xml", "application/json" })
+    public DCBeanAnnotated readDC(@PathParam("pid") String pid) {
+	return resources.readDC(pid);
+    }
 }

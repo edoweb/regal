@@ -1,5 +1,3 @@
-package de.nrw.hbz.regal.sync;
-
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -16,6 +14,8 @@ package de.nrw.hbz.regal.sync;
  * limitations under the License.
  *
  */
+package de.nrw.hbz.regal.sync;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,26 +24,19 @@ import de.nrw.hbz.regal.sync.ingest.OpusDownloader;
 import de.nrw.hbz.regal.sync.ingest.OpusIngester;
 
 /**
- * Class Main
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
- * 
- * @author Jan Schnasse, schnasse@hbz-nrw.de creation date: 03.06.2011
+ * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class Main
-{
-	final static Logger logger = LoggerFactory.getLogger(Main.class);
+public class Main {
+    final static Logger logger = LoggerFactory.getLogger(Main.class);
 
-	public static void main(String[] args)
-	{
-		Syncer syncer = new Syncer(new OpusIngester(), new OpusDownloader(),
-				new OpusDigitalEntityBuilder());
-		syncer.main(args);
-	}
+    /**
+     * @param args
+     *            standard args. See: Syncer
+     */
+    public static void main(String[] args) {
+	Syncer syncer = new Syncer(new OpusIngester(), new OpusDownloader(),
+		new OpusDigitalEntityBuilder());
+	syncer.main(args);
+    }
 }

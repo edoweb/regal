@@ -33,99 +33,78 @@ import de.nrw.hbz.regal.sync.ingest.DownloaderInterface;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class TestDigitoolDownloader
-{
-	Properties properties = new Properties();
+@SuppressWarnings("javadoc")
+public class TestDigitoolDownloader {
+    Properties properties = new Properties();
 
-	private final String piddownloaderServer;
-	private final String piddownloaderDownloadLocation;
+    private final String piddownloaderServer;
+    private final String piddownloaderDownloadLocation;
 
-	public TestDigitoolDownloader()
-	{
-		try
-		{
-			properties = new Properties();
-			properties.load(getClass().getResourceAsStream("/test.properties"));
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		piddownloaderServer = properties.getProperty("piddownloader.server");
-		piddownloaderDownloadLocation = properties
-				.getProperty("piddownloader.downloadLocation");
-		File dir = new File(piddownloaderDownloadLocation);
-		dir.mkdirs();
+    public TestDigitoolDownloader() {
+	try {
+	    properties = new Properties();
+	    properties.load(getClass().getResourceAsStream("/test.properties"));
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
 
-	@Before
-	public void setUp()
-	{
+	piddownloaderServer = properties.getProperty("piddownloader.server");
+	piddownloaderDownloadLocation = properties
+		.getProperty("piddownloader.downloadLocation");
+	File dir = new File(piddownloaderDownloadLocation);
+	dir.mkdirs();
+    }
 
+    @Before
+    public void setUp() {
+
+    }
+
+    @Test
+    public void downloadPid() {
+
+	try {
+
+	    FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation
+		    + File.separator + "3025500"));
+
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
 
-	@Test
-	public void downloadPid()
-	{
+	DownloaderInterface downloader = new DigitoolDownloader();
+	downloader.init(piddownloaderServer, piddownloaderDownloadLocation);
 
-		try
-		{
+	try {
+	    downloader.download("3025500");
+	    Assert.assertTrue(new File(piddownloaderDownloadLocation
+		    + File.separator + "3025500").exists());
 
-			FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation
-					+ File.separator + "3025500"));
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+	try {
 
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+	    FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation
+		    + File.separator + "3025500"));
 
-		DownloaderInterface downloader = new DigitoolDownloader();
-		downloader.init(piddownloaderServer, piddownloaderDownloadLocation);
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
 
-		try
-		{
-			downloader.download("3025500");
-			Assert.assertTrue(new File(piddownloaderDownloadLocation
-					+ File.separator + "3025500").exists());
-
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		try
-		{
-
-			FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation
-					+ File.separator + "3025500"));
-
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		try
-		{
-			downloader.download("3237400");
-			Assert.assertTrue(false);
-		}
-		catch (IOException e)
-		{
-
-		}
+	try {
+	    downloader.download("3237400");
+	    Assert.assertTrue(false);
+	} catch (IOException e) {
 
 	}
 
-	@After
-	public void tearDown()
-	{
+    }
 
-	}
+    @After
+    public void tearDown() {
+
+    }
 }
