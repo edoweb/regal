@@ -9,22 +9,7 @@ body {
 	background-attachment: fixed;
 	background-image: -moz-linear-gradient(center top, #CCCCCC 0%, #FFFFFF 100%);
 }
-
-image {
-	width: 128px;
-	height: 128px;
-}
-
-ul a img {
-	display: block;
-	float: left;
-	width: 64px;
-	background-color: #ffffff;
-	line-height: 128px;
-	overflow: hidden;
-	position: relative;
-	z-index: 1;
-}
+.page
 
 .navigation:before {
 	display: block;
@@ -57,7 +42,6 @@ ul a img {
 .logo {
 	background-color: white;
 	margin-bottom: 20;
-	height: 15%;
 	padding-top: 0;
 	background-attachment: scroll;
 	background-clip: border-box;
@@ -67,18 +51,12 @@ ul a img {
 	background-position: 0 0;
 	background-repeat: repeat;
 	background-size: auto auto;
+	height:105px;
 }
 
-.logo img {
-	margin-left: 350;
-	margin-top: 30;
-}
 
-#page 
-{
-	margin-right:30%;
-	margin-left:30%;
-}
+
+
 .footer {
 	border-style: solid;
 	border-width: 1px;
@@ -91,11 +69,22 @@ ul a img {
 }
 
 #resultList {
-	padding: 10px;
-	margin-right: 30;
-	margin-left: 30;
-}
+	border-style: solid;
+	border-width: 0px;
+	list-style: none;
+	background-color: #ffffff;
+	box-shadow: 5px 5px 7px #999999; //
+	border-radius: 15px;
+	padding: 30px;
+	width:800px;
 
+	margin-left:auto; margin-right:auto;
+}
+#hitsDiv
+{
+	width:800px;
+	margin-left:auto; margin-right:auto;
+}
 #resultList li {
 	padding: 10px;
 	margin: 20px;
@@ -120,21 +109,9 @@ a:visited {
 }
 
 .searchform {
-	margin-top:30;
-	padding:30;
-}
-
-#content {
-	
-}
-
-#outputDiv {
-	white-space: pre-wrap; //
-	font-family: monospace;
-	font-size: 0.9em;
-	background-color: #ffffff; //
-	border-radius: 15px;
-	box-shadow: 5px 5px 7px #999999;
+	padding-top:20px;
+	width:800px;
+	margin-left:auto; margin-right:auto;
 }
 
 #queryDiv {
@@ -170,9 +147,13 @@ a:visited {
 	vertical-align: text-top;
 	font-size: 0.9em;
 }
-
+table
+{
+    float:left;
+}  
 table tr td {
 	font-size: 0.9em;
+
 }
 
 table tr td a {
@@ -184,10 +165,7 @@ table tr td a {
 td {
 	padding-right: 20;
 }
-/*table tr td a:visited{
-	color: #404040;
 
-}*/
 .tablelabel {
 	font-size: 1.em;
 	font-weight: bold;
@@ -216,8 +194,9 @@ td {
 	background-color: #ffffff;
 	box-shadow: 5px 5px 7px #999999; //
 	border-radius: 15px;
-	margin-left: 25%;
-	margin-right: 25%;
+	width:800px;
+	height:1024px;
+	margin-left:auto; margin-right:auto;
 }
 
 #list {
