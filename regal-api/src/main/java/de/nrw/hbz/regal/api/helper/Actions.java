@@ -1781,12 +1781,8 @@ public class Actions {
 	    IOUtils.copy(in, writer, "UTF-8");
 	    String str1 = writer.toString();
 
-	    str1 = Pattern
-		    .compile(url.toString())
-		    .matcher(str1)
-		    .replaceAll(
-			    Matcher.quoteReplacement(serverName + "/resource/"
-				    + pid));
+	    str1 = Pattern.compile(url.toString()).matcher(str1)
+		    .replaceAll(Matcher.quoteReplacement(pid));
 	    return str + "\n" + str1;
 
 	} catch (IOException e) {
