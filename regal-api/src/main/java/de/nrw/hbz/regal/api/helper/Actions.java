@@ -925,13 +925,8 @@ public class Actions {
 	    String str = writer.toString();
 
 	    str = Pattern.compile(lobidUrl).matcher(str)
-		    .replaceAll(Matcher.quoteReplacement(// serverName +
-							 // "/resource/"
-			    // +
-			    pid))
+		    .replaceAll(Matcher.quoteReplacement(pid))
 		    + "<"
-		    // + serverName
-		    // + "/resource/"
 		    + pid
 		    + "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
 		    + lobidUrl + "> .";
