@@ -228,7 +228,7 @@ public class Utils {
      */
     @GET
     @Path("/pdfbox/{pid}")
-    @Produces({ "text/plain" })
+    @Produces({ "text/plain; charset=UTF-8" })
     public Response pdfbox(@PathParam("pid") String pid,
 	    @Context Request request) {
 	try {
