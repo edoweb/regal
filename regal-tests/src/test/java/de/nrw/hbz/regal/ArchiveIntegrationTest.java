@@ -52,6 +52,7 @@ public class ArchiveIntegrationTest {
     Properties properties = null;
     Node rootObject = null;
     ComplexObject object = null;
+    ComplexObjectNode child = null;
 
     @Before
     public void setUp() {
@@ -88,9 +89,9 @@ public class ArchiveIntegrationTest {
 		"info:fedora/fedora-system:FedoraRELSExt-1.0",
 		"application/rdf+xml");
 
-	cm.setContentModelPID("test:HBZNodeModel");
-	cm.setServiceDefinitionPID("test:HBZNodeServiceDefinition");
-	cm.setServiceDeploymentPID("test:HBZNodeServiceDeployment");
+	cm.setContentModelPID("testCM:HBZNodeModel");
+	cm.setServiceDefinitionPID("testCM:HBZNodeServiceDefinition");
+	cm.setServiceDeploymentPID("testCM:HBZNodeServiceDeployment");
 	cm.addMethod(
 		"listParents",
 		"http://localhost:8080/AdditionalServices/services/HBZNodeServices/ListParents?pid=(pid)");
@@ -104,9 +105,12 @@ public class ArchiveIntegrationTest {
 	rootObject.addContentModel(cm);
 
 	object = new ComplexObject(rootObject);
-	object.addChild(new ComplexObjectNode(new Node().addCreator(
-		"Der kleine Jan").setLabel("Ein Kindobjekt")));
 
+	child = new ComplexObjectNode(new Node().addCreator("Der kleine Jan")
+		.setLabel("Ein Kindobjekt"));
+	child.addChild(new ComplexObjectNode(new Node().addCreator(
+		"Der kleine Schnasse").setLabel("Ein Kindeskind")));
+	object.addChild(child);
 	List<String> objects = archive.findNodes("test:*");
 	for (String pid : objects) {
 	    archive.deleteNode(pid);
@@ -124,7 +128,8 @@ public class ArchiveIntegrationTest {
 	try {
 	    archive.createComplexObject(object);
 	    Assert.assertTrue(archive.nodeExists(object.getRoot().getPID()));
-	    Assert.assertEquals(5, archive.findNodes("test:*").size());
+	    Thread.sleep(10000);
+	    Assert.assertEquals(3, archive.findNodes("test:*").size());
 	} catch (Exception e) {
 	    e.printStackTrace();
 	    Assert.fail(e.getMessage());
@@ -215,7 +220,7 @@ public class ArchiveIntegrationTest {
 	    archive.deleteComplexObject(object.getRoot().getPID());
 
 	    Assert.assertFalse(archive.nodeExists(object.getRoot().getPID()));
-	    Assert.assertEquals(3, archive.findNodes("test:*").size());
+	    Assert.assertEquals(0, archive.findNodes("test:*").size());
 
 	} catch (Exception e) {
 	    e.printStackTrace();

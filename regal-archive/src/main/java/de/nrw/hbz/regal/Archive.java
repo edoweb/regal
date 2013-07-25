@@ -278,7 +278,7 @@ class Archive implements ArchiveInterface {
 		Vector<String> objects = node.getParents();
 		// If no object relation remains: delete
 		if (objects == null || objects.size() == 1)
-		    fedoraInterface.deleteNode(node.getPID());
+		    deleteComplexObject(node.getPID());
 		else {
 		    System.out
 			    .println(pid
