@@ -56,6 +56,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.culturegraph.mf.Flux;
 import org.openrdf.OpenRDFException;
+import org.openrdf.model.Graph;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -73,11 +74,13 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
+import org.openrdf.rio.RDFParser;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 import org.openrdf.rio.helpers.BasicWriterSettings;
 import org.openrdf.rio.helpers.JSONLDMode;
 import org.openrdf.rio.helpers.JSONLDSettings;
+import org.openrdf.rio.helpers.StatementCollector;
 import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -910,46 +913,87 @@ public class Actions {
 	if (alephid.isEmpty()) {
 	    throw new ArchiveException(pid + " no Catalog-Id found");
 	}
-	String lobidUrl = "http://lobid.org/resource/" + alephid;
-	InputStream in = null;
+
+	String lobidUri = "http://lobid.org/resource/" + alephid;
 	try {
-	    URL url = new URL(lobidUrl);
+	    URL lobidUrl = new URL(
+		    "http://lobid.org/sparql/?query=describe+%3Chttp%3A%2F%2Flobid.org%2Fresource%2F"
+			    + alephid + "%3E");
 
-	    URLConnection con = url.openConnection();
-	    con.setRequestProperty("Accept", "text/plain");
-	    con.connect();
-
-	    in = con.getInputStream();
-	    StringWriter writer = new StringWriter();
-	    IOUtils.copy(in, writer, "UTF-8");
-	    String str = writer.toString();
-
-	    str = Pattern.compile(lobidUrl).matcher(str)
+	    String str = readRdfToString(lobidUrl, RDFFormat.TURTLE,
+		    RDFFormat.NTRIPLES, "text/plain");
+	    str = Pattern.compile(lobidUri).matcher(str)
 		    .replaceAll(Matcher.quoteReplacement(pid))
 		    + "<"
 		    + pid
 		    + "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
-		    + lobidUrl + "> .";
+		    + lobidUri + "> .";
 
 	    if (str.contains("http://www.w3.org/2002/07/owl#sameAs")) {
 		str = includeSameAs(str, pid);
 	    }
 	    updateMetadata(pid, str);
+	} catch (MalformedURLException e) {
+	    throw new HttpArchiveException(500, e.getMessage());
 	} catch (IOException e) {
-	    throw new ArchiveException(pid
-		    + " IOException happens during copy operation.", e);
-	} finally {
-	    try {
-		if (in != null)
-		    in.close();
-	    } catch (IOException e) {
-		throw new ArchiveException(pid
-			+ " wasn't able to close stream.", e);
-	    }
+	    throw new HttpArchiveException(500, e.getMessage());
 	}
 
 	return pid + " lobid metadata successfully loaded!";
 
+    }
+
+    private String readRdfToString(URL url, RDFFormat inf, RDFFormat outf,
+	    String accept) {
+
+	Graph myGraph = null;
+	try {
+	    myGraph = readRdfUrlToGraph(url, inf, accept);
+	} catch (IOException e) {
+	    throw new HttpArchiveException(500, e.getMessage());
+	}
+
+	StringWriter out = new StringWriter();
+	RDFWriter writer = Rio.createWriter(outf, out);
+	try {
+	    writer.startRDF();
+	    for (Statement st : myGraph) {
+		writer.handleStatement(st);
+	    }
+	    writer.endRDF();
+	} catch (RDFHandlerException e) {
+	    throw new HttpArchiveException(500, e.getMessage());
+	}
+	return out.getBuffer().toString();
+
+    }
+
+    private Graph readRdfUrlToGraph(URL url, RDFFormat inf, String accept)
+	    throws IOException {
+	URLConnection con = url.openConnection();
+	con.setRequestProperty("Accept", accept);
+	con.connect();
+	InputStream inputStream = con.getInputStream();
+	return readRdfInputstreamToGraph(inputStream, inf, url.toString());
+    }
+
+    private Graph readRdfInputstreamToGraph(InputStream inputStream,
+	    RDFFormat inf, String baseUrl) throws IOException {
+	RDFParser rdfParser = Rio.createParser(inf);
+	org.openrdf.model.Graph myGraph = new org.openrdf.model.impl.GraphImpl();
+	StatementCollector collector = new StatementCollector(myGraph);
+	rdfParser.setRDFHandler(collector);
+	try {
+	    rdfParser.parse(inputStream, baseUrl);
+	} catch (IOException e) {
+	    throw new HttpArchiveException(500, e.getMessage());
+	} catch (RDFParseException e) {
+	    throw new HttpArchiveException(500, e.getMessage());
+	} catch (RDFHandlerException e) {
+	    throw new HttpArchiveException(500, e.getMessage());
+	}
+
+	return myGraph;
     }
 
     /**
