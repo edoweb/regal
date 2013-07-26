@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.junit.Test;
+import org.junit.After;
+import org.junit.Before;
 
 import de.nrw.hbz.regal.api.helper.Actions;
 import de.nrw.hbz.regal.api.helper.ObjectType;
@@ -147,7 +148,7 @@ public class TestActions {
 	System.out.println(str);
     }
 
-    //@Test
+    // @Test
     public void lobidify() throws IOException {
 	Actions actions = new Actions();
 	String result = actions.lobidify("test:4245081");
