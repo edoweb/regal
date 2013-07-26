@@ -35,7 +35,6 @@ import de.nrw.hbz.regal.exceptions.NodeNotFoundException;
 import de.nrw.hbz.regal.fedora.FedoraFacade;
 import de.nrw.hbz.regal.fedora.FedoraInterface;
 import de.nrw.hbz.regal.fedora.FedoraVocabulary;
-import de.nrw.hbz.regal.sesame.SesameFacade;
 
 /**
  * Class Archive
@@ -55,7 +54,6 @@ class Archive implements ArchiveInterface {
     // .getLogger(HBZFedoraIngester.class);
 
     private FedoraInterface fedoraInterface = null;
-    private SesameFacade sesame = null;
     private static Archive me = null;
 
     public static Archive getInstance(String host, String user, String password) {
@@ -67,9 +65,7 @@ class Archive implements ArchiveInterface {
 
     private Archive(String host, String user, String password,
 	    String sesameNativeStore) {
-
 	fedoraInterface = new FedoraFacade(host, user, password);
-	sesame = new SesameFacade(user, password, sesameNativeStore);
     }
 
     public FedoraInterface getFedoraInterface() {
@@ -155,10 +151,7 @@ class Archive implements ArchiveInterface {
 	// node.addRelation(nodeToMe);
 
 	fedoraInterface.updateNode(node);
-	sesame.updateNode(node);
-
 	fedoraInterface.updateNode(parent);
-	sesame.updateNode(node);
 
 	return node;
     }
@@ -285,7 +278,6 @@ class Archive implements ArchiveInterface {
 				    + " node is shared by other objects. Can't delete!");
 		    node.removeRelation(IS_PART_OF, rootPID);
 		    fedoraInterface.updateNode(node);
-		    sesame.updateNode(node);
 		}
 	    }
 
@@ -340,7 +332,6 @@ class Archive implements ArchiveInterface {
     private void iterateUpdate(ComplexObjectNode tnode, Node parent) {
 	Node node = tnode.getMe();
 	updateNode(node.getPID(), node);
-	sesame.updateNode(node);
 	for (int i = 0; i < tnode.sizeOfChildren(); i++) {
 	    ComplexObjectNode n1 = tnode.getChild(i);
 	    iterateUpdate(n1, node);
