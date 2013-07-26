@@ -9,7 +9,7 @@ user=$2
 password=$3
 for i in `pidlist $type`
 do
-curl -u ${user}:${password} -XPOST http://localhost/utils/lobidify/$i
+curl -u ${user}:${password} -XPOST http://localhost/utils/lobidify/$i;echo
 done
 }
 
