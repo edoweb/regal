@@ -927,7 +927,13 @@ public class Actions {
 		    + "<"
 		    + pid
 		    + "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
-		    + lobidUri + "> .";
+		    + lobidUri
+		    + "> .\n"
+		    + "<"
+		    + pid
+		    + "> <http://purl.org/lobid/lv#hbzID> \""
+		    + alephid
+		    + "\" .";
 
 	    if (str.contains("http://www.w3.org/2002/07/owl#sameAs")) {
 		str = includeSameAs(str, pid);
