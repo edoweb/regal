@@ -147,7 +147,7 @@ public class DippIngester implements IngestInterface {
 	logger.info(pid + " " + "Found eJournal article.");
 	webclient.createObject(dtlBean, "application/zip", ObjectType.article);
 	logger.info(pid + " " + "updated.\n");
-	webclient.metadata(dtlBean, metadata);
+	webclient.autoGenerateMetadataMerge(dtlBean, metadata);
 	logger.info(pid + " " + "and all related updated.\n");
     }
 

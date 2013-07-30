@@ -86,7 +86,7 @@ public class OpusIngester implements IngestInterface
 		webclient
 				.createObject(dtlBean, "application/pdf", ObjectType.monograph);
 		logger.info(pid + " " + "updated.\n");
-		webclient.metadata(dtlBean);
+		webclient.autoGenerateMetdata(dtlBean);
 	}
 
 	@Override

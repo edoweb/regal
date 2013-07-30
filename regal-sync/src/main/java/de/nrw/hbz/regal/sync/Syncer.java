@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.regal.PIDReporter;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
-import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
 import de.nrw.hbz.regal.sync.ingest.DownloaderInterface;
 import de.nrw.hbz.regal.sync.ingest.IngestInterface;
 
@@ -56,7 +56,7 @@ public class Syncer {
     private PIDReporter harvester;
     private IngestInterface ingester;
     private DownloaderInterface downloader;
-    private DigitalEntityBuilder builder;
+    private DigitalEntityBuilderInterface builder;
     private String mode;
     private String user;
     private String password;
@@ -81,7 +81,7 @@ public class Syncer {
      *            and passes it to the ingester.
      */
     public Syncer(IngestInterface ingester, DownloaderInterface downloader,
-	    DigitalEntityBuilder builder) {
+	    DigitalEntityBuilderInterface builder) {
 	this.ingester = ingester;
 	this.downloader = downloader;
 	this.builder = builder;

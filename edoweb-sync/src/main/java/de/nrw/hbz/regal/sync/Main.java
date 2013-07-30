@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.regal.DigitoolDownloader;
-import de.nrw.hbz.regal.sync.extern.DigitoolDigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder;
 import de.nrw.hbz.regal.sync.ingest.EdowebIngester;
 
 /**
@@ -36,7 +36,7 @@ public class Main {
      */
     public static void main(String[] args) {
 	Syncer syncer = new Syncer(new EdowebIngester(),
-		new DigitoolDownloader(), new DigitoolDigitalEntityBuilder());
+		new DigitoolDownloader(), new EdowebDigitalEntityBuilder());
 	syncer.main(args);
     }
 }

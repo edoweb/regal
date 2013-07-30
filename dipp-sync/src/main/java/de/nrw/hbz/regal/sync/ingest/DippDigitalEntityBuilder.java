@@ -29,14 +29,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
-import de.nrw.hbz.regal.sync.extern.DigitoolDigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
 import de.nrw.hbz.regal.sync.extern.StreamType;
+import de.nrw.hbz.regal.sync.extern.XmlUtils;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public class DippDigitalEntityBuilder extends DigitoolDigitalEntityBuilder {
+public class DippDigitalEntityBuilder implements DigitalEntityBuilderInterface {
     final static Logger logger = LoggerFactory
 	    .getLogger(DippDigitalEntityBuilder.class);
 
@@ -76,14 +77,16 @@ public class DippDigitalEntityBuilder extends DigitoolDigitalEntityBuilder {
 	    dcString = dcString.replaceAll("xmlns\\:ns", "xmlns:dc");
 
 	    dtlDe.setDc(dcString);
-	    NodeList list = getDocument(dcString).getElementsByTagName(
-		    "dc:title");
+
+	    NodeList list = XmlUtils.getDocument(dcString)
+		    .getElementsByTagName("dc:title");
 
 	    if (list != null && list.getLength() > 0) {
 		dtlDe.setLabel(list.item(0).getTextContent());
 	    }
 
-	    list = getDocument(dcString).getElementsByTagName("dc:type");
+	    list = XmlUtils.getDocument(dcString).getElementsByTagName(
+		    "dc:type");
 	    if (list != null && list.getLength() > 0) {
 		for (int i = 0; i < list.getLength(); i++) {
 		    Element el = (Element) list.item(i);
@@ -135,8 +138,8 @@ public class DippDigitalEntityBuilder extends DigitoolDigitalEntityBuilder {
 	    File relsExtFile = new File(baseDir + File.separator
 		    + "RELS-EXT.xml");
 	    logger.debug("Parse file: " + relsExtFile.getAbsolutePath());
-	    NodeList list = getDocument(relsExtFile).getElementsByTagName(
-		    relation);
+	    NodeList list = XmlUtils.getDocument(relsExtFile)
+		    .getElementsByTagName(relation);
 
 	    logger.debug("found " + list.getLength() + " nodes with tagname "
 		    + relation);

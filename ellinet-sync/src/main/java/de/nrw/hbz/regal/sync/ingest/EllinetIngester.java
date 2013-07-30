@@ -110,7 +110,7 @@ public class EllinetIngester implements IngestInterface
 		logger.info(pid + " Found monograph.");
 		webclient
 				.createObject(dtlBean, "application/pdf", ObjectType.monograph);
-		webclient.metadata(dtlBean);
+		webclient.autoGenerateMetdata(dtlBean);
 		logger.info(pid + " " + "updated.\n");
 	}
 

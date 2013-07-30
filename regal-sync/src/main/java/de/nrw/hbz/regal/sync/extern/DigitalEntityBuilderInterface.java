@@ -21,7 +21,7 @@ package de.nrw.hbz.regal.sync.extern;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public interface DigitalEntityBuilder
+public interface DigitalEntityBuilderInterface
 {
 	/**
 	 * Builds a java representation of a Digitool object the original object

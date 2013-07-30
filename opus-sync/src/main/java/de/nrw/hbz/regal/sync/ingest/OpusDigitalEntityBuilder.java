@@ -43,14 +43,14 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
-import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
 import de.nrw.hbz.regal.sync.extern.StreamType;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public class OpusDigitalEntityBuilder implements DigitalEntityBuilder {
+public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
     final static Logger logger = LoggerFactory
 	    .getLogger(OpusDigitalEntityBuilder.class);
 
