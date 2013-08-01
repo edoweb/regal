@@ -41,6 +41,14 @@
 					<artifactId>log4j-over-slf4j</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>sli4j-slf4j-logback</artifactId>
+					<groupId>com.googlecode.sli4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-jdk14</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -162,11 +170,23 @@
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>dipp-sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>sli4j-slf4j-logback</artifactId>
+					<groupId>com.googlecode.sli4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>opus-sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>sli4j-slf4j-logback</artifactId>
+					<groupId>com.googlecode.sli4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project> 

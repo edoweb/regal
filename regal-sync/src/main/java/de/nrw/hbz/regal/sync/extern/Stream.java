@@ -23,38 +23,73 @@ import java.io.File;
  * 
  */
 public class Stream {
-    File stream;
+    File file;
     String mimeType;
     StreamType type;
+    String fileId;
 
     /**
-     * @param stream
+     * @param file
      *            well it is a file
      * @param mimeType
      *            the mime type of file's data
      * @param type
      *            a type (how is it used in the application context)
      */
-    public Stream(File stream, String mimeType, StreamType type) {
+    public Stream(File file, String mimeType, StreamType type) {
 	super();
-	this.stream = stream;
+	this.file = file;
 	this.mimeType = mimeType;
 	this.type = type;
     }
 
     /**
+     * @param file
+     *            well it is a file
+     * @param mimeType
+     *            the mime type of file's data
+     * @param type
+     *            a type (how is it used in the application context)
+     * @param fileId
+     *            a id for the file (comes from digitool)
+     * 
+     */
+    public Stream(File file, String mimeType, StreamType type, String fileId) {
+	super();
+	this.file = file;
+	this.mimeType = mimeType;
+	this.type = type;
+	this.fileId = fileId;
+    }
+
+    /**
      * @return the actual file
      */
-    public File getStream() {
-	return stream;
+    public File getFile() {
+	return file;
+    }
+
+    /**
+     * @return the fileId associated with the file (optional), can be null;
+     */
+    public String getFileId() {
+	return fileId;
+    }
+
+    /**
+     * @param fileId
+     *            associates a id with the file
+     */
+    public void setFileId(String fileId) {
+	this.fileId = fileId;
     }
 
     /**
      * @param stream
      *            file
      */
-    public void setStream(File stream) {
-	this.stream = stream;
+    public void setFile(File stream) {
+	this.file = stream;
     }
 
     /**

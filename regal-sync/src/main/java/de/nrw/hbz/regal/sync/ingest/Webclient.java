@@ -268,7 +268,7 @@ public class Webclient {
 
 	try {
 
-	    if (dtlBean.getMarcFile() != null)
+	    if (dtlBean.getStream(StreamType.MARC).getFile() != null)
 		dc.add(marc2dc(dtlBean));
 	    else if (dtlBean.getDc() != null) {
 		dc.add(new DCBeanAnnotated(dtlBean.getDc()));
@@ -327,13 +327,13 @@ public class Webclient {
 	    logger.info(pid + " Update data: " + dataStream.getMimeType());
 	    MultiPart multiPart = new MultiPart();
 	    multiPart.bodyPart(new StreamDataBodyPart("InputStream",
-		    new FileInputStream(dataStream.getStream()), dataStream
-			    .getStream().getName()));
+		    new FileInputStream(dataStream.getFile()), dataStream
+			    .getFile().getName()));
 	    multiPart.bodyPart(new BodyPart(dataStream.getMimeType(),
 		    MediaType.TEXT_PLAIN_TYPE));
 
-	    logger.info("Upload: " + dataStream.getStream().getName());
-	    multiPart.bodyPart(new BodyPart(dataStream.getStream().getName(),
+	    logger.info("Upload: " + dataStream.getFile().getName());
+	    multiPart.bodyPart(new BodyPart(dataStream.getFile().getName(),
 		    MediaType.TEXT_PLAIN_TYPE));
 	    data.type("multipart/mixed").post(multiPart);
 
@@ -341,7 +341,7 @@ public class Webclient {
 	    logger.error(pid + " " + e.getMessage());
 	} catch (FileNotFoundException e) {
 	    logger.error(pid + " " + "FileNotFound "
-		    + dataStream.getStream().getAbsolutePath());
+		    + dataStream.getFile().getAbsolutePath());
 	} catch (Exception e) {
 	    logger.error(pid + " " + e.getMessage());
 	}
@@ -396,8 +396,9 @@ public class Webclient {
 	    Transformer transformer = tFactory
 		    .newTransformer(new StreamSource(ClassLoader
 			    .getSystemResourceAsStream("MARC21slim2OAIDC.xsl")));
-	    transformer.transform(new StreamSource(dtlBean.getMarcFile()),
-		    new StreamResult(str));
+	    transformer.transform(
+		    new StreamSource(dtlBean.getStream(StreamType.MARC)
+			    .getFile()), new StreamResult(str));
 	    String xmlStr = str.getBuffer().toString();
 	    DCBeanAnnotated dc = new DCBeanAnnotated(xmlStr);
 	    return dc;

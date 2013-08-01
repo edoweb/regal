@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -108,5 +109,63 @@ public class XmlUtils {
 	    e.printStackTrace();
 	}
 	return null;
+    }
+
+    /**
+     * @param file
+     *            file to store the string in
+     * @param str
+     *            the string will be stored in file
+     * @return a file containing the string
+     * @throws Exception
+     *             if something goes wrong
+     */
+    public static File stringToFile(File file, String str) throws Exception {
+	file.createNewFile();
+	FileOutputStream writer = null;
+	try {
+	    writer = new FileOutputStream(file);
+	    writer.write(str.replace("\n", " ").replace("  ", " ")
+		    .getBytes("utf-8"));
+	} catch (IOException e) {
+
+	    e.printStackTrace();
+	} finally {
+	    if (writer != null)
+		try {
+		    writer.flush();
+		    writer.close();
+		} catch (IOException ignored) {
+		}
+	}
+	str = null;
+	return file;
+    }
+
+    /**
+     * @param file
+     *            the contents of this file will be converted to a string
+     * @return a string with the content of the file
+     * @throws Exception
+     *             if something goes wrong
+     */
+    public static String fileToString(File file) throws Exception {
+	if (file == null || !file.exists()) {
+	    System.out.println("NO MARC METADATA");
+	    return "";
+	}
+	byte[] buffer = new byte[(int) file.length()];
+	BufferedInputStream f = null;
+	try {
+	    f = new BufferedInputStream(new FileInputStream(file));
+	    f.read(buffer);
+	} finally {
+	    if (f != null)
+		try {
+		    f.close();
+		} catch (IOException ignored) {
+		}
+	}
+	return new String(buffer);
     }
 }

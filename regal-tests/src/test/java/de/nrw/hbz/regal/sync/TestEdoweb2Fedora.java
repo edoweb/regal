@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -70,7 +69,6 @@ public class TestEdoweb2Fedora {
     }
 
     @Before
-    @After
     public void cleanUp() throws IOException {
 	File dir = new File("/tmp/edoweb/test");
 	if (dir.exists())
@@ -83,7 +81,13 @@ public class TestEdoweb2Fedora {
     public void mainTest() throws IOException {
 	Main main = new Main();
 	pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();
-
+	main.main(new String[] { "--mode", "DELE", "--user", user,
+		"--password", password, "--dtl", piddownloaderServer, "-cache",
+		piddownloaderDownloadLocation, "--oai", pidreporterServer,
+		"--set", pidreporterSet, "--timestamp",
+		pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+		"http://localhost", "-list", pidreporterPidFile, "-namespace",
+		"test" });
 	main.main(new String[] { "--mode", "PIDL", "--user", user,
 		"--password", password, "--dtl", piddownloaderServer, "-cache",
 		piddownloaderDownloadLocation, "--oai", pidreporterServer,
@@ -92,21 +96,14 @@ public class TestEdoweb2Fedora {
 		"http://localhost", "-list", pidreporterPidFile, "-namespace",
 		"test" });
 
-	main.main(new String[] { "--mode", "UPDT", "--user", user,
-		"--password", password, "--dtl", piddownloaderServer, "-cache",
-		piddownloaderDownloadLocation, "--oai", pidreporterServer,
-		"--set", pidreporterSet, "--timestamp",
-		pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
-		"http://localhost", "-list", pidreporterPidFile, "-namespace",
-		"test" });
-
-	main.main(new String[] { "--mode", "DELE", "--user", user,
-		"--password", password, "--dtl", piddownloaderServer, "-cache",
-		piddownloaderDownloadLocation, "--oai", pidreporterServer,
-		"--set", pidreporterSet, "--timestamp",
-		pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
-		"http://localhost", "-list", pidreporterPidFile, "-namespace",
-		"test" });
+	// main.main(new String[] { "--mode", "UPDT", "--user", user,
+	// "--password", password, "--dtl", piddownloaderServer, "-cache",
+	// piddownloaderDownloadLocation, "--oai", pidreporterServer,
+	// "--set", pidreporterSet, "--timestamp",
+	// pidreporterTimestampFile, "--fedoraBase", fedoraUrl, "--host",
+	// "http://localhost", "-list", pidreporterPidFile, "-namespace",
+	// "test" });
+	//
 
     }
 }

@@ -19,7 +19,6 @@ package de.nrw.hbz.regal.sync.extern;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
@@ -28,8 +27,6 @@ import java.util.Vector;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-
-@SuppressWarnings("javadoc")
 public class DigitalEntity {
 
     private boolean isParent = true;
@@ -57,6 +54,19 @@ public class DigitalEntity {
 	streams = new HashMap<StreamType, Stream>();
     }
 
+    /**
+     * @param location
+     *            the directory of the entity
+     * @param pid
+     *            The pid of the entity
+     */
+    public DigitalEntity(String location, String pid) {
+	this.location = location;
+	this.pid = pid;
+	related = new Vector<RelatedDigitalEntity>();
+	streams = new HashMap<StreamType, Stream>();
+    }
+
     private String fileToString(File file, String streamId) throws Exception {
 	// String str = "";
 	if (pid == null)
@@ -80,35 +90,6 @@ public class DigitalEntity {
 
 	return new String(buffer);
 
-    }
-
-    private File stringToFile(String str, String streamId) throws Exception {
-	if (pid == null)
-	    throw new Exception("Can't set Attribute please set PID first.");
-	// System.out.println(location + File.separator + pid + "_" + streamId
-	// + ".xml");
-	File file = new File(location + File.separator + "." + pid + "_"
-		+ streamId + ".xml");
-
-	file.createNewFile();
-	FileOutputStream writer = null;
-	try {
-	    writer = new FileOutputStream(file);
-	    writer.write(str.replace("\n", " ").replace("  ", " ")
-		    .getBytes("utf-8"));
-	} catch (IOException e) {
-
-	    e.printStackTrace();
-	} finally {
-	    if (writer != null)
-		try {
-		    writer.flush();
-		    writer.close();
-		} catch (IOException ignored) {
-		}
-	}
-	str = null;
-	return file;
     }
 
     /**
@@ -266,10 +247,25 @@ public class DigitalEntity {
     }
 
     /**
+     * @param file
+     *            a file
+     * @param mime
+     *            a mimetype, e.g. application/pdf
+     * @param type
+     *            a stream type
+     * @param fileId
+     *            a id for the file
+     */
+    public void addStream(File file, String mime, StreamType type, String fileId) {
+	streams.put(type, new Stream(file, mime, type, fileId));
+
+    }
+
+    /**
      * @return the data stream
      */
     public File getStream() {
-	return streams.get(StreamType.DATA).getStream();
+	return streams.get(StreamType.DATA).getFile();
     }
 
     /**
@@ -282,242 +278,24 @@ public class DigitalEntity {
     /**
      * TODO: Remove:Digitool Specific
      * 
-     * @return a Marc File
-     */
-    public File getMarcFile() {
-	return streams.get(StreamType.MARC).getStream();
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return MarcFile
-     * @throws Exception
-     *             if io fails
-     */
-    public String getMarc() throws Exception {
-	return fileToString(streams.get(StreamType.MARC).getStream(),
-		StreamType.MARC.toString());
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @param marc
-     *            a marc string
-     */
-    public void setMarc(String marc) {
-	try {
-	    streams.put(StreamType.MARC,
-		    new Stream(stringToFile(marc, StreamType.MARC.toString()),
-			    "application/xml", StreamType.MARC));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
      * @return dc string
      * @throws Exception
      *             if io fails
      */
     public String getDc() throws Exception {
-	return fileToString(streams.get(StreamType.DC).getStream(),
+	return fileToString(streams.get(StreamType.DC).getFile(),
 		StreamType.DC.toString());
     }
 
     /**
      * TODO: Remove:Digitool Specific
      * 
-     * @param dc
-     *            dc string
-     */
-    public void setDc(String dc) {
-	try {
-	    streams.put(StreamType.DC,
-		    new Stream(stringToFile(dc, StreamType.DC.toString()),
-			    "application/xml", StreamType.DC));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return
+     * @return control section of a digitool object
      * @throws Exception
-     */
-    public String getMetsHdr() throws Exception {
-	return fileToString(streams.get(StreamType.METS_HDR).getStream(),
-		StreamType.METS_HDR.toString());
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @param metsHdr
-     */
-    public void setMetsHdr(String metsHdr) {
-	try {
-	    streams.put(
-		    StreamType.METS_HDR,
-		    new Stream(stringToFile(metsHdr,
-			    StreamType.METS_HDR.toString()), "application/xml",
-			    StreamType.METS_HDR));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return
-     * @throws Exception
-     */
-    public String getStructMap() throws Exception {
-	return fileToString(streams.get(StreamType.STRUCT_MAP).getStream(),
-		StreamType.STRUCT_MAP.toString());
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @param structMap
-     */
-    public void setStructMap(String structMap) {
-	try {
-	    streams.put(
-		    StreamType.STRUCT_MAP,
-		    new Stream(stringToFile(structMap,
-			    StreamType.STRUCT_MAP.toString()),
-			    "application/xml", StreamType.STRUCT_MAP));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return
-     * @throws Exception
-     */
-    public String getFileSec() throws Exception {
-	return fileToString(streams.get(StreamType.FILE_SEC).getStream(),
-		StreamType.FILE_SEC.toString());
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @param fileSec
-     */
-    public void setFileSec(String fileSec) {
-	try {
-	    streams.put(
-		    StreamType.FILE_SEC,
-		    new Stream(stringToFile(fileSec,
-			    StreamType.FILE_SEC.toString()), "application/xml",
-			    StreamType.FILE_SEC));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return
-     * @throws Exception
-     */
-    public String getJhove() throws Exception {
-	return fileToString(streams.get(StreamType.JHOVE).getStream(),
-		StreamType.JHOVE.toString());
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @param jhove
-     */
-    public void setJhove(String jhove) {
-	try {
-	    streams.put(StreamType.JHOVE,
-		    new Stream(
-			    stringToFile(jhove, StreamType.JHOVE.toString()),
-			    "application/xml", StreamType.JHOVE));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return
-     * @throws Exception
-     */
-    public String getRights() throws Exception {
-	return fileToString(streams.get(StreamType.RIGHTS).getStream(),
-		StreamType.RIGHTS.toString());
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @param rights
-     */
-    public void setRights(String rights) {
-	try {
-	    streams.put(
-		    StreamType.RIGHTS,
-		    new Stream(stringToFile(rights,
-			    StreamType.RIGHTS.toString()), "application/xml",
-			    StreamType.RIGHTS));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return
-     * @throws Exception
-     */
-    public String getHistory() throws Exception {
-	return fileToString(streams.get(StreamType.HIST).getStream(),
-		StreamType.HIST.toString());
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @param history
-     */
-    public void setHistory(String history) {
-	try {
-	    streams.put(StreamType.HIST,
-		    new Stream(
-			    stringToFile(history, StreamType.HIST.toString()),
-			    "application/xml", StreamType.HIST));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return
-     * @throws Exception
+     *             if something goes wrong
      */
     public String getControl() throws Exception {
-	return fileToString(streams.get(StreamType.CONTROL).getStream(),
+	return fileToString(streams.get(StreamType.CONTROL).getFile(),
 		StreamType.CONTROL.toString());
 
     }
@@ -525,65 +303,7 @@ public class DigitalEntity {
     /**
      * TODO: Remove:Digitool Specific
      * 
-     * @param control
-     */
-    public void setControl(String control) {
-	try {
-	    streams.put(
-		    StreamType.CONTROL,
-		    new Stream(stringToFile(control,
-			    StreamType.CONTROL.toString()), "application/xml",
-			    StreamType.CONTROL));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * @param b
-     */
-    public void addViewMainLink(DigitalEntity b) {
-	related.add(new RelatedDigitalEntity(b, DigitalEntityRelation.VIEW_MAIN
-		.toString()));
-    }
-
-    /**
-     * @param b
-     */
-    public void addViewLink(DigitalEntity b) {
-	related.add(new RelatedDigitalEntity(b, DigitalEntityRelation.VIEW
-		.toString()));
-
-    }
-
-    /**
-     * @param b
-     */
-    public void addIndexLink(DigitalEntity b) {
-	related.add(new RelatedDigitalEntity(b, DigitalEntityRelation.INDEX
-		.toString()));
-
-    }
-
-    /**
-     * @param b
-     */
-    public void addArchiveLink(DigitalEntity b) {
-	related.add(new RelatedDigitalEntity(b, DigitalEntityRelation.ARCHIVE
-		.toString()));
-
-    }
-
-    /**
-     * @param b
-     */
-    public void addThumbnailLink(DigitalEntity b) {
-	related.add(new RelatedDigitalEntity(b, DigitalEntityRelation.THUMBNAIL
-		.toString()));
-    }
-
-    /**
-     * @return
+     * @return viewMain objects
      */
     public Vector<DigitalEntity> getViewMainLinks() {
 	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
@@ -595,62 +315,38 @@ public class DigitalEntity {
     }
 
     /**
-     * @return
-     * @throws Exception
+     * TODO: Remove:Digitool Specific
+     * 
+     * @return all related Objects with part_of relation
      */
-    public String getPreservation() throws Exception {
-	return fileToString(streams.get(StreamType.PREMIS).getStream(),
-		StreamType.PREMIS.toString());
-
-    }
-
-    /**
-     * @param preservation
-     */
-    public void setPreservation(String preservation) {
-	try {
-	    streams.put(
-		    StreamType.PREMIS,
-		    new Stream(stringToFile(preservation,
-			    StreamType.PREMIS.toString()), "application/xml",
-			    StreamType.PREMIS));
-	} catch (Exception e) {
-	    e.printStackTrace();
+    public Vector<DigitalEntity> getParts() {
+	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+	for (RelatedDigitalEntity rel : related) {
+	    if (rel.relation == DigitalEntityRelation.part_of.toString())
+		links.add(rel.entity);
 	}
+	return links;
     }
 
     /**
-     * @return
-     * @throws Exception
+     * TODO: Remove:Digitool Specific
+     * 
+     * @return return all part_of related objects with usage type volumes
      */
-    public String getText() throws Exception {
-	return fileToString(streams.get(StreamType.TEXT).getStream(),
-		StreamType.TEXT.toString());
-    }
-
-    /**
-     * @param text
-     */
-    public void setText(String text) {
-	try {
-	    streams.put(StreamType.TEXT,
-		    new Stream(stringToFile(text, StreamType.TEXT.toString()),
-			    "application/xml", StreamType.TEXT));
-	} catch (Exception e) {
-	    e.printStackTrace();
+    public Vector<DigitalEntity> getVolumes() {
+	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+	for (RelatedDigitalEntity rel : related) {
+	    if ((rel.relation == DigitalEntityRelation.part_of.toString())
+		    && (rel.entity.getUsageType().compareTo("volume") == 0))
+		links.add(rel.entity);
 	}
+	return links;
     }
 
-    // @Override
-    // public String toString()
-    // {
-    // // return "pid: " + pid + "\n" + "control: " + control + "\n" + "dc: "
-    // // + dc + "\n" + "preservation: " + preservation + "\n"
-    // // + "jhove: " + jhove + "\n" + "rights: " + rights + "\n"
-    // // + "history: " + history + "\n" + "text: " + text + "\n";
-    // }
     /**
-     * @return
+     * TODO: Remove:Digitool Specific
+     * 
+     * @return related objects with usage type ARCHIVE
      */
     public Vector<DigitalEntity> getArchiveLinks() {
 	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
@@ -662,19 +358,9 @@ public class DigitalEntity {
     }
 
     /**
-     * @return
-     */
-    public Vector<DigitalEntity> getThumbnailLinks() {
-	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
-	for (RelatedDigitalEntity rel : related) {
-	    if (rel.relation == DigitalEntityRelation.THUMBNAIL.toString())
-		links.add(rel.entity);
-	}
-	return links;
-    }
-
-    /**
-     * @return
+     * TODO: Remove:Digitool Specific
+     * 
+     * @return elated objects with usage type VIEW
      */
     public Vector<DigitalEntity> getViewLinks() {
 	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
@@ -686,25 +372,54 @@ public class DigitalEntity {
     }
 
     /**
-     * @return
-     */
-    public Vector<DigitalEntity> getIndexLinks() {
-	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
-	for (RelatedDigitalEntity rel : related) {
-	    if (rel.relation == DigitalEntityRelation.INDEX.toString())
-		links.add(rel.entity);
-	}
-	return links;
-    }
-
-    /**
-     * @return
+     * @return the usage type is one more type
      */
     public String getUsageType() {
 	return usageType;
     }
 
+    /**
+     * @param usageType
+     *            set the usage type as you wish
+     */
     public void setUsageType(String usageType) {
 	this.usageType = usageType;
     }
+
+    @Override
+    public String toString() {
+	return toString(this, 12, 0);
+    }
+
+    /**
+     * @param digitalEntity
+     *            the entity you want to convert to string
+     * @param depth
+     *            numbers of hierarchy
+     * @param indent
+     *            usually start with 0
+     * @return a string representation of the digitalEntity
+     */
+    public String toString(DigitalEntity digitalEntity, int depth, int indent) {
+	StringBuffer buffer = new StringBuffer();
+	buffer.append(indent(indent));
+	buffer.append(digitalEntity.getPid() + " (" + digitalEntity.getLabel()
+		+ ") usage_type:" + digitalEntity.getUsageType() + "  parent:"
+		+ digitalEntity.getParentPid());
+	if (depth != 0) {
+	    for (RelatedDigitalEntity related : digitalEntity.getRelated()) {
+		buffer.append(toString(related.entity, depth - 1, indent + 1));
+	    }
+	}
+	return buffer.toString();
+    }
+
+    private String indent(int indent) {
+	StringBuffer buffer = new StringBuffer();
+	buffer.append("\n");
+	for (int i = 0; i < indent; i++)
+	    buffer.append("\t");
+	return buffer.toString();
+    }
+
 }

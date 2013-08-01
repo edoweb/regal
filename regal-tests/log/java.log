@@ -1,0 +1,588 @@
+INFO main de.nrw.hbz.regal.sync.Syncer - 1 / 1
+INFO main de.nrw.hbz.regal.sync.Syncer - 1/1 3237397 deleted!
+
+INFO main de.nrw.hbz.regal.sync.Syncer - 1 / 1
+INFO main de.nrw.hbz.regal.DigitoolDownloader - Create Directory /tmp/edoweb/test/3237397 and start to Download files
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237426 (Kapitel_II), child of 3237397 : streamId: HT015282733_ej_c_20091006105338_01 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237438 (Kapitel_VI), child of 3237397 : streamId: HT015282733_ej_c_20091006105338_13 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237410 (2008), child of 3237397 : streamId: HT015282733_ej_c_20091006104724_10 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237407 (2006), child of 3237397 : streamId: HT015282733_ej_c_20091006104724_07 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237415 (Inhaltsverzeichnis), child of 3237397 : streamId: HT015282733_ej_c_20091006105058_01 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237418 (Kapitel_I), child of 3237397 : streamId: HT015282733_ej_c_20091006105058_04 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237432 (Kapitel_IV), child of 3237397 : streamId: HT015282733_ej_c_20091006105338_07 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237421 (Vorwort), child of 3237397 : streamId: HT015282733_ej_c_20091006105058_07 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237443 (Kapitel_VII), child of 3237397 : streamId: HT015282733_ej_c_20091006110114_01 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237429 (Kapitel_III), child of 3237397 : streamId: HT015282733_ej_c_20091006105338_04 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237446 (Kapitel_VIII), child of 3237397 : streamId: HT015282733_ej_c_20091006110114_04 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237449 (Kapitel_IX), child of 3237397 : streamId: HT015282733_ej_c_20091006110114_07 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237452 (Kapitel_X), child of 3237397 : streamId: HT015282733_ej_c_20091006110114_10 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237455 (Kapitel_XI), child of 3237397 : streamId: HT015282733_ej_c_20091006110114_13 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237465 (Vorwort), child of 3237397 : streamId: HT015282733_ej_c_20091006110848_01 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237460 (Kapitel_XII), child of 3237397 : streamId: HT015282733_ej_c_20091006110238_01 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237476 (Abschnitt_4), child of 3237397 : streamId: HT015282733_ej_c_20091006111051_01 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237468 (Abschnitt_2), child of 3237397 : streamId: HT015282733_ej_c_20091006110848_04 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237471 (Abschnitt_3), child of 3237397 : streamId: HT015282733_ej_c_20091006110848_07 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237487 (Abschnitt_1), child of 3237397 : streamId: HT015282733_ej_c_20091006113905_01 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237479 (Abschnitt_5), child of 3237397 : streamId: HT015282733_ej_c_20091006111051_04 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237482 (Abschnitt_6), child of 3237397 : streamId: HT015282733_ej_c_20091006111051_07 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237504 (Abschnitt_5), child of 3237397 : streamId: HT015282733_ej_c_20091006114039_01 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237490 (Abschnitt_2), child of 3237397 : streamId: HT015282733_ej_c_20091006113905_04 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237493 (Abschnitt_3), child of 3237397 : streamId: HT015282733_ej_c_20091006113905_07 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237496 (Abschnitt_4), child of 3237397 : streamId: HT015282733_ej_c_20091006113905_10 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237499 (Vorwort), child of 3237397 : streamId: HT015282733_ej_c_20091006113905_13 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237401 (2005), child of 3237397 : streamId: HT015282733_ej_c_20091006104724_01 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237404 (2007), child of 3237397 : streamId: HT015282733_ej_c_20091006104724_04 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 3237435 (Kapitel_V), child of 3237397 : streamId: HT015282733_ej_c_20091006105338_10 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 4369752 (2009), child of 3237397 : streamId: HT015282733_ej_c_20111206090607_01 mets fileId does not exist! mets relation is broken!
+WARN main de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder - 4369755 (2010), child of 3237397 : streamId: HT015282733_ej_c_20111206090607_04 mets fileId does not exist! mets relation is broken!
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - 3237397 Start ingest: test:3237397
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - 3237397: start ingesting eJournal
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397 Found ejournal.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - 
+3237397 (Jahresberichte des LUA) usage_type:VIEW_MAIN  parent:null
+	3237397-2002 (2002) usage_type:volume  parent:3237397
+		3237428 (Kapitel_III) usage_type:issue  parent:3237397-2002
+			3237430 (Kapitel_III) usage_type:INDEX  parent:3237397
+			3237429 (Kapitel_III) usage_type:VIEW_MAIN  parent:3237397
+		3237437 (Kapitel_VI) usage_type:issue  parent:3237397-2002
+			3237438 (Kapitel_VI) usage_type:VIEW_MAIN  parent:3237397
+			3237439 (Kapitel_VI) usage_type:INDEX  parent:3237397
+		3237417 (Kapitel_I) usage_type:issue  parent:3237397-2002
+			3237418 (Kapitel_I) usage_type:VIEW_MAIN  parent:3237397
+			3237419 (Kapitel_I) usage_type:INDEX  parent:3237397
+		3237414 (Inhaltsverzeichnis) usage_type:issue  parent:3237397-2002
+			3237415 (Inhaltsverzeichnis) usage_type:VIEW_MAIN  parent:3237397
+			3237416 (Inhaltsverzeichnis) usage_type:INDEX  parent:3237397
+		3237431 (Kapitel_IV) usage_type:issue  parent:3237397-2002
+			3237432 (Kapitel_IV) usage_type:VIEW_MAIN  parent:3237397
+			3237433 (Kapitel_IV) usage_type:INDEX  parent:3237397
+		3237425 (Kapitel_II) usage_type:issue  parent:3237397-2002
+			3237426 (Kapitel_II) usage_type:VIEW_MAIN  parent:3237397
+			3237427 (Kapitel_II) usage_type:INDEX  parent:3237397
+		3237459 (Kapitel_XII) usage_type:issue  parent:3237397-2002
+			3237460 (Kapitel_XII) usage_type:VIEW_MAIN  parent:3237397
+			3237461 (Kapitel_XII) usage_type:INDEX  parent:3237397
+		3237442 (Kapitel_VII) usage_type:issue  parent:3237397-2002
+			3237443 (Kapitel_VII) usage_type:VIEW_MAIN  parent:3237397
+			3237444 (Kapitel_VII) usage_type:INDEX  parent:3237397
+		3237445 (Kapitel_VIII) usage_type:issue  parent:3237397-2002
+			3237446 (Kapitel_VIII) usage_type:VIEW_MAIN  parent:3237397
+			3237447 (Kapitel_VIII) usage_type:INDEX  parent:3237397
+		3237448 (Kapitel_IX) usage_type:issue  parent:3237397-2002
+			3237449 (Kapitel_IX) usage_type:VIEW_MAIN  parent:3237397
+			3237450 (Kapitel_IX) usage_type:INDEX  parent:3237397
+		3237451 (Kapitel_X) usage_type:issue  parent:3237397-2002
+			3237452 (Kapitel_X) usage_type:VIEW_MAIN  parent:3237397
+			3237453 (Kapitel_X) usage_type:INDEX  parent:3237397
+		3237454 (Kapitel_XI) usage_type:issue  parent:3237397-2002
+			3237455 (Kapitel_XI) usage_type:VIEW_MAIN  parent:3237397
+			3237456 (Kapitel_XI) usage_type:INDEX  parent:3237397
+		3237420 (Vorwort) usage_type:issue  parent:3237397-2002
+			3237421 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+			3237422 (Vorwort) usage_type:INDEX  parent:3237397
+		3237434 (Kapitel_V) usage_type:issue  parent:3237397-2002
+			3237435 (Kapitel_V) usage_type:VIEW_MAIN  parent:3237397
+			3237436 (Kapitel_V) usage_type:INDEX  parent:3237397
+	3237397-2003 (2003) usage_type:volume  parent:3237397
+		3237467 (Abschnitt_2) usage_type:issue  parent:3237397-2003
+			3237468 (Abschnitt_2) usage_type:VIEW_MAIN  parent:3237397
+			3237469 (Abschnitt_2) usage_type:INDEX  parent:3237397
+		3237464 (Vorwort) usage_type:issue  parent:3237397-2003
+			3237465 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+			3237466 (Vorwort) usage_type:INDEX  parent:3237397
+		3237470 (Abschnitt_3) usage_type:issue  parent:3237397-2003
+			3237471 (Abschnitt_3) usage_type:VIEW_MAIN  parent:3237397
+			3237472 (Abschnitt_3) usage_type:INDEX  parent:3237397
+		3237478 (Abschnitt_5) usage_type:issue  parent:3237397-2003
+			3237479 (Abschnitt_5) usage_type:VIEW_MAIN  parent:3237397
+			3237480 (Abschnitt_5) usage_type:INDEX  parent:3237397
+		3237475 (Abschnitt_4) usage_type:issue  parent:3237397-2003
+			3237476 (Abschnitt_4) usage_type:VIEW_MAIN  parent:3237397
+			3237477 (Abschnitt_4) usage_type:INDEX  parent:3237397
+		3237481 (Abschnitt_6) usage_type:issue  parent:3237397-2003
+			3237482 (Abschnitt_6) usage_type:VIEW_MAIN  parent:3237397
+			3237483 (Abschnitt_6) usage_type:INDEX  parent:3237397
+	3237397-2004 (2004) usage_type:volume  parent:3237397
+		3237489 (Abschnitt_2) usage_type:issue  parent:3237397-2004
+			3237490 (Abschnitt_2) usage_type:VIEW_MAIN  parent:3237397
+			3237491 (Abschnitt_2) usage_type:INDEX  parent:3237397
+		3237486 (Abschnitt_1) usage_type:issue  parent:3237397-2004
+			3237487 (Abschnitt_1) usage_type:VIEW_MAIN  parent:3237397
+			3237488 (Abschnitt_1) usage_type:INDEX  parent:3237397
+		3237492 (Abschnitt_3) usage_type:issue  parent:3237397-2004
+			3237493 (Abschnitt_3) usage_type:VIEW_MAIN  parent:3237397
+			3237494 (Abschnitt_3) usage_type:INDEX  parent:3237397
+		3237495 (Abschnitt_4) usage_type:issue  parent:3237397-2004
+			3237496 (Abschnitt_4) usage_type:VIEW_MAIN  parent:3237397
+			3237497 (Abschnitt_4) usage_type:INDEX  parent:3237397
+		3237498 (Vorwort) usage_type:issue  parent:3237397-2004
+			3237499 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+			3237500 (Vorwort) usage_type:INDEX  parent:3237397
+		3237503 (Abschnitt_5) usage_type:issue  parent:3237397-2004
+			3237504 (Abschnitt_5) usage_type:VIEW_MAIN  parent:3237397
+			3237505 (Abschnitt_5) usage_type:INDEX  parent:3237397
+	3237397-2005 (2005) usage_type:volume  parent:3237397
+		3237400 (2005) usage_type:issue  parent:3237397-2005
+			3237401 (2005) usage_type:VIEW_MAIN  parent:3237397
+			3237402 (2005) usage_type:INDEX  parent:3237397
+	3237397-2006 (2006) usage_type:volume  parent:3237397
+		3237406 (2006) usage_type:issue  parent:3237397-2006
+			3237407 (2006) usage_type:VIEW_MAIN  parent:3237397
+			3237408 (2006) usage_type:INDEX  parent:3237397
+	3237397-2007 (2007) usage_type:volume  parent:3237397
+		3237403 (2007) usage_type:issue  parent:3237397-2007
+			3237405 (2007) usage_type:INDEX  parent:3237397
+			3237404 (2007) usage_type:VIEW_MAIN  parent:3237397
+	3237397-2008 (2008) usage_type:volume  parent:3237397
+		3237409 (2008) usage_type:issue  parent:3237397-2008
+			3237410 (2008) usage_type:VIEW_MAIN  parent:3237397
+			3237411 (2008) usage_type:INDEX  parent:3237397
+	3237397-2009 (2009) usage_type:volume  parent:3237397
+		4369751 (2009) usage_type:issue  parent:3237397-2009
+			4369752 (2009) usage_type:VIEW_MAIN  parent:3237397
+			4369753 (2009) usage_type:INDEX  parent:3237397
+	3237397-2010 (2010) usage_type:volume  parent:3237397
+		4369754 (2010) usage_type:issue  parent:3237397-2010
+			4369755 (2010) usage_type:VIEW_MAIN  parent:3237397
+			4369756 (2010) usage_type:INDEX  parent:3237397
+	4369757 (Jahresberichte des LUA) usage_type:VIEW  parent:null
+	4369758 (Jahresberichte des LUA) usage_type:INDEX  parent:null
+	3237426 (Kapitel_II) usage_type:VIEW_MAIN  parent:3237397
+		3237425 (Kapitel_II) usage_type:VIEW_MAIN  parent:3237397
+		3237427 (Kapitel_II) usage_type:INDEX  parent:3237397
+	3237427 (Kapitel_II) usage_type:INDEX  parent:3237397
+		3237425 (Kapitel_II) usage_type:VIEW_MAIN  parent:3237397
+		3237426 (Kapitel_II) usage_type:VIEW_MAIN  parent:3237397
+	3237438 (Kapitel_VI) usage_type:VIEW_MAIN  parent:3237397
+		3237437 (Kapitel_VI) usage_type:VIEW_MAIN  parent:3237397
+		3237439 (Kapitel_VI) usage_type:INDEX  parent:3237397
+	3237410 (2008) usage_type:VIEW_MAIN  parent:3237397
+		3237409 (2008) usage_type:VIEW_MAIN  parent:3237397
+		3237411 (2008) usage_type:INDEX  parent:3237397
+	3237405 (2007) usage_type:INDEX  parent:3237397
+		3237404 (2007) usage_type:VIEW_MAIN  parent:3237397
+		3237403 (2007) usage_type:VIEW_MAIN  parent:3237397
+	3237407 (2006) usage_type:VIEW_MAIN  parent:3237397
+		3237406 (2006) usage_type:VIEW_MAIN  parent:3237397
+		3237408 (2006) usage_type:INDEX  parent:3237397
+	3237408 (2006) usage_type:INDEX  parent:3237397
+		3237407 (2006) usage_type:VIEW_MAIN  parent:3237397
+		3237406 (2006) usage_type:VIEW_MAIN  parent:3237397
+	3237411 (2008) usage_type:INDEX  parent:3237397
+		3237409 (2008) usage_type:VIEW_MAIN  parent:3237397
+		3237410 (2008) usage_type:VIEW_MAIN  parent:3237397
+	3237415 (Inhaltsverzeichnis) usage_type:VIEW_MAIN  parent:3237397
+		3237414 (Inhaltsverzeichnis) usage_type:VIEW_MAIN  parent:3237397
+		3237416 (Inhaltsverzeichnis) usage_type:INDEX  parent:3237397
+	3237418 (Kapitel_I) usage_type:VIEW_MAIN  parent:3237397
+		3237417 (Kapitel_I) usage_type:VIEW_MAIN  parent:3237397
+		3237419 (Kapitel_I) usage_type:INDEX  parent:3237397
+	3237430 (Kapitel_III) usage_type:INDEX  parent:3237397
+		3237428 (Kapitel_III) usage_type:VIEW_MAIN  parent:3237397
+		3237429 (Kapitel_III) usage_type:VIEW_MAIN  parent:3237397
+	3237432 (Kapitel_IV) usage_type:VIEW_MAIN  parent:3237397
+		3237431 (Kapitel_IV) usage_type:VIEW_MAIN  parent:3237397
+		3237433 (Kapitel_IV) usage_type:INDEX  parent:3237397
+	3237419 (Kapitel_I) usage_type:INDEX  parent:3237397
+		3237417 (Kapitel_I) usage_type:VIEW_MAIN  parent:3237397
+		3237418 (Kapitel_I) usage_type:VIEW_MAIN  parent:3237397
+	3237421 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+		3237420 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+		3237422 (Vorwort) usage_type:INDEX  parent:3237397
+	3237422 (Vorwort) usage_type:INDEX  parent:3237397
+		3237421 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+		3237420 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+	3237443 (Kapitel_VII) usage_type:VIEW_MAIN  parent:3237397
+		3237442 (Kapitel_VII) usage_type:VIEW_MAIN  parent:3237397
+		3237444 (Kapitel_VII) usage_type:INDEX  parent:3237397
+	3237444 (Kapitel_VII) usage_type:INDEX  parent:3237397
+		3237443 (Kapitel_VII) usage_type:VIEW_MAIN  parent:3237397
+		3237442 (Kapitel_VII) usage_type:VIEW_MAIN  parent:3237397
+	3237433 (Kapitel_IV) usage_type:INDEX  parent:3237397
+		3237431 (Kapitel_IV) usage_type:VIEW_MAIN  parent:3237397
+		3237432 (Kapitel_IV) usage_type:VIEW_MAIN  parent:3237397
+	3237429 (Kapitel_III) usage_type:VIEW_MAIN  parent:3237397
+		3237428 (Kapitel_III) usage_type:VIEW_MAIN  parent:3237397
+		3237430 (Kapitel_III) usage_type:INDEX  parent:3237397
+	3237439 (Kapitel_VI) usage_type:INDEX  parent:3237397
+		3237437 (Kapitel_VI) usage_type:VIEW_MAIN  parent:3237397
+		3237438 (Kapitel_VI) usage_type:VIEW_MAIN  parent:3237397
+	3237446 (Kapitel_VIII) usage_type:VIEW_MAIN  parent:3237397
+		3237445 (Kapitel_VIII) usage_type:VIEW_MAIN  parent:3237397
+		3237447 (Kapitel_VIII) usage_type:INDEX  parent:3237397
+	3237447 (Kapitel_VIII) usage_type:INDEX  parent:3237397
+		3237446 (Kapitel_VIII) usage_type:VIEW_MAIN  parent:3237397
+		3237445 (Kapitel_VIII) usage_type:VIEW_MAIN  parent:3237397
+	3237449 (Kapitel_IX) usage_type:VIEW_MAIN  parent:3237397
+		3237448 (Kapitel_IX) usage_type:VIEW_MAIN  parent:3237397
+		3237450 (Kapitel_IX) usage_type:INDEX  parent:3237397
+	3237450 (Kapitel_IX) usage_type:INDEX  parent:3237397
+		3237449 (Kapitel_IX) usage_type:VIEW_MAIN  parent:3237397
+		3237448 (Kapitel_IX) usage_type:VIEW_MAIN  parent:3237397
+	3237452 (Kapitel_X) usage_type:VIEW_MAIN  parent:3237397
+		3237451 (Kapitel_X) usage_type:VIEW_MAIN  parent:3237397
+		3237453 (Kapitel_X) usage_type:INDEX  parent:3237397
+	3237453 (Kapitel_X) usage_type:INDEX  parent:3237397
+		3237451 (Kapitel_X) usage_type:VIEW_MAIN  parent:3237397
+		3237452 (Kapitel_X) usage_type:VIEW_MAIN  parent:3237397
+	3237455 (Kapitel_XI) usage_type:VIEW_MAIN  parent:3237397
+		3237454 (Kapitel_XI) usage_type:VIEW_MAIN  parent:3237397
+		3237456 (Kapitel_XI) usage_type:INDEX  parent:3237397
+	3237456 (Kapitel_XI) usage_type:INDEX  parent:3237397
+		3237454 (Kapitel_XI) usage_type:VIEW_MAIN  parent:3237397
+		3237455 (Kapitel_XI) usage_type:VIEW_MAIN  parent:3237397
+	3237465 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+		3237464 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+		3237466 (Vorwort) usage_type:INDEX  parent:3237397
+	3237461 (Kapitel_XII) usage_type:INDEX  parent:3237397
+		3237459 (Kapitel_XII) usage_type:VIEW_MAIN  parent:3237397
+		3237460 (Kapitel_XII) usage_type:VIEW_MAIN  parent:3237397
+	3237460 (Kapitel_XII) usage_type:VIEW_MAIN  parent:3237397
+		3237459 (Kapitel_XII) usage_type:VIEW_MAIN  parent:3237397
+		3237461 (Kapitel_XII) usage_type:INDEX  parent:3237397
+	3237466 (Vorwort) usage_type:INDEX  parent:3237397
+		3237465 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+		3237464 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+	3237476 (Abschnitt_4) usage_type:VIEW_MAIN  parent:3237397
+		3237475 (Abschnitt_4) usage_type:VIEW_MAIN  parent:3237397
+		3237477 (Abschnitt_4) usage_type:INDEX  parent:3237397
+	3237477 (Abschnitt_4) usage_type:INDEX  parent:3237397
+		3237475 (Abschnitt_4) usage_type:VIEW_MAIN  parent:3237397
+		3237476 (Abschnitt_4) usage_type:VIEW_MAIN  parent:3237397
+	3237468 (Abschnitt_2) usage_type:VIEW_MAIN  parent:3237397
+		3237467 (Abschnitt_2) usage_type:VIEW_MAIN  parent:3237397
+		3237469 (Abschnitt_2) usage_type:INDEX  parent:3237397
+	3237469 (Abschnitt_2) usage_type:INDEX  parent:3237397
+		3237468 (Abschnitt_2) usage_type:VIEW_MAIN  parent:3237397
+		3237467 (Abschnitt_2) usage_type:VIEW_MAIN  parent:3237397
+	3237471 (Abschnitt_3) usage_type:VIEW_MAIN  parent:3237397
+		3237470 (Abschnitt_3) usage_type:VIEW_MAIN  parent:3237397
+		3237472 (Abschnitt_3) usage_type:INDEX  parent:3237397
+	3237472 (Abschnitt_3) usage_type:INDEX  parent:3237397
+		3237470 (Abschnitt_3) usage_type:VIEW_MAIN  parent:3237397
+		3237471 (Abschnitt_3) usage_type:VIEW_MAIN  parent:3237397
+	3237487 (Abschnitt_1) usage_type:VIEW_MAIN  parent:3237397
+		3237486 (Abschnitt_1) usage_type:VIEW_MAIN  parent:3237397
+		3237488 (Abschnitt_1) usage_type:INDEX  parent:3237397
+	3237488 (Abschnitt_1) usage_type:INDEX  parent:3237397
+		3237487 (Abschnitt_1) usage_type:VIEW_MAIN  parent:3237397
+		3237486 (Abschnitt_1) usage_type:VIEW_MAIN  parent:3237397
+	3237479 (Abschnitt_5) usage_type:VIEW_MAIN  parent:3237397
+		3237478 (Abschnitt_5) usage_type:VIEW_MAIN  parent:3237397
+		3237480 (Abschnitt_5) usage_type:INDEX  parent:3237397
+	3237480 (Abschnitt_5) usage_type:INDEX  parent:3237397
+		3237478 (Abschnitt_5) usage_type:VIEW_MAIN  parent:3237397
+		3237479 (Abschnitt_5) usage_type:VIEW_MAIN  parent:3237397
+	3237482 (Abschnitt_6) usage_type:VIEW_MAIN  parent:3237397
+		3237481 (Abschnitt_6) usage_type:VIEW_MAIN  parent:3237397
+		3237483 (Abschnitt_6) usage_type:INDEX  parent:3237397
+	3237483 (Abschnitt_6) usage_type:INDEX  parent:3237397
+		3237482 (Abschnitt_6) usage_type:VIEW_MAIN  parent:3237397
+		3237481 (Abschnitt_6) usage_type:VIEW_MAIN  parent:3237397
+	3237504 (Abschnitt_5) usage_type:VIEW_MAIN  parent:3237397
+		3237503 (Abschnitt_5) usage_type:VIEW_MAIN  parent:3237397
+		3237505 (Abschnitt_5) usage_type:INDEX  parent:3237397
+	3237505 (Abschnitt_5) usage_type:INDEX  parent:3237397
+		3237503 (Abschnitt_5) usage_type:VIEW_MAIN  parent:3237397
+		3237504 (Abschnitt_5) usage_type:VIEW_MAIN  parent:3237397
+	3237490 (Abschnitt_2) usage_type:VIEW_MAIN  parent:3237397
+		3237489 (Abschnitt_2) usage_type:VIEW_MAIN  parent:3237397
+		3237491 (Abschnitt_2) usage_type:INDEX  parent:3237397
+	3237491 (Abschnitt_2) usage_type:INDEX  parent:3237397
+		3237489 (Abschnitt_2) usage_type:VIEW_MAIN  parent:3237397
+		3237490 (Abschnitt_2) usage_type:VIEW_MAIN  parent:3237397
+	3237493 (Abschnitt_3) usage_type:VIEW_MAIN  parent:3237397
+		3237492 (Abschnitt_3) usage_type:VIEW_MAIN  parent:3237397
+		3237494 (Abschnitt_3) usage_type:INDEX  parent:3237397
+	3237494 (Abschnitt_3) usage_type:INDEX  parent:3237397
+		3237492 (Abschnitt_3) usage_type:VIEW_MAIN  parent:3237397
+		3237493 (Abschnitt_3) usage_type:VIEW_MAIN  parent:3237397
+	3237496 (Abschnitt_4) usage_type:VIEW_MAIN  parent:3237397
+		3237495 (Abschnitt_4) usage_type:VIEW_MAIN  parent:3237397
+		3237497 (Abschnitt_4) usage_type:INDEX  parent:3237397
+	3237497 (Abschnitt_4) usage_type:INDEX  parent:3237397
+		3237496 (Abschnitt_4) usage_type:VIEW_MAIN  parent:3237397
+		3237495 (Abschnitt_4) usage_type:VIEW_MAIN  parent:3237397
+	3237499 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+		3237498 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+		3237500 (Vorwort) usage_type:INDEX  parent:3237397
+	3237500 (Vorwort) usage_type:INDEX  parent:3237397
+		3237499 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+		3237498 (Vorwort) usage_type:VIEW_MAIN  parent:3237397
+	3237401 (2005) usage_type:VIEW_MAIN  parent:3237397
+		3237400 (2005) usage_type:VIEW_MAIN  parent:3237397
+		3237402 (2005) usage_type:INDEX  parent:3237397
+	3237402 (2005) usage_type:INDEX  parent:3237397
+		3237401 (2005) usage_type:VIEW_MAIN  parent:3237397
+		3237400 (2005) usage_type:VIEW_MAIN  parent:3237397
+	3237404 (2007) usage_type:VIEW_MAIN  parent:3237397
+		3237403 (2007) usage_type:VIEW_MAIN  parent:3237397
+		3237405 (2007) usage_type:INDEX  parent:3237397
+	3237416 (Inhaltsverzeichnis) usage_type:INDEX  parent:3237397
+		3237414 (Inhaltsverzeichnis) usage_type:VIEW_MAIN  parent:3237397
+		3237415 (Inhaltsverzeichnis) usage_type:VIEW_MAIN  parent:3237397
+	3237435 (Kapitel_V) usage_type:VIEW_MAIN  parent:3237397
+		3237434 (Kapitel_V) usage_type:VIEW_MAIN  parent:3237397
+		3237436 (Kapitel_V) usage_type:INDEX  parent:3237397
+	3237436 (Kapitel_V) usage_type:INDEX  parent:3237397
+		3237434 (Kapitel_V) usage_type:VIEW_MAIN  parent:3237397
+		3237435 (Kapitel_V) usage_type:VIEW_MAIN  parent:3237397
+	4369752 (2009) usage_type:VIEW_MAIN  parent:3237397
+		4369751 (2009) usage_type:VIEW_MAIN  parent:3237397
+		4369753 (2009) usage_type:INDEX  parent:3237397
+	4369753 (2009) usage_type:INDEX  parent:3237397
+		4369752 (2009) usage_type:VIEW_MAIN  parent:3237397
+		4369751 (2009) usage_type:VIEW_MAIN  parent:3237397
+	4369755 (2010) usage_type:VIEW_MAIN  parent:3237397
+		4369754 (2010) usage_type:VIEW_MAIN  parent:3237397
+		4369756 (2010) usage_type:INDEX  parent:3237397
+	4369756 (2010) usage_type:INDEX  parent:3237397
+		4369755 (2010) usage_type:VIEW_MAIN  parent:3237397
+		4369754 (2010) usage_type:VIEW_MAIN  parent:3237397
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237397: got indexed!
+WARN main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237397 Not oai provided! POST http://localhost:8080/api/utils/makeOaiSet/test:3237397 returned a response status of 500 Internal Server Error
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397 Found 9 parts.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 1/9
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2002 Found eJournal volume.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2002 Found 14 issues.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 1/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237428 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237428 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_III.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237428 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 2/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237437 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237437 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_VI.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237437 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 3/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237417 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237417 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_I.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237417 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 4/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237414 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237414 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Inhaltsverzeichnis.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237414 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 5/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237431 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237431 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_IV.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237431 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 6/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237425 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237425 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_II.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237425 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 7/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237459 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237459 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_XII.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237459 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 8/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237442 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237442 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_VII.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237442 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 9/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237445 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237445 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_VIII.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237445 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 10/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237448 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237448 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_IX.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237448 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 11/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237451 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237451 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_X.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237451 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 12/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237454 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237454 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_XI.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237454 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 13/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237420 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237420 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: vorwort.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237420 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 14/14
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237434 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237434 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Kapitel_V.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237434 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2002 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 2/9
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2003 Found eJournal volume.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2003 Found 6 issues.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 1/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237467 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237467 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Abschnitt_2.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237467 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 2/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237464 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237464 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Vorwort.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237464 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 3/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237470 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237470 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Abschnitt_3.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237470 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 4/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237478 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237478 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Abschnitt_5.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237478 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 5/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237475 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237475 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Abschnitt_4.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237475 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 6/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237481 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237481 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Abschnitt_6.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237481 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2003 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 3/9
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2004 Found eJournal volume.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2004 Found 6 issues.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 1/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237489 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237489 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Abschnitt_2.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237489 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 2/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237486 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237486 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Abschnitt_1.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237486 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 3/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237492 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237492 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Abschnitt_3.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237492 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 4/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237495 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237495 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Abschnitt_4.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237495 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 5/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237498 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237498 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Vorwort.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237498 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 6/6
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237503 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237503 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: Abschnitt_5.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237503 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2004 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 4/9
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2005 Found eJournal volume.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2005 Found 1 issues.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 1/1
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237400 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237400 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: LUA Jahresbericht 2005 komplett.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237400 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2005 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 5/9
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2006 Found eJournal volume.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2006 Found 1 issues.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 1/1
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237406 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237406 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: LUA-A-JB-2006-komplett.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237406 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2006 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 6/9
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2007 Found eJournal volume.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2007 Found 1 issues.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 1/1
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237403 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237403 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: LUA-Jahresbericht-2007_komplett.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237403 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2007 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 7/9
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2008 Found eJournal volume.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2008 Found 1 issues.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 1/1
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237409 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:3237409 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: LUA Jahresbericht 2008 komplett.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237409 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2008 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 8/9
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2009 Found eJournal volume.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2009 Found 1 issues.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 1/1
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:4369751 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:4369751 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: LUA_Jahresbericht_2009_komplett.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:4369751 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2009 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 9/9
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2010 Found eJournal volume.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2010 Found 1 issues.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - Part: 1/1
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:4369754 Found eJournal issue.
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:4369754 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: LUA_Jahresbericht_2010_komplett.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:4369754 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397-2010 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:3237397 and all volumes updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - 3237397: end ingesting eJournal
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - 3237397 Thanx and goodbye!
+
+INFO main de.nrw.hbz.regal.sync.Syncer - 1/1 3237397 has been processed!
+

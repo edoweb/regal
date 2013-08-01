@@ -76,7 +76,7 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 	    dcString = dcString.replaceAll("</ns\\:", "</dc:");
 	    dcString = dcString.replaceAll("xmlns\\:ns", "xmlns:dc");
 
-	    dtlDe.setDc(dcString);
+	    // dtlDe.setDc(dcString);
 
 	    NodeList list = XmlUtils.getDocument(dcString)
 		    .getElementsByTagName("dc:title");

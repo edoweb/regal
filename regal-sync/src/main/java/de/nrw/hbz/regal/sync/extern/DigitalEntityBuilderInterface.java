@@ -21,19 +21,18 @@ package de.nrw.hbz.regal.sync.extern;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public interface DigitalEntityBuilderInterface
-{
-	/**
-	 * Builds a java representation of a Digitool object the original object
-	 * must be downloaded first in a local directory using DigitoolDownloader.
-	 * 
-	 * @param baseDir
-	 *            the dir in which the downloaded digitool object exists
-	 * @param pid
-	 *            the pid of the object
-	 * @return a DigitalEntity java representation of the digitool object
-	 * @throws Exception
-	 *             if something goes wrong you probably want to stop.
-	 */
-	public DigitalEntity build(String baseDir, String pid) throws Exception;
+public interface DigitalEntityBuilderInterface {
+    /**
+     * Builds a java representation of a digital object the original object must
+     * be downloaded first in a local directory using a Downloader.
+     * 
+     * @param location
+     *            the dir in which the downloaded object exists
+     * @param pid
+     *            the pid of the object
+     * @return a DigitalEntity java representation of the digitool object
+     * @throws Exception
+     *             if something goes wrong you probably want to stop.
+     */
+    public DigitalEntity build(String location, String pid) throws Exception;
 }

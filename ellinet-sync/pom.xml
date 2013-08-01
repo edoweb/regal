@@ -115,5 +115,10 @@
 			<version>1.7.5</version>
 			
 		</dependency>
+		<dependency>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>edoweb-sync</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

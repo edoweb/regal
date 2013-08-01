@@ -21,24 +21,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -81,7 +74,7 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 
 	    Element root = getDocument(file);
 
-	    dtlDe.setDc(nodeToString(root));
+	    // dtlDe.setDc(nodeToString(root));
 	    NodeList list = root.getElementsByTagName("dc:title");
 
 	    if (list != null && list.getLength() > 0) {
@@ -129,26 +122,6 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 
 	return dtlDe;
 
-    }
-
-    private String nodeToString(Node node) {
-	try {
-	    TransformerFactory transFactory = TransformerFactory.newInstance();
-	    Transformer transformer = transFactory.newTransformer();
-	    StringWriter buffer = new StringWriter(1024);
-	    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-		    "yes");
-
-	    transformer
-		    .transform(new DOMSource(node), new StreamResult(buffer));
-	    String str = buffer.toString();
-	    return str;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	} catch (Error error) {
-	    error.printStackTrace();
-	}
-	return "";
     }
 
     private Element getDocument(File digitalEntityFile) {
