@@ -5,95 +5,95 @@
 
 		<!-- DC to DC -->
 		<data source="*.http://purl.org/dc/elements/1.1/contributor"
-			name="dc:contributor">
+			name="oai_dc:contributor">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/coverage" name="dc:coverage">
+		<data source="*.http://purl.org/dc/elements/1.1/coverage" name="oai_oai:coverage">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/creator" name="dc:creator">
+		<data source="*.http://purl.org/dc/elements/1.1/creator" name="oai_dc:creator">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/date" name="dc:date">
+		<data source="*.http://purl.org/dc/elements/1.1/date" name="oai_dc:date">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<data source="*.http://purl.org/dc/elements/1.1/description"
-			name="dc:description">
+			name="oai_dc:description">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/format" name="dc:format">
+		<data source="*.http://purl.org/dc/elements/1.1/format" name="oai_dc:format">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/identifier" name="dc:identifier">
+		<data source="*.http://purl.org/dc/elements/1.1/identifier" name="oai_dc:identifier">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/language" name="dc:language">
+		<data source="*.http://purl.org/dc/elements/1.1/language" name="oai_dc:language">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/publisher" name="dc:publisher">
+		<data source="*.http://purl.org/dc/elements/1.1/publisher" name="oai_dc:publisher">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/relation" name="dc:relation">
+		<data source="*.http://purl.org/dc/elements/1.1/relation" name="oai_dc:relation">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/rights" name="dc:rights">
+		<data source="*.http://purl.org/dc/elements/1.1/rights" name="oai_dc:rights">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/source" name="dc:source">
+		<data source="*.http://purl.org/dc/elements/1.1/source" name="oai_dc:source">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/subject" name="dc:subject">
+		<data source="*.http://purl.org/dc/elements/1.1/subject" name="oai_dc:subject">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/title" name="dc:title">
+		<data source="*.http://purl.org/dc/elements/1.1/title" name="oai_dc:title">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/elements/1.1/type" name="dc:type">
+		<data source="*.http://purl.org/dc/elements/1.1/type" name="oai_dc:type">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 
 		<!-- dcterms to dc -->
-		<data source="*.http://purl.org/dc/terms/issued" name="dc:date">
+		<data source="*.http://purl.org/dc/terms/issued" name="oai_dc:date">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 
-		<data source="*.http://purl.org/dc/terms/language" name="dc:language">
+		<data source="*.http://purl.org/dc/terms/language" name="oai_dc:language">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/terms/isPartOf" name="dc:relation">
+		<data source="*.http://purl.org/dc/terms/isPartOf" name="oai_dc:relation">
 			<regexp match="((.*))" format="${1}" />
 		</data>
-		<data source="*.http://purl.org/dc/terms/subject" name="dc:subject">
+		<data source="*.http://purl.org/dc/terms/subject" name="oai_dc:subject">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<!-- ifla to dc -->
 		<data source="*.http://iflastandards.info/ns/isbd/elements/P1004"
-			name="dc:title">
+			name="oai_dc:title">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<data source="*.http://iflastandards.info/ns/isbd/elements/P1016"
-			name="dc:coverage">
+			name="oai_dc:coverage">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<data source="*.http://iflastandards.info/ns/isbd/elements/P1006"
-			name="dc:description">
+			name="oai_dc:description">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<!-- foaf to dc -->
 
-		<data source="*.http://xmlns.com/foaf/0.1/isPrimaryTopicOf" name="dc:relation">
+		<data source="*.http://xmlns.com/foaf/0.1/isPrimaryTopicOf" name="oai_dc:relation">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 
 		<!-- rdf to dc -->
 		<data source="*.http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-			name="dc:type">
+			name="oai_dc:type">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 
 		<!-- lobid to dc -->
 		<data source="*.http://lobid.org/vocab/lobid#fulltextOnline"
-			name="dc:relation">
+			name="oai_dc:relation">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 	</rules>

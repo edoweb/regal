@@ -390,6 +390,11 @@ class Archive implements ArchiveInterface {
 
 	return rootObject;
     }
+
+    public void readDcToNode(Node node, InputStream in, String dcNamespace) {
+	fedoraInterface.readDcToNode(node, in, dcNamespace);
+    }
+
     /*
      * #How is the #earth so #small. #elliptic #rider, #spaceegg, #transport of
      * my #soul. #ahouuuuu

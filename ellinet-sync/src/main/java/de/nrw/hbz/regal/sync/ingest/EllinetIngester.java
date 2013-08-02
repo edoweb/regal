@@ -36,94 +36,78 @@ import de.nrw.hbz.regal.sync.extern.DigitalEntity;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class EllinetIngester implements IngestInterface
-{
-	final static Logger logger = LoggerFactory.getLogger(EllinetIngester.class);
+public class EllinetIngester implements IngestInterface {
+    final static Logger logger = LoggerFactory.getLogger(EllinetIngester.class);
 
-	private String namespace = "ellinet";
-	String host = null;
-	Webclient webclient = null;
+    private String namespace = "ellinet";
+    String host = null;
+    Webclient webclient = null;
 
-	@Override
-	public void init(String host, String user, String password, String ns)
-	{
-		this.namespace = ns;
-		this.host = host;
-		webclient = new Webclient(namespace, user, password, host);
+    @Override
+    public void init(String host, String user, String password, String ns) {
+	this.namespace = ns;
+	this.host = host;
+	webclient = new Webclient(namespace, user, password, host);
+    }
+
+    @Override
+    public ContentModel createContentModel() {
+	return null;
+    }
+
+    @Override
+    public void ingest(DigitalEntity dtlBean) {
+	logger.info("Start ingest: " + namespace + ":" + dtlBean.getPid());
+
+	String partitionC = null;
+	String pid = null;
+	pid = dtlBean.getPid();
+	try {
+	    ControlBean control = new ControlBean(dtlBean);
+	    partitionC = control.getPartitionC().firstElement();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+	try {
+
+	    if (partitionC.compareTo("HSS00DZM") == 0) {
+		logger.info(pid + ": start ingesting ellinetObject");
+		updateMonographs(dtlBean);
+		logger.info(pid + ": end ingesting eJournal");
+	    } else {
+		logger.warn("Unknown type: " + partitionC
+			+ ". No further actions performed.");
+	    }
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    logger.info(e.getMessage());
 	}
 
-	@Override
-	public ContentModel createContentModel()
-	{
-		return null;
-	}
+    }
 
-	@Override
-	public void ingest(DigitalEntity dtlBean)
-	{
-		logger.info("Start ingest: " + namespace + ":" + dtlBean.getPid());
+    @Override
+    public void update(DigitalEntity dtlBean) {
+	ingest(dtlBean);
+    }
 
-		String partitionC = null;
-		String pid = null;
-		pid = dtlBean.getPid();
-		try
-		{
-			ControlBean control = new ControlBean(dtlBean);
-			partitionC = control.getPartitionC().firstElement();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		try
-		{
+    private void updateMonographs(DigitalEntity dtlBean) {
+	String pid = namespace + ":" + dtlBean.getPid();
+	logger.info(pid + " Found monograph.");
+	webclient
+		.createObject(dtlBean, "application/pdf", ObjectType.monograph);
+	webclient.autoGenerateMetdata(dtlBean);
+	webclient.publish(dtlBean);
+	logger.info(pid + " " + "updated.\n");
+    }
 
-			if (partitionC.compareTo("HSS00DZM") == 0)
-			{
-				logger.info(pid + ": start ingesting ellinetObject");
-				updateMonographs(dtlBean);
-				logger.info(pid + ": end ingesting eJournal");
-			}
-			else
-			{
-				logger.warn("Unknown type: " + partitionC
-						+ ". No further actions performed.");
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			logger.info(e.getMessage());
-		}
+    @Override
+    public void delete(String pid) {
+	webclient.delete(pid);
+    }
 
-	}
+    @Override
+    public void setNamespace(String namespace) {
+	this.namespace = namespace;
 
-	@Override
-	public void update(DigitalEntity dtlBean)
-	{
-		ingest(dtlBean);
-	}
-
-	private void updateMonographs(DigitalEntity dtlBean)
-	{
-		String pid = namespace + ":" + dtlBean.getPid();
-		logger.info(pid + " Found monograph.");
-		webclient
-				.createObject(dtlBean, "application/pdf", ObjectType.monograph);
-		webclient.autoGenerateMetdata(dtlBean);
-		logger.info(pid + " " + "updated.\n");
-	}
-
-	@Override
-	public void delete(String pid)
-	{
-		webclient.delete(pid);
-	}
-
-	@Override
-	public void setNamespace(String namespace)
-	{
-		this.namespace = namespace;
-
-	}
+    }
 }

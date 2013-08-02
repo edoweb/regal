@@ -16,6 +16,7 @@
  */
 package de.nrw.hbz.regal.sync.ingest;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -136,18 +137,20 @@ public class DippIngester implements IngestInterface {
 		dtlBean.getPid().lastIndexOf(':') + 1);
 	dtlBean.setPid(ppid);
 
-	// DippMapping mapper = new DippMapping();
-	//
-	// String metadata = mapper.map(new
-	// File(dtlBean.getLocation()+File.separator+"QDC.xml"),
-	// dtlBean.getPid());//printRelations(dtlBean, dtlBean);
+	DippMapping mapper = new DippMapping();
+
+	String metadata = mapper.map(new File(dtlBean.getLocation()
+		+ File.separator + "QDC.xml"),
+		namespace + ":" + dtlBean.getPid());
+	// printRelations(dtlBean, dtlBean);
 	// // logger.info(metadata);
-	String metadata = "";
+	// String metadata = "";
 	map.clear();
 	logger.info(pid + " " + "Found eJournal article.");
 	webclient.createObject(dtlBean, "application/zip", ObjectType.article);
 	logger.info(pid + " " + "updated.\n");
 	webclient.autoGenerateMetadataMerge(dtlBean, metadata);
+	webclient.publish(dtlBean);
 	logger.info(pid + " " + "and all related updated.\n");
     }
 

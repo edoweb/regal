@@ -17,10 +17,13 @@
 package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -36,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
@@ -70,22 +74,26 @@ public class EdowebDigitalEntityBuilder implements
 	DigitalEntity dtlDe = new DigitalEntity(location, pid);
 	dtlDe.setXml(new File(dtlDe.getLocation() + File.separator + pid
 		+ ".xml"));
-	Element root = getXmlRepresentation(dtlDe);
-	dtlDe.setLabel(getLabel(root));
-	loadMetadataStreams(dtlDe, root);
-	loadDataStream(dtlDe, root);
-	linkToParent(dtlDe);
+	try {
+	    Element root = getXmlRepresentation(dtlDe);
+	    dtlDe.setLabel(getLabel(root));
+	    loadMetadataStreams(dtlDe, root);
+	    loadDataStream(dtlDe, root);
+	    linkToParent(dtlDe);
+	} catch (Exception e) {
+
+	}
 	return dtlDe;
     }
 
     private DigitalEntity prepareMetsStructure(final DigitalEntity entity) {
 	Element root = null;
-	DigitalEntity dtlDe = null;
+	DigitalEntity dtlDe = entity;
 	try {
 	    root = XmlUtils.getDocument(entity.getStream(StreamType.STRUCT_MAP)
 		    .getFile());
-	} catch (NullPointerException e) {
-	    return entity;
+	} catch (Exception e) {
+	    return dtlDe;
 	}
 
 	try {
@@ -99,9 +107,12 @@ public class EdowebDigitalEntityBuilder implements
 	} catch (XPathExpressionException e) {
 	    logger.warn(entity.getPid() + " no issus found.");
 	}
-
-	root = XmlUtils.getDocument(entity.getStream(StreamType.FILE_SEC)
-		.getFile());
+	try {
+	    root = XmlUtils.getDocument(entity.getStream(StreamType.FILE_SEC)
+		    .getFile());
+	} catch (Exception e) {
+	    return dtlDe;
+	}
 
 	try {
 	    mapGroupIdsToFileIds(entity, root);
@@ -271,7 +282,9 @@ public class EdowebDigitalEntityBuilder implements
 	return root.getElementsByTagName("label").item(0).getTextContent();
     }
 
-    private Element getXmlRepresentation(final DigitalEntity dtlDe) {
+    private Element getXmlRepresentation(final DigitalEntity dtlDe)
+	    throws FileNotFoundException, ParserConfigurationException,
+	    SAXException, IOException {
 	File digitalEntityFile = new File(dtlDe.getLocation() + File.separator
 		+ dtlDe.getPid() + ".xml");
 	return XmlUtils.getDocument(digitalEntityFile);
@@ -279,66 +292,82 @@ public class EdowebDigitalEntityBuilder implements
 
     private DigitalEntity addSiblings(final DigitalEntity entity) {
 	DigitalEntity dtlDe = entity;
-	Element root = XmlUtils.getDocument(entity.getXml());
-	NodeList list = root.getElementsByTagName("relation");
-	for (int i = 0; i < list.getLength(); i++) {
-	    Node item = list.item(i);
-	    String relPid = ((Element) item).getElementsByTagName("pid")
-		    .item(0).getTextContent();
-	    String usageType = ((Element) item)
-		    .getElementsByTagName("usage_type").item(0)
-		    .getTextContent();
-	    String type = ((Element) item).getElementsByTagName("type").item(0)
-		    .getTextContent();
-	    if (type.compareTo(DigitalEntityRelation.manifestation.toString()) == 0) {
-		DigitalEntity b = buildSimpleBean(entity.getLocation(), relPid);
-		dtlDe.addRelated(b, usageType);
+	Element root;
+	try {
+	    root = XmlUtils.getDocument(entity.getXml());
+	    NodeList list = root.getElementsByTagName("relation");
+	    for (int i = 0; i < list.getLength(); i++) {
+		Node item = list.item(i);
+		String relPid = ((Element) item).getElementsByTagName("pid")
+			.item(0).getTextContent();
+		String usageType = ((Element) item)
+			.getElementsByTagName("usage_type").item(0)
+			.getTextContent();
+		String type = ((Element) item).getElementsByTagName("type")
+			.item(0).getTextContent();
+		if (type.compareTo(DigitalEntityRelation.manifestation
+			.toString()) == 0) {
+		    DigitalEntity b = buildSimpleBean(entity.getLocation(),
+			    relPid);
+		    dtlDe.addRelated(b, usageType);
+		}
 	    }
+	} catch (Exception e) {
+
 	}
+
 	return dtlDe;
     }
 
     private DigitalEntity addChildren(final DigitalEntity entity) {
 	DigitalEntity dtlDe = entity;
-	Element root = XmlUtils.getDocument(entity.getXml());
-	NodeList list = root.getElementsByTagName("relation");
-	for (int i = 0; i < list.getLength(); i++) {
-	    Node item = list.item(i);
-	    String relPid = ((Element) item).getElementsByTagName("pid")
-		    .item(0).getTextContent();
-	    String usageType = ((Element) item)
-		    .getElementsByTagName("usage_type").item(0)
-		    .getTextContent();
-	    String type = ((Element) item).getElementsByTagName("type").item(0)
-		    .getTextContent();
-	    if (type.compareTo(DigitalEntityRelation.include.toString()) == 0) {
-		try {
-		    DigitalEntity b = build(entity.getLocation(), relPid);
-		    b.setUsageType(usageType);
-		    addToTree(entity, b);
+	try {
+	    Element root = XmlUtils.getDocument(entity.getXml());
+	    NodeList list = root.getElementsByTagName("relation");
+	    for (int i = 0; i < list.getLength(); i++) {
+		Node item = list.item(i);
+		String relPid = ((Element) item).getElementsByTagName("pid")
+			.item(0).getTextContent();
+		String usageType = ((Element) item)
+			.getElementsByTagName("usage_type").item(0)
+			.getTextContent();
+		String type = ((Element) item).getElementsByTagName("type")
+			.item(0).getTextContent();
+		if (type.compareTo(DigitalEntityRelation.include.toString()) == 0) {
+		    try {
+			DigitalEntity b = build(entity.getLocation(), relPid);
+			b.setUsageType(usageType);
+			addToTree(entity, b);
 
-		} catch (Exception e) {
-		    // TODO
-		    e.printStackTrace();
+		    } catch (Exception e) {
+			// TODO
+			e.printStackTrace();
+		    }
 		}
 	    }
+	} catch (Exception e) {
+
 	}
 	return dtlDe;
     }
 
     private void linkToParent(DigitalEntity dtlDe) {
-	Element root = XmlUtils.getDocument(dtlDe.getXml());
-	NodeList list = root.getElementsByTagName("relation");
-	for (int i = 0; i < list.getLength(); i++) {
-	    Node item = list.item(i);
-	    String relPid = ((Element) item).getElementsByTagName("pid")
-		    .item(0).getTextContent();
-	    String type = ((Element) item).getElementsByTagName("type").item(0)
-		    .getTextContent();
-	    if (type.compareTo(DigitalEntityRelation.part_of.toString()) == 0) {
-		dtlDe.setIsParent(false);
-		dtlDe.setParentPid(relPid);
+	try {
+	    Element root = XmlUtils.getDocument(dtlDe.getXml());
+	    NodeList list = root.getElementsByTagName("relation");
+	    for (int i = 0; i < list.getLength(); i++) {
+		Node item = list.item(i);
+		String relPid = ((Element) item).getElementsByTagName("pid")
+			.item(0).getTextContent();
+		String type = ((Element) item).getElementsByTagName("type")
+			.item(0).getTextContent();
+		if (type.compareTo(DigitalEntityRelation.part_of.toString()) == 0) {
+		    dtlDe.setIsParent(false);
+		    dtlDe.setParentPid(relPid);
+		}
 	    }
+	} catch (Exception e) {
+
 	}
     }
 

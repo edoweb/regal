@@ -110,6 +110,15 @@ public class Webclient {
 	} catch (Exception e) {
 	    logger.error(dtlBean.getPid() + " " + e.getMessage());
 	}
+
+    }
+
+    /**
+     * @param dtlBean
+     *            provides the entity to the searchengine and to the oai
+     *            provider
+     */
+    public void publish(DigitalEntity dtlBean) {
 	try {
 	    index(dtlBean);
 	} catch (Exception e) {
@@ -120,7 +129,6 @@ public class Webclient {
 	} catch (Exception e) {
 	    logger.error(dtlBean.getPid() + " " + e.getMessage());
 	}
-
     }
 
     /**
@@ -134,6 +142,7 @@ public class Webclient {
      *            n-triple metadata to integrate
      */
     public void autoGenerateMetadataMerge(DigitalEntity dtlBean, String metadata) {
+	setMetadata(dtlBean, "");
 	autoGenerateMetdata(dtlBean);
 	String pid = namespace + ":" + dtlBean.getPid();
 	String resource = endpoint + "/resource/" + pid;
@@ -152,7 +161,6 @@ public class Webclient {
 	} catch (Exception e) {
 	    logger.error(dtlBean.getPid() + " " + e.getMessage());
 	}
-
     }
 
     /**

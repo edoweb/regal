@@ -217,7 +217,7 @@ public class EdowebIngester implements IngestInterface {
 	ObjectType t = ObjectType.issue;
 	webclient.createObject(dtlBean, "application/pdf", t);
 	String metadata = "<" + pid
-		+ "> <http://purl.org/ontology/bibo/volume> \""
+		+ "> <http://purl.org/ontology/bibo/issue> \""
 		+ dtlBean.getLabel() + "\" .\n" + "<" + pid
 		+ "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
 		+ dtlBean.getLabel() + "\" .\n";
@@ -241,6 +241,7 @@ public class EdowebIngester implements IngestInterface {
 	webclient
 		.createObject(dtlBean, "application/pdf", ObjectType.monograph);
 	webclient.autoGenerateMetdata(dtlBean);
+	webclient.publish(dtlBean);
 	logger.info(pid + " " + "updated.\n");
     }
 
@@ -250,6 +251,7 @@ public class EdowebIngester implements IngestInterface {
 	    logger.info(pid + " Found ejournal.");
 	    webclient.createResource(ObjectType.journal, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.publish(dtlBean);
 	    Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
 	    int numOfVols = viewMainLinks.size();
 	    logger.info(pid + " " + "Found " + numOfVols + " volumes.");
@@ -267,6 +269,7 @@ public class EdowebIngester implements IngestInterface {
 	    logger.info(pid + " Found webpage.");
 	    webclient.createResource(ObjectType.webpage, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.publish(dtlBean);
 	    Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 	    int numOfVersions = viewLinks.size();
 	    logger.info(pid + " " + "Found " + numOfVersions + " versions.");
@@ -284,6 +287,7 @@ public class EdowebIngester implements IngestInterface {
 	    logger.info(pid + " Found webpage.");
 	    webclient.createResource(ObjectType.webpage, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.publish(dtlBean);
 	    for (DigitalEntity b : dtlBean.getArchiveLinks()) {
 		b.setParentPid(dtlBean.getPid());
 		Stream dataStream = b.getStream(StreamType.DATA);
@@ -307,6 +311,7 @@ public class EdowebIngester implements IngestInterface {
 	    logger.info(dtlBean.toString());
 	    webclient.createResource(ObjectType.journal, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.publish(dtlBean);
 	    Vector<DigitalEntity> volumes = dtlBean.getVolumes();
 	    int numOfVols = volumes.size();
 	    int count = 1;
@@ -328,6 +333,7 @@ public class EdowebIngester implements IngestInterface {
 
 	    webclient.createResource(ObjectType.webpage, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.publish(dtlBean);
 	    Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
 	    int numOfVersions = viewLinks.size();
 	    logger.info(pid + " Found " + numOfVersions + " versions.");

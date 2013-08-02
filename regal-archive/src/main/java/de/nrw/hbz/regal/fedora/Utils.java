@@ -362,13 +362,29 @@ public class Utils {
 	}
     }
 
-    void readDcToNode(Node node) throws RemoteException, FedoraClientException {
+    void readFedoraDcToNode(Node node) throws RemoteException,
+	    FedoraClientException {
 
 	FedoraResponse response = new GetDatastreamDissemination(node.getPID(),
 		"DC").download(true).execute();
 	InputStream ds = response.getEntityInputStream();
+	readDcToNode(node, ds, "dc");
+
+    }
+
+    /**
+     * @param node
+     *            dc stream will be added to this node
+     * @param ds
+     *            stream containing xml dc data
+     * @param ns
+     *            namespace of the dc
+     */
+    public void readDcToNode(Node node, InputStream ds, String ns) {
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	factory.setExpandEntityReferences(false);
+	factory.setIgnoringElementContentWhitespace(true);
+
 	try {
 	    DocumentBuilder docBuilder = factory.newDocumentBuilder();
 
@@ -378,111 +394,128 @@ public class Utils {
 	    Element root = doc.getDocumentElement();
 	    root.normalize();
 
-	    NodeList contributer = root.getElementsByTagName("dc:contributer");
-	    NodeList coverage = root.getElementsByTagName("dc:coverage");
-	    NodeList creator = root.getElementsByTagName("dc:creator");
-	    NodeList date = root.getElementsByTagName("dc:date");
-	    NodeList description = root.getElementsByTagName("dc:description");
-	    NodeList format = root.getElementsByTagName("dc:format");
-	    NodeList identifier = root.getElementsByTagName("dc:identifier");
-	    NodeList label = root.getElementsByTagName("dc:label");
-	    NodeList language = root.getElementsByTagName("dc:language");
-	    NodeList publisher = root.getElementsByTagName("dc:publisher");
-	    NodeList rights = root.getElementsByTagName("dc:rights");
-	    NodeList source = root.getElementsByTagName("dc:source");
-	    NodeList subject = root.getElementsByTagName("dc:subject");
-	    NodeList title = root.getElementsByTagName("dc:title");
-	    NodeList type = root.getElementsByTagName("dc:type");
+	    NodeList contributer = root.getElementsByTagName(ns
+		    + ":contributer");
+	    NodeList coverage = root.getElementsByTagName(ns + ":coverage");
+	    NodeList creator = root.getElementsByTagName(ns + ":creator");
+	    NodeList date = root.getElementsByTagName(ns + ":date");
+	    NodeList description = root.getElementsByTagName(ns
+		    + ":description");
+	    NodeList format = root.getElementsByTagName(ns + ":format");
+	    NodeList identifier = root.getElementsByTagName(ns + ":identifier");
+	    NodeList label = root.getElementsByTagName(ns + ":label");
+	    NodeList language = root.getElementsByTagName(ns + ":language");
+	    NodeList publisher = root.getElementsByTagName(ns + ":publisher");
+	    NodeList rights = root.getElementsByTagName(ns + ":rights");
+	    NodeList source = root.getElementsByTagName(ns + ":source");
+	    NodeList subject = root.getElementsByTagName(ns + ":subject");
+	    NodeList title = root.getElementsByTagName(ns + ":title");
+	    NodeList type = root.getElementsByTagName(ns + ":type");
 
 	    if (contributer != null && contributer.getLength() != 0) {
+		node.setContributer(new Vector<String>());
 		for (int i = 0; i < contributer.getLength(); i++) {
 		    node.addContributer(transformFromXMLEntity(contributer
-			    .item(i).getTextContent()));
+			    .item(i).getTextContent().trim()));
 		}
 	    }
 	    if (coverage != null && coverage.getLength() != 0) {
+		node.setCoverage(new Vector<String>());
 		for (int i = 0; i < coverage.getLength(); i++) {
 		    node.addCoverage(transformFromXMLEntity(coverage.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (creator != null && creator.getLength() != 0) {
+		node.setCreator(new Vector<String>());
 		for (int i = 0; i < creator.getLength(); i++) {
 		    node.addCreator(transformFromXMLEntity(creator.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (date != null && date.getLength() != 0) {
+		node.setDate(new Vector<String>());
 		for (int i = 0; i < date.getLength(); i++) {
 		    node.addDate(transformFromXMLEntity(date.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (description != null && description.getLength() != 0) {
+		node.setDescription(new Vector<String>());
 		for (int i = 0; i < description.getLength(); i++) {
 		    node.addDescription(transformFromXMLEntity(description
-			    .item(i).getTextContent()));
+			    .item(i).getTextContent().trim()));
 		}
 	    }
 	    if (format != null && format.getLength() != 0) {
+		node.setFormat(new Vector<String>());
 		for (int i = 0; i < format.getLength(); i++) {
 		    node.addFormat(transformFromXMLEntity(format.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (identifier != null && identifier.getLength() != 0) {
+		node.setIdentifier(new Vector<String>());
 		for (int i = 0; i < identifier.getLength(); i++) {
 		    node.addIdentifier(transformFromXMLEntity(identifier
-			    .item(i).getTextContent()));
+			    .item(i).getTextContent().trim()));
 		}
 	    }
 	    if (label != null && label.getLength() != 0) {
+
 		for (int i = 0; i < label.getLength(); i++) {
 		    // TODO set oder add
 		    node.setLabel(transformFromXMLEntity(label.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (language != null && language.getLength() != 0) {
+		node.setLanguage(new Vector<String>());
 		for (int i = 0; i < language.getLength(); i++) {
 		    node.addLanguage(transformFromXMLEntity(language.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (publisher != null && publisher.getLength() != 0) {
+		node.setPublisher(new Vector<String>());
 		for (int i = 0; i < publisher.getLength(); i++) {
 		    node.addPublisher(transformFromXMLEntity(publisher.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (rights != null && rights.getLength() != 0) {
+		node.setRights(new Vector<String>());
 		for (int i = 0; i < rights.getLength(); i++) {
 		    node.addRights(transformFromXMLEntity(rights.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (source != null && source.getLength() != 0) {
+		node.setSource(new Vector<String>());
 		for (int i = 0; i < source.getLength(); i++) {
 		    node.addSource(transformFromXMLEntity(source.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (subject != null && subject.getLength() != 0) {
+		node.setSubject(new Vector<String>());
 		for (int i = 0; i < subject.getLength(); i++) {
 		    node.addSubject(transformFromXMLEntity(subject.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (title != null && title.getLength() != 0) {
+		node.setTitle(new Vector<String>());
 		for (int i = 0; i < title.getLength(); i++) {
 		    node.addTitle(transformFromXMLEntity(title.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 	    if (type != null && type.getLength() != 0) {
+		node.setType(new Vector<String>());
 		for (int i = 0; i < type.getLength(); i++) {
 		    node.addType(transformFromXMLEntity(type.item(i)
-			    .getTextContent()));
+			    .getTextContent().trim()));
 		}
 	    }
 
@@ -496,7 +529,6 @@ public class Utils {
 
 	    throw new ArchiveException("An unknown exception occured.", e);
 	}
-
     }
 
     void readRelsExt(Node node) throws FedoraClientException {

@@ -59,6 +59,7 @@ public class View {
     Vector<String> alephid = null;
     Vector<String> rights = null;
     Vector<String> identifier = null;
+    Vector<String> contributer = null;
     @SuppressWarnings("rawtypes")
     Vector<SimpleEntry> predicates = null;
 
@@ -138,6 +139,7 @@ public class View {
 	hasPartName = new Vector<String>();
 	identifier = new Vector<String>();
 	predicates = new Vector<SimpleEntry>();
+	contributer = new Vector<String>();
 	// Not Implemented yet: First make Cool URIs!
 	// metsUrl = new Vector<String>();
 	// oaioreUrl = new Vector<String>();
@@ -246,6 +248,10 @@ public class View {
     // {
     // return verbundUrl;
     // }
+
+    public Vector<String> getContributer() {
+	return contributer;
+    }
 
     /**
      * @return
@@ -908,6 +914,10 @@ public class View {
 
     public void setApiUrl(String apiUrl) {
 	this.apiUrl = apiUrl;
+    }
+
+    public void setContributer(Vector<String> contributer) {
+	this.contributer = contributer;
     }
 
 }

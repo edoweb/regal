@@ -41,37 +41,25 @@ public class XmlUtils {
      * @param digitalEntityFile
      *            the xml file
      * @return the root element as org.w3c.dom.Element
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     * @throws FileNotFoundException
      */
-    public static Element getDocument(File digitalEntityFile) {
-	try {
-	    DocumentBuilderFactory factory = DocumentBuilderFactory
-		    .newInstance();
-	    factory.setNamespaceAware(true);
-	    DocumentBuilder docBuilder;
+    public static Element getDocument(File digitalEntityFile)
+	    throws ParserConfigurationException, FileNotFoundException,
+	    SAXException, IOException {
+	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	factory.setNamespaceAware(true);
+	DocumentBuilder docBuilder;
 
-	    docBuilder = factory.newDocumentBuilder();
+	docBuilder = factory.newDocumentBuilder();
 
-	    Document doc = docBuilder.parse(new BufferedInputStream(
-		    new FileInputStream(digitalEntityFile)));
-	    Element root = doc.getDocumentElement();
-	    root.normalize();
-	    return root;
-	} catch (FileNotFoundException e) {
-
-	    e.printStackTrace();
-	} catch (SAXException e) {
-
-	    e.printStackTrace();
-	} catch (IOException e) {
-
-	    e.printStackTrace();
-	} catch (ParserConfigurationException e) {
-
-	    e.printStackTrace();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-	return null;
+	Document doc = docBuilder.parse(new BufferedInputStream(
+		new FileInputStream(digitalEntityFile)));
+	Element root = doc.getDocumentElement();
+	root.normalize();
+	return root;
     }
 
     /**

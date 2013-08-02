@@ -165,7 +165,7 @@ public class FedoraFacade implements FedoraInterface {
 	node.setNamespace(pid.substring(0, pid.indexOf(':')));
 
 	try {
-	    utils.readDcToNode(node);
+	    utils.readFedoraDcToNode(node);
 	    utils.readRelsExt(node);
 	    // TODO Fix me
 	    // readContentModels(node);
@@ -618,6 +618,11 @@ public class FedoraFacade implements FedoraInterface {
 		    + " an unknown exception occured.", e);
 	}
 
+    }
+
+    @Override
+    public void readDcToNode(Node node, InputStream in, String dcNamespace) {
+	utils.readDcToNode(node, in, dcNamespace);
     }
 
 }

@@ -38,67 +38,60 @@ import de.nrw.hbz.regal.sync.extern.DigitalEntity;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class OpusIngester implements IngestInterface
-{
-	final static Logger logger = LoggerFactory.getLogger(OpusIngester.class);
+public class OpusIngester implements IngestInterface {
+    final static Logger logger = LoggerFactory.getLogger(OpusIngester.class);
 
-	private String namespace = "opus";
-	String host = null;
-	Webclient webclient = null;
-	HashMap<String, String> map = new HashMap<String, String>();
+    private String namespace = "opus";
+    String host = null;
+    Webclient webclient = null;
+    HashMap<String, String> map = new HashMap<String, String>();
 
-	@Override
-	public void init(String host, String user, String password, String ns)
-	{
-		this.namespace = ns;
-		this.host = host;
-		webclient = new Webclient(namespace, user, password, host);
-	}
+    @Override
+    public void init(String host, String user, String password, String ns) {
+	this.namespace = ns;
+	this.host = host;
+	webclient = new Webclient(namespace, user, password, host);
+    }
 
-	@Override
-	public ContentModel createContentModel()
-	{
-		return null;
-	}
+    @Override
+    public ContentModel createContentModel() {
+	return null;
+    }
 
-	@Override
-	public void ingest(DigitalEntity dtlBean)
-	{
-		String pid = dtlBean.getPid().substring(
-				dtlBean.getPid().lastIndexOf(':') + 1);
-		logger.info("Start ingest: " + namespace + ":" + pid);
+    @Override
+    public void ingest(DigitalEntity dtlBean) {
+	String pid = dtlBean.getPid().substring(
+		dtlBean.getPid().lastIndexOf(':') + 1);
+	logger.info("Start ingest: " + namespace + ":" + pid);
 
-		updateMonograph(dtlBean);
+	updateMonograph(dtlBean);
 
-	}
+    }
 
-	@Override
-	public void update(DigitalEntity dtlBean)
-	{
-		ingest(dtlBean);
-	}
+    @Override
+    public void update(DigitalEntity dtlBean) {
+	ingest(dtlBean);
+    }
 
-	private void updateMonograph(DigitalEntity dtlBean)
-	{
-		String pid = dtlBean.getPid();
+    private void updateMonograph(DigitalEntity dtlBean) {
+	String pid = dtlBean.getPid();
 
-		map.clear();
-		webclient
-				.createObject(dtlBean, "application/pdf", ObjectType.monograph);
-		logger.info(pid + " " + "updated.\n");
-		webclient.autoGenerateMetdata(dtlBean);
-	}
+	map.clear();
+	webclient
+		.createObject(dtlBean, "application/pdf", ObjectType.monograph);
+	logger.info(pid + " " + "updated.\n");
+	webclient.autoGenerateMetdata(dtlBean);
+	webclient.publish(dtlBean);
+    }
 
-	@Override
-	public void delete(String pid)
-	{
-		webclient.delete(pid.substring(pid.lastIndexOf(':') + 1));
-	}
+    @Override
+    public void delete(String pid) {
+	webclient.delete(pid.substring(pid.lastIndexOf(':') + 1));
+    }
 
-	@Override
-	public void setNamespace(String namespace)
-	{
-		this.namespace = namespace;
+    @Override
+    public void setNamespace(String namespace) {
+	this.namespace = namespace;
 
-	}
+    }
 }

@@ -24,6 +24,7 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_MEMBER_OF;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.ITEM_ID;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1904,6 +1905,9 @@ public class Actions {
     public View getView(String pid) {
 
 	Node node = readNode(pid);
+	String oaidc = oaidc(pid);
+	archive.readDcToNode(node, new ByteArrayInputStream(oaidc.getBytes()),
+		"oai_dc");
 	return getView(node);
 
     }
@@ -1916,9 +1920,10 @@ public class Actions {
      * @return the view of the object of type type.
      */
     View getView(Node node) {
+
 	String pid = node.getPID();
 	String uri = pid;
-	String apiUrl = serverName + "/resources/" + pid;
+	String apiUrl = serverName + "/resource/" + pid;
 
 	View view = new View();
 	view.setLastModified(node.getLastModified());
@@ -1930,6 +1935,7 @@ public class Actions {
 	view.setLocation(node.getSource());
 	view.setPublisher(node.getPublisher());
 	view.setDescription(node.getDescription());
+	view.setContributer(node.getContributer());
 	String label = node.getLabel();
 
 	if (label != null && !label.isEmpty())
@@ -2078,94 +2084,8 @@ public class Actions {
 
 	}
 
-	InputStream in = null;
-
-	try {
-	    URL metadata = new URL(fedoraExtern + "/objects/" + pid
-		    + "/datastreams/metadata/content");
-	    in = metadata.openStream();
-
-	    RepositoryConnection con = null;
-	    Repository myRepository = new SailRepository(new MemoryStore());
-	    try {
-		myRepository.initialize();
-		con = myRepository.getConnection();
-		String baseURI = "";
-
-		con.add(in, baseURI, RDFFormat.N3);
-
-		RepositoryResult<Statement> statements = con.getStatements(
-			null, null, null, true);
-
-		while (statements.hasNext()) {
-		    Statement st = statements.next();
-		    String rdfSubject = st.getSubject().stringValue();
-
-		    if (rdfSubject.compareTo(pid) == 0) {
-			view.addPredicate(st.getPredicate().stringValue(), st
-				.getObject().stringValue());
-		    }
-		}
-
-	    } catch (RepositoryException e) {
-
-		e.printStackTrace();
-	    } catch (RDFParseException e) {
-
-		e.printStackTrace();
-	    } catch (IOException e) {
-
-		e.printStackTrace();
-	    } finally {
-		if (con != null) {
-		    try {
-			con.close();
-		    } catch (RepositoryException e) {
-			e.printStackTrace();
-		    }
-		}
-	    }
-	} catch (IOException e1) {
-	    // TODO Auto-generated catch block
-	    e1.printStackTrace();
-	} finally {
-	    IOUtils.closeQuietly(in);
-	}
-
 	return view;
     }
-
-    // /**
-    // * If a link with same predicate exists it will be replaced.
-    // *
-    // * @param pid
-    // * pid of the object
-    // * @param link
-    // * link to be updated
-    // * @return a short message
-    // */
-    // private String updateLink(String pid, Link link)
-    // {
-    //
-    // Node node = readNode(pid);
-    // Vector<Link> links = node.getRelsExt();
-    // Iterator<Link> iterator = links.iterator();
-    //
-    // while (iterator.hasNext())
-    // {
-    // Link l = iterator.next();
-    // if (l.getPredicate().compareTo(link.getPredicate()) == 0)
-    // {
-    // links.remove(l);
-    // }
-    // }
-    //
-    // links.add(link);
-    // node.setRelsExt(links);
-    // archive.updateNode(node.getPID(), node);
-    // return pid + " " + link + " link successfully updated.";
-    //
-    // }
 
     private File download(URL url) throws IOException {
 	File file = null;
