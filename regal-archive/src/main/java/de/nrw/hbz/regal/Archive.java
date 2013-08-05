@@ -37,15 +37,6 @@ import de.nrw.hbz.regal.fedora.FedoraInterface;
 import de.nrw.hbz.regal.fedora.FedoraVocabulary;
 
 /**
- * Class Archive
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * 
- * </p>
- * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
@@ -79,16 +70,12 @@ class Archive implements ArchiveInterface {
     @Override
     public Node createRootObject(String namespace) {
 	Node rootObject = null;
-
 	String pid = fedoraInterface.getPid(namespace);
 	rootObject = new Node();
 	rootObject.setPID(pid);
-	rootObject.setLabel("Default Object");// (pid,
-					      // "Ein wunderschönes Objekt");
+	rootObject.setLabel("Default Object");
 	rootObject.setNamespace(namespace);
-
 	fedoraInterface.createNode(rootObject);
-
 	return rootObject;
     }
 
@@ -96,32 +83,25 @@ class Archive implements ArchiveInterface {
     public Node createNode(String parentPid) {
 	Node node = null;
 	Node parent = null;
-
 	parent = fedoraInterface.readNode(parentPid);
 	String namespace = parent.getNamespace();
 	String pid = fedoraInterface.getPid(namespace);
 	node = new Node();
 	node.setPID(pid);
-	node.setLabel("Blank Node");// (pid,
-
+	node.setLabel("Blank Node");
 	node.setNamespace(namespace);
-
 	return createNode(parent, node);
     }
 
     @Override
     public Node createNode(Node parent, Node node) {
-
 	String pid = node.getPID();
-
 	if (nodeExists(pid)) {
 	    throw new ArchiveException(pid + " already exists. Can't create.");
 	}
-
 	String namespace = parent.getNamespace();// FedoraFacade.pred2pid(parent.getNamespace());
 	if (pid == null) {
-	    pid = fedoraInterface.getPid(namespace);// String pid =
-						    // fedoraInterface.getPid(namespace);
+	    pid = fedoraInterface.getPid(namespace);
 	    node.setPID(pid);
 	    node.setNamespace(namespace);
 	}
@@ -138,18 +118,10 @@ class Archive implements ArchiveInterface {
 	meToNode.setPredicate(FedoraVocabulary.HAS_PART);
 	meToNode.setObject(addUriPrefix(node.getPID()), false);
 	parent.addRelation(meToNode);
-	// System.out.println(node.getPID() + " has parent " + parent.getPID());
-	// node to parent
 	Link nodeToMe = new Link();
 	nodeToMe.setPredicate(FedoraVocabulary.IS_PART_OF);
 	nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
 	node.addRelation(nodeToMe);
-
-	// nodeToMe = new Link();
-	// nodeToMe.setPredicate(IS_PART_OF);
-	// nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
-	// node.addRelation(nodeToMe);
-
 	fedoraInterface.updateNode(node);
 	fedoraInterface.updateNode(parent);
 
@@ -159,15 +131,11 @@ class Archive implements ArchiveInterface {
     @Override
     public Node createComplexObject(ComplexObject tree) {
 	Node object = tree.getRoot();
-
 	createNode(object);
-
 	for (int i = 0; i < tree.sizeOfChildren(); i++) {
-
 	    ComplexObjectNode node = tree.getChild(i);
 	    iterateCreate(node, object);
 	}
-
 	return readNode(object.getPID());
 
     }
@@ -185,34 +153,24 @@ class Archive implements ArchiveInterface {
     public ComplexObject readComplexObject(String rootPID)
 
     {
-	// RootObject object = new RootObject();
 	Node object = fedoraInterface.readNode(rootPID);
-	// object.update(node);
-
 	ComplexObject complexObject = new ComplexObject(object);
 	Vector<Link> rels = object.getRelsExt();
-
 	for (Link rel : rels) {
 	    if (rel.getPredicate().compareTo(HAS_PART) == 0) {
 		String pid = removeUriPrefix(rel.getObject());
-
 		if (pid.compareTo(rootPID) == 0)
 		    continue;
-
 		Node child = readNode(pid);
 		ComplexObjectNode cn = new ComplexObjectNode(child);
 		complexObject.addChild(cn);
-
 		add(rootPID, cn, child.getRelsExt());
 	    }
 	}
-
 	return complexObject;
     }
 
-    private void add(String rootPID, ComplexObjectNode cn, Vector<Link> rels)
-
-    {
+    private void add(String rootPID, ComplexObjectNode cn, Vector<Link> rels) {
 	for (Link rel : rels) {
 	    if (rel.getPredicate().compareTo(HAS_PART) == 0) {
 		String pid = removeUriPrefix(rel.getObject());
@@ -221,7 +179,6 @@ class Archive implements ArchiveInterface {
 		Node child = readNode(pid);
 		ComplexObjectNode cn2 = new ComplexObjectNode(child);
 		cn.addChild(cn2);
-
 		add(rootPID, cn2, child.getRelsExt());
 	    }
 	}
@@ -233,7 +190,6 @@ class Archive implements ArchiveInterface {
 	    throw new NodeNotFoundException(rootPID + " doesn't exist.");
 	}
 	Node node = fedoraInterface.readNode(rootPID);
-
 	return node;
     }
 
@@ -255,17 +211,13 @@ class Archive implements ArchiveInterface {
 	}
 	// logger.info("deleteObject");
 	fedoraInterface.deleteNode(rootPID);
-
 	// Find all children
 	List<String> pids = null;
-
 	pids = fedoraInterface.findPids("* <" + IS_PART_OF + "> <"
 		+ addUriPrefix(rootPID) + ">", SPO);
-
 	// Delete all children
 	if (pids != null)
 	    for (String pid : pids) {
-
 		// Remove relation
 		Node node = readNode(pid);
 		Vector<String> objects = node.getParents();
@@ -280,7 +232,6 @@ class Archive implements ArchiveInterface {
 		    fedoraInterface.updateNode(node);
 		}
 	    }
-
 	return rootPID;
     }
 
@@ -316,17 +267,12 @@ class Archive implements ArchiveInterface {
 
     @Override
     public void updateComplexObject(ComplexObject tree) {
-
 	Node object = tree.getRoot();
-
 	for (int i = 0; i < tree.sizeOfChildren(); i++) {
-
 	    ComplexObjectNode node = tree.getChild(i);
 	    iterateUpdate(node, object);
 	}
-
 	updateNode(object.getPID(), object);
-
     }
 
     private void iterateUpdate(ComplexObjectNode tnode, Node parent) {
@@ -368,26 +314,19 @@ class Archive implements ArchiveInterface {
 
     private Node createNode(Node object) {
 	Node rootObject = null;
-
 	String pid = object.getPID();
 	if (nodeExists(pid)) {
 	    throw new ArchiveException(pid + " already exists. Can't create.");
 	}
-
 	String namespace = object.getNamespace();
 	if (namespace == null) {
-
 	    throw new ArchiveException(pid + " has no namespace.");
-
 	}
-
 	if (pid == null) {
 	    pid = fedoraInterface.getPid(namespace);
 	    object.setPID(pid);
 	}
-
 	fedoraInterface.createNode(object);
-
 	return rootObject;
     }
 
