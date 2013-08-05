@@ -49,13 +49,12 @@ class Archive implements ArchiveInterface {
 
     public static Archive getInstance(String host, String user, String password) {
 	if (me == null) {
-	    me = new Archive(host, user, password, "/tmp/testses");
+	    me = new Archive(host, user, password);
 	}
 	return me;
     }
 
-    private Archive(String host, String user, String password,
-	    String sesameNativeStore) {
+    private Archive(String host, String user, String password) {
 	fedoraInterface = new FedoraFacade(host, user, password);
     }
 
