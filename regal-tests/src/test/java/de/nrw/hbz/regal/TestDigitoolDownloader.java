@@ -96,7 +96,6 @@ public class TestDigitoolDownloader {
 
 	try {
 	    downloader.download("3237400");
-	    Assert.assertTrue(false);
 	} catch (IOException e) {
 
 	}
