@@ -104,13 +104,10 @@ class Archive implements ArchiveInterface {
 	    node.setPID(pid);
 	    node.setNamespace(namespace);
 	}
-
 	if (!fedoraInterface.nodeExists(pid)) {
-
 	    node.setNamespace(namespace);
 	    fedoraInterface.createNode(node);
 	}
-
 	node = fedoraInterface.readNode(node.getPID());
 	// Parent to node
 	Link meToNode = new Link();
@@ -123,7 +120,6 @@ class Archive implements ArchiveInterface {
 	node.addRelation(nodeToMe);
 	fedoraInterface.updateNode(node);
 	fedoraInterface.updateNode(parent);
-
 	return node;
     }
 
@@ -149,9 +145,7 @@ class Archive implements ArchiveInterface {
     }
 
     @Override
-    public ComplexObject readComplexObject(String rootPID)
-
-    {
+    public ComplexObject readComplexObject(String rootPID) {
 	Node object = fedoraInterface.readNode(rootPID);
 	ComplexObject complexObject = new ComplexObject(object);
 	Vector<Link> rels = object.getRelsExt();
