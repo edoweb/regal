@@ -215,36 +215,50 @@ public class EdowebIngester implements IngestInterface {
 
     private void updateIssue(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
-	logger.info(pid + " " + "Found eJournal issue.");
-	ObjectType t = ObjectType.issue;
-	webclient.createObject(dtlBean, "application/pdf", t);
-	String metadata = "<" + pid
-		+ "> <http://purl.org/ontology/bibo/issue> \""
-		+ dtlBean.getLabel() + "\" .\n" + "<" + pid
-		+ "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
-		+ dtlBean.getLabel() + "\" .\n";
-	webclient.setMetadata(dtlBean, metadata);
-	logger.info(pid + " " + "updated.\n");
+	try {
+	    ObjectType t = ObjectType.issue;
+	    webclient.createObject(dtlBean, "application/pdf", t);
+	    logger.info(pid + " " + "Found eJournal issue.");
+
+	    String metadata = "<" + pid
+		    + "> <http://purl.org/ontology/bibo/issue> \""
+		    + dtlBean.getLabel() + "\" .\n" + "<" + pid
+		    + "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
+		    + dtlBean.getLabel() + "\" .\n";
+	    webclient.setMetadata(dtlBean, metadata);
+	    logger.info(pid + " " + "updated.\n");
+	} catch (IllegalArgumentException e) {
+	    logger.debug(e.getMessage());
+	}
 
     }
 
     private void updateWebpagePart(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
-	logger.info(pid + " Found webpage version.");
+	try {
+	    logger.info(pid + " Found webpage version.");
 
-	webclient.createObject(dtlBean, "application/zip", ObjectType.version);
-	logger.info(pid + " " + "updated.\n");
+	    webclient.createObject(dtlBean, "application/zip",
+		    ObjectType.version);
+	    logger.info(pid + " " + "updated.\n");
+	} catch (IllegalArgumentException e) {
+	    logger.debug(e.getMessage());
+	}
     }
 
     private void updateMonographs(DigitalEntity dtlBean) {
 
 	String pid = namespace + ":" + dtlBean.getPid();
-	logger.info(pid + " Found monograph.");
-	webclient
-		.createObject(dtlBean, "application/pdf", ObjectType.monograph);
-	webclient.autoGenerateMetdata(dtlBean);
-	webclient.publish(dtlBean);
-	logger.info(pid + " " + "updated.\n");
+	try {
+	    logger.info(pid + " Found monograph.");
+	    webclient.createObject(dtlBean, "application/pdf",
+		    ObjectType.monograph);
+	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.publish(dtlBean);
+	    logger.info(pid + " " + "updated.\n");
+	} catch (IllegalArgumentException e) {
+	    logger.debug(e.getMessage());
+	}
     }
 
     private void updateEJournalParent(DigitalEntity dtlBean) {
@@ -348,7 +362,7 @@ public class EdowebIngester implements IngestInterface {
 	}
     }
 
-    private Vector<DigitalEntity> getParts(final DigitalEntity dtlBean) {
+    private Vector<DigitalEntity> getParts(DigitalEntity dtlBean) {
 	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
 	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
 	    if (rel.relation

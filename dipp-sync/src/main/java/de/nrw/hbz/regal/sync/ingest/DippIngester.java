@@ -146,12 +146,18 @@ public class DippIngester implements IngestInterface {
 	// // logger.info(metadata);
 	// String metadata = "";
 	map.clear();
-	logger.info(pid + " " + "Found eJournal article.");
-	webclient.createObject(dtlBean, "application/zip", ObjectType.article);
-	logger.info(pid + " " + "updated.\n");
-	webclient.autoGenerateMetadataMerge(dtlBean, metadata);
-	webclient.publish(dtlBean);
-	logger.info(pid + " " + "and all related updated.\n");
+	try {
+
+	    webclient.createObject(dtlBean, "application/zip",
+		    ObjectType.article);
+	    logger.info(pid + " " + "Found eJournal article.");
+	    logger.info(pid + " " + "updated.\n");
+	    webclient.autoGenerateMetadataMerge(dtlBean, metadata);
+	    webclient.publish(dtlBean);
+	    logger.info(pid + " " + "and all related updated.\n");
+	} catch (IllegalArgumentException e) {
+	    logger.debug(e.getMessage());
+	}
     }
 
     @Override

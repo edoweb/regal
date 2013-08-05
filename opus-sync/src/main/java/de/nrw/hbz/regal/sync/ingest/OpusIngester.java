@@ -77,11 +77,15 @@ public class OpusIngester implements IngestInterface {
 	String pid = dtlBean.getPid();
 
 	map.clear();
-	webclient
-		.createObject(dtlBean, "application/pdf", ObjectType.monograph);
-	logger.info(pid + " " + "updated.\n");
-	webclient.autoGenerateMetdata(dtlBean);
-	webclient.publish(dtlBean);
+	try {
+	    webclient.createObject(dtlBean, "application/pdf",
+		    ObjectType.monograph);
+	    logger.info(pid + " " + "updated.\n");
+	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.publish(dtlBean);
+	} catch (IllegalArgumentException e) {
+	    logger.debug(e.getMessage());
+	}
     }
 
     @Override

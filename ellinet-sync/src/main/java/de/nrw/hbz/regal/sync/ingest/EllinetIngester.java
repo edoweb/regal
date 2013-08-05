@@ -92,12 +92,17 @@ public class EllinetIngester implements IngestInterface {
 
     private void updateMonographs(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
-	logger.info(pid + " Found monograph.");
-	webclient
-		.createObject(dtlBean, "application/pdf", ObjectType.monograph);
-	webclient.autoGenerateMetdata(dtlBean);
-	webclient.publish(dtlBean);
-	logger.info(pid + " " + "updated.\n");
+	try {
+
+	    webclient.createObject(dtlBean, "application/pdf",
+		    ObjectType.monograph);
+	    logger.info(pid + " Found monograph.");
+	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.publish(dtlBean);
+	    logger.info(pid + " " + "updated.\n");
+	} catch (IllegalArgumentException e) {
+	    logger.debug(e.getMessage());
+	}
     }
 
     @Override

@@ -202,42 +202,44 @@ public class Webclient {
 	String pid = namespace + ":" + dtlBean.getPid();
 	String resource = endpoint + "/resource/" + pid;
 	String data = resource + "/data";
+	DigitalEntity fulltextObject = findFulltext(dtlBean, expectedMime);
+	createDataResource(dtlBean, type, resource, data, fulltextObject);
+    }
 
-	createResource(type, dtlBean);
+    private DigitalEntity findFulltext(DigitalEntity dtlBean,
+	    String expectedMime) {
+	DigitalEntity fulltextObject = null;
 
 	Stream dataStream = dtlBean.getStream(StreamType.DATA);
-
 	if (dataStream.getMimeType() != null
-		&& dataStream.getMimeType().compareTo(expectedMime) != 0) {
-	    DigitalEntity fulltextObject = null;
-	    for (DigitalEntity view : getViewMainLinks(dtlBean)) {
+		&& dataStream.getMimeType().compareTo(expectedMime) == 0)
+	    return dtlBean;
+	for (DigitalEntity view : getViewMainLinks(dtlBean)) {
+
+	    Stream viewData = view.getStream(StreamType.DATA);
+	    if (viewData.getMimeType().compareTo(expectedMime) == 0) {
+		return view;
+
+	    }
+	}
+	if (fulltextObject == null) {
+	    for (DigitalEntity view : getViewLinks(dtlBean)) {
 
 		Stream viewData = view.getStream(StreamType.DATA);
 		if (viewData.getMimeType().compareTo(expectedMime) == 0) {
-		    fulltextObject = view;
-		    break;
+		    return view;
 		}
 	    }
-	    if (fulltextObject == null) {
-		for (DigitalEntity view : getViewLinks(dtlBean)) {
-
-		    Stream viewData = view.getStream(StreamType.DATA);
-		    if (viewData.getMimeType().compareTo(expectedMime) == 0) {
-			fulltextObject = view;
-			break;
-		    }
-		}
-	    }
-	    if (fulltextObject != null) {
-		updateData(data, fulltextObject);
-	    } else {
-		logger.warn(pid + " found no valid data.");
-		logger.info(pid + " expected " + expectedMime + " , found "
-			+ dataStream.getMimeType());
-	    }
-	} else {
-	    updateData(data, dtlBean);
 	}
+	throw new IllegalArgumentException(dtlBean.getPid()
+		+ " found no valid data. expected " + expectedMime
+		+ " , found " + dataStream.getMimeType());
+    }
+
+    private void createDataResource(DigitalEntity dtlBean, ObjectType type,
+	    String resource, String data, DigitalEntity fulltextObject) {
+	createResource(type, dtlBean);
+	updateData(data, fulltextObject);
 	updateLabel(resource, dtlBean);
     }
 
