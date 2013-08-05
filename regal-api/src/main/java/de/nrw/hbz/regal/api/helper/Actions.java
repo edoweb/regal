@@ -95,6 +95,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import de.nrw.hbz.regal.ArchiveFactory;
 import de.nrw.hbz.regal.ArchiveInterface;
+import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
 import de.nrw.hbz.regal.datatypes.ComplexObject;
 import de.nrw.hbz.regal.datatypes.Link;
@@ -191,6 +192,11 @@ public class Actions {
 	    waitWorkaround();
 
 	return object.getRoot().getPID() + " successfully created!";
+    }
+
+    public String createNode(Node object) {
+	archive.createNode(object);
+	return object.getPID() + " successfully created!";
     }
 
     /**
@@ -2216,6 +2222,22 @@ public class Actions {
 		    "IOException during html creation");
 	}
 
+	return result;
+    }
+
+    public CreateObjectBean getRegalJson(String pid, String acceptFormat) {
+	Node node = readNode(pid);
+	CreateObjectBean result = new CreateObjectBean();
+	String parentPid = null;
+	String type = node.getContentType();
+
+	for (String pPid : node.getParents()) {
+	    parentPid = archive.removeUriPrefix(pPid);
+	    break;
+	}
+
+	result.setParentPid(parentPid);
+	result.setType(type);
 	return result;
     }
 }

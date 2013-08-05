@@ -67,6 +67,25 @@ class Archive implements ArchiveInterface {
     }
 
     @Override
+    public Node createNode(Node node) {
+	String pid = node.getPID();
+	if (nodeExists(pid)) {
+	    throw new ArchiveException(pid + " already exists. Can't create.");
+	}
+	if (pid == null) {
+	    throw new ArchiveException("Pid is null!");
+	}
+	if (node.getNamespace() == null || node.getNamespace().isEmpty()) {
+	    throw new ArchiveException("Namespace is null!");
+	}
+	if (!fedoraInterface.nodeExists(pid)) {
+	    fedoraInterface.createNode(node);
+	}
+	fedoraInterface.updateNode(node);
+	return node;
+    }
+
+    @Override
     public Node createRootObject(String namespace) {
 	Node rootObject = null;
 	String pid = fedoraInterface.getPid(namespace);
@@ -303,24 +322,6 @@ class Archive implements ArchiveInterface {
     @Override
     public void updateContentModel(ContentModel createEdowebMonographModel) {
 	fedoraInterface.updateContentModel(createEdowebMonographModel);
-    }
-
-    private Node createNode(Node object) {
-	Node rootObject = null;
-	String pid = object.getPID();
-	if (nodeExists(pid)) {
-	    throw new ArchiveException(pid + " already exists. Can't create.");
-	}
-	String namespace = object.getNamespace();
-	if (namespace == null) {
-	    throw new ArchiveException(pid + " has no namespace.");
-	}
-	if (pid == null) {
-	    pid = fedoraInterface.getPid(namespace);
-	    object.setPID(pid);
-	}
-	fedoraInterface.createNode(object);
-	return rootObject;
     }
 
     public void readDcToNode(Node node, InputStream in, String dcNamespace) {

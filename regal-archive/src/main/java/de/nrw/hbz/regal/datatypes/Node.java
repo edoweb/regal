@@ -843,4 +843,18 @@ public class Node {
 	return bean.getRelation();
     }
 
+    /**
+     * @param predicate
+     *            all links with this predicate will be removed
+     */
+    public void removeRelations(String predicate) {
+	Vector<Link> newRels = new Vector<Link>();
+	for (Link rel : relsExt) {
+	    if (rel.getPredicate().compareTo(predicate) == 0)
+		continue;
+	    newRels.add(rel);
+	}
+	this.setRelsExt(newRels);
+    }
+
 }

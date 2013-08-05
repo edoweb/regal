@@ -43,6 +43,15 @@ public interface ArchiveInterface {
     public Node createComplexObject(ComplexObject object);
 
     /**
+     * Creates a node.
+     * 
+     * @param node
+     *            the new node
+     * @return The new created object.
+     */
+    public Node createNode(Node node);
+
+    /**
      * Adds a new node as child of the parent.
      * 
      * @param parent
@@ -154,8 +163,10 @@ public interface ArchiveInterface {
     public String addUriPrefix(String pid);
 
     /**
+     * Removes "info:fedora/" from pred
+     * 
      * @param pred
-     *            the predicate
+     *            string
      * @return the predicate prfixed with a certain namespace, e.g info:fedora.
      */
     public String removeUriPrefix(String pred);
