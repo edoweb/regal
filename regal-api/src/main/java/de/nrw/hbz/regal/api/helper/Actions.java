@@ -1884,14 +1884,14 @@ public class Actions {
 	/*
 	 * Workaround START
 	 */
-	try {
-	    logger.info("Wait 10 sec! Nasty workaround.");
-	    Thread.sleep(10000);
-	    logger.info("Stop Waiting! Nasty workaround.");
-	} catch (InterruptedException e1) {
-
-	    e1.printStackTrace();
-	}
+	// try {
+	// logger.info("Wait 10 sec! Nasty workaround.");
+	// //Thread.sleep(10000);
+	// logger.info("Stop Waiting! Nasty workaround.");
+	// } catch (InterruptedException e1) {
+	//
+	// e1.printStackTrace();
+	// }
 	/*
 	 * Workaround END
 	 */
