@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
+import de.nrw.hbz.regal.sync.extern.DigitalEntityRelation;
+import de.nrw.hbz.regal.sync.extern.RelatedDigitalEntity;
 import de.nrw.hbz.regal.sync.extern.Stream;
 import de.nrw.hbz.regal.sync.extern.StreamType;
 
@@ -252,15 +254,24 @@ public class EdowebIngester implements IngestInterface {
 	    webclient.createResource(ObjectType.journal, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
 	    webclient.publish(dtlBean);
-	    Vector<DigitalEntity> viewMainLinks = dtlBean.getViewMainLinks();
+	    Vector<DigitalEntity> viewMainLinks = getViewMainLinks(dtlBean);
 	    int numOfVols = viewMainLinks.size();
-	    logger.info(pid + " " + "Found " + numOfVols + " volumes.");
+	    logger.info(pid + " " + "Found " + numOfVols + " parts.");
 	    logger.info(pid + " " + "Will not update volumes.");
 	    logger.info(pid + " " + "updated.\n");
 	} catch (Exception e) {
 	    logger.error(pid + " " + e.getMessage());
 	}
 
+    }
+
+    private Vector<DigitalEntity> getViewMainLinks(final DigitalEntity dtlBean) {
+	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
+	    if (rel.relation == DigitalEntityRelation.VIEW_MAIN.toString())
+		links.add(rel.entity);
+	}
+	return links;
     }
 
     private void updateWebpageParent(DigitalEntity dtlBean) {
@@ -270,7 +281,7 @@ public class EdowebIngester implements IngestInterface {
 	    webclient.createResource(ObjectType.webpage, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
 	    webclient.publish(dtlBean);
-	    Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
+	    Vector<DigitalEntity> viewLinks = getViewLinks(dtlBean);
 	    int numOfVersions = viewLinks.size();
 	    logger.info(pid + " " + "Found " + numOfVersions + " versions.");
 	    logger.info(pid + " " + "Will not update versions.");
@@ -288,7 +299,7 @@ public class EdowebIngester implements IngestInterface {
 	    webclient.createResource(ObjectType.webpage, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
 	    webclient.publish(dtlBean);
-	    for (DigitalEntity b : dtlBean.getArchiveLinks()) {
+	    for (DigitalEntity b : getArchiveLinks(dtlBean)) {
 		b.setParentPid(dtlBean.getPid());
 		Stream dataStream = b.getStream(StreamType.DATA);
 		if (dataStream.getMimeType().compareTo("application/zip") == 0) {
@@ -304,6 +315,17 @@ public class EdowebIngester implements IngestInterface {
 
     }
 
+    private Vector<DigitalEntity> getArchiveLinks(DigitalEntity dtlBean) {
+
+	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
+	    if (rel.relation == DigitalEntityRelation.ARCHIVE.toString())
+		links.add(rel.entity);
+	}
+	return links;
+
+    }
+
     private void ingestEJournalComplete(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
@@ -312,11 +334,11 @@ public class EdowebIngester implements IngestInterface {
 	    webclient.createResource(ObjectType.journal, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
 	    webclient.publish(dtlBean);
-	    Vector<DigitalEntity> volumes = dtlBean.getVolumes();
-	    int numOfVols = volumes.size();
+	    Vector<DigitalEntity> list = getParts(dtlBean);
+	    int numOfVols = list.size();
 	    int count = 1;
 	    logger.info(pid + " Found " + numOfVols + " parts.");
-	    for (DigitalEntity b : volumes) {
+	    for (DigitalEntity b : list) {
 		logger.info("Part: " + (count++) + "/" + numOfVols);
 		updatePart(b);
 	    }
@@ -324,6 +346,16 @@ public class EdowebIngester implements IngestInterface {
 	} catch (Exception e) {
 	    logger.error(pid + " " + e.getMessage());
 	}
+    }
+
+    private Vector<DigitalEntity> getParts(final DigitalEntity dtlBean) {
+	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
+	    if (rel.relation
+		    .compareTo(DigitalEntityRelation.part_of.toString()) == 0)
+		links.add(rel.entity);
+	}
+	return links;
     }
 
     private void ingestWebpageComplete(DigitalEntity dtlBean) {
@@ -334,7 +366,7 @@ public class EdowebIngester implements IngestInterface {
 	    webclient.createResource(ObjectType.webpage, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
 	    webclient.publish(dtlBean);
-	    Vector<DigitalEntity> viewLinks = dtlBean.getViewLinks();
+	    Vector<DigitalEntity> viewLinks = getViewLinks(dtlBean);
 	    int numOfVersions = viewLinks.size();
 	    logger.info(pid + " Found " + numOfVersions + " versions.");
 	    int count = 1;
@@ -346,6 +378,17 @@ public class EdowebIngester implements IngestInterface {
 	} catch (Exception e) {
 	    logger.info(pid + " " + e.getMessage());
 	}
+
+    }
+
+    private Vector<DigitalEntity> getViewLinks(DigitalEntity dtlBean) {
+
+	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
+	    if (rel.relation == DigitalEntityRelation.VIEW.toString())
+		links.add(rel.entity);
+	}
+	return links;
 
     }
 

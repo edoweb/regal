@@ -19,6 +19,7 @@ package de.nrw.hbz.regal.sync.ingest;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.StringWriter;
+import java.util.Vector;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.transform.Transformer;
@@ -45,6 +46,8 @@ import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
 import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
+import de.nrw.hbz.regal.sync.extern.DigitalEntityRelation;
+import de.nrw.hbz.regal.sync.extern.RelatedDigitalEntity;
 import de.nrw.hbz.regal.sync.extern.Stream;
 import de.nrw.hbz.regal.sync.extern.StreamType;
 
@@ -207,7 +210,7 @@ public class Webclient {
 	if (dataStream.getMimeType() != null
 		&& dataStream.getMimeType().compareTo(expectedMime) != 0) {
 	    DigitalEntity fulltextObject = null;
-	    for (DigitalEntity view : dtlBean.getViewMainLinks()) {
+	    for (DigitalEntity view : getViewMainLinks(dtlBean)) {
 
 		Stream viewData = view.getStream(StreamType.DATA);
 		if (viewData.getMimeType().compareTo(expectedMime) == 0) {
@@ -216,7 +219,7 @@ public class Webclient {
 		}
 	    }
 	    if (fulltextObject == null) {
-		for (DigitalEntity view : dtlBean.getViewLinks()) {
+		for (DigitalEntity view : getViewLinks(dtlBean)) {
 
 		    Stream viewData = view.getStream(StreamType.DATA);
 		    if (viewData.getMimeType().compareTo(expectedMime) == 0) {
@@ -236,6 +239,26 @@ public class Webclient {
 	    updateData(data, dtlBean);
 	}
 	updateLabel(resource, dtlBean);
+    }
+
+    private Vector<DigitalEntity> getViewLinks(DigitalEntity dtlBean) {
+
+	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
+	    if (rel.relation == DigitalEntityRelation.VIEW.toString())
+		links.add(rel.entity);
+	}
+	return links;
+
+    }
+
+    private Vector<DigitalEntity> getViewMainLinks(final DigitalEntity dtlBean) {
+	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
+	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
+	    if (rel.relation == DigitalEntityRelation.VIEW_MAIN.toString())
+		links.add(rel.entity);
+	}
+	return links;
     }
 
     /**

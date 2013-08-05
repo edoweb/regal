@@ -303,69 +303,12 @@ public class DigitalEntity {
     /**
      * TODO: Remove:Digitool Specific
      * 
-     * @return viewMain objects
-     */
-    public Vector<DigitalEntity> getViewMainLinks() {
-	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
-	for (RelatedDigitalEntity rel : related) {
-	    if (rel.relation == DigitalEntityRelation.VIEW_MAIN.toString())
-		links.add(rel.entity);
-	}
-	return links;
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
      * @return all related Objects with part_of relation
      */
     public Vector<DigitalEntity> getParts() {
 	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
 	for (RelatedDigitalEntity rel : related) {
 	    if (rel.relation == DigitalEntityRelation.part_of.toString())
-		links.add(rel.entity);
-	}
-	return links;
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return return all part_of related objects with usage type volumes
-     */
-    public Vector<DigitalEntity> getVolumes() {
-	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
-	for (RelatedDigitalEntity rel : related) {
-	    if ((rel.relation == DigitalEntityRelation.part_of.toString())
-		    && (rel.entity.getUsageType().compareTo("volume") == 0))
-		links.add(rel.entity);
-	}
-	return links;
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return related objects with usage type ARCHIVE
-     */
-    public Vector<DigitalEntity> getArchiveLinks() {
-	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
-	for (RelatedDigitalEntity rel : related) {
-	    if (rel.relation == DigitalEntityRelation.ARCHIVE.toString())
-		links.add(rel.entity);
-	}
-	return links;
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
-     * @return elated objects with usage type VIEW
-     */
-    public Vector<DigitalEntity> getViewLinks() {
-	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
-	for (RelatedDigitalEntity rel : related) {
-	    if (rel.relation == DigitalEntityRelation.VIEW.toString())
 		links.add(rel.entity);
 	}
 	return links;
