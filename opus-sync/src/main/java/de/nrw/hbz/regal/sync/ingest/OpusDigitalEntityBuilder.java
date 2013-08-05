@@ -16,28 +16,19 @@
  */
 package de.nrw.hbz.regal.sync.ingest;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
 import de.nrw.hbz.regal.sync.extern.StreamType;
+import de.nrw.hbz.regal.sync.extern.XmlUtils;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -72,7 +63,7 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 	try {
 	    Vector<String> files = new Vector<String>();
 
-	    Element root = getDocument(file);
+	    Element root = XmlUtils.getDocument(file);
 
 	    // dtlDe.setDc(nodeToString(root));
 	    NodeList list = root.getElementsByTagName("dc:title");
@@ -122,39 +113,6 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 
 	return dtlDe;
 
-    }
-
-    private Element getDocument(File digitalEntityFile) {
-	try {
-	    DocumentBuilderFactory factory = DocumentBuilderFactory
-		    .newInstance();
-	    DocumentBuilder docBuilder;
-
-	    docBuilder = factory.newDocumentBuilder();
-
-	    Document doc;
-
-	    doc = docBuilder.parse(new BufferedInputStream(new FileInputStream(
-		    digitalEntityFile)));
-	    Element root = doc.getDocumentElement();
-	    root.normalize();
-	    return root;
-	} catch (FileNotFoundException e) {
-
-	    logger.error(e.getMessage());
-	} catch (SAXException e) {
-
-	    logger.error(e.getMessage());
-	} catch (IOException e) {
-
-	    logger.error(e.getMessage());
-	} catch (ParserConfigurationException e) {
-
-	    logger.error(e.getMessage());
-	} catch (Exception e) {
-	    logger.error(e.getMessage());
-	}
-	return null;
     }
 
 }
