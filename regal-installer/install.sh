@@ -244,6 +244,12 @@ echo "Fetch source..."
 cd $ARCHIVE_HOME/src
 git pull
 git checkout test
+cd -
+}
+
+function configApi()
+{
+cd $ARCHIVE_HOME/src
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
 echo "Start maven build. If this is your first regal installation, downloading all dependencies can take a lot of time."
 mvn -e clean install -DskipTests --settings settings.xml
@@ -339,18 +345,26 @@ then
 	createConfig
 	copyConfig
 	updateMaster
+	configApi
 	rollout     
     else
 	echo -e $usage
     fi
 else
-
     if [[ $1 == "-u" ]] && [[ $2 == "test" ]]
     then
 	makeDir
 	createConfig
 	copyConfig
 	updateTest
+	configApi
+	rollout	
+    elif [[ $1 == "-u" ]] && [[ $2 == "local" ]]
+    then
+	makeDir
+	createConfig
+	copyConfig
+	configApi
 	rollout
     elif [[ $1 == "-ext" ]] && [[ -n "$2" ]]
     then
