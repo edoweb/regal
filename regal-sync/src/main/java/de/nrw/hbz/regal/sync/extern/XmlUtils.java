@@ -42,9 +42,13 @@ public class XmlUtils {
      *            the xml file
      * @return the root element as org.w3c.dom.Element
      * @throws ParserConfigurationException
+     *             comes from factory.newDocumentBuilder()
      * @throws IOException
+     *             comes from docBuilder.parse()
      * @throws SAXException
+     *             comes from docBuilder.parse()
      * @throws FileNotFoundException
+     *             comes from FileInputStream
      */
     public static Element getDocument(File digitalEntityFile)
 	    throws ParserConfigurationException, FileNotFoundException,
