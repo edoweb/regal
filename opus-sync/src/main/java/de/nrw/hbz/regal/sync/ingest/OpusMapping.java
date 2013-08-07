@@ -62,8 +62,6 @@ public class OpusMapping {
 	    IOException, RecognitionException {
 	File outfile = File.createTempFile("lobid", "rdf");
 	outfile.deleteOnExit();
-	System.out.println(Thread.currentThread().getContextClassLoader()
-		.getResource("opus-xmetadissplus-to-lobid.flux").toString());
 	File fluxFile = createFile("opus-xmetadissplus-to-lobid.flux",
 		"/tmp/opus-xmetadissplus-to-lobid.flux");
 	createFile("opus-xmetadissplus-to-lobid.xml",

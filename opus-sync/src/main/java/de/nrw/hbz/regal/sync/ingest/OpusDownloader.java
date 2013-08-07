@@ -24,7 +24,6 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
@@ -53,7 +52,7 @@ public class OpusDownloader extends Downloader {
 
     protected void downloadObject(File dir, String pid) {
 	try {
-	    pid = URLEncoder.encode(pid, "utf-8");
+	    pid = pid.replace(':', '-');
 	    downloadXMetaDissPlus(dir, pid);
 	    downloadPdfs(dir, pid);
 
