@@ -19,7 +19,7 @@ package de.nrw.hbz.regal.sync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.nrw.hbz.regal.DigitoolDownloader;
+import de.nrw.hbz.regal.sync.ingest.DigitoolDownloader;
 import de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder;
 import de.nrw.hbz.regal.sync.ingest.EllinetIngester;
 
