@@ -151,7 +151,7 @@ public class Webclient {
 	String resource = endpoint + "/resource/" + pid;
 	String m = "";
 	try {
-	    logger.info("Metadata: " + metadata);
+	    logger.debug("Metadata: " + metadata);
 	    m = readMetadata(resource + "/metadata", dtlBean);
 
 	} catch (Exception e) {
@@ -159,7 +159,7 @@ public class Webclient {
 	}
 	try {
 	    String merge = appendMetadata(m, metadata);
-	    logger.info("MERGE: " + metadata);
+	    logger.debug("MERGE: " + metadata);
 	    updateMetadata(resource + "/metadata", merge);
 	} catch (Exception e) {
 	    logger.error(dtlBean.getPid() + " " + e.getMessage());
