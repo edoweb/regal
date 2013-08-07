@@ -171,7 +171,6 @@
 		<module>regal-archive</module>
 		<module>regal-downloader</module>
 		<module>regal-pidreporter</module>
-		<module>digitool-downloader</module>
 		<module>regal-sync</module>
 		<module>edoweb-sync</module>
 		<module>ellinet-sync</module>

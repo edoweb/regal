@@ -56,11 +56,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
-			<artifactId>digitool-downloader</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -68,6 +63,11 @@
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-sync</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
 		</dependency>
 		 <dependency>
             <groupId>ch.qos.logback</groupId>

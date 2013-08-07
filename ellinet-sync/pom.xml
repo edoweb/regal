@@ -55,11 +55,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
-			<artifactId>digitool-downloader</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
