@@ -195,11 +195,6 @@ public class Actions {
     // return object.getRoot().getPID() + " successfully created!";
     // }
 
-    public String createNode(Node object) {
-	fedora.createNode(object);
-	return object.getPID() + " successfully created!";
-    }
-
     /**
      * @param pid
      *            The pid that must be deleted
@@ -2226,7 +2221,12 @@ public class Actions {
 	return result;
     }
 
-    public CreateObjectBean getRegalJson(String pid, String acceptFormat) {
+    /**
+     * @param pid
+     *            the pid to read from
+     * @return the parentPid and contentType as json
+     */
+    public CreateObjectBean getRegalJson(String pid) {
 	Node node = readNode(pid);
 	CreateObjectBean result = new CreateObjectBean();
 	String parentPid = null;

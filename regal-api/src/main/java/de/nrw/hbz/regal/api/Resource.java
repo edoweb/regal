@@ -245,8 +245,7 @@ public class Resource {
     @Produces({ "application/json" })
     public Response getObjectAsJson(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	CreateObjectBean result = actions.getRegalJson(namespace + ":" + pid,
-		"application/json");
+	CreateObjectBean result = actions.getRegalJson(namespace + ":" + pid);
 	// return rem;
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
