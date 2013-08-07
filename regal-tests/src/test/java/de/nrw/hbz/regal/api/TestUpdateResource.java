@@ -72,9 +72,9 @@ public class TestUpdateResource {
 
     @Test
     public void testUpdate() throws FileNotFoundException, IOException {
-	String monuri = createMonograph();
-	String voluri = createJournal();
-	String arturi = moveMonographAsArticleToJournal();
+	createMonograph();
+	createJournal();
+	moveMonographAsArticleToJournal();
 
     }
 
