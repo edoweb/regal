@@ -175,7 +175,6 @@ class FedoraFacade implements FedoraInterface {
 	    // TODO Fix me
 	    // readContentModels(node);
 	    GetObjectProfileResponse prof = new GetObjectProfile(pid).execute();
-
 	    node.setLabel(prof.getLabel());
 	    node.setLastModified(prof.getLastModifiedDate());
 

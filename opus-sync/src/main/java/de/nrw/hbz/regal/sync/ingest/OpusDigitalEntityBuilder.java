@@ -17,6 +17,7 @@
 package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -43,6 +44,7 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
     @Override
     public DigitalEntity build(String baseDir, String pid) throws Exception {
 
+	pid = URLEncoder.encode(pid, "utf-8");
 	if (!map.containsKey(pid)) {
 	    DigitalEntity e = new DigitalEntity(baseDir);
 	    e.setPid(pid);

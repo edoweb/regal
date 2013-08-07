@@ -2145,17 +2145,24 @@ public class Actions {
 	    }
 	    if (object.startsWith(namespace)) {
 		objectLink = uriPrefix + object;
-	    } else {
+	    } else if (object.startsWith("http")) {
 		objectLink = object;
 	    }
 	    if (predicate.compareTo("http://hbz-nrw.de/regal#contentType") == 0) {
 		objectLink = "/" + object + "/";
 	    }
-	    return "<tr><td><a href=\"" + subjectLink + "\">" + subject
-		    + "</a></td><td><a href=\"" + predicate + "\">" + predicate
-		    + "</a></td><td about=\"" + subject + "\"><a property=\""
-		    + predicate + "\" href=\"" + objectLink + "\">" + object
-		    + "</a></td></tr>";
+	    if (objectLink != null) {
+		return "<tr><td><a href=\"" + subjectLink + "\">" + subject
+			+ "</a></td><td><a href=\"" + predicate + "\">"
+			+ predicate + "</a></td><td about=\"" + subject
+			+ "\"><a property=\"" + predicate + "\" href=\""
+			+ objectLink + "\">" + object + "</a></td></tr>";
+	    } else {
+		return "<tr><td><a href=\"" + subjectLink + "\">" + subject
+			+ "</a></td><td><a href=\"" + predicate + "\">"
+			+ predicate + "</a></td><td about=\"" + subject + "\">"
+			+ object + "</td></tr>";
+	    }
 	}
     }
 

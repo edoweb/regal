@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metamorph xmlns="http://www.culturegraph.org/metamorph"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1">
+	<rules>
+
+		<data source="*.title.value" name="http://iflastandards.info/ns/isbd/elements/P1004">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+
+		<combine name="http://purl.org/dc/elements/1.1/creator"
+			value="${creatorLastName}, ${creatorAcademicTitle} ${creatorFirstName}">
+			<data source="*.creator.person.name.foreName.value" name="creatorFirstName">
+				<regexp match="((.*))" format="${1}" />
+			</data>
+			<data source="*.creator.person.name.surName.value" name="creatorLastName">
+				<regexp match="((.*))" format="${1}" />
+			</data>
+
+		</combine>
+		<data source="*.type.value" name="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		<data source="*.issued.value" name="http://purl.org/dc/terms/issued">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		<data source="*.abstract.value" name="http://purl.org/dc/terms/abstract">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		<data source="*.identifier.value" name="http://hbz-nrw.de/regal/urn">
+			<regexp match="(urn[^\ ]*)" format="${1}" />
+		</data>
+		<data source="*.medium.value" name="http://purl.org/dc/terms/medium">
+			<regexp match="(urn[^\ ]*)" format="${1}" />
+		</data>
+		<data source="*.language.value" name="http://purl.org/dc/terms/language">
+			<regexp match="((.*))" format="http://id.loc.gov/vocabulary/iso639-2/${1}" />
+		</data>
+		<data source="*.rights.value" name="http://purl.org/dc/terms/rights">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+
+		<combine name="http://iflastandards.info/ns/isbd/elements/P1017"
+			value="${name}, ${place}">
+			<data source="*.publisher.universityOrInstitution.name.value"
+				name="name">
+				<regexp match="((.*))" format="${1}" />
+			</data>
+			<data source="*.publisher.universityOrInstitution.place.value"
+				name="place">
+				<regexp match="((.*))" format="${1}" />
+			</data>
+		</combine>
+	</rules>
+</metamorph>

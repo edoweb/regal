@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="oai2.xsl" ?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/
+         http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+	<responseDate>2013-08-07T11:06:55Z</responseDate>
+	<request verb="GetRecord" metadataPrefix="XMetaDissPlus"
+		identifier="oai:ubm.opus.hbz-nrw.de:6">http://ubm.opus.hbz-nrw.de/oai2/oai2.php</request>
+	<GetRecord>
+		<record>
+			<header>
+				<identifier>oai:ubm.opus.hbz-nrw.de:6</identifier>
+				<datestamp>2004-07-29T14:24:02Z</datestamp>
+				<setSpec>ddc:540</setSpec>
+				<setSpec>pub-type:8</setSpec>
+				<setSpec>has-source-swb:false</setSpec>
+			</header>
+			<metadata>
+				<xMetaDiss:xMetaDiss xmlns:xMetaDiss="http://www.d-nb.de/standards/xmetadissplus"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddb="http://www.d-nb.de/standards/ddb/"
+					xmlns:pc="http://www.d-nb.de/standards/pc/" xmlns:cc="http://www.d-nb.de/standards/cc/"
+					xmlns="http://www.d-nb.de/standards/subject/" xmlns:urn="http://www.d-nb.de/standards/urn/"
+					xmlns:doi="http://www.d-nb.de/standards/doi/" xmlns:hdl="http://www.d-nb.de/standards/hdl/"
+					xmlns:thesis="http://www.ndltd.org/standards/metadata/etdms/1.0/"
+					xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
+					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dini="http://www.d-nb.de/standards/xmetadissplus/type/"
+					xsi:schemaLocation="http://www.d-nb.de/standards/xmetadissplus/
+    http://files.dnb.de/standards/xmetadissplus/xmetadissplus.xsd">
+					<dc:title xsi:type="ddb:titleISO639-2" lang="ger">EinfluÃ
+						endogener und exogener Faktoren auf Bildung und Reparatur
+						oxidativer DNA-SchÃ¤den
+					</dc:title>
+					<dc:creator xsi:type="pc:MetaPers">
+						<pc:person>
+							<pc:name type="nameUsedByThePerson">
+								<pc:foreName>Hanns-Christian</pc:foreName>
+								<pc:surName>Mahler</pc:surName>
+							</pc:name>
+						</pc:person>
+					</dc:creator>
+					<dcterms:abstract xsi:type="ddb:contentISO639-2"
+						lang="ger" ddb:type="noScheme">FÃ¼r die Krebsentstehung sind nach heutigen
+						Vorstellungen Mutationen in bestimmten Genen somatischer Zellen
+						verantwortlich, die ihrerseits durch chemische Modifikationen der
+						DNA (DNA-SchÃ¤den) verursacht werden. Von besonderem Interesse als
+						DNA-schÃ¤digende Agentien sind reaktive Sauerstoffspezies (ROS),
+						die endogen - wie z.B. in der Lipidperoxidation oder
+						mitochondrialen Atmungskette - oder exogen - z.B. durch
+						Arzneimittel oder andere aus der Umwelt stammende Chemikalien -
+						gebildet werden kÃ¶nnen. Dem Schutz der DNA vor dieser SchÃ¤digung
+						und ihren Folgen dienen antioxidative Systeme und DNA-Reparatur,
+						deren Effizienz von verschiedenen Genen der Zelle abhÃ¤ngig ist.
+						Ziel dieser Arbeit war die Untersuchung des Einflusses bestimmter
+						Faktoren auf die Bildung, Inhibierung (antioxidative Wirkung) und
+						Reparatur oxidativer DNA-SchÃ¤den. Als Beispiel fÃ¼r exogene
+						Stoffe, die zur Bildung oxidativer DNA-SchÃ¤den fÃ¼hren, wurden
+						die Gyrasehemmer Ofloxacin und Norfloxacin nach Bestrahlung mit
+						UV-360 untersucht. Unter Verwendung spezifischer
+						DNA-Reparatur-endonukleasen als Sonden (Fpg-Protein, Endonuklease
+						III, Endonuklease IV, Exonuklease III, T4 Endonuklease V) wurden
+						spezifisch DNA-Modifikationen an zellfreier und zellulÃ¤rer DNA
+						quantifiziert. Es zeigte sich, daÃ es sich im Falle des
+						Ofloxacins bei der ultimal mit der DNA reagierenden reaktiven
+						Spezies um Hydroxylradikale handelt, wÃ¤hrend durch Norfloxacin
+						Singulettsauerstoff entsteht. Durch Zusatz verschiedener
+						Antioxidantien konnten diese Ergebnisse bestÃ¤tigt werden. Im
+						Gegensatz zu Hydroxylradikalen ist Ã¼ber die DNA-SchÃ¤den und
+						Mutationen durch Alkoxyl-Radikale, die endogen bei der
+						Lipidperoxidation entstehen, nichts bekannt. Die Substanz BCBT
+						([4-[(tert-Butyldioxy)carbonyl]benzyl]-triethyl-ammonium-chlorid)
+						generiert Alkoxyl-Radikale. BCBT + UV-360 induzierte vorwiegend
+						Fpg-sensitive Modifikationen, die durch Bestimmung mittels
+						HPLC/ECD zu 83 Â± 18% als 8-Hydroxyguanin identifiziert wurden.
+						Der Vergleich des Einflusses der ZusÃ¤tze tert-Butanol und
+						Natriumazid auf die SchÃ¤digung mit BCBT mit anderen reaktiven
+						Spezies zeigte klar, daÃ die SchÃ¤digung hier Ã¼ber
+						Alkoxyl-Radikale verlÃ¤uft. Die Analyse und Sequenzierung der
+						durch BCBT induzierten Mutanten zeigte, daÃ vorwiegend GC-&gt;TA
+						Transversionen gebildet werden, die auf 8-oxoG zurÃ¼ckzufÃ¼hren
+						sind. Auf der Ebene der Antioxidantien wurde der EinfluÃ des
+						zelleigenen Glutathions untersucht. Mit der Depletion des
+						Glutathion-Gehalts durch Vorbehandlung mit
+						L-Buthionin-SR-sulfoximin (BSO) ging eine ErhÃ¶hung des
+						Steady-State-Spiegels in den untersuchten AS52 Zellen einher.
+						Selen ist ein wichtiges Spurenelement und u.a. Bestandteil von
+						Glutathionperoxidasen (GPx). Um die Bedeutung von Selen bei der
+						oxidativer DNA-Modifikationen bzw. deren Inhibierung zu
+						untersuchen, wurden Natriumselenit und Ebselen eingesetzt. Ab
+						einer Konzentration von 50 ÂµM trat durch Natriumselenit eine
+						ErhÃ¶hung des Steady-State-Spiegels auf (prooxidativer Effekt).
+						Parallel mit der oxidativen SchÃ¤digung der DNA ist eine ErhÃ¶hung
+						des zellulÃ¤ren Gehalts an Glutathion feststellbar. Ebselen
+						bedingte in Konzentrationen bis 200 ÂµM keine ErhÃ¶hung des
+						Steady-State-Spiegels oder des Gehalts an reduziertem Glutathion.
+						Beide Substanzen waren in der Lage, die durch sichtbares Licht und
+						UV-B-Strahlung induzierten EinzelstrangbrÃ¼che zu reduzieren.
+						Mikrokerne, die durch SchÃ¤digung mit den Agentien Kaliumbromat,
+						Ro 19-8022 + Licht und Wasserstoffperoxid entstanden, waren ebenso
+						durch Natriumselenit und Ebselen reduzierbar. In dieser Arbeit
+						konnte ferner gezeigt werden, daÃ p53 keinen EinfluÃ auf die
+						Reparatur UV-induzierter Modifikationen
+						(Nukleotidexzisionsreparatur) und die Reparatur Fpg-sensitiver
+						Modifikationen (Basenexzisionsreparatur) hat.
+					</dcterms:abstract>
+					<dc:publisher xsi:type="cc:Publisher">
+						<cc:universityOrInstitution>
+							<cc:name>Johannes Gutenberg-UniversitÃ¤t</cc:name>
+							<cc:place>Mainz</cc:place>
+						</cc:universityOrInstitution>
+						<cc:address cc:Scheme="DIN5008"></cc:address>
+					</dc:publisher>
+					<dcterms:issued xsi:type="dcterms:W3CDTF">2000</dcterms:issued>
+					<dc:type xsi:type="dini:PublType">doctoralThesis</dc:type>
+					<dc:identifier xsi:type="urn:nbn">urn:nbn:de:hebis:77-68
+					</dc:identifier>
+					<dcterms:medium xsi:type="dcterms:IMT">application/pdf
+					</dcterms:medium>
+					<dcterms:medium xsi:type="dcterms:IMT">text/xml</dcterms:medium>
+					<dc:language xsi:type="dcterms:ISO639-2">ger</dc:language>
+					<dc:rights xsi:type="ddb:noScheme">http://ubm.opus.hbz-nrw.de/doku/urheberrecht.php
+					</dc:rights>
+					<thesis:degree>
+						<thesis:level>thesis.doctoral</thesis:level>
+						<thesis:grantor xsi:type="cc:Corporate">
+							<cc:universityOrInstitution>
+								<cc:name>Johannes Gutenberg-UniversitÃ¤t</cc:name>
+								<cc:place>Mainz</cc:place>
+							</cc:universityOrInstitution>
+						</thesis:grantor>
+					</thesis:degree>
+					<ddb:contact ddb:contactID="F6000-0309" />
+					<ddb:fileNumber>2</ddb:fileNumber>
+					<ddb:fileProperties ddb:fileName="diss.pdf"
+						ddb:fileID="file6-2" ddb:fileSize="983370">aus: Praesentationsformat
+					</ddb:fileProperties>
+					<ddb:fileProperties ddb:fileName="meta.xml"
+						ddb:fileID="file6-3" ddb:fileSize="5007">aus: Praesentationsformat
+					</ddb:fileProperties>
+					<ddb:identifier ddb:type="URL">http://ubm.opus.hbz-nrw.de/volltexte/2000/6
+					</ddb:identifier>
+					<ddb:rights ddb:kind="free" />
+				</xMetaDiss:xMetaDiss>
+			</metadata>
+		</record>
+	</GetRecord>
+</OAI-PMH>

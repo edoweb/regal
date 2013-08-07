@@ -27,6 +27,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.nrw.hbz.regal.sync.ingest.DigitoolDownloader;
 import de.nrw.hbz.regal.sync.ingest.DownloaderInterface;
 
 /**

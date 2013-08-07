@@ -16,6 +16,7 @@
  */
 package de.nrw.hbz.regal.sync.ingest;
 
+import java.io.File;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -81,7 +82,12 @@ public class OpusIngester implements IngestInterface {
 	    webclient.createObject(dtlBean, "application/pdf",
 		    ObjectType.monograph);
 	    logger.info(pid + " " + "updated.\n");
-	    webclient.autoGenerateMetdata(dtlBean);
+	    OpusMapping mapper = new OpusMapping();
+	    String metadata = mapper.map(new File(dtlBean.getLocation()
+		    + File.separator + pid + ".xml"),
+		    namespace + ":" + dtlBean.getPid());
+
+	    webclient.autoGenerateMetadataMerge(dtlBean, metadata);
 	    webclient.publish(dtlBean);
 	} catch (IllegalArgumentException e) {
 	    logger.debug(e.getMessage());
