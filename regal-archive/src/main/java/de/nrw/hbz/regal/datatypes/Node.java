@@ -17,7 +17,6 @@
 package de.nrw.hbz.regal.datatypes;
 
 import static de.nrw.hbz.regal.datatypes.Vocabulary.TYPE_NODE;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 
 import java.util.Date;
 import java.util.List;
@@ -35,13 +34,11 @@ public class Node {
     String metadataFile;
     String uploadFile;
     Vector<Link> relsExt = new Vector<Link>();
-    Vector<String> parentObjects = new Vector<String>();
     Vector<ContentModel> cms = new Vector<ContentModel>();
     private String label = null;
     private String type = null;
     private String pid = null;
     private String state = null;
-
     private String mimeType = null;
     private String namespace = null;
     private String contentType = null;
@@ -78,10 +75,6 @@ public class Node {
      * @return this
      */
     public Node addRelation(Link link) {
-	if (link.getPredicate().compareTo(IS_PART_OF) == 0) {
-	    addParent(link.getObject());
-	    link.setLiteral(false);
-	}
 	relsExt.add(link);
 	return this;
     }
@@ -119,9 +112,6 @@ public class Node {
 		newRels.add(link);
 	    }
 	}
-
-	deleteObjects();
-
 	setRelsExt(newRels);
     }
 
@@ -140,14 +130,14 @@ public class Node {
     /**
      * The relsExt defines all relations of the node.
      * 
-     * @param rels
+     * @param links
      *            all relations of the node
      * @return this
      */
-    public Node setRelsExt(Vector<Link> rels) {
+    public Node setRelsExt(List<Link> links) {
 	// myNode.setRELSEXT(new RELSEXT_type0());
 	relsExt = new Vector<Link>();
-	for (Link link : rels) {
+	for (Link link : links) {
 	    addRelation(link);
 	}
 
@@ -264,12 +254,12 @@ public class Node {
 	return state;
     }
 
-    /**
-     * @return all parents of the node
-     */
-    public Vector<String> getParents() {
-	return parentObjects;
-    }
+    // /**
+    // * @return all parents of the node
+    // */
+    // public Vector<String> getParents() {
+    // return parentObjects;
+    // }
 
     /**
      * @return the node's pid
@@ -314,15 +304,6 @@ public class Node {
     public Node setLabel(String str) {
 	label = str;
 	return this;
-    }
-
-    private Node addParent(String obj) {
-	parentObjects.add(obj);
-	return this;
-    }
-
-    private void deleteObjects() {
-	parentObjects = new Vector<String>();
     }
 
     /**
@@ -846,15 +827,24 @@ public class Node {
     /**
      * @param predicate
      *            all links with this predicate will be removed
+     * @return the removed statements
      */
-    public void removeRelations(String predicate) {
+    public List<Link> removeRelations(String predicate) {
 	Vector<Link> newRels = new Vector<Link>();
+	Vector<Link> removed = new Vector<Link>();
 	for (Link rel : relsExt) {
-	    if (rel.getPredicate().compareTo(predicate) == 0)
-		continue;
-	    newRels.add(rel);
+	    if (rel.getPredicate().compareTo(predicate) == 0) {
+		System.out.println("REMOVE: " + this.pid + " <"
+			+ rel.getPredicate() + "> " + rel.getObject());
+		removed.add(rel);
+	    } else {
+		System.out.println("ADD: " + this.pid + " <"
+			+ rel.getPredicate() + "> " + rel.getObject());
+		newRels.add(rel);
+	    }
 	}
 	this.setRelsExt(newRels);
+	return removed;
     }
 
 }

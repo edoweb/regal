@@ -69,6 +69,7 @@ import com.yourmediashelf.fedora.client.request.FindObjects;
 import com.yourmediashelf.fedora.client.request.GetDatastreamDissemination;
 import com.yourmediashelf.fedora.client.request.ListDatastreams;
 import com.yourmediashelf.fedora.client.request.ModifyDatastream;
+import com.yourmediashelf.fedora.client.request.PurgeRelationship;
 import com.yourmediashelf.fedora.client.request.Upload;
 import com.yourmediashelf.fedora.client.response.FedoraResponse;
 import com.yourmediashelf.fedora.client.response.FindObjectsResponse;
@@ -115,50 +116,38 @@ public class Utils {
 	return pred;
     }
 
-    void updateRelsExt(String pid, Vector<Link> links) {
+    void purgeRelationships(String pid, List<Link> list) {
+
+	for (Link link : list) {
+	    System.out.println("PURGE: " + addUriPrefix(pid) + " <"
+		    + link.getPredicate() + "> " + link.getObject());
+	    try {
+		new PurgeRelationship(pid).subject(addUriPrefix(pid))
+			.predicate(link.getPredicate())
+			.object(link.getObject(), link.isLiteral()).execute();
+	    } catch (FedoraClientException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
+	}
+    }
+
+    void addRelationships(String pid, List<Link> links) {
 
 	if (links != null)
-	    for (Link curHBZLink : links) {
-		if (curHBZLink == null)
-		    return;
+	    for (Link link : links) {
 
-		// System.out.println("UPDATE: <" + pid + "> <"
-		// + curHBZLink.getPredicate() + "> <"
-		// + curHBZLink.getObject() + ">");
+		System.out.println("Add: <" + pid + "> <" + link.getPredicate()
+			+ "> <" + link.getObject() + ">");
 		try {
-		    if (curHBZLink.isLiteral()) {
-			// System.out.println("isLiteral");
-			// fedoraManager.addRelationship(pid,
-			// curHBZLink.getPredicate(),
-			// curHBZLink.getObject(), true, null);
-			new AddRelationship(pid)
-				.predicate(curHBZLink.getPredicate())
-				.object(curHBZLink.getObject(), true).execute();
-		    } else {
-			// System.out.println("NOT isLiteral");
-
-			// fedoraManager.addRelationship(pid,
-			// curHBZLink.getPredicate(),
-			// curHBZLink.getObject(), false, null);
-			new AddRelationship(pid)
-				.predicate(curHBZLink.getPredicate())
-				.object(curHBZLink.getObject(), false)
-				.execute();
-		    }
+		    new AddRelationship(pid).predicate(link.getPredicate())
+			    .object(link.getObject(), link.isLiteral())
+			    .execute();
 		} catch (Exception e) {
-		    // System.out.println("Try as Literal:");
 		    try {
-			// fedoraManager.addRelationship(pid,
-			// curHBZLink.getPredicate(),
-			// curHBZLink.getObject(), true, null);
-			new AddRelationship(pid)
-				.predicate(curHBZLink.getPredicate())
-				.object(curHBZLink.getObject(), true).execute();
+			new AddRelationship(pid).predicate(link.getPredicate())
+				.object(link.getObject(), true).execute();
 		    } catch (Exception e2) {
-			// System.out.println("UPDATE: Could not ingest: <" +
-			// pid
-			// + "> <" + curHBZLink.getPredicate() + "> <"
-			// + curHBZLink.getObject() + ">");
 
 		    }
 
@@ -234,14 +223,8 @@ public class Utils {
     }
 
     /**
-     * 
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
      * Description: Allows to ingest a local file as managed datastream of the
-     * object
-     * </p>
+     * object </p>
      * 
      * @param pid
      *            of the object
@@ -565,41 +548,10 @@ public class Utils {
 			link.setObject(objUri.stringValue());
 			link.setPredicate(predUri.stringValue());
 
-			// System.out.println(" READ: <" + node.getPID() + "> <"
-			// + link.getPredicate() + "> <"import static
-			// + link.getObject() + ">");
-
 			if (link.getPredicate().compareTo(REL_IS_NODE_TYPE) == 0) {
 			    node.setNodeType(link.getObject());
-			}
-			// else if (link.getPredicate().compareTo(
-			// REL_IS_IN_NAMESPACE) == 0)
-			// {
-			// node.setNamespace(link.getObject());
-			// }
-			// else if
-			// (link.getPredicate().compareTo(HAS_DATASTREAM) == 0)
-			// {
-			// node.setFileName(link.getObject());
-			// node.setDataUrl(new URL(host + "/objects/"
-			// + node.getPID() + "/datastreams/"
-			// + node.getFileName() + "/content"));
-			//
-			// }
-			// else if
-			// (link.getPredicate().compareTo(DATASTREAM_MIME) == 0)
-			// {
-			// node.setMimeType(link.getObject());
-			// }
-			// else if (link.getPredicate().compareTo(
-			// HAS_METADATASTREAM) == 0)
-			// {
-			// node.setMetadataUrl(new URL(host + "/objects/"
-			// + node.getPID()
-			// + "/datastreams/metadata/content"));
-			// }
-			else if (link.getPredicate()
-				.compareTo(REL_CONTENT_TYPE) == 0) {
+			} else if (link.getPredicate().compareTo(
+				REL_CONTENT_TYPE) == 0) {
 			    node.setContentType(link.getObject());
 			}
 
@@ -826,13 +778,7 @@ public class Utils {
     }
 
     /**
-     * 
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description: Creates new Rels-Ext datastream in object 'pid'
-     * </p>
+     * Creates new Rels-Ext datastream in object 'pid' </p>
      * 
      * @param pid
      *            of the object
@@ -848,6 +794,25 @@ public class Utils {
 		    + "\">" + "    </rdf:Description>" + "</rdf:RDF>";
 
 	    new AddDatastream(pid, "RELS-EXT").mimeType("application/rdf+xml")
+		    .formatURI("info:fedora/fedora-system:FedoraRELSExt-1.0")
+		    .versionable(true).content(initialContent).execute();
+
+	} catch (Exception e) {
+	    throw new ArchiveException(e.getMessage(), e);
+	}
+    }
+
+    void updateFedoraXmlForRelsExt(String pid) {
+	// System.out.println("Create new REL-EXT "+pid);
+	try {
+
+	    String initialContent = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:rel=\"info:fedora/fedora-system:def/relations-external#\">"
+		    + "    <rdf:Description rdf:about=\"info:fedora/"
+		    + pid
+		    + "\">" + "    </rdf:Description>" + "</rdf:RDF>";
+
+	    new ModifyDatastream(pid, "RELS-EXT")
+		    .mimeType("application/rdf+xml")
 		    .formatURI("info:fedora/fedora-system:FedoraRELSExt-1.0")
 		    .versionable(true).content(initialContent).execute();
 

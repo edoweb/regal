@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import de.nrw.hbz.regal.api.helper.Actions;
 import de.nrw.hbz.regal.api.helper.ObjectType;
@@ -116,7 +116,7 @@ public class TestActions {
 
     }
 
-    // @Test
+    @Test
     public void testCreation() {
 	try {
 	    Resource resources = new Resource();
@@ -125,7 +125,7 @@ public class TestActions {
 	    resources.create("123", "test", input);
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    System.out.println(e.getMessage());
+	    Assert.fail();
 	}
 
     }
@@ -162,7 +162,7 @@ public class TestActions {
 	System.out.println(str);
     }
 
-    @After
+    // @After
     public void tearDown() throws IOException {
 	Actions actions = new Actions();
 	try {

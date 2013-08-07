@@ -16,8 +16,6 @@
  */
 package de.nrw.hbz.regal.api;
 
-import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_IS_NODE_TYPE;
-import static de.nrw.hbz.regal.datatypes.Vocabulary.TYPE_OBJECT;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.HAS_PART;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 
@@ -26,6 +24,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -48,9 +47,8 @@ import de.nrw.hbz.regal.api.helper.Actions;
 import de.nrw.hbz.regal.api.helper.ContentModelFactory;
 import de.nrw.hbz.regal.api.helper.HttpArchiveException;
 import de.nrw.hbz.regal.api.helper.ObjectType;
-import de.nrw.hbz.regal.api.helper.TypeType;
 import de.nrw.hbz.regal.api.helper.View;
-import de.nrw.hbz.regal.datatypes.Link;
+import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
@@ -552,20 +550,24 @@ public class Resource {
 	    throw new HttpArchiveException(Status.BAD_REQUEST.getStatusCode(),
 		    "The type you've provided is NULL or empty.");
 	}
-	if (input.type.compareTo(ObjectType.monograph.toString()) == 0)
-	    return createMonograph(input, pid, namespace);
-	else if (input.type.compareTo(ObjectType.journal.toString()) == 0)
-	    return createEJournal(input, pid, namespace);
-	else if (input.type.compareTo(ObjectType.webpage.toString()) == 0)
-	    return createWebpage(input, pid, namespace);
-	else if (input.type.compareTo(ObjectType.version.toString()) == 0)
-	    return createWebpageVersion(input, pid, namespace);
-	else if (input.type.compareTo(ObjectType.volume.toString()) == 0)
-	    return createEJournalVolume(input, pid, namespace);
-	else {
-	    Node node = createResource(input, pid, namespace);
-	    return node.getPID() + " created!";
+	List<ContentModel> models = new Vector<ContentModel>();
+	if (input.type.compareTo(ObjectType.monograph.toString()) == 0) {
+	    models.add(ContentModelFactory.createMonographModel(namespace));
+	    models.add(ContentModelFactory.createPdfModel(namespace));
+	} else if (input.type.compareTo(ObjectType.journal.toString()) == 0) {
+	    models.add(ContentModelFactory.createEJournalModel(namespace));
+	    models.add(ContentModelFactory.createPdfModel(namespace));
+	} else if (input.type.compareTo(ObjectType.webpage.toString()) == 0) {
+	    models.add(ContentModelFactory.createWebpageModel(namespace));
+	} else if (input.type.compareTo(ObjectType.version.toString()) == 0) {
+	    models.add(ContentModelFactory.createVersionModel(namespace));
+	} else if (input.type.compareTo(ObjectType.volume.toString()) == 0) {
+	    models.add(ContentModelFactory.createVolumeModel(namespace));
+	    models.add(ContentModelFactory.createPdfModel(namespace));
 	}
+	models.add(ContentModelFactory.createHeadModel(namespace));
+	Node node = actions.createResource(input, pid, namespace, models);
+	return node.getPID() + " created/updated!";
     }
 
     /**
@@ -855,105 +857,6 @@ public class Resource {
     public ObjectList getAllParents(@PathParam("pid") String pid) {
 
 	return new ObjectList(actions.findObject(pid, IS_PART_OF));
-    }
-
-    private Node createResource(CreateObjectBean input, String rawPid,
-	    String namespace) {
-	logger.info("create " + input.type);
-	String pid = namespace + ":" + rawPid;
-	Node rootObject = null;
-
-	try {
-	    if (actions.nodeExists(pid)) {
-		rootObject = actions.readNode(pid);
-		List<String> parentPids = rootObject.getParents();
-		for (String pp : parentPids) {
-		    Node parent = actions.readNode(pp);
-		    parent.removeRelation(HAS_PART, pid);
-		}
-		rootObject.removeRelations(REL_IS_NODE_TYPE);
-		rootObject.removeRelations(IS_PART_OF);
-	    } else {
-		rootObject = new Node();
-		rootObject.setNamespace(namespace).setPID(pid);
-		rootObject.setContentType(input.getType());
-		rootObject.addContentModel(ContentModelFactory
-			.createHeadModel(namespace));
-	    }
-	    rootObject.setNodeType(TYPE_OBJECT);
-
-	    Link link = new Link();
-	    link.setPredicate(TypeType.contentType.toString());
-	    link.setObject(input.type, true);
-	    rootObject.addRelation(link);
-
-	    if (input.getParentPid() != null && !input.getParentPid().isEmpty()) {
-		String parentPid = input.getParentPid();
-		link = new Link();
-		link.setPredicate(IS_PART_OF);
-		link.setObject(parentPid, false);
-		rootObject.addRelation(link);
-
-		link = new Link();
-		link.setPredicate(HAS_PART);
-		link.setObject(pid, false);
-		actions.addLink(parentPid, link);
-	    }
-	    actions.createNode(rootObject);
-	    return rootObject;
-
-	} catch (ArchiveException e) {
-	    e.printStackTrace();
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
-	}
-    }
-
-    // --SPECIAL---
-
-    private String createWebpage(CreateObjectBean input, String p,
-	    String namespace) {
-	logger.info("create Webpage");
-	Node webpage = createResource(input, p, namespace);
-	webpage.addContentModel(ContentModelFactory
-		.createWebpageModel(namespace));
-	return actions.createNode(webpage);
-    }
-
-    private String createMonograph(CreateObjectBean input, String p,
-	    String namespace) {
-	logger.info("create Monograph");
-	Node node = createResource(input, p, namespace);
-	node.addContentModel(ContentModelFactory
-		.createMonographModel(namespace));
-	node.addContentModel(ContentModelFactory.createPdfModel(namespace));
-	return actions.createNode(node);
-    }
-
-    private String createEJournal(CreateObjectBean input, String p,
-	    String namespace) {
-	logger.info("create EJournal");
-	Node node = createResource(input, p, namespace);
-	node.addContentModel(ContentModelFactory.createEJournalModel(namespace));
-	node.addContentModel(ContentModelFactory.createPdfModel(namespace));
-	return actions.createNode(node);
-    }
-
-    private String createWebpageVersion(CreateObjectBean input, String p,
-	    String namespace) {
-	Node node = createResource(input, p, namespace);
-	node.addContentModel(ContentModelFactory.createVersionModel(namespace));
-	node.addContentModel(ContentModelFactory.createPdfModel(namespace));
-	return actions.createNode(node);
-    }
-
-    private String createEJournalVolume(CreateObjectBean input, String p,
-	    String namespace) {
-	Node node = createResource(input, p, namespace);
-	node.addContentModel(ContentModelFactory.createVolumeModel(namespace));
-	node.addContentModel(ContentModelFactory.createPdfModel(namespace));
-	return actions.createNode(node);
     }
 
     /**

@@ -14,25 +14,24 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal;
+package de.nrw.hbz.regal.fedora;
+
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
-public class ArchiveFactory
-{
-	/**
-	 * @param host
-	 *            The webadress of the backend system
-	 * @param user
-	 *            A user to operate in the archive
-	 * @param passwd
-	 *            The users password
-	 * @return An archive object implementing the ArchivInterface.java
-	 */
-	public static ArchiveInterface getArchiveImpl(String host, String user,
-			String passwd)
-	{
-		return Archive.getInstance(host, user, passwd);
-	}
+public class FedoraFactory {
+    /**
+     * @param host
+     *            The webadress of the backend system
+     * @param user
+     *            A user to operate in the archive
+     * @param passwd
+     *            The users password
+     * @return An archive object implementing the ArchivInterface.java
+     */
+    public static FedoraInterface getFedoraImpl(String host, String user,
+	    String passwd) {
+	return new FedoraFacade(host, user, passwd);
+    }
 }

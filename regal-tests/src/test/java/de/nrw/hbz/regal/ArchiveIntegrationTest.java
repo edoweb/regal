@@ -38,6 +38,8 @@ import de.nrw.hbz.regal.datatypes.ComplexObjectNode;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.fedora.FedoraFactory;
+import de.nrw.hbz.regal.fedora.FedoraInterface;
 import de.nrw.hbz.regal.fedora.FedoraVocabulary;
 
 /**
@@ -47,7 +49,7 @@ import de.nrw.hbz.regal.fedora.FedoraVocabulary;
 @SuppressWarnings("javadoc")
 public class ArchiveIntegrationTest {
 
-    ArchiveInterface archive = null;
+    FedoraInterface archive = null;
 
     Properties properties = null;
     Node rootObject = null;
@@ -66,7 +68,7 @@ public class ArchiveIntegrationTest {
 	    e.printStackTrace();
 	}
 
-	archive = ArchiveFactory.getArchiveImpl(
+	archive = FedoraFactory.getFedoraImpl(
 		properties.getProperty("fedoraUrl"),
 		properties.getProperty("user"),
 		properties.getProperty("password"));
@@ -169,8 +171,6 @@ public class ArchiveIntegrationTest {
 	try {
 
 	    Node myObject = archive.createComplexObject(object);
-	    // Node node1 =
-	    archive.createNode(myObject.getPID());
 
 	    Node node2 = new Node();
 	    node2.addTitle("NEUER KNOTEN").setLabel("Cooler neuer Knoten");

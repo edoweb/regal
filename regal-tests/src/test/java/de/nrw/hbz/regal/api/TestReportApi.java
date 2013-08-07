@@ -85,10 +85,10 @@ public class TestReportApi {
 	    WebResource myReportMetadata = c.resource(myReport.toString()
 		    + "/metadata");
 	    WebResource myReportDc = c.resource(myReport.toString() + "/dc");
-	    WebResource deleteNs = c.resource(properties.getProperty("apiUrl")
-		    + "/utils/deleteNamespace/test");
 
 	    // --------------Clean up--------------------
+	    WebResource deleteNs = c.resource(properties.getProperty("apiUrl")
+		    + "/utils/deleteNamespace/test");
 	    {
 		try {
 		    String response = deleteNs.delete(String.class);
@@ -133,6 +133,7 @@ public class TestReportApi {
 
 		dc = myReportDc.get(DCBeanAnnotated.class);
 		Assert.assertEquals("Test", dc.getCreator().get(0));
+
 	    } catch (Exception e) {
 
 	    }

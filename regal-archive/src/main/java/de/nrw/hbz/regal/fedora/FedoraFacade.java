@@ -28,12 +28,16 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_METHODMAP_WSDL;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_METHODMAP_WSDL_URI;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_WSDL;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_WSDL_URI;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.HAS_PART;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_HAS_MODEL;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_HAS_SERVICE;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_IS_CONTRACTOR_OF;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_IS_DEPLOYMENT_OF;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SDEF_CONTENTMODEL;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SDEP_CONTENTMODEL;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SIMPLE;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SPO;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -82,6 +86,8 @@ import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
 import com.yourmediashelf.fedora.generated.access.DatastreamType;
 import com.yourmediashelf.fedora.generated.management.PidList;
 
+import de.nrw.hbz.regal.datatypes.ComplexObject;
+import de.nrw.hbz.regal.datatypes.ComplexObjectNode;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
@@ -91,7 +97,7 @@ import de.nrw.hbz.regal.exceptions.NodeNotFoundException;
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
-public class FedoraFacade implements FedoraInterface {
+class FedoraFacade implements FedoraInterface {
 
     Utils utils = null;
 
@@ -143,7 +149,6 @@ public class FedoraFacade implements FedoraInterface {
 	    Link link = new Link();
 	    link.setObject(node.getContentType(), true);
 	    link.setPredicate(REL_CONTENT_TYPE);
-
 	    node.addRelation(link);
 
 	    utils.createRelsExt(node);
@@ -200,7 +205,6 @@ public class FedoraFacade implements FedoraInterface {
 	// updateContentModels(node);
 
 	if (node.getUploadFile() != null) {
-
 	    utils.updateManagedStream(node);
 	}
 
@@ -255,6 +259,7 @@ public class FedoraFacade implements FedoraInterface {
     @Override
     public void deleteNode(String rootPID) {
 	try {
+	    unlinkParent(rootPID);
 	    new PurgeObject(rootPID).execute();
 
 	    // AutoPurger purger = new AutoPurger(fedoraManager);
@@ -353,25 +358,40 @@ public class FedoraFacade implements FedoraInterface {
      * @param node
      */
     private void updateRelsExt(Node node) {
-
 	String pid = node.getPID();
-
-	// IF DATASTREAM ! EXISTS
-	// CREATE DATASTREAM
-	// ADD RELATIONS
+	String type = node.getContentType();
 
 	if (!dataStreamExists(pid, "RELS-EXT")) {
 	    utils.createFedoraXmlForRelsExt(pid);
+	} else {
+	    utils.updateFedoraXmlForRelsExt(pid);
 	}
-	Vector<Link> links = node.getRelsExt();
-
-	Node old = readNode(pid);
-	links.removeAll(old.getRelsExt());
-
-	utils.updateRelsExt(pid, links);
-
+	Link link = new Link();
+	link.setPredicate(REL_CONTENT_TYPE);
+	link.setObject(type, true);
+	node.addRelation(link);
+	utils.addRelationships(pid, node.getRelsExt());
     }
 
+    /*
+     * Mit Letzter Zeile --------After Purge Local------------------- test:123
+     * <info:fedora/fedora-system:def/model#hasModel>
+     * info:fedora/testCM:MonographObjectModel test:123
+     * <info:fedora/fedora-system:def/model#hasModel>
+     * info:fedora/testCM:pdfObjectModel test:123
+     * <info:fedora/fedora-system:def/model#hasModel>
+     * info:fedora/testCM:headObjectModel test:123
+     * <info:fedora/fedora-system:def/relations-external#isPartOf> test:234
+     * --------------------------- --------After Purge Remote-------------------
+     * test:123 <info:fedora/fedora-system:def/model#hasModel>
+     * info:fedora/testCM:MonographObjectModel test:123
+     * <info:fedora/fedora-system:def/model#hasModel>
+     * info:fedora/testCM:pdfObjectModel test:123
+     * <info:fedora/fedora-system:def/model#hasModel>
+     * info:fedora/testCM:headObjectModel test:123
+     * <info:hbz/hbz-ingest:def/model#contentType> monograph
+     * ---------------------------
+     */
     private List<String> findPidsRdf(String rdfQuery, String queryFormat) {
 	InputStream stream = findTriples(rdfQuery, FedoraVocabulary.SPO,
 		FedoraVocabulary.N3);
@@ -474,7 +494,7 @@ public class FedoraFacade implements FedoraInterface {
 	cmHBZLink2.setObject(utils.addUriPrefix(CM_CONTENTMODEL), false);
 	cmHBZLinks.add(cmHBZLink2);
 
-	utils.updateRelsExt(foCMPid, cmHBZLinks);
+	utils.addRelationships(foCMPid, cmHBZLinks);
 
 	Vector<Link> sDefHBZLinks = new Vector<Link>();
 	Link sDefHBZLink = new Link();
@@ -482,7 +502,7 @@ public class FedoraFacade implements FedoraInterface {
 	sDefHBZLink.setObject(utils.addUriPrefix(SDEF_CONTENTMODEL), false);
 	sDefHBZLinks.add(sDefHBZLink);
 
-	utils.updateRelsExt(foSDefPid, sDefHBZLinks);
+	utils.addRelationships(foSDefPid, sDefHBZLinks);
 
 	Vector<Link> sDepHBZLinks = new Vector<Link>();
 	Link sDepHBZLink1 = new Link();
@@ -500,7 +520,7 @@ public class FedoraFacade implements FedoraInterface {
 	sDepHBZLink3.setObject(utils.addUriPrefix(SDEP_CONTENTMODEL), false);
 	sDepHBZLinks.add(sDepHBZLink3);
 
-	utils.updateRelsExt(foSDepPid, sDepHBZLinks);
+	utils.addRelationships(foSDepPid, sDepHBZLinks);
 
 	new AddDatastream(foCMPid, DS_COMPOSITE_MODEL)
 		.dsLabel("DS-Composite-Stream").versionable(true)
@@ -621,8 +641,210 @@ public class FedoraFacade implements FedoraInterface {
     }
 
     @Override
+    public List<String> findNodes(String searchTerm) {
+	return findPids(searchTerm, SIMPLE);
+    }
+
+    @Override
     public void readDcToNode(Node node, InputStream in, String dcNamespace) {
 	utils.readDcToNode(node, in, dcNamespace);
     }
 
+    @Override
+    public String deleteComplexObject(String rootPID) {
+	if (!nodeExists(rootPID)) {
+	    throw new NodeNotFoundException(rootPID
+		    + " doesn't exist. Can't delete!");
+	}
+	// logger.info("deleteObject");
+	deleteNode(rootPID);
+	// Find all children
+	List<String> pids = null;
+	pids = findPids("* <" + IS_PART_OF + "> <" + addUriPrefix(rootPID)
+		+ ">", SPO);
+	// Delete all children
+	if (pids != null)
+	    for (String pid : pids) {
+		Node node = readNode(pid);
+		deleteComplexObject(node.getPID());
+	    }
+	return rootPID;
+    }
+
+    @Override
+    public Node createComplexObject(ComplexObject tree) {
+	Node object = tree.getRoot();
+	createNode(object);
+	for (int i = 0; i < tree.sizeOfChildren(); i++) {
+	    ComplexObjectNode node = tree.getChild(i);
+	    iterateCreate(node, object);
+	}
+	return readNode(object.getPID());
+
+    }
+
+    private void iterateCreate(ComplexObjectNode tnode, Node parent) {
+	Node node = tnode.getMe();
+	node = createNode(parent, node);
+	for (int i = 0; i < tnode.sizeOfChildren(); i++) {
+	    ComplexObjectNode n1 = tnode.getChild(i);
+	    iterateCreate(n1, node);
+	}
+    }
+
+    @Override
+    public ComplexObject readComplexObject(String rootPID) {
+	Node object = readNode(rootPID);
+	ComplexObject complexObject = new ComplexObject(object);
+	Vector<Link> rels = object.getRelsExt();
+	for (Link rel : rels) {
+	    if (rel.getPredicate().compareTo(HAS_PART) == 0) {
+		String pid = removeUriPrefix(rel.getObject());
+		if (pid.compareTo(rootPID) == 0)
+		    continue;
+		Node child = readNode(pid);
+		ComplexObjectNode cn = new ComplexObjectNode(child);
+		complexObject.addChild(cn);
+		add(rootPID, cn, child.getRelsExt());
+	    }
+	}
+	return complexObject;
+    }
+
+    private void add(String rootPID, ComplexObjectNode cn, Vector<Link> rels) {
+	for (Link rel : rels) {
+	    if (rel.getPredicate().compareTo(HAS_PART) == 0) {
+		String pid = removeUriPrefix(rel.getObject());
+		if (pid.compareTo(rootPID) == 0)
+		    continue;
+		Node child = readNode(pid);
+		ComplexObjectNode cn2 = new ComplexObjectNode(child);
+		cn.addChild(cn2);
+		add(rootPID, cn2, child.getRelsExt());
+	    }
+	}
+    }
+
+    @Override
+    public void updateComplexObject(ComplexObject tree) {
+	Node object = tree.getRoot();
+	for (int i = 0; i < tree.sizeOfChildren(); i++) {
+	    ComplexObjectNode node = tree.getChild(i);
+	    iterateUpdate(node, object);
+	}
+	updateNode(object);
+    }
+
+    private void iterateUpdate(ComplexObjectNode tnode, Node parent) {
+	Node node = tnode.getMe();
+	updateNode(node);
+	for (int i = 0; i < tnode.sizeOfChildren(); i++) {
+	    ComplexObjectNode n1 = tnode.getChild(i);
+	    iterateUpdate(n1, node);
+	}
+    }
+
+    @Override
+    public Node createNode(Node parent, Node node) {
+	String pid = node.getPID();
+	if (nodeExists(pid)) {
+	    throw new ArchiveException(pid + " already exists. Can't create.");
+	}
+	String namespace = parent.getNamespace();// FedoraFacade.pred2pid(parent.getNamespace());
+	if (pid == null) {
+	    pid = getPid(namespace);
+	    node.setPID(pid);
+	    node.setNamespace(namespace);
+	}
+	if (!nodeExists(pid)) {
+	    node.setNamespace(namespace);
+	    createNode(node);
+	}
+	node = readNode(node.getPID());
+	// Parent to node
+	Link meToNode = new Link();
+	meToNode.setPredicate(FedoraVocabulary.HAS_PART);
+	meToNode.setObject(addUriPrefix(node.getPID()), false);
+	parent.addRelation(meToNode);
+	Link nodeToMe = new Link();
+	nodeToMe.setPredicate(FedoraVocabulary.IS_PART_OF);
+	nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
+	node.addRelation(nodeToMe);
+	updateNode(node);
+	updateNode(parent);
+	return node;
+    }
+
+    @Override
+    public Node createRootObject(String namespace) {
+	Node rootObject = null;
+	String pid = getPid(namespace);
+	rootObject = new Node();
+	rootObject.setPID(pid);
+	rootObject.setLabel("Default Object");
+	rootObject.setNamespace(namespace);
+	createNode(rootObject);
+	return rootObject;
+    }
+
+    @Override
+    public String getNodeParent(Node node) {
+	List<Link> links = node.getRelsExt();
+	for (Link link : links) {
+	    if (link.getPredicate().compareTo(IS_PART_OF) == 0) {
+		return link.getObject();
+	    }
+	}
+	return null;
+    }
+
+    void unlinkParent(String pid) {
+	try {
+	    Node node = readNode(pid);
+	    Node parent = readNode(getNodeParent(node));
+	    parent.removeRelation(HAS_PART, node.getPID());
+	    updateNode(parent);
+	} catch (NodeNotFoundException e) {
+	    // Nothing to do
+	    // logger.debug(node.getPID() + " has no parent!");
+	}
+    }
+
+    @Override
+    public void unlinkParent(Node node) {
+	try {
+	    Node parent = readNode(getNodeParent(node));
+	    parent.removeRelation(HAS_PART, node.getPID());
+	    updateNode(parent);
+	} catch (NodeNotFoundException e) {
+	    // Nothing to do
+	    // logger.debug(node.getPID() + " has no parent!");
+	}
+    }
+
+    @Override
+    public void linkToParent(Node node, String parentPid) {
+	node.removeRelations(IS_PART_OF);
+	Link link = new Link();
+	link.setPredicate(IS_PART_OF);
+	link.setObject(parentPid);
+	node.addRelation(link);
+	updateNode(node);
+    }
+
+    @Override
+    public void linkParentToNode(String parentPid, String pid) {
+	try {
+	    Node parent = readNode(parentPid);
+	    Link link = new Link();
+	    link.setPredicate(HAS_PART);
+	    link.setObject(pid);
+	    parent.addRelation(link);
+	    updateNode(parent);
+	} catch (NodeNotFoundException e) {
+	    // Nothing to do
+	    // logger.debug(pid +
+	    // " has no parent! ParentPid: "+parentPid+" is not a valid pid.");
+	}
+    }
 }

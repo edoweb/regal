@@ -19,6 +19,7 @@ package de.nrw.hbz.regal.fedora;
 import java.io.InputStream;
 import java.util.List;
 
+import de.nrw.hbz.regal.datatypes.ComplexObject;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Node;
 
@@ -199,5 +200,93 @@ public interface FedoraInterface {
      *            namespace of the dc
      */
     public void readDcToNode(Node node, InputStream in, String dcNamespace);
+
+    /**
+     * @param searchTerm
+     *            A search term
+     * @return A list of pids
+     */
+    public List<String> findNodes(String searchTerm);
+
+    /**
+     * @param pid
+     *            The pid that must be deleted
+     * @return The pid that has been deleted
+     */
+    public String deleteComplexObject(String pid);
+
+    /**
+     * @param namespace
+     *            The namespace of the new object
+     * @return The new created object.
+     */
+    public Node createRootObject(String namespace);
+
+    /**
+     * @param object
+     *            A complex object
+     * @return the root of the newly created complex object
+     */
+    public Node createComplexObject(ComplexObject object);
+
+    /**
+     * @param pid
+     *            the pid of the object to read
+     * @return A tree-like complex object
+     */
+    public ComplexObject readComplexObject(String pid);
+
+    /**
+     * Adds a new node as child of the parent.
+     * 
+     * @param parent
+     *            the parent of the new node
+     * @param node
+     *            the new node
+     * @return The new created object.
+     */
+    public Node createNode(Node parent, Node node);
+
+    /**
+     * @param object
+     *            The new verions of the object
+     */
+    public void updateComplexObject(ComplexObject object);
+
+    /**
+     * @param node
+     *            a node connected to a parent
+     * @return the pid of the parent connected via isPartOf
+     */
+    public String getNodeParent(Node node);
+
+    /**
+     * Finds the parent (isPartOf) and removes the hasPart statement that points
+     * to the node.
+     * 
+     * @param node
+     *            all Parents will be removed
+     */
+    public void unlinkParent(Node node);
+
+    /**
+     * Add a isPartOf statement to the node.
+     * 
+     * @param node
+     *            the node is a child of parent
+     * @param parentPid
+     *            the pid of the parent
+     */
+    public void linkToParent(Node node, String parentPid);
+
+    /**
+     * Add a hasPart statement to the parent
+     * 
+     * @param parentPid
+     *            the parent
+     * @param pid
+     *            the nodes pid
+     */
+    public void linkParentToNode(String parentPid, String pid);
 
 }
