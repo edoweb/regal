@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.regal.api.helper.ObjectType;
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.RelatedDigitalEntity;
 
@@ -54,11 +53,6 @@ public class DippIngester implements IngestInterface {
 	this.namespace = ns;
 	this.host = host;
 	webclient = new Webclient(namespace, user, password, host);
-    }
-
-    @Override
-    public ContentModel createContentModel() {
-	return null;
     }
 
     @Override
@@ -162,11 +156,5 @@ public class DippIngester implements IngestInterface {
     @Override
     public void delete(String pid) {
 	webclient.delete(pid.substring(pid.lastIndexOf(':') + 1));
-    }
-
-    @Override
-    public void setNamespace(String namespace) {
-	this.namespace = namespace;
-
     }
 }

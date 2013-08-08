@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.regal.api.helper.ObjectType;
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 
 /**
@@ -48,11 +47,6 @@ public class EllinetIngester implements IngestInterface {
 	this.namespace = ns;
 	this.host = host;
 	webclient = new Webclient(namespace, user, password, host);
-    }
-
-    @Override
-    public ContentModel createContentModel() {
-	return null;
     }
 
     @Override
@@ -110,9 +104,4 @@ public class EllinetIngester implements IngestInterface {
 	webclient.delete(pid);
     }
 
-    @Override
-    public void setNamespace(String namespace) {
-	this.namespace = namespace;
-
-    }
 }

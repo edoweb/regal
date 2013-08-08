@@ -98,7 +98,6 @@ public class Syncer {
 			+ "CONT: All PIDs that aren't already downloaded will be downloaded and created or updated\n"
 			+ "UPDT: In accordance to the timestamp all modified PIDs will be reingested"
 			+ "PIDL: Use this mode in combination with -list to provide a file with a newline separated pidlist"
-			+ "MODL: Recreates only the Content model"
 			+ "DELE: Use this mode in combination with -list to provide a file with a newline separated pidlist");
 	options.addOption("u", "user", true, "Specify username");
 	options.addOption("p", "password", true, "Specify password");
@@ -223,8 +222,6 @@ public class Syncer {
 
 	    dele(pidListFile);
 
-	} else if (mode.compareTo("MODL") == 0) {
-	    ingester.createContentModel();
 	}
 
     }

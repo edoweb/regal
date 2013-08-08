@@ -16,7 +16,6 @@
  */
 package de.nrw.hbz.regal.sync.ingest;
 
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 
 /**
@@ -49,13 +48,6 @@ public interface IngestInterface {
     public abstract void update(DigitalEntity dtlBean);
 
     /**
-     * Recreates only the used content models
-     * 
-     * @return the model
-     */
-    public abstract ContentModel createContentModel();
-
-    /**
      * 
      * @param host
      *            the host of the webapi
@@ -69,11 +61,5 @@ public interface IngestInterface {
      */
     public abstract void init(String host, String user, String password,
 	    String ns);
-
-    /**
-     * @param namespace
-     *            The namespace is used as prefix for all pids.
-     */
-    public abstract void setNamespace(String namespace);
 
 }
