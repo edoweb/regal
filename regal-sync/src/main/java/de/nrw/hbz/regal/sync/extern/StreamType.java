@@ -68,5 +68,10 @@ public enum StreamType {
     /**
      * A data stream
      */
-    DATA
+    DATA,
+
+    /**
+     * An xMetaDissPlus file
+     */
+    xMetaDissPlus
 }

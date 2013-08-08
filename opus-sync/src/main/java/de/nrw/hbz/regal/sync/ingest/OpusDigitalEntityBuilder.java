@@ -43,7 +43,7 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
     @Override
     public DigitalEntity build(String baseDir, String pid) throws Exception {
 
-	pid = pid.replace(':', '-');
+	// pid = pid.replace(':', '-');
 	if (!map.containsKey(pid)) {
 	    DigitalEntity e = new DigitalEntity(baseDir);
 	    e.setPid(pid);
@@ -60,7 +60,7 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 	    DigitalEntity dtlDe) {
 	// dtlDe = new DigitalEntity(baseDir);
 	File file = new File(baseDir + File.separator + pid + ".xml");
-
+	dtlDe.addStream(file, "application/xml", StreamType.xMetaDissPlus);
 	try {
 	    Vector<String> files = new Vector<String>();
 

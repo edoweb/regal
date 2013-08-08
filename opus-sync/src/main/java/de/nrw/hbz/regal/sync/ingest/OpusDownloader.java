@@ -52,7 +52,7 @@ public class OpusDownloader extends Downloader {
 
     protected void downloadObject(File dir, String pid) {
 	try {
-	    pid = pid.replace(':', '-');
+	    // pid = pid.replace(':', '-');
 	    downloadXMetaDissPlus(dir, pid);
 	    downloadPdfs(dir, pid);
 
@@ -96,26 +96,50 @@ public class OpusDownloader extends Downloader {
 	    Element id = (Element) identifiers.item(i);
 	    identifier = id.getTextContent();
 	}
-	NodeList fileProperties = xMetaDissPlus
-		.getElementsByTagName("ddb:fileProperties");
 
-	for (int i = 0; i < fileProperties.getLength(); i++) {
-	    Element fileProperty = (Element) fileProperties.item(i);
-	    String filename = fileProperty.getAttribute("ddb:fileName");
-	    files.add(filename);
-	}
+	NodeList transferUrls = xMetaDissPlus
+		.getElementsByTagName("ddb:transfer");
 
-	int i = 0;
-	for (String file : files) {
+	if (transferUrls == null || transferUrls.getLength() == 0) {
+	    // opus 3.2 hbz slang
+	    NodeList fileProperties = xMetaDissPlus
+		    .getElementsByTagName("ddb:fileProperties");
 
-	    try {
-		if (file.endsWith("pdf")) {
-		    i++;
-		    download(dir.getAbsoluteFile() + File.separator + pid + "_"
-			    + i + ".pdf", identifier + "/pdf/" + file);
+	    for (int i = 0; i < fileProperties.getLength(); i++) {
+		Element fileProperty = (Element) fileProperties.item(i);
+		String filename = fileProperty.getAttribute("ddb:fileName");
+		files.add(filename);
+	    }
+
+	    for (int i = 0; i < fileProperties.getLength(); i++) {
+		Element fileProperty = (Element) fileProperties.item(i);
+		String filename = fileProperty.getAttribute("ddb:fileName");
+		files.add(filename);
+	    }
+
+	    int i = 0;
+	    for (String file : files) {
+
+		try {
+		    if (file.endsWith("pdf")) {
+			i++;
+			download(dir.getAbsoluteFile() + File.separator + pid
+				+ "_" + i + ".pdf", identifier + "/pdf/" + file);
+		    }
+		} catch (IOException e) {
+		    logger.error(e.getMessage());
 		}
-	    } catch (IOException e) {
-		logger.error(e.getMessage());
+	    }
+	} else {// qucosa slang
+	    for (int i = 0; i < transferUrls.getLength(); i++) {
+		Element transferUrl = (Element) transferUrls.item(i);
+		String url = transferUrl.getTextContent();
+		try {
+		    download(dir.getAbsoluteFile() + File.separator + pid + "_"
+			    + (i + 1) + ".pdf", url);
+		} catch (IOException e) {
+		    logger.error(e.getMessage());
+		}
 	    }
 	}
     }

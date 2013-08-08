@@ -16,7 +16,6 @@
  */
 package de.nrw.hbz.regal.sync.ingest;
 
-import java.io.File;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -25,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
+import de.nrw.hbz.regal.sync.extern.StreamType;
 
 /**
  * Class FedoraIngester
@@ -61,8 +61,9 @@ public class OpusIngester implements IngestInterface {
 
     @Override
     public void ingest(DigitalEntity dtlBean) {
-	String pid = dtlBean.getPid().substring(
-		dtlBean.getPid().lastIndexOf(':') + 1);
+	String pid = dtlBean.getPid().replace(':', '-');
+	dtlBean.setPid(pid);
+	// pid = pid.substring(pid.lastIndexOf(':') + 1);
 	logger.info("Start ingest: " + namespace + ":" + pid);
 
 	updateMonograph(dtlBean);
@@ -83,8 +84,8 @@ public class OpusIngester implements IngestInterface {
 		    ObjectType.monograph);
 	    logger.info(pid + " " + "updated.\n");
 	    OpusMapping mapper = new OpusMapping();
-	    String metadata = mapper.map(new File(dtlBean.getLocation()
-		    + File.separator + pid + ".xml"),
+	    String metadata = mapper.map(
+		    dtlBean.getStream(StreamType.xMetaDissPlus).getFile(),
 		    namespace + ":" + dtlBean.getPid());
 
 	    webclient.autoGenerateMetadataMerge(dtlBean, metadata);
