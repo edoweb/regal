@@ -403,6 +403,7 @@ public class EdowebDigitalEntityBuilder implements
 	    logger.warn(related.getPid() + " (" + related.getLabel()
 		    + "), child of " + dtlDe.getPid() + " : " + e.getMessage()
 		    + " mets relation is broken!");
+	    related.setUsageType(ObjectType.file.toString());
 	    return dtlDe;
 	}
 	for (RelatedDigitalEntity entity : dtlDe.getRelated()) {

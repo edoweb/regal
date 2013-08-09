@@ -176,6 +176,9 @@ public class EdowebIngester implements IngestInterface {
 	String usageType = dtlBean.getUsageType();
 	if (usageType.compareTo(ObjectType.volume.toString()) == 0) {
 	    updateVolume(dtlBean);
+
+	} else if (usageType.compareTo(ObjectType.file.toString()) == 0) {
+	    updateFile(dtlBean);
 	} else // if (usageType.compareTo(ObjectType.issue.toString()) == 0)
 	{
 	    updateIssue(dtlBean);
@@ -226,6 +229,24 @@ public class EdowebIngester implements IngestInterface {
 
     }
 
+    private void updateFile(DigitalEntity dtlBean) {
+	String pid = namespace + ":" + dtlBean.getPid();
+	try {
+	    ObjectType t = ObjectType.file;
+	    webclient.createObject(dtlBean, "application/pdf", t);
+	    logger.info(pid + " " + "Found file part.");
+
+	    String metadata = "<" + pid
+		    + "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
+		    + dtlBean.getLabel() + "\" .\n";
+	    webclient.setMetadata(dtlBean, metadata);
+	    logger.info(pid + " " + "updated.\n");
+	} catch (IllegalArgumentException e) {
+	    logger.debug(e.getMessage());
+	}
+
+    }
+
     private void updateWebpagePart(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
@@ -246,12 +267,24 @@ public class EdowebIngester implements IngestInterface {
 	    logger.info(pid + " Found monograph.");
 	    webclient.createObject(dtlBean, "application/pdf",
 		    ObjectType.monograph);
-	    webclient.autoGenerateMetdata(dtlBean);
-	    webclient.publish(dtlBean);
-	    logger.info(pid + " " + "updated.\n");
 	} catch (IllegalArgumentException e) {
-	    logger.debug(e.getMessage());
+	    logger.warn(e.getMessage());
+	    webclient.createResource(ObjectType.monograph, dtlBean);
 	}
+	webclient.autoGenerateMetdata(dtlBean);
+	webclient.publish(dtlBean);
+
+	Vector<DigitalEntity> list = getParts(dtlBean);
+	int num = list.size();
+	int count = 1;
+	logger.info(pid + " Found " + num + " parts.");
+	for (DigitalEntity b : list) {
+	    logger.info("Part: " + (count++) + "/" + num);
+	    updatePart(b);
+	}
+
+	logger.info(pid + " " + "updated.\n");
+
     }
 
     private void updateEJournalParent(DigitalEntity dtlBean) {

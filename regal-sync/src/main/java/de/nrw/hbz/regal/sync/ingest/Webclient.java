@@ -273,7 +273,7 @@ public class Webclient {
 
 	String pid = namespace + ":" + dtlBean.getPid();
 	String ppid = dtlBean.getParentPid();
-
+	logger.info(pid + " -parent is: " + dtlBean.getParentPid());
 	String parentPid = namespace + ":" + ppid;
 	String resourceUrl = endpoint + "/resource/" + pid;
 	WebResource resource = webclient.resource(resourceUrl);
@@ -281,7 +281,7 @@ public class Webclient {
 	input.setType(type.toString());
 	logger.debug(pid + " type: " + input.getType());
 	if (ppid != null && !ppid.isEmpty()) {
-	    logger.debug("Parent: " + dtlBean.getParentPid());
+
 	    input.setParentPid(parentPid);
 
 	}
