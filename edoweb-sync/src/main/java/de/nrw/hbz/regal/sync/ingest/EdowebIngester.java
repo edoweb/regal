@@ -264,15 +264,22 @@ public class EdowebIngester implements IngestInterface {
 
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
-	    logger.info(pid + " Found monograph.");
-	    webclient.createObject(dtlBean, "application/pdf",
-		    ObjectType.monograph);
+	    webclient.createResource(ObjectType.monograph, dtlBean);
+	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.publish(dtlBean);
+	    if (dtlBean.getStream(StreamType.DATA).getMimeType()
+		    .compareTo("application/pdf") == 0)
+
+	    {
+
+		dtlBean.setParentPid(dtlBean.getPid());
+		dtlBean.setPid(dtlBean.getPid() + "-1");
+		updateFile(dtlBean);
+	    }
 	} catch (IllegalArgumentException e) {
 	    logger.warn(e.getMessage());
-	    webclient.createResource(ObjectType.monograph, dtlBean);
+	    // webclient.createResource(ObjectType.monograph, dtlBean);
 	}
-	webclient.autoGenerateMetdata(dtlBean);
-	webclient.publish(dtlBean);
 
 	Vector<DigitalEntity> list = getParts(dtlBean);
 	int num = list.size();

@@ -214,6 +214,8 @@ public class Webclient {
 	if (dataStream.getMimeType() != null
 		&& dataStream.getMimeType().compareTo(expectedMime) == 0)
 	    return dtlBean;
+
+	// TODO wofür ist das gut? - Ist das nicht längst refactored?
 	for (DigitalEntity view : getViewMainLinks(dtlBean)) {
 
 	    Stream viewData = view.getStream(StreamType.DATA);
