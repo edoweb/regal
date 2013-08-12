@@ -16,8 +16,6 @@
  */
 package de.nrw.hbz.regal.datatypes;
 
-import static de.nrw.hbz.regal.datatypes.Vocabulary.TYPE_NODE;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -46,12 +44,10 @@ public class Node {
     DCBean bean = new DCBean();
 
     /**
-     * Creates a new Node. The node has the default type HBZ_NODE, and connects
-     * to other nodes with a HAS_PART relationship.
+     * Creates a new Node.
      * 
      */
     public Node() {
-	setNodeType(TYPE_NODE);
     }
 
     /**
@@ -61,7 +57,6 @@ public class Node {
      *            the ID of the node.
      */
     public Node(String pid) {
-	setNodeType(TYPE_NODE);
 	setPID(pid);
     }
 
@@ -134,7 +129,7 @@ public class Node {
      *            all relations of the node
      * @return this
      */
-    public Node setRelsExt(List<Link> links) {
+    private Node setRelsExt(List<Link> links) {
 	// myNode.setRELSEXT(new RELSEXT_type0());
 	relsExt = new Vector<Link>();
 	for (Link link : links) {
@@ -164,7 +159,7 @@ public class Node {
      *            the type
      * @return this
      */
-    public Node setNodeType(String str) {
+    public Node setType(String str) {
 	this.type = str;
 
 	return this;

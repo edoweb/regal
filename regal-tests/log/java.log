@@ -1,0 +1,25 @@
+INFO main de.nrw.hbz.regal.sync.Syncer - 1 / 1
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:1750760 Can't delete!DELETE http://localhost:8080/api/resource/test:1750760 returned a response status of 500 Internal Server Error
+INFO main de.nrw.hbz.regal.sync.Syncer - 1/1 1750760 deleted!
+
+INFO main de.nrw.hbz.regal.sync.Syncer - 1 / 1
+INFO main de.nrw.hbz.regal.sync.ingest.DigitoolDownloader - Create Directory /tmp/edoweb/test/1750760 and start to Download files
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - 1750760 Start ingest: test:1750760
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - 1750760: start updating monograph (wpd01)
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:1750760 -parent is: null
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:1750760: got indexed!
+WARN main de.nrw.hbz.regal.sync.ingest.Webclient - test:1750760 Not oai provided! POST http://localhost:8080/api/utils/makeOaiSet/test:1750760 returned a response status of 500 Internal Server Error
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:1750760-1 -parent is: 1750760
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - test:1750760-1 Update data: application/pdf
+INFO main de.nrw.hbz.regal.sync.ingest.Webclient - Upload: binarywriterservlet55a5.pdf
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:1750760-1 Found file part.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:1750760-1 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:1750760 Found 0 parts.
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - test:1750760 updated.
+
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - 1750760: end updating monograph (wpd01)
+INFO main de.nrw.hbz.regal.sync.ingest.EdowebIngester - 1750760-1 Thanx and goodbye!
+
+INFO main de.nrw.hbz.regal.sync.Syncer - 1/1 1750760 has been processed!
+

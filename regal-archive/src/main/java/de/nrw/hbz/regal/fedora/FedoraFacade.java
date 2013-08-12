@@ -17,6 +17,7 @@
 package de.nrw.hbz.regal.fedora;
 
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_CONTENT_TYPE;
+import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.CM_CONTENTMODEL;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL_URI;
@@ -86,8 +87,6 @@ import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
 import com.yourmediashelf.fedora.generated.access.DatastreamType;
 import com.yourmediashelf.fedora.generated.management.PidList;
 
-import de.nrw.hbz.regal.datatypes.ComplexObject;
-import de.nrw.hbz.regal.datatypes.ComplexObjectNode;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
@@ -149,6 +148,11 @@ class FedoraFacade implements FedoraInterface {
 	    Link link = new Link();
 	    link.setObject(node.getContentType(), true);
 	    link.setPredicate(REL_CONTENT_TYPE);
+	    node.addRelation(link);
+
+	    link = new Link();
+	    link.setObject(node.getNodeType(), true);
+	    link.setPredicate(REL_IS_NODE_TYPE);
 	    node.addRelation(link);
 
 	    utils.createRelsExt(node);
@@ -369,6 +373,12 @@ class FedoraFacade implements FedoraInterface {
 	link.setPredicate(REL_CONTENT_TYPE);
 	link.setObject(type, true);
 	node.addRelation(link);
+
+	link = new Link();
+	link.setObject(node.getNodeType(), true);
+	link.setPredicate(REL_IS_NODE_TYPE);
+	node.addRelation(link);
+
 	utils.addRelationships(pid, node.getRelsExt());
     }
 
@@ -671,79 +681,6 @@ class FedoraFacade implements FedoraInterface {
     }
 
     @Override
-    public Node createComplexObject(ComplexObject tree) {
-	Node object = tree.getRoot();
-	createNode(object);
-	for (int i = 0; i < tree.sizeOfChildren(); i++) {
-	    ComplexObjectNode node = tree.getChild(i);
-	    iterateCreate(node, object);
-	}
-	return readNode(object.getPID());
-
-    }
-
-    private void iterateCreate(ComplexObjectNode tnode, Node parent) {
-	Node node = tnode.getMe();
-	node = createNode(parent, node);
-	for (int i = 0; i < tnode.sizeOfChildren(); i++) {
-	    ComplexObjectNode n1 = tnode.getChild(i);
-	    iterateCreate(n1, node);
-	}
-    }
-
-    @Override
-    public ComplexObject readComplexObject(String rootPID) {
-	Node object = readNode(rootPID);
-	ComplexObject complexObject = new ComplexObject(object);
-	Vector<Link> rels = object.getRelsExt();
-	for (Link rel : rels) {
-	    if (rel.getPredicate().compareTo(HAS_PART) == 0) {
-		String pid = removeUriPrefix(rel.getObject());
-		if (pid.compareTo(rootPID) == 0)
-		    continue;
-		Node child = readNode(pid);
-		ComplexObjectNode cn = new ComplexObjectNode(child);
-		complexObject.addChild(cn);
-		add(rootPID, cn, child.getRelsExt());
-	    }
-	}
-	return complexObject;
-    }
-
-    private void add(String rootPID, ComplexObjectNode cn, Vector<Link> rels) {
-	for (Link rel : rels) {
-	    if (rel.getPredicate().compareTo(HAS_PART) == 0) {
-		String pid = removeUriPrefix(rel.getObject());
-		if (pid.compareTo(rootPID) == 0)
-		    continue;
-		Node child = readNode(pid);
-		ComplexObjectNode cn2 = new ComplexObjectNode(child);
-		cn.addChild(cn2);
-		add(rootPID, cn2, child.getRelsExt());
-	    }
-	}
-    }
-
-    @Override
-    public void updateComplexObject(ComplexObject tree) {
-	Node object = tree.getRoot();
-	for (int i = 0; i < tree.sizeOfChildren(); i++) {
-	    ComplexObjectNode node = tree.getChild(i);
-	    iterateUpdate(node, object);
-	}
-	updateNode(object);
-    }
-
-    private void iterateUpdate(ComplexObjectNode tnode, Node parent) {
-	Node node = tnode.getMe();
-	updateNode(node);
-	for (int i = 0; i < tnode.sizeOfChildren(); i++) {
-	    ComplexObjectNode n1 = tnode.getChild(i);
-	    iterateUpdate(n1, node);
-	}
-    }
-
-    @Override
     public Node createNode(Node parent, Node node) {
 	String pid = node.getPID();
 	if (nodeExists(pid)) {
@@ -846,4 +783,76 @@ class FedoraFacade implements FedoraInterface {
 	    // " has no parent! ParentPid: "+parentPid+" is not a valid pid.");
 	}
     }
+
+    // public Node createComplexObject(ComplexObject tree) {
+    // Node object = tree.getRoot();
+    // createNode(object);
+    // for (int i = 0; i < tree.sizeOfChildren(); i++) {
+    // ComplexObjectNode node = tree.getChild(i);
+    // iterateCreate(node, object);
+    // }
+    // return readNode(object.getPID());
+    //
+    // }
+    //
+    // private void iterateCreate(ComplexObjectNode tnode, Node parent) {
+    // Node node = tnode.getMe();
+    // node = createNode(parent, node);
+    // for (int i = 0; i < tnode.sizeOfChildren(); i++) {
+    // ComplexObjectNode n1 = tnode.getChild(i);
+    // iterateCreate(n1, node);
+    // }
+    // }
+    //
+    // public ComplexObject readComplexObject(String rootPID) {
+    // Node object = readNode(rootPID);
+    // ComplexObject complexObject = new ComplexObject(object);
+    // Vector<Link> rels = object.getRelsExt();
+    // for (Link rel : rels) {
+    // if (rel.getPredicate().compareTo(HAS_PART) == 0) {
+    // String pid = removeUriPrefix(rel.getObject());
+    // if (pid.compareTo(rootPID) == 0)
+    // continue;
+    // Node child = readNode(pid);
+    // ComplexObjectNode cn = new ComplexObjectNode(child);
+    // complexObject.addChild(cn);
+    // add(rootPID, cn, child.getRelsExt());
+    // }
+    // }
+    // return complexObject;
+    // }
+    //
+    // private void add(String rootPID, ComplexObjectNode cn, Vector<Link> rels)
+    // {
+    // for (Link rel : rels) {
+    // if (rel.getPredicate().compareTo(HAS_PART) == 0) {
+    // String pid = removeUriPrefix(rel.getObject());
+    // if (pid.compareTo(rootPID) == 0)
+    // continue;
+    // Node child = readNode(pid);
+    // ComplexObjectNode cn2 = new ComplexObjectNode(child);
+    // cn.addChild(cn2);
+    // add(rootPID, cn2, child.getRelsExt());
+    // }
+    // }
+    // }
+
+    // @Override
+    // public void updateComplexObject(ComplexObject tree) {
+    // Node object = tree.getRoot();
+    // for (int i = 0; i < tree.sizeOfChildren(); i++) {
+    // ComplexObjectNode node = tree.getChild(i);
+    // iterateUpdate(node, object);
+    // }
+    // updateNode(object);
+    // }
+    //
+    // private void iterateUpdate(ComplexObjectNode tnode, Node parent) {
+    // Node node = tnode.getMe();
+    // updateNode(node);
+    // for (int i = 0; i < tnode.sizeOfChildren(); i++) {
+    // ComplexObjectNode n1 = tnode.getChild(i);
+    // iterateUpdate(n1, node);
+    // }
+    // }
 }

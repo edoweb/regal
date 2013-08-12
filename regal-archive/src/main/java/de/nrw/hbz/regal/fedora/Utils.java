@@ -549,7 +549,7 @@ public class Utils {
 			link.setPredicate(predUri.stringValue());
 
 			if (link.getPredicate().compareTo(REL_IS_NODE_TYPE) == 0) {
-			    node.setNodeType(link.getObject());
+			    node.setType(link.getObject());
 			} else if (link.getPredicate().compareTo(
 				REL_CONTENT_TYPE) == 0) {
 			    node.setContentType(link.getObject());
