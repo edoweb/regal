@@ -23,41 +23,18 @@ import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Node;
 
 /**
- * Class FedoraInterface
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
- * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
 public interface FedoraInterface {
     /**
-     * 
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description: Creates a object with properties of node
-     * </p>
-     * 
      * @param node
      *            the object as Fedora object
      */
     public void createNode(Node node);
 
     /**
-     * 
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description: The corresponding fedora object will be read into a new node
-     * </p>
+     * The corresponding fedora object will be read into a new node
      * 
      * @param pid
      *            The pid of an existing node.
@@ -74,13 +51,7 @@ public interface FedoraInterface {
     public void updateNode(Node node);
 
     /**
-     * 
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description: The fedora object will be deleted
-     * </p>
+     * The fedora object will be deleted
      * 
      * @param rootPID
      *            identifier of a fedora object
@@ -119,14 +90,8 @@ public interface FedoraInterface {
     public boolean nodeExists(String pid);
 
     /**
-     * 
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
      * Description: If the object 'pid' has a datastream with 'datastreamId' the
      * method returns true.
-     * </p>
      * 
      * @param pid
      *            of the object

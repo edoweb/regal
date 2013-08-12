@@ -99,7 +99,6 @@ import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
-import de.nrw.hbz.regal.exceptions.NodeNotFoundException;
 import de.nrw.hbz.regal.fedora.FedoraFactory;
 import de.nrw.hbz.regal.fedora.FedoraInterface;
 import de.nrw.hbz.regal.fedora.FedoraVocabulary;
@@ -1217,7 +1216,7 @@ public class Actions {
     public Node readNode(String pid) {
 	try {
 	    return fedora.readNode(pid);
-	} catch (NodeNotFoundException e) {
+	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(404, e.getMessage());
 	}
     }

@@ -91,7 +91,6 @@ import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
-import de.nrw.hbz.regal.exceptions.NodeNotFoundException;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -120,8 +119,7 @@ class FedoraFacade implements FedoraInterface {
 	    FedoraRequest.setDefaultClient(fedora);
 
 	} catch (MalformedURLException e) {
-	    throw new ArchiveException("The variable host: " + host
-		    + " may contain a malformed url.", e);
+	    throw new CantInitializeFedoraFacadeException(e);
 	}
 
     }
@@ -158,8 +156,7 @@ class FedoraFacade implements FedoraInterface {
 	    utils.createRelsExt(node);
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    throw new ArchiveException("An unknown exception occured. "
-		    + e.getMessage(), e);
+	    throw new CantCreateNodeException(e);
 	}
 
     }
@@ -167,7 +164,7 @@ class FedoraFacade implements FedoraInterface {
     @Override
     public Node readNode(String pid) {
 	if (!nodeExists(pid))
-	    throw new NodeNotFoundException(pid + " does not exist!");
+	    throw new NodeNotFoundException(pid);
 
 	Node node = new Node();
 	node.setPID(pid);
@@ -183,9 +180,9 @@ class FedoraFacade implements FedoraInterface {
 	    node.setLastModified(prof.getLastModifiedDate());
 
 	} catch (FedoraClientException e) {
-	    throw new ArchiveException("An unknown exception occured.", e);
+	    throw new CantReadNodeException(pid, e);
 	} catch (RemoteException e) {
-	    throw new ArchiveException("An unknown exception occured.", e);
+	    throw new CantReadNodeException(pid, e);
 	}
 
 	try {
@@ -239,7 +236,7 @@ class FedoraFacade implements FedoraInterface {
 		    .execute();
 	    return response.getPid();
 	} catch (FedoraClientException e) {
-	    throw new ArchiveException(e.getMessage(), e);
+	    throw new CantGetPidException(namespace, e);
 	}
     }
 
@@ -255,7 +252,7 @@ class FedoraFacade implements FedoraInterface {
 	    list.getPid().toArray(arr);
 	    return arr;
 	} catch (FedoraClientException e) {
-	    throw new ArchiveException(e.getMessage(), e);
+	    throw new CantGetPidException(namespace, e);
 	}
     }
 
@@ -264,12 +261,9 @@ class FedoraFacade implements FedoraInterface {
 	try {
 	    unlinkParent(rootPID);
 	    new PurgeObject(rootPID).execute();
-
-	    // AutoPurger purger = new AutoPurger(fedoraManager);
-	    // purger.purge(rootPID, "delete");
 	} catch (FedoraClientException e) {
-	    throw new ArchiveException(rootPID
-		    + " an unknown exception occured.", e);
+
+	    throw new CantDeleteException(rootPID, e);
 	}
     }
 
@@ -279,8 +273,7 @@ class FedoraFacade implements FedoraInterface {
 	try {
 	    new ModifyDatastream(pid, datastream).dsState("D").execute();
 	} catch (FedoraClientException e) {
-	    throw new ArchiveException("Deletion of " + pid + "/" + datastream
-		    + " not possible.", e);
+	    throw new CantDeleteDatastreamException(pid, e);
 	}
 
     }
@@ -301,9 +294,9 @@ class FedoraFacade implements FedoraInterface {
 	try {
 	    createContentModel(cm);
 	} catch (UnsupportedEncodingException e) {
-	    throw new ArchiveException(e.getMessage(), e);
+	    throw new CantUpdateContentModel(cm.toString(), e);
 	} catch (FedoraClientException e) {
-	    throw new ArchiveException(e.getMessage(), e);
+	    throw new CantUpdateContentModel(cm.toString(), e);
 	}
     }
 
@@ -315,7 +308,7 @@ class FedoraFacade implements FedoraInterface {
 		    .lang(queryFormat).type("triples").execute();
 	    return response.getEntityInputStream();
 	} catch (Exception e) {
-	    throw new ArchiveException(e.getMessage(), e);
+	    throw new CantSearchException(query, e);
 	}
     }
 
@@ -348,18 +341,6 @@ class FedoraFacade implements FedoraInterface {
 	return false;
     }
 
-    /**
-     * 
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description: RELS-Ext are added to the POJO and to the corresponding
-     * fedora object
-     * </p>
-     * 
-     * @param node
-     */
     private void updateRelsExt(Node node) {
 	String pid = node.getPID();
 	String type = node.getContentType();
@@ -432,19 +413,20 @@ class FedoraFacade implements FedoraInterface {
 
 	} catch (RepositoryException e) {
 
-	    throw new ArchiveException("An unknown exception occured.", e);
+	    throw new RdfException(rdfQuery, e);
 	} catch (RDFParseException e) {
 
-	    throw new ArchiveException("An unknown exception occured.", e);
+	    throw new RdfException(rdfQuery, e);
 	} catch (IOException e) {
 
-	    throw new ArchiveException("An unknown exception occured.", e);
+	    throw new RdfException(rdfQuery, e);
 	} finally {
 	    if (con != null) {
 		try {
 		    con.close();
 		} catch (RepositoryException e) {
-		    throw new ArchiveException("Can not close stream.", e);
+		    throw new RdfException(
+			    rdfQuery + ". Can not close stream.", e);
 		}
 	    }
 	}
@@ -635,16 +617,13 @@ class FedoraFacade implements FedoraInterface {
 
 	} catch (ParserConfigurationException e) {
 
-	    throw new ArchiveException(node.getPID()
-		    + " an unknown exception occured.", e);
+	    throw new XmlException(node.getPID(), e);
 	} catch (SAXException e) {
 
-	    throw new ArchiveException(node.getPID()
-		    + " an unknown exception occured.", e);
+	    throw new XmlException(node.getPID(), e);
 	} catch (IOException e) {
 
-	    throw new ArchiveException(node.getPID()
-		    + " an unknown exception occured.", e);
+	    throw new XmlException(node.getPID(), e);
 	}
 
     }
@@ -662,11 +641,12 @@ class FedoraFacade implements FedoraInterface {
     @Override
     public String deleteComplexObject(String rootPID) {
 	if (!nodeExists(rootPID)) {
-	    throw new NodeNotFoundException(rootPID
-		    + " doesn't exist. Can't delete!");
+	    throw new NodeNotFoundException(rootPID);
 	}
 	// logger.info("deleteObject");
+
 	deleteNode(rootPID);
+
 	// Find all children
 	List<String> pids = null;
 	pids = findPids("* <" + IS_PART_OF + "> <" + rootPID + ">", SPO);
@@ -683,7 +663,7 @@ class FedoraFacade implements FedoraInterface {
     public Node createNode(Node parent, Node node) {
 	String pid = node.getPID();
 	if (nodeExists(pid)) {
-	    throw new ArchiveException(pid + " already exists. Can't create.");
+	    throw new ArchiveException(pid);
 	}
 	String namespace = parent.getNamespace();// FedoraFacade.pred2pid(parent.getNamespace());
 	if (pid == null) {
@@ -783,6 +763,125 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
+    private class CantDeleteException extends ArchiveException {
+
+	private static final long serialVersionUID = -7879667636793687166L;
+
+	public CantDeleteException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+
+    }
+
+    private class CantReadNodeException extends ArchiveException {
+
+	private static final long serialVersionUID = 7338818611992590876L;
+
+	public CantReadNodeException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+
+    }
+
+    private class CantInitializeFedoraFacadeException extends ArchiveException {
+
+	private static final long serialVersionUID = 5357635794214927895L;
+
+	public CantInitializeFedoraFacadeException(final String message,
+		final Throwable cause) {
+	    super(message, cause);
+	}
+
+	public CantInitializeFedoraFacadeException(final Throwable cause) {
+	    super(cause);
+	}
+
+    }
+
+    public class XmlException extends ArchiveException {
+
+	private static final long serialVersionUID = -4955991522087336862L;
+
+	public XmlException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class RdfException extends ArchiveException {
+
+	private static final long serialVersionUID = -4251129481313224317L;
+
+	public RdfException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class CantUpdateContentModel extends ArchiveException {
+
+	private static final long serialVersionUID = 1794883693210840141L;
+
+	public CantUpdateContentModel(final String message,
+		final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class CantDeleteDatastreamException extends ArchiveException {
+
+	private static final long serialVersionUID = 128120359698836741L;
+
+	public CantDeleteDatastreamException(final String message,
+		final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class CantGetPidException extends ArchiveException {
+
+	private static final long serialVersionUID = 5316657644921457520L;
+
+	public CantGetPidException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class CantCreateNodeException extends ArchiveException {
+
+	private static final long serialVersionUID = 8569995140758544941L;
+
+	public CantCreateNodeException(final String message,
+		final Throwable cause) {
+	    super(message, cause);
+	}
+
+	public CantCreateNodeException(final Throwable cause) {
+	    super(cause);
+	}
+
+    }
+
+    public class CantSearchException extends ArchiveException {
+
+	private static final long serialVersionUID = -276889477323963368L;
+
+	public CantSearchException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class NodeNotFoundException extends ArchiveException {
+
+	private static final long serialVersionUID = 8851350561350951329L;
+
+	public NodeNotFoundException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+
+	public NodeNotFoundException(String message) {
+	    super(message);
+	}
+
+    }
     // public Node createComplexObject(ComplexObject tree) {
     // Node object = tree.getRoot();
     // createNode(object);

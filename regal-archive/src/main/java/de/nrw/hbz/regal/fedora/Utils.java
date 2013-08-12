@@ -137,8 +137,9 @@ public class Utils {
 	if (links != null)
 	    for (Link link : links) {
 
-		System.out.println("Add: <" + pid + "> <" + link.getPredicate()
-			+ "> <" + link.getObject() + ">");
+		// System.out.println("Add: <" + pid + "> <" +
+		// link.getPredicate()
+		// + "> <" + link.getObject() + ">");
 		try {
 		    new AddRelationship(pid).predicate(link.getPredicate())
 			    .object(link.getObject(), link.isLiteral())

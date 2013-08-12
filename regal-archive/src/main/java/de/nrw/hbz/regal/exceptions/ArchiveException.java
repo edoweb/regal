@@ -20,27 +20,24 @@ package de.nrw.hbz.regal.exceptions;
  * @author Jan Schnasse
  * 
  */
-public class ArchiveException extends RuntimeException
-{
+public class ArchiveException extends RuntimeException {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8702385952488200219L;
 
-	private static final long serialVersionUID = -2953264524472071347L;
+    @SuppressWarnings("javadoc")
+    public ArchiveException(final String message) {
+	super(message);
+    }
 
-	@SuppressWarnings("javadoc")
-	public ArchiveException(final String message)
-	{
-		super(message);
-	}
+    @SuppressWarnings("javadoc")
+    public ArchiveException(final Throwable cause) {
+	super(cause);
+    }
 
-	@SuppressWarnings("javadoc")
-	public ArchiveException(final Throwable cause)
-	{
-		super(cause);
-	}
-
-	@SuppressWarnings("javadoc")
-	public ArchiveException(final String message, final Throwable cause)
-	{
-		super(message, cause);
-	}
-
+    @SuppressWarnings("javadoc")
+    public ArchiveException(final String message, final Throwable cause) {
+	super(message, cause);
+    }
 }
