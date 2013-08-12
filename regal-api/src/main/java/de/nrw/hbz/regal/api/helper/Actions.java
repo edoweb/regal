@@ -40,7 +40,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -1648,26 +1647,19 @@ public class Actions {
     }
 
     private void linkObjectToOaiSet(Node node, String spec, String pid) {
-	Vector<Link> relations = node.getRelsExt();
-	Iterator<Link> iter = relations.iterator();
-	while (iter.hasNext()) {
-	    String pred = iter.next().getPredicate();
-	    if (pred.compareTo(IS_MEMBER_OF) == 0)
-		iter.remove();
-	    else if (pred.compareTo(ITEM_ID) == 0)
-		iter.remove();
-	}
+
+	node.removeRelations(IS_MEMBER_OF);
+	node.removeRelations(ITEM_ID);
+
 	Link link = new Link();
 	link.setPredicate(IS_MEMBER_OF);
 	link.setObject("info:fedora/" + pid, false);
-	relations.add(link);
+	node.addRelation(link);
 
 	link = new Link();
 	link.setPredicate(ITEM_ID);
 	link.setObject(uriPrefix + node.getPID(), false);
-	relations.add(link);
-
-	node.setRelsExt(relations);
+	node.addRelation(link);
 
 	fedora.updateNode(node);
     }
@@ -2273,7 +2265,7 @@ public class Actions {
 		}
 		fedora.createNode(node);
 	    }
-	    node.setNodeType(TYPE_OBJECT);
+	    node.setType(TYPE_OBJECT);
 	    node.setContentType(input.getType());
 
 	    String parentPid = input.getParentPid();
