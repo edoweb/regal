@@ -119,7 +119,7 @@ class FedoraFacade implements FedoraInterface {
 	    FedoraRequest.setDefaultClient(fedora);
 
 	} catch (MalformedURLException e) {
-	    throw new CantInitializeFedoraFacadeException(e);
+	    throw new InitializeFedoraFacadeException(e);
 	}
 
     }
@@ -156,7 +156,7 @@ class FedoraFacade implements FedoraInterface {
 	    utils.createRelsExt(node);
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    throw new CantCreateNodeException(e);
+	    throw new CreateNodeException(e);
 	}
 
     }
@@ -180,9 +180,9 @@ class FedoraFacade implements FedoraInterface {
 	    node.setLastModified(prof.getLastModifiedDate());
 
 	} catch (FedoraClientException e) {
-	    throw new CantReadNodeException(pid, e);
+	    throw new ReadNodeException(pid, e);
 	} catch (RemoteException e) {
-	    throw new CantReadNodeException(pid, e);
+	    throw new ReadNodeException(pid, e);
 	}
 
 	try {
@@ -236,7 +236,7 @@ class FedoraFacade implements FedoraInterface {
 		    .execute();
 	    return response.getPid();
 	} catch (FedoraClientException e) {
-	    throw new CantGetPidException(namespace, e);
+	    throw new GetPidException(namespace, e);
 	}
     }
 
@@ -252,7 +252,7 @@ class FedoraFacade implements FedoraInterface {
 	    list.getPid().toArray(arr);
 	    return arr;
 	} catch (FedoraClientException e) {
-	    throw new CantGetPidException(namespace, e);
+	    throw new GetPidException(namespace, e);
 	}
     }
 
@@ -263,7 +263,7 @@ class FedoraFacade implements FedoraInterface {
 	    new PurgeObject(rootPID).execute();
 	} catch (FedoraClientException e) {
 
-	    throw new CantDeleteException(rootPID, e);
+	    throw new DeleteException(rootPID, e);
 	}
     }
 
@@ -273,7 +273,7 @@ class FedoraFacade implements FedoraInterface {
 	try {
 	    new ModifyDatastream(pid, datastream).dsState("D").execute();
 	} catch (FedoraClientException e) {
-	    throw new CantDeleteDatastreamException(pid, e);
+	    throw new DeleteDatastreamException(pid, e);
 	}
 
     }
@@ -294,9 +294,9 @@ class FedoraFacade implements FedoraInterface {
 	try {
 	    createContentModel(cm);
 	} catch (UnsupportedEncodingException e) {
-	    throw new CantUpdateContentModel(cm.toString(), e);
+	    throw new UpdateContentModel(cm.toString(), e);
 	} catch (FedoraClientException e) {
-	    throw new CantUpdateContentModel(cm.toString(), e);
+	    throw new UpdateContentModel(cm.toString(), e);
 	}
     }
 
@@ -308,7 +308,7 @@ class FedoraFacade implements FedoraInterface {
 		    .lang(queryFormat).type("triples").execute();
 	    return response.getEntityInputStream();
 	} catch (Exception e) {
-	    throw new CantSearchException(query, e);
+	    throw new SearchException(query, e);
 	}
     }
 
@@ -763,36 +763,36 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    private class CantDeleteException extends ArchiveException {
+    private class DeleteException extends ArchiveException {
 
 	private static final long serialVersionUID = -7879667636793687166L;
 
-	public CantDeleteException(final String message, final Throwable cause) {
+	public DeleteException(final String message, final Throwable cause) {
 	    super(message, cause);
 	}
 
     }
 
-    private class CantReadNodeException extends ArchiveException {
+    private class ReadNodeException extends ArchiveException {
 
 	private static final long serialVersionUID = 7338818611992590876L;
 
-	public CantReadNodeException(final String message, final Throwable cause) {
+	public ReadNodeException(final String message, final Throwable cause) {
 	    super(message, cause);
 	}
 
     }
 
-    private class CantInitializeFedoraFacadeException extends ArchiveException {
+    private class InitializeFedoraFacadeException extends ArchiveException {
 
 	private static final long serialVersionUID = 5357635794214927895L;
 
-	public CantInitializeFedoraFacadeException(final String message,
+	public InitializeFedoraFacadeException(final String message,
 		final Throwable cause) {
 	    super(message, cause);
 	}
 
-	public CantInitializeFedoraFacadeException(final Throwable cause) {
+	public InitializeFedoraFacadeException(final Throwable cause) {
 	    super(cause);
 	}
 
@@ -816,55 +816,55 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class CantUpdateContentModel extends ArchiveException {
+    public class UpdateContentModel extends ArchiveException {
 
 	private static final long serialVersionUID = 1794883693210840141L;
 
-	public CantUpdateContentModel(final String message,
+	public UpdateContentModel(final String message,
 		final Throwable cause) {
 	    super(message, cause);
 	}
     }
 
-    public class CantDeleteDatastreamException extends ArchiveException {
+    public class DeleteDatastreamException extends ArchiveException {
 
 	private static final long serialVersionUID = 128120359698836741L;
 
-	public CantDeleteDatastreamException(final String message,
+	public DeleteDatastreamException(final String message,
 		final Throwable cause) {
 	    super(message, cause);
 	}
     }
 
-    public class CantGetPidException extends ArchiveException {
+    public class GetPidException extends ArchiveException {
 
 	private static final long serialVersionUID = 5316657644921457520L;
 
-	public CantGetPidException(final String message, final Throwable cause) {
+	public GetPidException(final String message, final Throwable cause) {
 	    super(message, cause);
 	}
     }
 
-    public class CantCreateNodeException extends ArchiveException {
+    public class CreateNodeException extends ArchiveException {
 
 	private static final long serialVersionUID = 8569995140758544941L;
 
-	public CantCreateNodeException(final String message,
+	public CreateNodeException(final String message,
 		final Throwable cause) {
 	    super(message, cause);
 	}
 
-	public CantCreateNodeException(final Throwable cause) {
+	public CreateNodeException(final Throwable cause) {
 	    super(cause);
 	}
 
     }
 
-    public class CantSearchException extends ArchiveException {
+    public class SearchException extends ArchiveException {
 
 	private static final long serialVersionUID = -276889477323963368L;
 
-	public CantSearchException(final String message, final Throwable cause) {
+	public SearchException(final String message, final Throwable cause) {
 	    super(message, cause);
 	}
     }
