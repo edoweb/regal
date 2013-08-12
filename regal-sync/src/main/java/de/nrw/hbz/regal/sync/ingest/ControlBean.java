@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
-import de.nrw.hbz.regal.sync.util.XMLUtils;
+import de.nrw.hbz.regal.sync.extern.XmlUtils;
 
 /**
  * Class ControlBean
@@ -71,7 +71,7 @@ public class ControlBean {
     public ControlBean(DigitalEntity dtlBean) throws Exception {
 	this.dtlBean = dtlBean;
 
-	Element root = XMLUtils.getDocument(dtlBean.getControl());
+	Element root = XmlUtils.getDocument(dtlBean.getControl());
 
 	XPathFactory factory = XPathFactory.newInstance();
 	XPath xpath = factory.newXPath();
