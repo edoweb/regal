@@ -669,8 +669,7 @@ class FedoraFacade implements FedoraInterface {
 	deleteNode(rootPID);
 	// Find all children
 	List<String> pids = null;
-	pids = findPids("* <" + IS_PART_OF + "> <" + addUriPrefix(rootPID)
-		+ ">", SPO);
+	pids = findPids("* <" + IS_PART_OF + "> <" + rootPID + ">", SPO);
 	// Delete all children
 	if (pids != null)
 	    for (String pid : pids) {
