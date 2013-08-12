@@ -23,13 +23,21 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Vector;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -159,5 +167,33 @@ public class XmlUtils {
 		}
 	}
 	return new String(buffer);
+    }
+
+    /**
+     * @param xPathStr
+     *            a xpath expression
+     * @param root
+     *            the xpath is applied to this element
+     * @return a list of elements
+     * @throws XPathExpressionException
+     */
+    public static List<Element> getElements(String xPathStr, Element root,
+	    NamespaceContext nscontext) throws XPathExpressionException {
+	XPathFactory xpathFactory = XPathFactory.newInstance();
+	XPath xpath = xpathFactory.newXPath();
+	xpath.setNamespaceContext(nscontext);
+	NodeList elements = (NodeList) xpath.evaluate(xPathStr, root,
+		XPathConstants.NODESET);
+
+	List<Element> result = new Vector<Element>();
+	for (int i = 0; i < elements.getLength(); i++) {
+	    try {
+		Element element = (Element) elements.item(i);
+		result.add(element);
+	    } catch (ClassCastException e) {
+		e.printStackTrace();
+	    }
+	}
+	return result;
     }
 }
