@@ -17,24 +17,19 @@
 package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Deque;
 import java.util.HashMap;
@@ -49,6 +44,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -267,70 +263,34 @@ public abstract class Downloader implements DownloaderInterface {
 	return null;
     }
 
-    protected File getXml(File file, URL url) throws IOException {
-
-	URLConnection con = url.openConnection();
-	BufferedReader in = new BufferedReader(new InputStreamReader(
-		con.getInputStream(), "UTF-8"));
-
-	StringWriter strOut = new StringWriter();
-
-	// Copy stream to String
-	char[] buf = new char[1024];
-	int n;
-	while ((n = in.read(buf)) != -1) {
-	    strOut.write(buf, 0, n);
+    protected void download(File dir, String url) {
+	try {
+	    URL dataStreamUrl = new URL(url);
+	    File file = new File(dir.getAbsolutePath() + ""
+		    + dataStreamUrl.getFile());
+	    if (!file.exists()) {
+		file.getParentFile().mkdirs();
+		file.createNewFile();
+	    }
+	    OutputStream output = new FileOutputStream(file);
+	    IOUtils.copy(dataStreamUrl.openStream(), output);
+	} catch (Exception e) {
+	    throw new DownloadException(e);
 	}
-
-	String str = strOut.toString();
-	strOut.close();
-	in.close();
-
-	// copy String to File
-	in = new BufferedReader(new StringReader(str));
-	BufferedWriter out = new BufferedWriter(new FileWriter(file));
-	buf = new char[1024];
-	while ((n = in.read(buf)) != -1) {
-	    out.write(buf, 0, n);
-	}
-
-	out.close();
-	in.close();
-
-	return file;
     }
 
-    protected Element getDocument(File digitalEntityFile) {
+    protected void downloadText(File file, URL url) {
 	try {
-	    DocumentBuilderFactory factory = DocumentBuilderFactory
-		    .newInstance();
-	    DocumentBuilder docBuilder;
-
-	    docBuilder = factory.newDocumentBuilder();
-
-	    Document doc;
-
-	    doc = docBuilder.parse(new BufferedInputStream(new FileInputStream(
-		    digitalEntityFile)));
-	    Element root = doc.getDocumentElement();
-	    root.normalize();
-	    return root;
-	} catch (FileNotFoundException e) {
-
-	    e.printStackTrace();
-	} catch (SAXException e) {
-
-	    e.printStackTrace();
+	    String data = null;
+	    StringWriter writer = new StringWriter();
+	    IOUtils.copy(url.openStream(), writer);
+	    data = writer.toString();
+	    FileUtils.writeStringToFile(file, data, "utf-8");
+	} catch (MalformedURLException e) {
+	    throw new DownloadException(e);
 	} catch (IOException e) {
-
-	    e.printStackTrace();
-	} catch (ParserConfigurationException e) {
-
-	    e.printStackTrace();
-	} catch (Exception e) {
-	    e.printStackTrace();
+	    throw new DownloadException(e);
 	}
-	return null;
     }
 
     @SuppressWarnings("resource")
@@ -393,4 +353,9 @@ public abstract class Downloader implements DownloaderInterface {
 	}
     }
 
+    public class DownloadException extends RuntimeException {
+	public DownloadException(Throwable arg0) {
+	    super(arg0);
+	}
+    }
 }
