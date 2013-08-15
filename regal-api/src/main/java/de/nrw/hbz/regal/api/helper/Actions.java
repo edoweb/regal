@@ -293,56 +293,6 @@ public class Actions {
     }
 
     /**
-     * @param rdfQuery
-     *            A sparql query
-     * @return a short message
-     */
-    public String findSubject(String rdfQuery) {
-	String volumePid = null;
-	InputStream stream = fedora.findTriples(rdfQuery,
-		FedoraVocabulary.SPARQL, FedoraVocabulary.N3);
-
-	RepositoryConnection con = null;
-	Repository myRepository = new SailRepository(new MemoryStore());
-	try {
-	    myRepository.initialize();
-	    con = myRepository.getConnection();
-	    String baseURI = "";
-
-	    con.add(stream, baseURI, RDFFormat.N3);
-
-	    RepositoryResult<Statement> statements = con.getStatements(null,
-		    null, null, true);
-
-	    while (statements.hasNext()) {
-		Statement st = statements.next();
-		volumePid = st.getSubject().stringValue()
-			.replace("info:fedora/", "");
-		break;
-	    }
-	} catch (RepositoryException e) {
-
-	    e.printStackTrace();
-	} catch (RDFParseException e) {
-
-	    e.printStackTrace();
-	} catch (IOException e) {
-
-	    e.printStackTrace();
-	} finally {
-	    if (con != null) {
-		try {
-		    con.close();
-		} catch (RepositoryException e) {
-		    e.printStackTrace();
-		}
-	    }
-	}
-
-	return volumePid;
-    }
-
-    /**
      * 
      * @param pid
      *            The pid
@@ -1570,8 +1520,10 @@ public class Actions {
 		String logoLink = "";
 		if (mime.compareTo("application/pdf") == 0) {
 		    logoLink = "/pdflogo.svg";
-		} else {
+		} else if (mime.compareTo("application/zip") == 0) {
 		    logoLink = "/zip.png";
+		} else {
+		    logoLink = "/data.png";
 		}
 		st.add("data", "<tr><td class=\"textlink\"><a	href=\""
 			+ dataLink + "\"><img src=\"" + logoLink
