@@ -45,39 +45,45 @@ import org.xml.sax.SAXException;
  * 
  */
 public class XmlUtils {
+
     /**
      * @param digitalEntityFile
      *            the xml file
      * @return the root element as org.w3c.dom.Element
-     * @throws ParserConfigurationException
-     *             comes from factory.newDocumentBuilder()
-     * @throws IOException
-     *             comes from docBuilder.parse()
-     * @throws SAXException
-     *             comes from docBuilder.parse()
-     * @throws FileNotFoundException
-     *             comes from FileInputStream
+     * @throws XmlException
+     *             RuntimeException if something goes wrong
      */
-    public static Element getDocument(File digitalEntityFile)
-	    throws ParserConfigurationException, FileNotFoundException,
-	    SAXException, IOException {
-	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	factory.setNamespaceAware(true);
-	DocumentBuilder docBuilder;
+    public static Element getDocument(File digitalEntityFile) {
 
-	docBuilder = factory.newDocumentBuilder();
+	try {
+	    DocumentBuilderFactory factory = DocumentBuilderFactory
+		    .newInstance();
+	    factory.setNamespaceAware(true);
+	    DocumentBuilder docBuilder = factory.newDocumentBuilder();
 
-	Document doc = docBuilder.parse(new BufferedInputStream(
-		new FileInputStream(digitalEntityFile)));
-	Element root = doc.getDocumentElement();
-	root.normalize();
-	return root;
+	    Document doc = docBuilder.parse(new BufferedInputStream(
+		    new FileInputStream(digitalEntityFile)));
+	    Element root = doc.getDocumentElement();
+	    root.normalize();
+	    return root;
+	} catch (FileNotFoundException e) {
+	    throw new XmlException(e);
+	} catch (SAXException e) {
+	    throw new XmlException(e);
+	} catch (IOException e) {
+	    throw new XmlException(e);
+	} catch (ParserConfigurationException e) {
+	    throw new XmlException(e);
+	}
+
     }
 
     /**
      * @param xmlString
      *            a xml string
      * @return the root element as org.w3c.dom.Element
+     * @throws XmlException
+     *             RuntimeException if something goes wrong
      */
     public static Element getDocument(String xmlString) {
 	try {
@@ -94,21 +100,20 @@ public class XmlUtils {
 	    root.normalize();
 	    return root;
 	} catch (FileNotFoundException e) {
-
-	    e.printStackTrace();
+	    throw new XmlException(e);
 	} catch (SAXException e) {
 
-	    e.printStackTrace();
+	    throw new XmlException(e);
 	} catch (IOException e) {
 
-	    e.printStackTrace();
+	    throw new XmlException(e);
 	} catch (ParserConfigurationException e) {
 
-	    e.printStackTrace();
+	    throw new XmlException(e);
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    throw new XmlException(e);
 	}
-	return null;
+
     }
 
     /**
@@ -174,8 +179,11 @@ public class XmlUtils {
      *            a xpath expression
      * @param root
      *            the xpath is applied to this element
+     * @param nscontext
+     *            a NamespaceContext
      * @return a list of elements
      * @throws XPathExpressionException
+     *             if the xPathStr is malformed
      */
     public static List<Element> getElements(String xPathStr, Element root,
 	    NamespaceContext nscontext) throws XPathExpressionException {
@@ -196,4 +204,5 @@ public class XmlUtils {
 	}
 	return result;
     }
+
 }
