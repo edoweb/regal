@@ -29,23 +29,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.nrw.hbz.regal.api.helper.DigitoolDc2RdfMap;
 import de.nrw.hbz.regal.datatypes.DCBean;
 import de.nrw.hbz.regal.datatypes.Node;
 
 /**
- * Class DCBean
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
- * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
@@ -73,14 +62,6 @@ public class DCBeanAnnotated {
      */
     public DCBeanAnnotated() {
 
-    }
-
-    /**
-     * @param xmlString
-     *            a string to initalise from
-     */
-    public DCBeanAnnotated(String xmlString) {
-	parse(xmlString);
     }
 
     /**
@@ -799,115 +780,6 @@ public class DCBeanAnnotated {
 	    ;
 	while (type.remove(""))
 	    ;
-    }
-
-    private void parse(String str) {
-	if (str == null || str.isEmpty())
-	    return;
-	Element root = getDocument(str);
-
-	String tagName = DigitoolDc2RdfMap.xmlDcContributer;
-	NodeList nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addContributer(element.getTextContent());
-	}
-
-	tagName = DigitoolDc2RdfMap.xmlDcCoverage;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addCoverage(element.getTextContent());
-	}
-
-	tagName = DigitoolDc2RdfMap.xmlDcCreator;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addCreator(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcDate;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addDate(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcDescription;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addDescription(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcFormat;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addFormat(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcIdentifier;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    String curId = element.getTextContent();
-	    if (curId.contains("HT")) {
-		if (curId.startsWith("HBZ")) {
-		    addIdentifier(curId.substring(3));
-		} else {
-		    addIdentifier(curId);
-		}
-	    } else {
-		addIdentifier(curId);
-	    }
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcLanguage;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addLanguage(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcPublisher;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addPublisher(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcRelation;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addRelation(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcRights;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addRights(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcSource;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addSource(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcSubject;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addSubject(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcTitle;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addTitle(element.getTextContent());
-	}
-	tagName = DigitoolDc2RdfMap.xmlDcType;
-	nodes = root.getElementsByTagName(tagName);
-	for (int j = 0; j < nodes.getLength(); j++) {
-	    Element element = ((Element) nodes.item(j));
-	    addType(element.getTextContent());
-	}
-
     }
 
     /**
