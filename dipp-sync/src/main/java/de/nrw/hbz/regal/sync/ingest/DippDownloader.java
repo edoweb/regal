@@ -31,6 +31,8 @@ import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import de.nrw.hbz.regal.sync.extern.XmlUtils;
+
 /**
  * http://193.30.112.23:9280/fedora/get/dipp:1001?xml=true
  * http://193.30.112.23:9280/fedora/listDatastreams/dipp:1001?xml=true
@@ -82,7 +84,7 @@ public class DippDownloader extends Downloader {
 	    IOUtils.copy(url.openStream(), writer);
 	    data = writer.toString();
 
-	    Element root = stringToElement(data);
+	    Element root = XmlUtils.getDocument(data);
 	    NodeList constituents = root.getElementsByTagName(relation);
 	    if (constituents == null || constituents.getLength() == 0)
 		return;
@@ -135,7 +137,7 @@ public class DippDownloader extends Downloader {
 	    IOUtils.copy(url.openStream(), writer);
 	    data = writer.toString();
 
-	    Element root = stringToElement(data);
+	    Element root = XmlUtils.getDocument(data);
 	    NodeList constituents = root.getElementsByTagName(relation);
 	    for (int i = 0; i < constituents.getLength(); i++) {
 		try {
@@ -179,7 +181,7 @@ public class DippDownloader extends Downloader {
 	    IOUtils.copy(url.openStream(), writer);
 	    data = writer.toString();
 
-	    Element root = stringToElement(data);
+	    Element root = XmlUtils.getDocument(data);
 	    NodeList dss = root.getElementsByTagName("datastream");
 
 	    for (int i = 0; i < dss.getLength(); i++) {

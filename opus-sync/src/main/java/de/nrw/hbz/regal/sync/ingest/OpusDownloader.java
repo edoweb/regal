@@ -31,6 +31,8 @@ import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import de.nrw.hbz.regal.sync.extern.XmlUtils;
+
 /**
  * 
  * 
@@ -86,8 +88,8 @@ public class OpusDownloader extends Downloader {
     private void downloadPdfs(File dir, String pid) {
 	Vector<String> files = new Vector<String>();
 	String identifier = null;
-	Element xMetaDissPlus = getDocument(new File(dir.getAbsolutePath()
-		+ File.separator + pid + ".xml"));
+	Element xMetaDissPlus = XmlUtils.getDocument(new File(dir
+		.getAbsolutePath() + File.separator + pid + ".xml"));
 
 	NodeList identifiers = xMetaDissPlus
 		.getElementsByTagName("ddb:identifier");
