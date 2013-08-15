@@ -77,6 +77,10 @@ public class OaiSet {
 	return pid;
     }
 
+    /**
+     * @param pid
+     *            the pid for the set
+     */
     protected void setPid(String pid) {
 	this.pid = pid;
     }

@@ -18,14 +18,9 @@ package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.StringWriter;
 import java.util.Vector;
 
 import javax.ws.rs.core.MediaType;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,13 +96,6 @@ public class Webclient {
      *            A DigitalEntity to operate on
      */
     public void autoGenerateMetdata(DigitalEntity dtlBean) {
-	String pid = namespace + ":" + dtlBean.getPid();
-	String resource = endpoint + "/resource/" + pid;
-	try {
-	    updateDC(resource + "/dc", dtlBean);
-	} catch (Exception e) {
-	    logger.error(dtlBean.getPid() + " " + e.getMessage());
-	}
 	try {
 	    lobidify(dtlBean);
 	} catch (Exception e) {
@@ -295,32 +283,32 @@ public class Webclient {
 	}
     }
 
-    private void updateDC(String url, DigitalEntity dtlBean) {
-	String pid = namespace + ":" + dtlBean.getPid();
-	WebResource webpageDC = webclient.resource(url);
-
-	DCBeanAnnotated dc = new DCBeanAnnotated();
-
-	try {
-
-	    if (dtlBean.getStream(StreamType.MARC).getFile() != null)
-		dc.add(marc2dc(dtlBean));
-	    else if (dtlBean.getDc() != null) {
-		dc.add(new DCBeanAnnotated(dtlBean.getDc()));
-	    } else {
-		logger.warn(pid
-			+ " not able to create dublin core data. No Marc or DC metadata found.");
-	    }
-
-	    dc.addDescription(dtlBean.getLabel());
-	    webpageDC.put(dc);
-
-	} catch (UniformInterfaceException e) {
-	    logger.info(pid + " " + e.getMessage());
-	} catch (Exception e) {
-	    logger.debug(pid + " " + e.getMessage());
-	}
-    }
+    // private void updateDC(String url, DigitalEntity dtlBean) {
+    // String pid = namespace + ":" + dtlBean.getPid();
+    // WebResource webpageDC = webclient.resource(url);
+    //
+    // DCBeanAnnotated dc = new DCBeanAnnotated();
+    //
+    // try {
+    //
+    // if (dtlBean.getStream(StreamType.MARC).getFile() != null)
+    // dc.add(marc2dc(dtlBean));
+    // else if (dtlBean.getDc() != null) {
+    // dc.add(new DCBeanAnnotated(dtlBean.getDc()));
+    // } else {
+    // logger.warn(pid
+    // + " not able to create dublin core data. No Marc or DC metadata found.");
+    // }
+    //
+    // dc.addDescription(dtlBean.getLabel());
+    // webpageDC.put(dc);
+    //
+    // } catch (UniformInterfaceException e) {
+    // logger.info(pid + " " + e.getMessage());
+    // } catch (Exception e) {
+    // logger.debug(pid + " " + e.getMessage());
+    // }
+    // }
 
     private String readMetadata(String url, DigitalEntity dtlBean) {
 	WebResource metadataRes = webclient.resource(url);
@@ -423,26 +411,26 @@ public class Webclient {
 	}
     }
 
-    private DCBeanAnnotated marc2dc(DigitalEntity dtlBean) {
-	String pid = namespace + ":" + dtlBean.getPid();
-	try {
-	    StringWriter str = new StringWriter();
-	    TransformerFactory tFactory = TransformerFactory.newInstance();
-	    Transformer transformer = tFactory
-		    .newTransformer(new StreamSource(ClassLoader
-			    .getSystemResourceAsStream("MARC21slim2OAIDC.xsl")));
-	    transformer.transform(
-		    new StreamSource(dtlBean.getStream(StreamType.MARC)
-			    .getFile()), new StreamResult(str));
-	    String xmlStr = str.getBuffer().toString();
-	    DCBeanAnnotated dc = new DCBeanAnnotated(xmlStr);
-	    return dc;
-
-	} catch (Throwable t) {
-	    logger.warn(pid + " " + t.getCause().getMessage());
-	}
-	return null;
-    }
+    // private DCBeanAnnotated marc2dc(DigitalEntity dtlBean) {
+    // String pid = namespace + ":" + dtlBean.getPid();
+    // try {
+    // StringWriter str = new StringWriter();
+    // TransformerFactory tFactory = TransformerFactory.newInstance();
+    // Transformer transformer = tFactory
+    // .newTransformer(new StreamSource(ClassLoader
+    // .getSystemResourceAsStream("MARC21slim2OAIDC.xsl")));
+    // transformer.transform(
+    // new StreamSource(dtlBean.getStream(StreamType.MARC)
+    // .getFile()), new StreamResult(str));
+    // String xmlStr = str.getBuffer().toString();
+    // DCBeanAnnotated dc = new DCBeanAnnotated(xmlStr);
+    // return dc;
+    //
+    // } catch (Throwable t) {
+    // logger.warn(pid + " " + t.getCause().getMessage());
+    // }
+    // return null;
+    // }
 
     /**
      * 
