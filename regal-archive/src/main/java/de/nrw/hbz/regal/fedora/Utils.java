@@ -841,7 +841,7 @@ public class Utils {
 
 	    return result;
 	} catch (FedoraClientException e) {
-	    throw new ArchiveException("An unknown exception occured.", e);
+	    throw new ArchiveException(e);
 	}
 
     }

@@ -93,10 +93,13 @@ import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
 /**
+ * The FedoraFacade implements all Fedora-Calls as a singleton
+ * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
 class FedoraFacade implements FedoraInterface {
 
+    static FedoraFacade me = null;
     Utils utils = null;
 
     ContentModelBuilder cmBuilder = new ContentModelBuilder();
@@ -109,7 +112,7 @@ class FedoraFacade implements FedoraInterface {
      * @param aPassword
      *            The password of the fedora user
      */
-    public FedoraFacade(String host, String aUser, String aPassword) {
+    private FedoraFacade(String host, String aUser, String aPassword) {
 	utils = new Utils(host, aUser);
 	try {
 	    FedoraCredentials credentials = new FedoraCredentials(host, aUser,
@@ -122,6 +125,23 @@ class FedoraFacade implements FedoraInterface {
 	    throw new InitializeFedoraFacadeException(e);
 	}
 
+    }
+
+    /**
+     * @param host
+     *            The url of the fedora web endpoint
+     * @param aUser
+     *            A valid fedora user
+     * @param aPassword
+     *            The password of the fedora user
+     * @return a instance of FedoraFacade singleton
+     */
+    public static FedoraFacade getInstance(String host, String aUser,
+	    String aPassword) {
+	if (me == null)
+	    return new FedoraFacade(host, aUser, aPassword);
+	else
+	    return me;
     }
 
     @Override
@@ -189,11 +209,9 @@ class FedoraFacade implements FedoraInterface {
 	    FedoraResponse response = new GetDatastreamDissemination(pid,
 		    "data").download(true).execute();
 	    node.setMimeType(response.getType());
-
-	}
-
-	catch (FedoraClientException e) {
-
+	} catch (FedoraClientException e) {
+	    // The node must not have a mimetype
+	    // throw new ReadNodeException(pid, e);
 	}
 
 	return node;
@@ -820,8 +838,7 @@ class FedoraFacade implements FedoraInterface {
 
 	private static final long serialVersionUID = 1794883693210840141L;
 
-	public UpdateContentModel(final String message,
-		final Throwable cause) {
+	public UpdateContentModel(final String message, final Throwable cause) {
 	    super(message, cause);
 	}
     }
@@ -849,8 +866,7 @@ class FedoraFacade implements FedoraInterface {
 
 	private static final long serialVersionUID = 8569995140758544941L;
 
-	public CreateNodeException(final String message,
-		final Throwable cause) {
+	public CreateNodeException(final String message, final Throwable cause) {
 	    super(message, cause);
 	}
 

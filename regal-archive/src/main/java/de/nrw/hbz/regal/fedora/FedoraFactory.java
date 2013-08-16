@@ -16,7 +16,6 @@
  */
 package de.nrw.hbz.regal.fedora;
 
-
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
@@ -32,6 +31,6 @@ public class FedoraFactory {
      */
     public static FedoraInterface getFedoraImpl(String host, String user,
 	    String passwd) {
-	return new FedoraFacade(host, user, passwd);
+	return FedoraFacade.getInstance(host, user, passwd);
     }
 }
