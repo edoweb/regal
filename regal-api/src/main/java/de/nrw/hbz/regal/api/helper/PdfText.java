@@ -48,9 +48,9 @@ public class PdfText {
 	    String text = stripper.getText(doc);
 	    return text;
 	} catch (IOException e) {
-	    throw new HttpArchiveException(500, "Didn't find  pdf file.");
+	    throw new HttpArchiveException(500, e);
 	} catch (Exception e) {
-	    throw new HttpArchiveException(500, e.getMessage());
+	    throw new HttpArchiveException(500, e);
 	} finally {
 	    if (doc != null) {
 		try {
@@ -84,7 +84,7 @@ public class PdfText {
 
 	    return buf.toString();
 	} catch (IOException e) {
-	    throw new HttpArchiveException(500, "itext problem");
+	    throw new HttpArchiveException(500, e);
 	}
 
     }

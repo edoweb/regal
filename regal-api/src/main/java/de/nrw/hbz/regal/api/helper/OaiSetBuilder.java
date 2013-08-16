@@ -73,7 +73,7 @@ public class OaiSetBuilder {
 	} else if (predicate.compareTo("http://hbz-nrw.de/regal#contentType") == 0) {
 	    String docType = object;
 	    name = docmap(docType);
-	    spec = TypeType.contentType.toString() + ":" + docType;
+	    spec = "contentType:" + docType;
 
 	}
 

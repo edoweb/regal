@@ -1,0 +1,187 @@
+/*
+ * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package de.nrw.hbz.regal.api.helper;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import de.nrw.hbz.regal.api.CreateObjectBean;
+import de.nrw.hbz.regal.api.Resource;
+import de.nrw.hbz.regal.datatypes.Node;
+
+/**
+ * 
+ * @author Jan Schnasse schnasse@hbz-nrw.de
+ * 
+ */
+@SuppressWarnings("javadoc")
+public class TestActions {
+    Properties properties;
+
+    @Before
+    public void setUp() {
+	try {
+	    properties = new Properties();
+	    properties.load(getClass().getResourceAsStream("/test.properties"));
+	    Actions actions = new Actions();
+	    try {
+		actions.deleteNamespace("test");
+	    } catch (Exception e) {
+
+	    }
+	    try {
+
+		actions.deleteNamespace("testCM");
+	    } catch (Exception e) {
+
+	    }
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+
+    }
+
+    // @Test
+    public void testFindByType() throws IOException {
+	// TODO implement
+	Actions actions = new Actions();
+	for (String result : actions
+		.findByType(ObjectType.monograph.toString())) {
+	    Node node = actions.readNode(result);
+	    String type = node.getContentType();
+
+	    if (type == null || type.isEmpty())
+		Assert.fail();
+	    else if (ObjectType.monograph.toString().compareTo(type) != 0) {
+		Assert.fail();
+	    }
+	}
+
+	for (String result : actions.findByType(ObjectType.journal.toString())) {
+	    Node node = actions.readNode(result);
+	    String type = node.getContentType();
+
+	    if (type == null || type.isEmpty())
+		Assert.fail();
+	    else if (ObjectType.journal.toString().compareTo(type) != 0) {
+		Assert.fail();
+	    }
+	}
+
+	for (String result : actions.findByType(ObjectType.volume.toString())) {
+	    Node node = actions.readNode(result);
+	    String type = node.getContentType();
+
+	    if (type == null || type.isEmpty())
+		Assert.fail();
+	    else if (ObjectType.volume.toString().compareTo(type) != 0) {
+		Assert.fail();
+	    }
+	}
+
+	for (String result : actions.findByType(ObjectType.webpage.toString())) {
+	    Node node = actions.readNode(result);
+	    String type = node.getContentType();
+
+	    if (type == null || type.isEmpty())
+		Assert.fail();
+	    else if (ObjectType.webpage.toString().compareTo(type) != 0) {
+		Assert.fail();
+	    }
+	}
+
+    }
+
+    @Test
+    public void testCreation() {
+	try {
+	    Resource resources = new Resource();
+	    CreateObjectBean input = new CreateObjectBean();
+	    input.setType("monograph");
+	    resources.create("123", "test", input);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    Assert.fail();
+	}
+
+    }
+
+    // @Test
+    public void epicur() throws IOException {
+	Actions actions = new Actions();
+	Services services = actions.getServices();
+	Assert.assertEquals(
+		"urn:nbn:de:edoweb-12340",
+		services.generateUrn("1234", "edoweb",
+			actions.getView("edoweb:1234")));
+	Assert.assertEquals(
+		"urn:nbn:de:edoweb-12357",
+		services.generateUrn("1235", "edoweb",
+			actions.getView("edoweb:1235")));
+	Assert.assertEquals(
+		"urn:nbn:de:edoweb-123476",
+		services.generateUrn("12347", "edoweb",
+			actions.getView("edoweb:12347")));
+	System.out.println(services.epicur("1234", "edoweb",
+		actions.getView("edoweb:1234")));
+
+	String str = "<http://lobid.org/resource/HT015456932> <http://purl.org/vocab/frbr/core#exemplar> <http://lobid.org/item/HT015456932%3AElektronische+Publikation> .";
+	str = Pattern.compile("http://lobid.org/resource/HT015456932")
+		.matcher(str)
+		.replaceAll(Matcher.quoteReplacement("edoweb:1234"));
+	System.out.println(str);
+    }
+
+    // @Test
+    public void lobidify() throws IOException {
+	Actions actions = new Actions();
+	String result = actions.lobidify("test:4245081");
+	System.out.println(result);
+    }
+
+    // @Test
+    public void html() throws IOException {
+	Actions actions = new Actions();
+	String str = actions.getReM("edoweb:2470307", "text/html");
+	System.out.println(str);
+    }
+
+    // @After
+    public void tearDown() throws IOException {
+	Actions actions = new Actions();
+	try {
+	    actions.deleteNamespace("test");
+	} catch (Exception e) {
+	    System.out.println(e.getMessage());
+	}
+	try {
+	    actions.deleteNamespace("testCM");
+	} catch (Exception e) {
+	    System.out.println(e.getMessage());
+	}
+    }
+}

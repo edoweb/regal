@@ -99,12 +99,10 @@ public class Resource {
 	    return res;
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	} catch (URISyntaxException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -412,16 +410,13 @@ public class Resource {
 	    return result;
 	} catch (URISyntaxException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	} catch (MalformedURLException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	} catch (IOException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -453,8 +448,7 @@ public class Resource {
 	    return actions.getFulltext(pid, namespace);
 	} catch (URISyntaxException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
 
     }
@@ -475,8 +469,7 @@ public class Resource {
 	    return actions.getEpicur(pid, namespace);
 	} catch (URISyntaxException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
 
     }
@@ -497,8 +490,7 @@ public class Resource {
 	    return actions.getOAI_DC(pid, namespace);
 	} catch (URISyntaxException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
 
     }
@@ -516,8 +508,7 @@ public class Resource {
 	    return new ObjectList(actions.findByType(type));
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -549,24 +540,29 @@ public class Resource {
 	    throw new HttpArchiveException(Status.BAD_REQUEST.getStatusCode(),
 		    "The type you've provided is NULL or empty.");
 	}
-	List<ContentModel> models = new Vector<ContentModel>();
-	if (input.type.compareTo(ObjectType.monograph.toString()) == 0) {
-	    models.add(ContentModelFactory.createMonographModel(namespace));
-	    models.add(ContentModelFactory.createPdfModel(namespace));
-	} else if (input.type.compareTo(ObjectType.journal.toString()) == 0) {
-	    models.add(ContentModelFactory.createEJournalModel(namespace));
-	    models.add(ContentModelFactory.createPdfModel(namespace));
-	} else if (input.type.compareTo(ObjectType.webpage.toString()) == 0) {
-	    models.add(ContentModelFactory.createWebpageModel(namespace));
-	} else if (input.type.compareTo(ObjectType.version.toString()) == 0) {
-	    models.add(ContentModelFactory.createVersionModel(namespace));
-	} else if (input.type.compareTo(ObjectType.volume.toString()) == 0) {
-	    models.add(ContentModelFactory.createVolumeModel(namespace));
-	    models.add(ContentModelFactory.createPdfModel(namespace));
+	try {
+	    List<ContentModel> models = new Vector<ContentModel>();
+	    if (input.type.compareTo(ObjectType.monograph.toString()) == 0) {
+		models.add(ContentModelFactory.createMonographModel(namespace));
+		models.add(ContentModelFactory.createPdfModel(namespace));
+	    } else if (input.type.compareTo(ObjectType.journal.toString()) == 0) {
+		models.add(ContentModelFactory.createEJournalModel(namespace));
+		models.add(ContentModelFactory.createPdfModel(namespace));
+	    } else if (input.type.compareTo(ObjectType.webpage.toString()) == 0) {
+		models.add(ContentModelFactory.createWebpageModel(namespace));
+	    } else if (input.type.compareTo(ObjectType.version.toString()) == 0) {
+		models.add(ContentModelFactory.createVersionModel(namespace));
+	    } else if (input.type.compareTo(ObjectType.volume.toString()) == 0) {
+		models.add(ContentModelFactory.createVolumeModel(namespace));
+		models.add(ContentModelFactory.createPdfModel(namespace));
+	    }
+	    models.add(ContentModelFactory.createHeadModel(namespace));
+	    Node node = actions.createResource(input, pid, namespace, models);
+	    return node.getPID() + " created/updated!";
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
-	models.add(ContentModelFactory.createHeadModel(namespace));
-	Node node = actions.createResource(input, pid, namespace, models);
-	return node.getPID() + " created/updated!";
     }
 
     /**
@@ -633,12 +629,10 @@ public class Resource {
 		    mimeType, name);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	} catch (IOException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
 
     }
@@ -682,12 +676,10 @@ public class Resource {
 	    return actions.updateMetadata(pid, content);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	} catch (IOException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -724,8 +716,7 @@ public class Resource {
 	    return actions.updateDC(pid, content);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -759,12 +750,11 @@ public class Resource {
     public String delete(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
 	try {
-	    return actions.delete(namespace + ":" + pid, false);
+	    return actions.delete(namespace + ":" + pid);
 
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -784,8 +774,7 @@ public class Resource {
 
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -805,8 +794,7 @@ public class Resource {
 
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -822,11 +810,10 @@ public class Resource {
     @Produces({ "application/json", "application/xml" })
     public String deleteAllOfType(@PathParam("type") String type) {
 	try {
-	    return actions.deleteAll(actions.findByType(type), false);
+	    return actions.deleteAll(actions.findByType(type));
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 

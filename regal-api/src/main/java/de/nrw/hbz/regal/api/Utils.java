@@ -43,7 +43,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  */
 @Path("/utils")
 public class Utils {
-    Actions actions = null;
+    Actions actions = new Actions();
 
     /**
      * @throws IOException
@@ -66,10 +66,9 @@ public class Utils {
     public String deleteNamespace(@PathParam("namespace") String namespace) {
 	try {
 	    return actions.deleteNamespace(namespace);
-	} catch (ArchiveException e) {
+	} catch (Exception e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
 
     }
@@ -87,8 +86,7 @@ public class Utils {
 	    return actions.makeOAISet(pid);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
 
     }
@@ -110,8 +108,7 @@ public class Utils {
 	} catch (ArchiveException e) {
 
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -128,8 +125,7 @@ public class Utils {
 	    return actions.lobidify(pid);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -147,8 +143,7 @@ public class Utils {
 	    return actions.oaidc(pid);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -168,8 +163,7 @@ public class Utils {
 	    return actions.epicur(pid, namespace);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -209,8 +203,7 @@ public class Utils {
 
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
@@ -227,8 +220,7 @@ public class Utils {
 	    return actions.contentModelsInit(namespace);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-		    e.getMessage());
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
 
