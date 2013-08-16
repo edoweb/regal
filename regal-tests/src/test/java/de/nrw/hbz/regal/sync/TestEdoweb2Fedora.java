@@ -24,7 +24,6 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * 
@@ -77,7 +76,7 @@ public class TestEdoweb2Fedora {
     }
 
     @SuppressWarnings("static-access")
-    @Test
+    // @Test
     public void mainTest() throws IOException {
 	Main main = new Main();
 	pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();

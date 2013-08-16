@@ -56,7 +56,8 @@ public class FedoraFacadeIntegrationTest {
 	// System.out.println(XmlSchemaCollection.class
 	// .getResource("XmlSchemaCollection.class"));
 
-	facade = new FedoraFacade(properties.getProperty("fedoraUrl"),
+	facade = FedoraFactory.getFedoraImpl(
+		properties.getProperty("fedoraUrl"),
 		properties.getProperty("user"),
 		properties.getProperty("password"));
 

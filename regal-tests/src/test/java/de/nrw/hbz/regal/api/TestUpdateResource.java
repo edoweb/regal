@@ -41,27 +41,20 @@ public class TestUpdateResource {
     String apiUrl;
 
     @Before
-    public void setUp() {
-	try {
-	    properties = new Properties();
-	    properties.load(getClass().getResourceAsStream("/test.properties"));
+    public void setUp() throws IOException {
 
-	    ClientConfig cc = new DefaultClientConfig();
-	    cc.getProperties()
-		    .put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-	    cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
-		    true);
-	    client = Client.create(cc);
-	    client.addFilter(new HTTPBasicAuthFilter(properties
-		    .getProperty("user"), properties.getProperty("password")));
-	    apiUrl = properties.getProperty("apiUrl");
-	    cleanUp();
+	properties = new Properties();
+	properties.load(getClass().getResourceAsStream("/test.properties"));
 
-	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-
-	}
+	ClientConfig cc = new DefaultClientConfig();
+	cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+	cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+	client = Client.create(cc);
+	client.addFilter(new HTTPBasicAuthFilter(
+		properties.getProperty("user"), properties
+			.getProperty("password")));
+	apiUrl = properties.getProperty("apiUrl");
+	cleanUp();
 
     }
 
