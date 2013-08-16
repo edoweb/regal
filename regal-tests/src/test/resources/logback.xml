@@ -5,7 +5,11 @@
     </layout>
   </appender>
  
-  <root level="DEBUG">
+  <root level="INFO">
     <appender-ref ref="CONSOLE" />
   </root>
+  
+  
+  <logger name="ch.qos.logback" level="OFF" additivity="false" />
+  
 </configuration>
