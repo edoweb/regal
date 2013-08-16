@@ -42,6 +42,8 @@ public class HttpArchiveException extends WebApplicationException {
      *            a http status code
      * @param message
      *            a human readable message
+     * @param cause
+     *            the exception that might has caused this exception
      */
     public HttpArchiveException(int status, String message, Throwable cause) {
 	super(cause, Response.status(status).entity(message).build());
@@ -51,8 +53,8 @@ public class HttpArchiveException extends WebApplicationException {
     /**
      * @param status
      *            a http status code
-     * @param message
-     *            a human readable message
+     * @param cause
+     *            the exception that might has caused this exception
      */
     public HttpArchiveException(int status, Throwable cause) {
 	super(cause, Response.status(status).entity(cause.getMessage()).build());
