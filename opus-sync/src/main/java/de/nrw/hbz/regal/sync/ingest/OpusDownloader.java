@@ -17,13 +17,10 @@
 package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
@@ -122,50 +119,20 @@ public class OpusDownloader extends Downloader {
 	    int i = 0;
 	    for (String file : files) {
 
-		try {
-		    if (file.endsWith("pdf")) {
-			i++;
-			download(dir.getAbsoluteFile() + File.separator + pid
-				+ "_" + i + ".pdf", identifier + "/pdf/" + file);
-		    }
-		} catch (IOException e) {
-		    logger.error(e.getMessage());
+		if (file.endsWith("pdf")) {
+		    i++;
+		    download(new File(dir.getAbsoluteFile() + File.separator
+			    + pid + "_" + i + ".pdf"), identifier + "/pdf/"
+			    + file);
 		}
 	    }
 	} else {// qucosa slang
 	    for (int i = 0; i < transferUrls.getLength(); i++) {
 		Element transferUrl = (Element) transferUrls.item(i);
 		String url = transferUrl.getTextContent();
-		try {
-		    download(dir.getAbsoluteFile() + File.separator + pid + "_"
-			    + (i + 1) + ".pdf", url);
-		} catch (IOException e) {
-		    logger.error(e.getMessage());
-		}
+		download(new File(dir.getAbsoluteFile() + File.separator + pid
+			+ "_" + (i + 1) + ".pdf"), url);
 	    }
-	}
-    }
-
-    private void download(String file, String url) throws IOException {
-	URL dataStreamUrl = new URL(url);
-	InputStream in = null;
-	FileOutputStream out = null;
-
-	try {
-
-	    URLConnection uc = dataStreamUrl.openConnection();
-	    uc.connect();
-	    in = uc.getInputStream();
-	    out = new FileOutputStream(file);
-
-	    byte[] buffer = new byte[1024];
-	    int bytesRead = -1;
-	    while ((bytesRead = in.read(buffer)) > -1) {
-		out.write(buffer, 0, bytesRead);
-	    }
-	} finally {
-	    in.close();
-	    out.close();
 	}
     }
 

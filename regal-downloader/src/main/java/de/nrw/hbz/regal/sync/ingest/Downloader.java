@@ -417,11 +417,19 @@ public abstract class Downloader implements DownloaderInterface {
 	}
     }
 
-    private void setDownloaded(boolean downloaded) {
+    /**
+     * @param downloaded
+     *            if something has been downloaded
+     */
+    protected void setDownloaded(boolean downloaded) {
 	this.downloaded = downloaded;
     }
 
-    private void setUpdated(boolean updated) {
+    /**
+     * @param updated
+     *            if an object was updated
+     */
+    protected void setUpdated(boolean updated) {
 	this.updated = updated;
     }
 

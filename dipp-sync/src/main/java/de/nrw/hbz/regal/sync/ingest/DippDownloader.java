@@ -17,13 +17,10 @@
 package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 
 import org.apache.commons.io.FileUtils;
@@ -197,41 +194,10 @@ public class DippDownloader extends Downloader {
 		    fileName = fileName + ".html";
 		}
 
-		URL dataStreamUrl = new URL(getServer() + "get/" + pid + "/"
-			+ datastreamName);
 		File dataStreamFile = new File(dir.getAbsolutePath()
 			+ File.separator + "" + fileName);
-
-		InputStream in = null;
-		FileOutputStream out = null;
-		try {
-		    URLConnection uc = dataStreamUrl.openConnection();
-		    uc.connect();
-		    in = uc.getInputStream();
-		    out = new FileOutputStream(dataStreamFile);
-
-		    byte[] buffer = new byte[1024];
-		    int bytesRead = -1;
-		    while ((bytesRead = in.read(buffer)) > -1) {
-			out.write(buffer, 0, bytesRead);
-		    }
-		    in.close();
-
-		} catch (IOException e) {
-		    logger.error(pid + " problem downloading stream "
-			    + datastreamName);
-		} finally {
-		    try {
-			if (in != null)
-			    in.close();
-			if (out != null)
-			    out.close();
-		    } catch (IOException e) {
-			logger.error(pid + " problem downloading stream "
-				+ datastreamName);
-		    }
-		}
-
+		download(dataStreamFile, getServer() + "get/" + pid + "/"
+			+ datastreamName);
 	    }
 
 	} catch (MalformedURLException e) {

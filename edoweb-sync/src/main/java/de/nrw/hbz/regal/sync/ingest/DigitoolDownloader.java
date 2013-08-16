@@ -16,14 +16,9 @@
  */
 package de.nrw.hbz.regal.sync.ingest;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,240 +27,124 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Properties;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import de.nrw.hbz.regal.PIDReporter;
+import de.nrw.hbz.regal.sync.extern.XmlUtils;
 
 /**
  * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class DigitoolDownloader implements DownloaderInterface {
+public class DigitoolDownloader extends Downloader {
+
     final static Logger logger = LoggerFactory
 	    .getLogger(DigitoolDownloader.class);
 
-    // DigitalEntityBeanBuilder beanBuilder = null;
-    String downloadLoaction = null;
-    String objectDirectory = null;
-    String server = null;
-    boolean updated = false;
-    boolean downloaded = false;
-
-    /**
-     * Only for main->run! API-CALLs must use DigitoolDownloader(String,String);
-     */
-    public DigitoolDownloader() {
-	// beanBuilder = new DigitalEntityBeanBuilder();
-
-    }
-
-    /**
-     * @param server
-     *            the digitool server to download from
-     * @param downloadLocation
-     *            a local directory to store the downloaded data
-     */
-    public void init(String server, String downloadLocation) {
-	this.downloadLoaction = downloadLocation;
-	this.server = server;
-	// beanBuilder = new DigitalEntityBeanBuilder();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.nrw.hbz.edoweb2.digitool.downloader.DownloaderInterface#download(java
-     * .lang.String)
-     */
     @Override
-    public String download(String pid) throws IOException {
-	return download(pid, true);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.nrw.hbz.edoweb2.digitool.downloader.DownloaderInterface#download(java
-     * .lang.String, boolean)
-     */
-    @Override
-    public String download(String pid, boolean forceDownload)
-	    throws IOException {
-
-	objectDirectory = downloadLoaction + File.separator + pid;
-
-	File dir = new File(objectDirectory);
-	File digitalEntityFile = null;
-	if (!dir.exists()) {
-	    logger.info("Create Directory " + dir.getAbsoluteFile()
-		    + " and start to Download files");
-	    dir.mkdirs();
-	    digitalEntityFile = getView(pid);
-	    getRelated(digitalEntityFile, pid);
+    protected void downloadObject(File downloadDirectory, String pid) {
+	try {
+	    String baseDir = downloadDirectory.getAbsolutePath();
+	    File digitalEntityFile = getView(pid, baseDir);
+	    getRelated(digitalEntityFile, pid, baseDir);
+	    getStream(digitalEntityFile, pid, baseDir);
 	    try {
-		getStream(digitalEntityFile, pid);
-	    } catch (Exception e) {
-		logger.error(e.getMessage());
+		moveObject(digitalEntityFile,
+			new File(this.getDownloadLocation()), pid);
+	    } catch (ParentNotFoundException e) {
+		logger.debug(pid + " " + e);
 	    }
-	    // beanBuilder.buildComplexBean(objectDirectory, pid);
-	    setUpdated(false);
-	    setDownloaded(true);
-	} else if (forceDownload) {
-	    logger.info("Directory " + dir.getAbsoluteFile()
-		    + " exists. Force override.");
-	    FileUtils.deleteDirectory(dir);
-	    dir.mkdirs();
-	    digitalEntityFile = getView(pid);
-	    getRelated(digitalEntityFile, pid);
-	    try {
-		getStream(digitalEntityFile, pid);
-	    } catch (Exception e) {
-		e.printStackTrace();
-		logger.error(e.getMessage());
-	    }
-	    // beanBuilder.buildComplexBean(objectDirectory, pid);
-	    setUpdated(true);
-	    setDownloaded(true);
-	} else {
-	    logger.info("Directory " + dir.getAbsoluteFile()
-		    + " exists. Step over.");
-	    setDownloaded(false);
+	} catch (Exception e) {
+	    logger.error(pid + " " + e);
 	}
 
-	if (digitalEntityFile != null) {
-	    String ppid = getParent(digitalEntityFile, pid);
+    }
 
-	    if (ppid != null) {
+    private void moveObject(File digitalEntityFile, File dir, String pid) {
 
-		String path = downloadLoaction + File.separator + ppid;
-		File parent = new File(path);
-		if (!parent.exists()) {
-		    FileUtils.deleteDirectory(dir);
-		    throw new IOException(
-			    "Can't download part without downloading parent. Parent pid is "
-				    + ppid);
-		} else {
-		    File tdir = new File(parent.getAbsolutePath());
-		    if (!tdir.exists()) {
-			for (String file : dir.list()) {
-			    File f = new File(dir.getAbsoluteFile()
-				    + File.separator + file);
-			    if (f.isDirectory()) {
-				FileUtils.moveDirectoryToDirectory(f, tdir,
-					true);
-			    } else {
-				File test = new File(tdir + File.separator
-					+ f.getName());
-				if (test.exists())
-				    test.delete();
-				FileUtils.moveFileToDirectory(f, tdir, true);
+	try {
+	    if (digitalEntityFile != null) {
+		String ppid = getParent(digitalEntityFile, pid);
 
-			    }
-			}
+		if (ppid != null) {
 
-			setUpdated(false);
-			setDownloaded(true);
-		    } else if (forceDownload) {
-
-			for (String file : dir.list()) {
-			    File f = new File(dir.getAbsoluteFile()
-				    + File.separator + file);
-			    if (f.isDirectory()) {
-				File test = new File(tdir + File.separator
-					+ f.getName());
-				if (test.exists())
-				    FileUtils.deleteDirectory(test);
-				FileUtils.moveDirectoryToDirectory(f, tdir,
-					true);
-			    } else {
-				File test = new File(tdir + File.separator
-					+ f.getName());
-				if (test.exists())
-				    test.delete();
-				FileUtils.moveFileToDirectory(f, tdir, true);
-			    }
-			}
-			setUpdated(true);
-			setDownloaded(true);
+		    String path = getDownloadLocation() + File.separator + ppid;
+		    File parent = new File(path);
+		    if (!parent.exists()) {
+			FileUtils.deleteDirectory(dir);
+			throw new ParentNotFoundException(ppid);
 		    } else {
-			logger.info("Directory " + tdir.getAbsoluteFile()
-				+ " exists. Step over.");
-			setDownloaded(false);
+			File tdir = new File(parent.getAbsolutePath());
+			if (!tdir.exists()) {
+			    for (String file : dir.list()) {
+				File f = new File(dir.getAbsoluteFile()
+					+ File.separator + file);
+				if (f.isDirectory()) {
+				    FileUtils.moveDirectoryToDirectory(f, tdir,
+					    true);
+				} else {
+				    File test = new File(tdir + File.separator
+					    + f.getName());
+				    if (test.exists())
+					test.delete();
+				    FileUtils
+					    .moveFileToDirectory(f, tdir, true);
+
+				}
+			    }
+
+			    setUpdated(false);
+			    setDownloaded(true);
+			} else {
+
+			    for (String file : dir.list()) {
+				File f = new File(dir.getAbsoluteFile()
+					+ File.separator + file);
+				if (f.isDirectory()) {
+				    File test = new File(tdir + File.separator
+					    + f.getName());
+				    if (test.exists())
+					FileUtils.deleteDirectory(test);
+				    FileUtils.moveDirectoryToDirectory(f, tdir,
+					    true);
+				} else {
+				    File test = new File(tdir + File.separator
+					    + f.getName());
+				    if (test.exists())
+					test.delete();
+				    FileUtils
+					    .moveFileToDirectory(f, tdir, true);
+				}
+			    }
+			    setUpdated(true);
+			    setDownloaded(true);
+			}
+
 		    }
-
+		    FileUtils.deleteDirectory(dir);
 		}
-		FileUtils.deleteDirectory(dir);
-		return parent.getAbsolutePath();
 	    }
+	} catch (IOException e) {
+	    throw new DownloadException(e);
 	}
-	return dir.getAbsolutePath();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.nrw.hbz.edoweb2.digitool.downloader.DownloaderInterface#hasUpdated()
-     */
-    @Override
-    public boolean hasUpdated() {
-	return updated;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.nrw.hbz.edoweb2.digitool.downloader.DownloaderInterface#hasDownloaded
-     * ()
-     */
-    @Override
-    public boolean hasDownloaded() {
-	return downloaded;
-    }
-
-    private void setDownloaded(boolean downloaded) {
-	this.downloaded = downloaded;
-    }
-
-    private void setUpdated(boolean updated) {
-	this.updated = updated;
     }
 
     /**
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description:
-     * </p>
-     * 
      * @param digitalEntityFile
      * @param pid
      * @throws IOException
      */
-    private void getStream(File digitalEntityFile, String pid)
+    private void getStream(File digitalEntityFile, String pid, String baseDir)
 	    throws IOException {
-	Element root = getDocument(digitalEntityFile);
+	Element root = XmlUtils.getDocument(digitalEntityFile);
 	if (root == null) {
 	    logger.error("Not able to download related files. XML parsing error: "
 		    + pid);
@@ -278,7 +157,7 @@ public class DigitoolDownloader implements DownloaderInterface {
 
 	if (filename == null || filename.isEmpty())
 	    return;
-	File streamDir = new File(objectDirectory + File.separator + pid);
+	File streamDir = new File(baseDir + File.separator + pid);
 	if (!streamDir.exists()) {
 	    streamDir.mkdir();
 	}
@@ -302,41 +181,18 @@ public class DigitoolDownloader implements DownloaderInterface {
 	HttpURLConnection con = (HttpURLConnection) url.openConnection();
 	con.setInstanceFollowRedirects(true);
 
-	BufferedInputStream in = null;
-	BufferedOutputStream out = null;
-	try {
-	    in = new BufferedInputStream(con.getInputStream());
-	    out = new BufferedOutputStream(new FileOutputStream(streamFile));
-	    byte[] buf = new byte[1024];
-	    int n;
-	    while ((n = in.read(buf)) != -1) {
-		out.write(buf, 0, n);
-	    }
-	} catch (FileNotFoundException e) {
-	    logger.error("File Not Found (" + pid + "): " + e.getMessage());
-	} finally {
-	    if (out != null)
-		out.close();
-	    if (in != null)
-		in.close();
-	}
+	copy(con.getInputStream(), streamFile);
     }
 
     /**
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description:
-     * </p>
      * 
      * @param pid
      * @throws IOException
      */
-    private void getRelated(File digitalEntityFile, String pid)
+    private void getRelated(File digitalEntityFile, String pid, String baseDir)
 	    throws IOException {
 	// File indexFile = null;
-	Element root = getDocument(digitalEntityFile);
+	Element root = XmlUtils.getDocument(digitalEntityFile);
 	if (root == null) {
 	    logger.error("Not able to download related files. XML parsing error: "
 		    + pid);
@@ -350,10 +206,9 @@ public class DigitoolDownloader implements DownloaderInterface {
 	    // String usageType = ((Element) item)
 	    // .getElementsByTagName("usage_type").item(0)
 	    // .getTextContent();
-	    File file = new File(objectDirectory + File.separator + relPid
-		    + ".xml");
+	    File file = new File(baseDir + File.separator + relPid + ".xml");
 	    getXml(file, relPid);
-	    getStream(file, relPid);
+	    getStream(file, relPid, baseDir);
 	}
 
     }
@@ -361,7 +216,7 @@ public class DigitoolDownloader implements DownloaderInterface {
     private String getParent(File digitalEntityFile, String pid)
 	    throws IOException {
 	// File indexFile = null;
-	Element root = getDocument(digitalEntityFile);
+	Element root = XmlUtils.getDocument(digitalEntityFile);
 	if (root == null) {
 	    logger.error("Not able to download related files. XML parsing error: "
 		    + pid);
@@ -384,32 +239,18 @@ public class DigitoolDownloader implements DownloaderInterface {
     }
 
     /**
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description:
-     * </p>
-     * 
      * @param pid
      * @throws IOException
      */
-    private File getView(String pid) throws IOException {
+    private File getView(String pid, String baseDir) throws IOException {
 
-	File digitalEntityFile = new File(objectDirectory + File.separator
-		+ pid + ".xml");
+	File digitalEntityFile = new File(baseDir + File.separator + pid
+		+ ".xml");
 	digitalEntityFile = getXml(digitalEntityFile, pid);
 	return digitalEntityFile;
     }
 
     /**
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description:
-     * </p>
-     * 
      * @param digitalEntityFile
      * @return
      */
@@ -453,13 +294,6 @@ public class DigitoolDownloader implements DownloaderInterface {
     }
 
     /**
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description:
-     * </p>
-     * 
      * @param in
      * @return
      */
@@ -498,62 +332,6 @@ public class DigitoolDownloader implements DownloaderInterface {
 	return sb3.toString();
     }
 
-    private Element getDocument(File digitalEntityFile) {
-	try {
-	    DocumentBuilderFactory factory = DocumentBuilderFactory
-		    .newInstance();
-	    DocumentBuilder docBuilder;
-
-	    docBuilder = factory.newDocumentBuilder();
-
-	    Document doc;
-
-	    doc = docBuilder.parse(new BufferedInputStream(new FileInputStream(
-		    digitalEntityFile)));
-	    Element root = doc.getDocumentElement();
-	    root.normalize();
-	    return root;
-	} catch (FileNotFoundException e) {
-
-	    e.printStackTrace();
-	} catch (SAXException e) {
-
-	    e.printStackTrace();
-	} catch (IOException e) {
-
-	    e.printStackTrace();
-	} catch (ParserConfigurationException e) {
-
-	    e.printStackTrace();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-	return null;
-    }
-
-    private void run(String propFile) throws IOException {
-	Properties properties = new Properties();
-	try {
-	    properties.load(new BufferedInputStream(new FileInputStream(
-		    propFile)));
-	} catch (IOException e) {
-	    throw new IOException("Could not open " + propFile + "!");
-	}
-	this.server = properties.getProperty("piddownloader.server");
-	this.downloadLoaction = properties
-		.getProperty("piddownloader.downloadLocation");
-
-	PIDReporter pidreporter = new PIDReporter();
-	Vector<String> pids = pidreporter.getPids(propFile);
-
-	for (int i = 0; i < pids.size(); i++) {
-	    String pid = pids.elementAt(i);
-	    logger.info((i + 1) + "/" + pids.size() + " Download " + pid + " !");
-	    download(pid);
-	}
-
-    }
-
     /**
      * @param argv
      *            the argument vector must contain exactly one item which points
@@ -579,4 +357,24 @@ public class DigitoolDownloader implements DownloaderInterface {
 	}
     }
 
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class ParentNotFoundException extends RuntimeException {
+
+	public ParentNotFoundException() {
+
+	}
+
+	public ParentNotFoundException(String arg0) {
+	    super(arg0);
+	}
+
+	public ParentNotFoundException(Throwable arg0) {
+	    super(arg0);
+	}
+
+	public ParentNotFoundException(String arg0, Throwable arg1) {
+	    super(arg0, arg1);
+	}
+
+    }
 }
