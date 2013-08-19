@@ -617,13 +617,6 @@ public class Resource {
 		name = multiPart.getBodyParts().get(2)
 			.getEntityAs(String.class);
 	    }
-	    // if (mimeType.compareTo("application/pdf") == 0)
-	    // {
-	    // Node node = actions.readNode(namespace + ":" + pid);
-	    // node.addContentModel(ContentModelFactory
-	    // .createPdfModel(namespace));
-	    // actions.updateNode(node);
-	    // }
 	    return actions.updateData(namespace + ":" + pid, multiPart
 		    .getBodyParts().get(0).getEntityAs(InputStream.class),
 		    mimeType, name);

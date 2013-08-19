@@ -35,7 +35,9 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
+import de.nrw.hbz.regal.fedora.CopyUtils;
 import de.nrw.hbz.regal.fedora.FedoraInterface;
+import de.nrw.hbz.regal.fedora.RdfUtils;
 
 class Services {
     final static Logger logger = LoggerFactory.getLogger(Services.class);

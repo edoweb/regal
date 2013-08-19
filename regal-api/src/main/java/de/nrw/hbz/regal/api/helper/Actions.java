@@ -48,9 +48,11 @@ import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
+import de.nrw.hbz.regal.fedora.CopyUtils;
 import de.nrw.hbz.regal.fedora.FedoraFactory;
 import de.nrw.hbz.regal.fedora.FedoraInterface;
 import de.nrw.hbz.regal.fedora.FedoraVocabulary;
+import de.nrw.hbz.regal.fedora.RdfUtils;
 
 /**
  * Actions provide a single class to access the archive. All endpoints are using
