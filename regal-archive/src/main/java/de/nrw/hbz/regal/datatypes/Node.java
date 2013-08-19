@@ -266,7 +266,7 @@ public class Node {
     /**
      * @return all relations
      */
-    public Vector<Link> getRelsExt() {
+    public List<Link> getRelsExt() {
 	return relsExt;
     }
 
