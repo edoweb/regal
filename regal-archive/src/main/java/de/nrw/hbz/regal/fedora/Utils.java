@@ -89,6 +89,29 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  * 
  */
 public class Utils {
+    public class NoPidFoundException extends RuntimeException {
+
+	public NoPidFoundException() {
+	    // TODO Auto-generated constructor stub
+	}
+
+	public NoPidFoundException(String arg0) {
+	    super(arg0);
+	    // TODO Auto-generated constructor stub
+	}
+
+	public NoPidFoundException(Throwable arg0) {
+	    super(arg0);
+	    // TODO Auto-generated constructor stub
+	}
+
+	public NoPidFoundException(String arg0, Throwable arg1) {
+	    super(arg0, arg1);
+	    // TODO Auto-generated constructor stub
+	}
+
+    }
+
     private String user = null;
 
     /**
@@ -286,7 +309,7 @@ public class Utils {
 			.execute();
 	    } else {
 		new AddDatastream(node.getPID(), "data").versionable(true)
-			.dsState("A").dsLabel(file.getName())
+			.dsState("A").dsLabel(node.getFileLabel())
 			.mimeType(node.getMimeType()).dsLocation(location)
 			.controlGroup("M").execute();
 	    }
@@ -836,7 +859,7 @@ public class Utils {
 
 	    return result;
 	} catch (FedoraClientException e) {
-	    throw new ArchiveException(e);
+	    throw new NoPidFoundException(rdfQuery, e);
 	}
 
     }

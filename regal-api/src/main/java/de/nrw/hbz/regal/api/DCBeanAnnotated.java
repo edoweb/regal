@@ -91,21 +91,22 @@ public class DCBeanAnnotated {
      *            a node to initalise from
      */
     public DCBeanAnnotated(Node node) {
-	contributer = node.getContributer();
-	coverage = node.getCoverage();
-	creator = node.getCreator();
-	date = node.getDate();
-	description = node.getDescription();
-	format = node.getFormat();
-	identifier = node.getIdentifier();
-	language = node.getLanguage();
-	publisher = node.getPublisher();
-	relation = node.getDCRelation();
-	rights = node.getRights();
-	source = node.getSource();
-	subject = node.getSubject();
-	title = node.getTitle();
-	type = node.getType();
+	DCBean dc = node.getBean();
+	contributer = dc.getContributer();
+	coverage = dc.getCoverage();
+	creator = dc.getCreator();
+	date = dc.getDate();
+	description = dc.getDescription();
+	format = dc.getFormat();
+	identifier = dc.getIdentifier();
+	language = dc.getLanguage();
+	publisher = dc.getPublisher();
+	relation = dc.getRelation();
+	rights = dc.getRights();
+	source = dc.getSource();
+	subject = dc.getSubject();
+	title = dc.getTitle();
+	type = dc.getType();
     }
 
     /**

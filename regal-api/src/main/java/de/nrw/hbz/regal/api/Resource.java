@@ -21,7 +21,6 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Vector;
@@ -405,19 +404,8 @@ public class Resource {
     @Produces({ "text/plain" })
     public String readMetadata(@PathParam("pid") String pid) {
 
-	try {
-	    String result = actions.readMetadata(pid);
-	    return result;
-	} catch (URISyntaxException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	} catch (MalformedURLException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	} catch (IOException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+	String result = actions.readMetadata(pid);
+	return result;
     }
 
     /**

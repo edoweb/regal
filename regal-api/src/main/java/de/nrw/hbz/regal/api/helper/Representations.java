@@ -297,7 +297,7 @@ class Representations {
     private View getExternalLinks(String pid) {
 	View view = new View();
 	Node node = fedora.readNode(pid);
-	for (String id : node.getIdentifier()) {
+	for (String id : node.getBean().getIdentifier()) {
 	    if (id.startsWith("doi")) {
 		view.addDoi(id);
 	    } else if (id.startsWith("urn")) {
@@ -479,15 +479,15 @@ class Representations {
 
 	View view = new View();
 	view.setLastModified(node.getLastModified());
-	view.setCreator(node.getCreator());
-	view.setTitle(node.getTitle());
-	view.setLanguage(node.getLanguage());
-	view.setSubject(node.getSubject());
-	view.setType(node.getType());
-	view.setLocation(node.getSource());
-	view.setPublisher(node.getPublisher());
-	view.setDescription(node.getDescription());
-	view.setContributer(node.getContributer());
+	view.setCreator(node.getBean().getCreator());
+	view.setTitle(node.getBean().getTitle());
+	view.setLanguage(node.getBean().getLanguage());
+	view.setSubject(node.getBean().getSubject());
+	view.setType(node.getBean().getType());
+	view.setLocation(node.getBean().getSource());
+	view.setPublisher(node.getBean().getPublisher());
+	view.setDescription(node.getBean().getDescription());
+	view.setContributer(node.getBean().getContributer());
 	String label = node.getLabel();
 
 	if (label != null && !label.isEmpty())
@@ -575,17 +575,17 @@ class Representations {
 		view.addZipUrl(apiUrl + "/data");
 	    }
 	}
-	for (String date : node.getDate()) {
+	for (String date : node.getBean().getDate()) {
 	    view.addYear(date.substring(0, 4));
 	}
-	for (String ddc : node.getSubject()) {
+	for (String ddc : node.getBean().getSubject()) {
 	    if (ddc.startsWith("ddc")) {
 		view.addDdc(ddc);
 		break;
 	    }
 	}
 
-	for (String id : node.getIdentifier()) {
+	for (String id : node.getBean().getIdentifier()) {
 	    if (id.startsWith("doi")) {
 		view.addDoi(id);
 

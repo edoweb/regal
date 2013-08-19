@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
 import de.nrw.hbz.regal.datatypes.ContentModel;
+import de.nrw.hbz.regal.datatypes.DCBean;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
@@ -205,10 +206,13 @@ public class Actions {
 	node = fedora.readNode(pid);
 
 	if (node != null) {
-	    return Response.temporaryRedirect(
+	    Response redirect = Response.temporaryRedirect(
 		    new java.net.URI(fedoraExtern + "/objects/" + pid
 			    + "/datastreams/data/content")).build();
 
+	    int status = redirect.getStatus();
+	    if (status != 200)
+		throw new HttpArchiveException(status);
 	}
 	return null;
 
@@ -242,33 +246,51 @@ public class Actions {
      * @throws IOException
      *             if reading fails
      */
-    public String readMetadata(String pid) throws URISyntaxException,
-	    MalformedURLException, IOException {
+    public String readMetadata(String pid) {
 
 	String result = null;
 	Node node = fedora.readNode(pid);
 	InputStream is = null;
 	if (node != null) {
-
-	    URL url = new URL(fedoraExtern + "/objects/" + pid
-		    + "/datastreams/metadata/content");
-	    URLConnection connection = url.openConnection();
+	    URLConnection connection = null;
 	    try {
+		URL url = new URL(fedoraExtern + "/objects/" + pid
+			+ "/datastreams/metadata/content");
+		connection = url.openConnection();
+
 		is = connection.getInputStream();
-		CopyUtils.copy(is, result);
+		result = CopyUtils.copyToString(is, "utf-8");
 		return result;
-	    } catch (IOException ioe) {
-		if (connection instanceof HttpURLConnection) {
-		    HttpURLConnection httpConn = (HttpURLConnection) connection;
-		    int statusCode = httpConn.getResponseCode();
-		    if (statusCode != 200) {
-			throw new HttpArchiveException(statusCode,
-				httpConn.getResponseMessage(), ioe);
-		    }
-		}
+	    } catch (Exception e) {
+		if (connection != null)
+		    throwExceptionWithStatusCode(connection, e);
+
+		throw new HttpArchiveException(500, e);
 	    }
+
 	}
 	throw new HttpArchiveException(404, "Datastream does not exist!");
+    }
+
+    private void throwExceptionWithStatusCode(URLConnection connection,
+	    Exception cause) {
+	try {
+	    if (connection instanceof HttpURLConnection) {
+		HttpURLConnection httpConn = (HttpURLConnection) connection;
+		int statusCode = httpConn.getResponseCode();
+		if (statusCode == 401) {
+		    throw new HttpArchiveException(
+			    404,
+			    "Access Denied. Login to verify if datastream exists or is marked as deleted?",
+			    cause);
+		} else if (statusCode != 200) {
+		    throw new HttpArchiveException(statusCode,
+			    httpConn.getResponseMessage(), cause);
+		}
+	    }
+	} catch (IOException e) {
+
+	}
     }
 
     /**
@@ -296,6 +318,7 @@ public class Actions {
 	tmp.deleteOnExit();
 	CopyUtils.copy(content, tmp);
 	Node node = fedora.readNode(pid);
+	node.setFileLabel(name);
 	if (node != null) {
 	    node.setUploadData(tmp.getAbsolutePath(), mimeType);
 	    fedora.updateNode(node);
@@ -318,21 +341,23 @@ public class Actions {
 
 	content.trim();
 	Node node = fedora.readNode(pid);
-	node.setContributer(content.getContributer());
-	node.setCoverage(content.getCoverage());
-	node.setCreator(content.getCreator());
-	node.setDate(content.getDate());
-	node.setDescription(content.getDescription());
-	node.setFormat(content.getFormat());
-	node.setIdentifier(content.getIdentifier());
-	node.setLanguage(content.getLanguage());
-	node.setPublisher(content.getPublisher());
-	node.setDescription(content.getDescription());
-	node.setRights(content.getRights());
-	node.setSource(content.getSource());
-	node.setSubject(content.getSubject());
-	node.setTitle(content.getTitle());
-	node.setType(content.getType());
+	DCBean dc = node.getBean();
+	dc.setContributer(content.getContributer());
+	dc.setCoverage(content.getCoverage());
+	dc.setCreator(content.getCreator());
+	dc.setDate(content.getDate());
+	dc.setDescription(content.getDescription());
+	dc.setFormat(content.getFormat());
+	dc.setIdentifier(content.getIdentifier());
+	dc.setLanguage(content.getLanguage());
+	dc.setPublisher(content.getPublisher());
+	dc.setDescription(content.getDescription());
+	dc.setRights(content.getRights());
+	dc.setSource(content.getSource());
+	dc.setSubject(content.getSubject());
+	dc.setTitle(content.getTitle());
+	dc.setType(content.getType());
+	node.setDcBean(dc);
 	fedora.updateNode(node);
 
 	return pid + " dc successfully updated!";
@@ -465,7 +490,12 @@ public class Actions {
      * @return a message
      */
     public String deleteNamespace(String namespace) {
-	List<String> objects = fedora.findNodes(namespace + ":*");
+	List<String> objects = null;
+	try {
+	    objects = fedora.findNodes(namespace + ":*");
+	} catch (Exception e) {
+
+	}
 	return deleteAll(objects);
     }
 
@@ -559,9 +589,10 @@ public class Actions {
 	    node = new Node();
 	    node.setNamespace(namespace).setPID(pid);
 	    node.setContentType(input.getType());
-	    for (ContentModel model : models) {
-		node.addContentModel(model);
-	    }
+	    if (models != null)
+		for (ContentModel model : models) {
+		    node.addContentModel(model);
+		}
 	    fedora.createNode(node);
 	}
 	node.setType(TYPE_OBJECT);

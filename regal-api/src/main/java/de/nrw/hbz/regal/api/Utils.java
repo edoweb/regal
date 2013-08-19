@@ -64,12 +64,8 @@ public class Utils {
     @Path("/deleteNamespace/{namespace}")
     @Produces({ "application/json", "application/xml" })
     public String deleteNamespace(@PathParam("namespace") String namespace) {
-	try {
-	    return actions.deleteNamespace(namespace);
-	} catch (Exception e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+
+	return actions.deleteNamespace(namespace);
 
     }
 

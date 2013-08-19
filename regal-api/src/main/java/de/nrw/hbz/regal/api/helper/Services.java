@@ -32,6 +32,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
+import de.nrw.hbz.regal.datatypes.DCBean;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
@@ -58,7 +59,7 @@ class Services {
 
 	String pid = node.getPID();
 
-	List<String> identifier = node.getIdentifier();
+	List<String> identifier = node.getBean().getIdentifier();
 	String alephid = "";
 	for (String id : identifier) {
 	    if (id.startsWith("TT") || id.startsWith("HT")) {
@@ -435,7 +436,11 @@ class Services {
 
 	    setNameLink.setObject(name, true);
 	    oaiset.addRelation(setNameLink);
-	    oaiset.addTitle(name);
+
+	    DCBean dc = oaiset.getBean();
+	    dc.addTitle(name);
+
+	    oaiset.setDcBean(dc);
 
 	    fedora.createNode(oaiset);
 

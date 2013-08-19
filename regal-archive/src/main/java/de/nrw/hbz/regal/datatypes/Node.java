@@ -29,10 +29,11 @@ import java.util.Vector;
  */
 public class Node {
 
-    String metadataFile;
-    String uploadFile;
-    Vector<Link> relsExt = new Vector<Link>();
-    Vector<ContentModel> cms = new Vector<ContentModel>();
+    private String metadataFile;
+    private String uploadFile;
+    private String fileLabel;
+    private Vector<Link> relsExt = new Vector<Link>();
+    private Vector<ContentModel> cms = new Vector<ContentModel>();
     private String label = null;
     private String type = null;
     private String pid = null;
@@ -41,7 +42,7 @@ public class Node {
     private String namespace = null;
     private String contentType = null;
     private Date lastModified = null;
-    DCBean bean = new DCBean();
+    private DCBean bean = new DCBean();
 
     /**
      * Creates a new Node.
@@ -842,4 +843,15 @@ public class Node {
 	return removed;
     }
 
+    public String getFileLabel() {
+	return fileLabel;
+    }
+
+    public void setFileLabel(String label) {
+	fileLabel = label;
+    }
+
+    public void setDcBean(DCBean dc) {
+	this.bean = dc;
+    }
 }
