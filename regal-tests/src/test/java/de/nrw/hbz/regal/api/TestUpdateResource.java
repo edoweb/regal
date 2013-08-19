@@ -64,14 +64,22 @@ public class TestUpdateResource {
     }
 
     @Test
-    public void testUpdate() throws FileNotFoundException, IOException {
+    public void testRestUpdate() throws FileNotFoundException, IOException {
+	createRestMonograph();
+	createRestJournal();
+	moveRestMonographAsArticleToJournal();
+
+    }
+
+    @Test
+    public void testResourceUpdate() throws FileNotFoundException, IOException {
 	createMonograph();
 	createJournal();
 	moveMonographAsArticleToJournal();
 
     }
 
-    private String moveMonographAsArticleToJournal() {
+    private void moveRestMonographAsArticleToJournal() {
 	WebResource mRes = client.resource(apiUrl + "/resource/test:123");
 	CreateObjectBean input = new CreateObjectBean();
 	input.setType("article");
@@ -80,10 +88,9 @@ public class TestUpdateResource {
 		.type("application/json").put(String.class, input);
 	System.out.println("Request PUT " + mRes.toString() + "\nResponse: "
 		+ response);
-	return client.toString();
     }
 
-    private String createJournal() {
+    private void createRestJournal() {
 	WebResource mRes = client.resource(apiUrl + "/resource/test:234");
 	CreateObjectBean input = new CreateObjectBean();
 	input.setType("journal");
@@ -91,10 +98,9 @@ public class TestUpdateResource {
 		.type("application/json").put(String.class, input);
 	System.out.println("Request PUT " + mRes.toString() + "\nResponse: "
 		+ response);
-	return client.toString();
     }
 
-    private String createMonograph() {
+    private void createRestMonograph() {
 	WebResource mRes = client.resource(apiUrl + "/resource/test:123");
 	CreateObjectBean input = new CreateObjectBean();
 	input.setType("monograph");
@@ -102,7 +108,33 @@ public class TestUpdateResource {
 		.type("application/json").put(String.class, input);
 	System.out.println("Request PUT " + mRes.toString() + "\nResponse: "
 		+ response);
-	return client.toString();
+    }
+
+    private void moveMonographAsArticleToJournal() throws IOException {
+
+	CreateObjectBean input = new CreateObjectBean();
+	input.setType("article");
+	input.setParentPid("test:234");
+
+	Resource resource = new Resource();
+	String response = resource.create("123", "test", input);
+	System.out.println(response);
+    }
+
+    private void createJournal() throws IOException {
+	CreateObjectBean input = new CreateObjectBean();
+	input.setType("journal");
+	Resource resource = new Resource();
+	String response = resource.create("234", "test", input);
+	System.out.println(response);
+    }
+
+    private void createMonograph() throws IOException {
+	CreateObjectBean input = new CreateObjectBean();
+	input.setType("monograph");
+	Resource resource = new Resource();
+	String response = resource.create("123", "test", input);
+	System.out.println(response);
     }
 
     public void cleanUp() {
