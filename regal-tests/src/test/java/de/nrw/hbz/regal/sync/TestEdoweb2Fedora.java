@@ -18,7 +18,6 @@ package de.nrw.hbz.regal.sync;
  */
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -45,15 +44,10 @@ public class TestEdoweb2Fedora {
     private final String password;
     private final String fedoraUrl;
 
-    public TestEdoweb2Fedora() {
-	try {
-	    properties = new Properties();
-	    properties.load(getClass().getResourceAsStream("/test.properties"));
-	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+    public TestEdoweb2Fedora() throws IOException {
+
+	properties = new Properties();
+	properties.load(getClass().getResourceAsStream("/test.properties"));
 
 	user = properties.getProperty("user");
 	password = properties.getProperty("password");

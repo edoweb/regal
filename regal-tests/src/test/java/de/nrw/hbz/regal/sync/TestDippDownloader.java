@@ -1,4 +1,4 @@
-package de.nrw.hbz.regal;
+package de.nrw.hbz.regal.sync;
 
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
@@ -72,10 +72,6 @@ public class TestDippDownloader {
 
     @Test
     public void downloadPid() {
-
-	System.out
-		.println("de.nrw.hbz.dipp.downloader.TestDippDownloader.java: To run this test please uncomment code.");
-
 	DippDownloader downloader = new DippDownloader();
 	downloader.init(piddownloaderServer, piddownloaderDownloadLocation);
 

@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -49,124 +48,113 @@ import com.sun.jersey.multipart.file.StreamDataBodyPart;
 public class TestJournalApi {
 
     Properties properties;
+    Client c;
+    String apiUrl;
 
     @Before
-    public void setUp() {
-	try {
-	    properties = new Properties();
-	    properties.load(getClass().getResourceAsStream("/test.properties"));
-	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+    public void setUp() throws IOException {
 
+	properties = new Properties();
+	properties.load(getClass().getResourceAsStream("/test.properties"));
+	apiUrl = properties.getProperty("apiUrl");
+	cleanUp();
+	// ----------------Init------------------
+	ClientConfig cc = new DefaultClientConfig();
+	cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+	cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+	c = Client.create(cc);
+	c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
+		properties.getProperty("password")));
     }
 
     @Test
     public void testJournal() throws FileNotFoundException, IOException {
-	try {
-	    // ----------------Init------------------
-	    ClientConfig cc = new DefaultClientConfig();
-	    cc.getProperties()
-		    .put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-	    cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
-		    true);
-	    Client c = Client.create(cc);
-	    c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
-		    properties.getProperty("password")));
 
-	    WebResource deleteNs = c.resource(properties.getProperty("apiUrl")
-		    + "/utils/deleteNamespace/test");
+	WebResource journals = c.resource(apiUrl + "/journal/");
+	WebResource aJournal = c.resource(journals.toString() + "test:123");
+	WebResource aJournalMetadata = c.resource(aJournal.toString()
+		+ "/metadata");
+	WebResource aJournalDc = c.resource(aJournal.toString() + "/dc");
 
-	    WebResource journals = c.resource(properties.getProperty("apiUrl")
-		    + "/journal/");
-	    WebResource aJournal = c.resource(journals.toString() + "test:123");
+	createJournal(aJournal);
+	uploadMetadata(aJournalMetadata);
+	uploadDublinCore(aJournalDc);
+	testDublinCore(aJournalDc);
 
-	    WebResource aJournalMetadata = c.resource(aJournal.toString()
-		    + "/metadata");
-	    WebResource aJournalDc = c.resource(aJournal.toString() + "/dc");
+	c.resource(aJournal.toString() + "/volume/");
+	WebResource aJournalVolume = c.resource(aJournal.toString()
+		+ "/volume/test:345");
+	WebResource aJournalVolumeMetadata = c.resource(aJournalVolume
+		.toString() + "/metadata");
+	WebResource aJournalVolumeDc = c.resource(aJournalVolume.toString()
+		+ "/dc");
+	WebResource aJournalVolumeData = c.resource(aJournalVolume.toString()
+		+ "/data");
 
-	    try {
-		deleteNs.delete();
-	    } catch (UniformInterfaceException e) {
-		System.out.println(e.getMessage());
-	    }
-	    String request = "content";
-	    String response = "";
-	    try {
-		response = aJournal.put(String.class, request);
-		System.out.println(response);
-	    } catch (UniformInterfaceException e) {
-		System.out.println(e.getResponse().getEntity(String.class));
-	    }
+	createVolume(aJournalVolume);
+	uploadData(aJournalVolumeData);
+	uploadMetadata(aJournalVolumeMetadata);
+	uploadDublinCore(aJournalVolumeDc);
+	testDublinCore(aJournalVolumeDc);
 
-	    byte[] metadata = IOUtils.toByteArray(Thread.currentThread()
-		    .getContextClassLoader().getResourceAsStream("test.ttl"));
-	    aJournalMetadata.type("text/plain").put(metadata);
+    }
 
-	    try {
-		DCBeanAnnotated dc = aJournalDc.get(DCBeanAnnotated.class);
+    private void uploadData(WebResource aJournalVolumeData) {
+	MultiPart multiPart = new MultiPart();
+	multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
+		.currentThread().getContextClassLoader()
+		.getResourceAsStream("test.pdf"), "test.pdf"));
+	multiPart.bodyPart(new BodyPart("application/pdf",
+		MediaType.TEXT_PLAIN_TYPE));
+	aJournalVolumeData.type("multipart/mixed").post(multiPart);
+    }
 
-		Vector<String> v = new Vector<String>();
-		v.add("Test");
-		dc.setCreator(v);
-		aJournalDc.post(DCBeanAnnotated.class, dc);
+    private void createVolume(WebResource aJournalVolume) {
+	String response = aJournalVolume.put(String.class);
+	System.out.println(response);
+    }
 
-		dc = aJournalDc.get(DCBeanAnnotated.class);
-		Assert.assertEquals("Test", dc.getCreator().get(0));
-		dc = aJournalDc.get(DCBeanAnnotated.class);
+    private void testDublinCore(WebResource aJournalDc) {
+	DCBeanAnnotated dc = aJournalDc.get(DCBeanAnnotated.class);
+	Assert.assertEquals("Test", dc.getCreator().get(0));
+	dc = aJournalDc.get(DCBeanAnnotated.class);
+    }
 
-	    } catch (Exception e) {
+    private void uploadDublinCore(WebResource aJournalDc) {
+	DCBeanAnnotated dc = aJournalDc.get(DCBeanAnnotated.class);
 
-	    }
+	Vector<String> v = new Vector<String>();
+	v.add("Test");
+	dc.setCreator(v);
+	aJournalDc.post(dc);
+    }
 
-	    c.resource(aJournal.toString() + "/volume/");
-	    WebResource aJournalVolume = c.resource(aJournal.toString()
-		    + "/volume/test:345");
-	    WebResource aJournalVolumeMetadata = c.resource(aJournalVolume
-		    .toString() + "/metadata");
-	    WebResource aJournalVolumeDc = c.resource(aJournalVolume.toString()
-		    + "/dc");
-	    WebResource aJournalVolumeData = c.resource(aJournalVolume
-		    .toString() + "/data");
+    private void uploadMetadata(WebResource aJournalMetadata)
+	    throws IOException {
+	byte[] metadata = IOUtils.toByteArray(Thread.currentThread()
+		.getContextClassLoader().getResourceAsStream("test.nt"));
+	aJournalMetadata.type("text/plain").put(metadata);
+    }
 
-	    response = aJournalVolume.put(String.class);
-	    System.out.println(response);
-
-	    metadata = IOUtils.toByteArray(Thread.currentThread()
-		    .getContextClassLoader().getResourceAsStream("test.ttl"));
-	    aJournalVolumeMetadata.type("text/plain").post(metadata);
-
-	    MultiPart multiPart = new MultiPart();
-	    multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
-		    .currentThread().getContextClassLoader()
-		    .getResourceAsStream("test.pdf"), "test.pdf"));
-	    multiPart.bodyPart(new BodyPart("application/pdf",
-		    MediaType.TEXT_PLAIN_TYPE));
-	    aJournalVolumeData.type("multipart/mixed").post(multiPart);
-
-	    DCBeanAnnotated dc = aJournalVolumeDc.get(DCBeanAnnotated.class);
-	    Vector<String> v = new Vector<String>();
-	    v.add("TestVolume");
-	    dc.setCreator(v);
-	    aJournalVolumeDc.post(dc);
-
-	    dc = aJournalVolumeDc.get(DCBeanAnnotated.class);
-	    Assert.assertEquals("TestVolume", dc.getCreator().get(0));
-
-	    response = deleteNs.delete(String.class);
-	    System.out.println(response);
-
-	} catch (UniformInterfaceException e) {
-
-	    e.printStackTrace();
-	    System.out.println(e.getResponse().getEntity(String.class));
-	}
+    private void createJournal(WebResource aJournal) {
+	String response = aJournal.put(String.class);
+	System.out.println(response);
     }
 
     @After
     public void tearDown() {
+	cleanUp();
+    }
+
+    public void cleanUp() {
+	try {
+	    WebResource deleteNs = c.resource(apiUrl
+		    + "/utils/deleteNamespace/test");
+	    String response = deleteNs.delete(String.class);
+	    System.out.println(response);
+	} catch (Exception e) {
+
+	}
 
     }
 }

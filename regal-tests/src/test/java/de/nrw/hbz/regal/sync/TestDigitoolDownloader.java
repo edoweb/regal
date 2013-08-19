@@ -1,3 +1,5 @@
+package de.nrw.hbz.regal.sync;
+
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -14,83 +16,63 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.regal.sync.ingest.OpusDownloader;
+import de.nrw.hbz.regal.sync.ingest.DigitoolDownloader;
+import de.nrw.hbz.regal.sync.ingest.DownloaderInterface;
 
 /**
- * 
- * @author Jan Schnasse schnasse@hbz-nrw.de
+ * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
 @SuppressWarnings("javadoc")
-public class TestOpusDownloader {
+public class TestDigitoolDownloader {
     Properties properties = new Properties();
-    /*
-     * 1637992 4676380 2258539 1638892 4628526
-     */
-    String pid = "1";// "3237397";//
+
     private final String piddownloaderServer;
     private final String piddownloaderDownloadLocation;
 
-    public TestOpusDownloader() {
-	try {
-	    properties = new Properties();
-	    properties.load(getClass().getResourceAsStream(
-		    "/testOpusDownloader.properties"));
-	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+    public TestDigitoolDownloader() throws IOException {
+
+	properties = new Properties();
+	properties.load(getClass().getResourceAsStream("/test.properties"));
 
 	piddownloaderServer = properties.getProperty("piddownloader.server");
 	piddownloaderDownloadLocation = properties
 		.getProperty("piddownloader.downloadLocation");
+	File dir = new File(piddownloaderDownloadLocation);
+	dir.mkdirs();
     }
 
     @Before
     public void setUp() {
-	try {
 
-	    FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
-
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
     }
 
     @Test
-    public void downloadPid() {
-
-	System.out
-		.println("de.nrw.hbz.dipp.downloader.TestOpusDownloader.java: To run this test please uncomment code.");
-
-	OpusDownloader downloader = new OpusDownloader();
+    public void downloadPid() throws IOException {
+	FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation
+		+ File.separator + "3025500"));
+	DownloaderInterface downloader = new DigitoolDownloader();
 	downloader.init(piddownloaderServer, piddownloaderDownloadLocation);
-
-	try {
-	    downloader.download(pid);
-	    File file = new File(piddownloaderDownloadLocation + File.separator
-		    + pid);
-	    Assert.assertTrue(file.exists());
-	    FileUtils.deleteDirectory(file);
-	    Assert.assertTrue(!file.exists());
-
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
-
+	downloader.download("3025500");
+	Assert.assertTrue(new File(piddownloaderDownloadLocation
+		+ File.separator + "3025500").exists());
+	FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation
+		+ File.separator + "3025500"));
+	downloader.download("3237400");
     }
 
+    @After
+    public void tearDown() {
+
+    }
 }

@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,7 +59,7 @@ public class TestUpdateResource {
 
     }
 
-    // @After
+    @After
     public void tearDown() throws IOException {
 	cleanUp();
     }
@@ -146,5 +147,6 @@ public class TestUpdateResource {
 	} catch (Exception e) {
 
 	}
+
     }
 }

@@ -44,14 +44,10 @@ public class FedoraFacadeTest {
     Node object = null;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
 
-	try {
-	    properties = new Properties();
-	    properties.load(getClass().getResourceAsStream("/test.properties"));
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+	properties = new Properties();
+	properties.load(getClass().getResourceAsStream("/test.properties"));
 
 	// System.out.println(XmlSchemaCollection.class
 	// .getResource("XmlSchemaCollection.class"));
@@ -83,13 +79,8 @@ public class FedoraFacadeTest {
 
     @Test
     public void createNode() {
-	try {
-	    facade.createNode(object);
-	    Assert.assertTrue(facade.nodeExists(object.getPID()));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    Assert.fail(e.getMessage());
-	}
+	facade.createNode(object);
+	Assert.assertTrue(facade.nodeExists(object.getPID()));
     }
 
     @Test(expected = FedoraFacade.NodeNotFoundException.class)
@@ -118,10 +109,6 @@ public class FedoraFacadeTest {
 
     @Test
     public void updateNode() {
-
-	if (facade.nodeExists(object.getPID()))
-	    facade.deleteNode(object.getPID());
-
 	facade.createNode(object);
 	Vector<String> newTitle = new Vector<String>();
 	newTitle.add("Neuer Titel");

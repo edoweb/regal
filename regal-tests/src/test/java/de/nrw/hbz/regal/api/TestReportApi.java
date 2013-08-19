@@ -26,11 +26,11 @@ import javax.ws.rs.core.MediaType;
 import junit.framework.Assert;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -47,107 +47,89 @@ import com.sun.jersey.multipart.file.StreamDataBodyPart;
 public class TestReportApi {
 
     Properties properties;
+    Client c;
 
     @Before
-    public void setUp() {
-	try {
-	    properties = new Properties();
-	    properties.load(getClass().getResourceAsStream("/test.properties"));
-	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+    public void setUp() throws IOException {
+	properties = new Properties();
+	properties.load(getClass().getResourceAsStream("/test.properties"));
+	ClientConfig cc = new DefaultClientConfig();
+	cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+	cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
+	c = Client.create(cc);
+	c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
+		properties.getProperty("password")));
 
+	cleanUp();
     }
 
     @Test
     public void testReport() throws FileNotFoundException, IOException {
+	WebResource monographs = c.resource(properties.getProperty("apiUrl")
+		+ "/monograph/");
+	WebResource myReport = c.resource(monographs.toString()
+		+ "test:d20c7a72-bb6c-40aa-bf12-ad38f7e0cb9c");
+	WebResource myReportData = c.resource(myReport + "/data");
+	WebResource myReportMetadata = c.resource(myReport + "/metadata");
+	WebResource myReportDc = c.resource(myReport + "/dc");
+
+	createResource(myReport);
+	uploadData(myReportData);
+	uploadMetadata(myReportMetadata);
+	uploadDublinCore(myReportDc);
+
+	testDublinCore(myReportDc);
+    }
+
+    private void testDublinCore(WebResource myReportDc) {
+	DCBeanAnnotated dc = myReportDc.get(DCBeanAnnotated.class);
+	Assert.assertEquals("Test", dc.getCreator().get(0));
+    }
+
+    private void uploadDublinCore(WebResource myReportDc) {
+	DCBeanAnnotated dc = myReportDc.get(DCBeanAnnotated.class);
+	Vector<String> v = new Vector<String>();
+	v.add("Test");
+	dc.setCreator(v);
+	myReportDc.accept("application/json").type("application/json").post(dc);
+    }
+
+    private void uploadMetadata(WebResource myReportMetadata)
+	    throws IOException {
+	byte[] metadata = IOUtils.toByteArray(Thread.currentThread()
+		.getContextClassLoader().getResourceAsStream("test.nt"));
+	myReportMetadata.type("text/plain").post(metadata);
+    }
+
+    private void uploadData(WebResource myReportData) {
+	MultiPart multiPart = new MultiPart();
+	multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
+		.currentThread().getContextClassLoader()
+		.getResourceAsStream("test.pdf"), "test.pdf"));
+	multiPart.bodyPart(new BodyPart("application/pdf",
+		MediaType.TEXT_PLAIN_TYPE));
+	myReportData.type("multipart/mixed").post(multiPart);
+    }
+
+    private WebResource createResource(WebResource myReport) {
+	WebResource myReportDc = c.resource(myReport.toString() + "/dc");
+	String response = myReport.put(String.class);
+	System.out.println(response);
+	return myReportDc;
+    }
+
+    @After
+    public void tearDown() {
+	cleanUp();
+    }
+
+    public void cleanUp() {
 	try {
-	    // ----------------Init------------------
-	    ClientConfig cc = new DefaultClientConfig();
-	    cc.getProperties()
-		    .put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-	    cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY,
-		    true);
-	    Client c = Client.create(cc);
-	    c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
-		    properties.getProperty("password")));
-
-	    c.resource(properties.getProperty("apiUrl")
-		    + "/utils/delete/test:d20c7a72-bb6c-40aa-bf12-ad38f7e0cb9c");
-	    WebResource monographs = c.resource(properties
-		    .getProperty("apiUrl") + "/monograph/");
-	    WebResource myReport = c.resource(monographs.toString()
-		    + "test:d20c7a72-bb6c-40aa-bf12-ad38f7e0cb9c");
-	    WebResource myReportData = c
-		    .resource(myReport.toString() + "/data");
-	    WebResource myReportMetadata = c.resource(myReport.toString()
-		    + "/metadata");
-	    WebResource myReportDc = c.resource(myReport.toString() + "/dc");
-
-	    // --------------Clean up--------------------
 	    WebResource deleteNs = c.resource(properties.getProperty("apiUrl")
 		    + "/utils/deleteNamespace/test");
-	    {
-		try {
-		    String response = deleteNs.delete(String.class);
-		    System.out.println(response);
+	    deleteNs.delete();
+	} catch (Exception e) {
 
-		} catch (UniformInterfaceException e) {
-		    System.out.println(e.getMessage());
-		}
-	    }
-
-	    String request = "content";
-	    String response = "";
-
-	    try {
-		response = myReport.put(String.class, request);
-
-	    } catch (UniformInterfaceException e) {
-		System.out.println(e.getResponse().getEntity(String.class));
-		// Assert.fail();
-	    }
-
-	    System.out.println(response);
-
-	    MultiPart multiPart = new MultiPart();
-	    multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
-		    .currentThread().getContextClassLoader()
-		    .getResourceAsStream("test.pdf"), "test.pdf"));
-	    multiPart.bodyPart(new BodyPart("application/pdf",
-		    MediaType.TEXT_PLAIN_TYPE));
-	    myReportData.type("multipart/mixed").post(multiPart);
-
-	    byte[] metadata = IOUtils.toByteArray(Thread.currentThread()
-		    .getContextClassLoader().getResourceAsStream("test.ttl"));
-	    myReportMetadata.type("text/plain").post(metadata);
-
-	    try {
-		DCBeanAnnotated dc = myReportDc.get(DCBeanAnnotated.class);
-		Vector<String> v = new Vector<String>();
-		v.add("Test");
-		dc.setCreator(v);
-		myReportDc.post(DCBeanAnnotated.class, dc);
-
-		dc = myReportDc.get(DCBeanAnnotated.class);
-		Assert.assertEquals("Test", dc.getCreator().get(0));
-
-	    } catch (Exception e) {
-
-	    }
-
-	    // --------------Clean up--------------------
-	    {
-		response = deleteNs.delete(String.class);
-		System.out.println(response);
-
-	    }
-	} catch (UniformInterfaceException e) {
-	    e.printStackTrace();
-	    System.out.println(e.getResponse().getEntity(String.class));
 	}
-
     }
 }
