@@ -14,6 +14,7 @@ import de.nrw.hbz.regal.sync.TestEdoweb2Fedora;
 import de.nrw.hbz.regal.sync.TestEdowebDigitalEntityBuilder;
 import de.nrw.hbz.regal.sync.TestOpusDownloader;
 
+@SuppressWarnings("javadoc")
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ TestJournalApi.class, TestReportApi.class,
 	TestUpdateResource.class, TestActions.class, FedoraFacadeTest.class,

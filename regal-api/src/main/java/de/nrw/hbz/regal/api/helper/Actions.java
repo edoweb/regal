@@ -239,12 +239,6 @@ public class Actions {
      * @param pid
      *            the pid of the object
      * @return n-triple metadata
-     * @throws URISyntaxException
-     *             if the fedora link is misconfigured
-     * @throws MalformedURLException
-     *             if the fedora link is misconfigured
-     * @throws IOException
-     *             if reading fails
      */
     public String readMetadata(String pid) {
 

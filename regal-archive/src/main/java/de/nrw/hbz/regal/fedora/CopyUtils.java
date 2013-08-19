@@ -142,8 +142,9 @@ public class CopyUtils {
     /**
      * @param is
      *            the stream will be copied to the string
-     * @param result
-     *            the string will contain the stream content
+     * @param encoding
+     *            a java encoding, e.g. utf-8
+     * @return the input stream as string
      * @throws IOException
      *             if something goes wrong
      */

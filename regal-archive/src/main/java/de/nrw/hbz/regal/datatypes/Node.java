@@ -843,14 +843,25 @@ public class Node {
 	return removed;
     }
 
+    /**
+     * @return a label for the upload data
+     */
     public String getFileLabel() {
 	return fileLabel;
     }
 
+    /**
+     * @param label
+     *            a label for the upload data
+     */
     public void setFileLabel(String label) {
 	fileLabel = label;
     }
 
+    /**
+     * @param dc
+     *            dublin core data in one bag
+     */
     public void setDcBean(DCBean dc) {
 	this.bean = dc;
     }
