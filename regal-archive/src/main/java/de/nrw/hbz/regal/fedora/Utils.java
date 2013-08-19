@@ -137,9 +137,6 @@ public class Utils {
 	if (links != null)
 	    for (Link link : links) {
 
-		// System.out.println("Add: <" + pid + "> <" +
-		// link.getPredicate()
-		// + "> <" + link.getObject() + ">");
 		try {
 		    new AddRelationship(pid).predicate(link.getPredicate())
 			    .object(link.getObject(), link.isLiteral())
@@ -202,7 +199,7 @@ public class Utils {
 
 	}
 
-	Vector<Link> links = node.getRelsExt();
+	List<Link> links = node.getRelsExt();
 	createRelsExt(pid, links);
 
     }
@@ -803,14 +800,12 @@ public class Utils {
 	}
     }
 
-    void updateFedoraXmlForRelsExt(String pid) {
+    void updateFedoraXmlForRelsExt(String pid, List<Link> statements) {
 	// System.out.println("Create new REL-EXT "+pid);
+	String initialContent = null;
 	try {
 
-	    String initialContent = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:rel=\"info:fedora/fedora-system:def/relations-external#\">"
-		    + "    <rdf:Description rdf:about=\"info:fedora/"
-		    + pid
-		    + "\">" + "    </rdf:Description>" + "</rdf:RDF>";
+	    initialContent = RdfUtils.getFedoraRelsExt(pid, statements);
 
 	    new ModifyDatastream(pid, "RELS-EXT")
 		    .mimeType("application/rdf+xml")
@@ -818,7 +813,7 @@ public class Utils {
 		    .versionable(true).content(initialContent).execute();
 
 	} catch (Exception e) {
-	    throw new ArchiveException(e.getMessage(), e);
+	    throw new ArchiveException(initialContent, e);
 	}
     }
 
@@ -965,7 +960,7 @@ public class Utils {
 
     }
 
-    private void createRelsExt(String pid, Vector<Link> links) {
+    private void createRelsExt(String pid, List<Link> links) {
 	if (links != null)
 	    for (Link curHBZLink : links) {
 		if (curHBZLink == null)

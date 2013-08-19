@@ -62,6 +62,8 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -98,6 +100,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
 class FedoraFacade implements FedoraInterface {
+    final static Logger logger = LoggerFactory.getLogger(FedoraFacade.class);
 
     static FedoraFacade me = null;
     Utils utils = null;
@@ -365,9 +368,8 @@ class FedoraFacade implements FedoraInterface {
 
 	if (!dataStreamExists(pid, "RELS-EXT")) {
 	    utils.createFedoraXmlForRelsExt(pid);
-	} else {
-	    utils.updateFedoraXmlForRelsExt(pid);
 	}
+
 	Link link = new Link();
 	link.setPredicate(REL_CONTENT_TYPE);
 	link.setObject(type, true);
@@ -378,7 +380,7 @@ class FedoraFacade implements FedoraInterface {
 	link.setPredicate(REL_IS_NODE_TYPE);
 	node.addRelation(link);
 
-	utils.addRelationships(pid, node.getRelsExt());
+	utils.updateFedoraXmlForRelsExt(pid, node.getRelsExt());
     }
 
     /*
@@ -739,7 +741,10 @@ class FedoraFacade implements FedoraInterface {
 	    updateNode(parent);
 	} catch (NodeNotFoundException e) {
 	    // Nothing to do
-	    // logger.debug(node.getPID() + " has no parent!");
+	    logger.debug(pid + " has no parent!");
+	} catch (ReadNodeException e) {
+	    // Nothing to do
+	    logger.debug(pid + " has no parent!");
 	}
     }
 
@@ -821,15 +826,6 @@ class FedoraFacade implements FedoraInterface {
 	private static final long serialVersionUID = -4955991522087336862L;
 
 	public XmlException(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-    }
-
-    public class RdfException extends ArchiveException {
-
-	private static final long serialVersionUID = -4251129481313224317L;
-
-	public RdfException(final String message, final Throwable cause) {
 	    super(message, cause);
 	}
     }
