@@ -40,7 +40,6 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SDEP_CONTENTMODEL;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SIMPLE;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SPO;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -48,10 +47,6 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Vector;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
@@ -64,10 +59,6 @@ import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.yourmediashelf.fedora.client.FedoraClient;
 import com.yourmediashelf.fedora.client.FedoraClientException;
@@ -182,6 +173,49 @@ class FedoraFacade implements FedoraInterface {
 	    throw new CreateNodeException(e);
 	}
 
+    }
+
+    @Override
+    public Node createNode(Node parent, Node node) {
+	String pid = node.getPID();
+	if (nodeExists(pid)) {
+	    throw new ArchiveException(pid);
+	}
+	String namespace = parent.getNamespace();// FedoraFacade.pred2pid(parent.getNamespace());
+	if (pid == null) {
+	    pid = getPid(namespace);
+	    node.setPID(pid);
+	    node.setNamespace(namespace);
+	}
+	if (!nodeExists(pid)) {
+	    node.setNamespace(namespace);
+	    createNode(node);
+	}
+	node = readNode(node.getPID());
+	// Parent to node
+	Link meToNode = new Link();
+	meToNode.setPredicate(FedoraVocabulary.HAS_PART);
+	meToNode.setObject(addUriPrefix(node.getPID()), false);
+	parent.addRelation(meToNode);
+	Link nodeToMe = new Link();
+	nodeToMe.setPredicate(FedoraVocabulary.IS_PART_OF);
+	nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
+	node.addRelation(nodeToMe);
+	updateNode(node);
+	updateNode(parent);
+	return node;
+    }
+
+    @Override
+    public Node createRootObject(String namespace) {
+	Node rootObject = null;
+	String pid = getPid(namespace);
+	rootObject = new Node();
+	rootObject.setPID(pid);
+	rootObject.setLabel("Default Object");
+	rootObject.setNamespace(namespace);
+	createNode(rootObject);
+	return rootObject;
     }
 
     @Override
@@ -342,6 +376,101 @@ class FedoraFacade implements FedoraInterface {
     public String addUriPrefix(String pid) {
 
 	return utils.addUriPrefix(pid);
+    }
+
+    @Override
+    public List<String> findNodes(String searchTerm) {
+	return findPids(searchTerm, SIMPLE);
+    }
+
+    @Override
+    public void readDcToNode(Node node, InputStream in, String dcNamespace) {
+	utils.readDcToNode(node, in, dcNamespace);
+    }
+
+    @Override
+    public String deleteComplexObject(String rootPID) {
+	if (!nodeExists(rootPID)) {
+	    throw new NodeNotFoundException(rootPID);
+	}
+	// logger.info("deleteObject");
+
+	deleteNode(rootPID);
+
+	// Find all children
+	List<String> pids = null;
+	pids = findPids("* <" + IS_PART_OF + "> <" + rootPID + ">", SPO);
+	// Delete all children
+	if (pids != null)
+	    for (String pid : pids) {
+		Node node = readNode(pid);
+		deleteComplexObject(node.getPID());
+	    }
+	return rootPID;
+    }
+
+    @Override
+    public String getNodeParent(Node node) {
+	List<Link> links = node.getRelsExt();
+	for (Link link : links) {
+	    if (link.getPredicate().compareTo(IS_PART_OF) == 0) {
+		return link.getObject();
+	    }
+	}
+	return null;
+    }
+
+    void unlinkParent(String pid) {
+	try {
+	    Node node = readNode(pid);
+	    Node parent = readNode(getNodeParent(node));
+	    parent.removeRelation(HAS_PART, node.getPID());
+	    updateNode(parent);
+	} catch (NodeNotFoundException e) {
+	    // Nothing to do
+	    logger.debug(pid + " has no parent!");
+	} catch (ReadNodeException e) {
+	    // Nothing to do
+	    logger.debug(pid + " has no parent!");
+	}
+    }
+
+    @Override
+    public void unlinkParent(Node node) {
+	try {
+	    Node parent = readNode(getNodeParent(node));
+	    parent.removeRelation(HAS_PART, node.getPID());
+	    updateNode(parent);
+	} catch (NodeNotFoundException e) {
+	    // Nothing to do
+	    // logger.debug(node.getPID() + " has no parent!");
+	}
+    }
+
+    @Override
+    public void linkToParent(Node node, String parentPid) {
+	node.removeRelations(IS_PART_OF);
+	Link link = new Link();
+	link.setPredicate(IS_PART_OF);
+	link.setObject(parentPid, false);
+	node.addRelation(link);
+	updateNode(node);
+    }
+
+    @Override
+    public void linkParentToNode(String parentPid, String pid) {
+	try {
+	    Node parent = readNode(parentPid);
+	    Link link = new Link();
+	    link.setPredicate(HAS_PART);
+	    link.setObject(pid, false);
+	    parent.addRelation(link);
+	    updateNode(parent);
+	} catch (NodeNotFoundException e) {
+	    // Nothing to do
+	    // logger.debug(pid +
+	    // " has no parent! ParentPid: "+parentPid+" is not a valid pid.");
+	}
     }
 
     @Override
@@ -561,229 +690,6 @@ class FedoraFacade implements FedoraInterface {
 		.controlGroup("X").mimeType("text/xml")
 		.content(cmBuilder.getWsdl(cm)).execute();
 
-    }
-
-    @SuppressWarnings("unused")
-    private void readContentModels(Node node) throws RemoteException,
-	    FedoraClientException {
-
-	// MIMETypedStream ds = fedoraAccess.getDatastreamDissemination(
-	// node.getPID(), "HBZCMInfoStream", null);
-	//
-	FedoraResponse response = new GetDatastreamDissemination(node.getPID(),
-		"HBZCMInfoStream").download(true).execute();
-	InputStream ds = response.getEntityInputStream();
-
-	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	try {
-	    DocumentBuilder docBuilder = factory.newDocumentBuilder();
-	    Document doc = docBuilder.parse(new BufferedInputStream(ds));
-	    Element root = doc.getDocumentElement();
-	    root.normalize();
-
-	    NodeList contentModels = root.getElementsByTagName("ContentModel");
-
-	    for (int i = 0; i < contentModels.getLength(); i++) {
-		ContentModel newModel = new ContentModel();
-
-		org.w3c.dom.Node contentModelIdNode = root
-			.getElementsByTagName("ContentModelPid").item(i);
-		org.w3c.dom.Node serviceDefIdNode = root.getElementsByTagName(
-			"ServiceDefPid").item(i);
-		org.w3c.dom.Node serviceDepIdNode = root.getElementsByTagName(
-			"ServiceDepPid").item(i);
-
-		newModel.setContentModelPID(contentModelIdNode.getTextContent());
-		newModel.setServiceDefinitionPID(serviceDefIdNode
-			.getTextContent());
-		newModel.setServiceDeploymentPID(serviceDepIdNode
-			.getTextContent());
-
-		org.w3c.dom.Node prescribedDss = root.getElementsByTagName(
-			"PrescribedDSs").item(i);
-
-		NodeList prescribedDs = ((Element) (prescribedDss))
-			.getElementsByTagName("PrescribedDS");
-
-		for (int j = 0; j < prescribedDs.getLength(); j++) {
-		    org.w3c.dom.Node dsid = ((Element) (prescribedDs.item(j)))
-			    .getElementsByTagName("dsid").item(0);
-		    org.w3c.dom.Node uri = ((Element) (prescribedDs.item(j)))
-			    .getElementsByTagName("uri").item(0);
-		    org.w3c.dom.Node mimeType = ((Element) (prescribedDs
-			    .item(j))).getElementsByTagName("mimeType").item(0);
-
-		    newModel.addPrescribedDs(dsid.getTextContent(),
-			    uri.getTextContent(), mimeType.getTextContent());
-		}
-
-		org.w3c.dom.Node methods = root.getElementsByTagName("Methods")
-			.item(i);
-		NodeList methodsKids = ((Element) (methods))
-			.getElementsByTagName("Method");
-
-		for (int j = 0; j < methodsKids.getLength(); j++) {
-		    org.w3c.dom.Node name = ((Element) (methodsKids.item(j)))
-			    .getElementsByTagName("name").item(0);
-		    org.w3c.dom.Node loc = ((Element) (methodsKids.item(j)))
-			    .getElementsByTagName("serviceLocation").item(0);
-
-		    newModel.addMethod(name.getTextContent(),
-			    loc.getTextContent());
-
-		}
-		node.addContentModel(newModel);
-	    }
-
-	} catch (ParserConfigurationException e) {
-
-	    throw new XmlException(node.getPID(), e);
-	} catch (SAXException e) {
-
-	    throw new XmlException(node.getPID(), e);
-	} catch (IOException e) {
-
-	    throw new XmlException(node.getPID(), e);
-	}
-
-    }
-
-    @Override
-    public List<String> findNodes(String searchTerm) {
-	return findPids(searchTerm, SIMPLE);
-    }
-
-    @Override
-    public void readDcToNode(Node node, InputStream in, String dcNamespace) {
-	utils.readDcToNode(node, in, dcNamespace);
-    }
-
-    @Override
-    public String deleteComplexObject(String rootPID) {
-	if (!nodeExists(rootPID)) {
-	    throw new NodeNotFoundException(rootPID);
-	}
-	// logger.info("deleteObject");
-
-	deleteNode(rootPID);
-
-	// Find all children
-	List<String> pids = null;
-	pids = findPids("* <" + IS_PART_OF + "> <" + rootPID + ">", SPO);
-	// Delete all children
-	if (pids != null)
-	    for (String pid : pids) {
-		Node node = readNode(pid);
-		deleteComplexObject(node.getPID());
-	    }
-	return rootPID;
-    }
-
-    @Override
-    public Node createNode(Node parent, Node node) {
-	String pid = node.getPID();
-	if (nodeExists(pid)) {
-	    throw new ArchiveException(pid);
-	}
-	String namespace = parent.getNamespace();// FedoraFacade.pred2pid(parent.getNamespace());
-	if (pid == null) {
-	    pid = getPid(namespace);
-	    node.setPID(pid);
-	    node.setNamespace(namespace);
-	}
-	if (!nodeExists(pid)) {
-	    node.setNamespace(namespace);
-	    createNode(node);
-	}
-	node = readNode(node.getPID());
-	// Parent to node
-	Link meToNode = new Link();
-	meToNode.setPredicate(FedoraVocabulary.HAS_PART);
-	meToNode.setObject(addUriPrefix(node.getPID()), false);
-	parent.addRelation(meToNode);
-	Link nodeToMe = new Link();
-	nodeToMe.setPredicate(FedoraVocabulary.IS_PART_OF);
-	nodeToMe.setObject(addUriPrefix(parent.getPID()), false);
-	node.addRelation(nodeToMe);
-	updateNode(node);
-	updateNode(parent);
-	return node;
-    }
-
-    @Override
-    public Node createRootObject(String namespace) {
-	Node rootObject = null;
-	String pid = getPid(namespace);
-	rootObject = new Node();
-	rootObject.setPID(pid);
-	rootObject.setLabel("Default Object");
-	rootObject.setNamespace(namespace);
-	createNode(rootObject);
-	return rootObject;
-    }
-
-    @Override
-    public String getNodeParent(Node node) {
-	List<Link> links = node.getRelsExt();
-	for (Link link : links) {
-	    if (link.getPredicate().compareTo(IS_PART_OF) == 0) {
-		return link.getObject();
-	    }
-	}
-	return null;
-    }
-
-    void unlinkParent(String pid) {
-	try {
-	    Node node = readNode(pid);
-	    Node parent = readNode(getNodeParent(node));
-	    parent.removeRelation(HAS_PART, node.getPID());
-	    updateNode(parent);
-	} catch (NodeNotFoundException e) {
-	    // Nothing to do
-	    logger.debug(pid + " has no parent!");
-	} catch (ReadNodeException e) {
-	    // Nothing to do
-	    logger.debug(pid + " has no parent!");
-	}
-    }
-
-    @Override
-    public void unlinkParent(Node node) {
-	try {
-	    Node parent = readNode(getNodeParent(node));
-	    parent.removeRelation(HAS_PART, node.getPID());
-	    updateNode(parent);
-	} catch (NodeNotFoundException e) {
-	    // Nothing to do
-	    // logger.debug(node.getPID() + " has no parent!");
-	}
-    }
-
-    @Override
-    public void linkToParent(Node node, String parentPid) {
-	node.removeRelations(IS_PART_OF);
-	Link link = new Link();
-	link.setPredicate(IS_PART_OF);
-	link.setObject(parentPid);
-	node.addRelation(link);
-	updateNode(node);
-    }
-
-    @Override
-    public void linkParentToNode(String parentPid, String pid) {
-	try {
-	    Node parent = readNode(parentPid);
-	    Link link = new Link();
-	    link.setPredicate(HAS_PART);
-	    link.setObject(pid);
-	    parent.addRelation(link);
-	    updateNode(parent);
-	} catch (NodeNotFoundException e) {
-	    // Nothing to do
-	    // logger.debug(pid +
-	    // " has no parent! ParentPid: "+parentPid+" is not a valid pid.");
-	}
     }
 
     private class DeleteException extends ArchiveException {
