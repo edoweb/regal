@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.nrw.hbz.regal.api.helper.ContentModelFactory;
+import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.datatypes.Vocabulary;
 
@@ -176,6 +177,28 @@ public class FedoraFacadeTest {
 	Assert.assertTrue(!facade.nodeExists(object.getPID()));
 	facade.createNode(object);
 	Assert.assertTrue(facade.nodeExists(object.getPID()));
+    }
+
+    @Test
+    public void createHierarchy() {
+	Node node = new Node();
+	node.setPID(facade.getPid("namespace"));
+	Node parent = facade.createRootObject("test");
+	node = facade.createNode(parent, node);
+	for (Link link : node.getRelsExt()) {
+	    if (link.getPredicate().equals(FedoraVocabulary.IS_PART_OF)) {
+		System.out.println(link.getObject());
+		Assert.assertTrue(link.getObject().equals(
+			"info:fedora/" + parent.getPID()));
+	    }
+	}
+	for (Link link : parent.getRelsExt()) {
+	    if (link.getPredicate().equals(FedoraVocabulary.HAS_PART)) {
+		System.out.println(link.getObject());
+		Assert.assertTrue(link.getObject().equals(
+			"info:fedora/" + node.getPID()));
+	    }
+	}
     }
 
     @After
