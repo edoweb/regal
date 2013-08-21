@@ -183,7 +183,7 @@ public interface FedoraInterface {
      * @param parent
      *            the parent of the new node
      * @param node
-     *            the new node
+     *            a new node that doesn't exist in Fedora yet
      * @return The new created object.
      */
     public Node createNode(Node parent, Node node);
