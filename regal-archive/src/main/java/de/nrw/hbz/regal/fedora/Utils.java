@@ -544,7 +544,7 @@ public class Utils {
 			Value objUri = st.getObject();
 
 			Link link = new Link();
-			link.setObject(objUri.stringValue());
+			link.setObject(objUri.stringValue(), false);
 			link.setPredicate(predUri.stringValue());
 
 			if (link.getPredicate().compareTo(REL_IS_NODE_TYPE) == 0) {

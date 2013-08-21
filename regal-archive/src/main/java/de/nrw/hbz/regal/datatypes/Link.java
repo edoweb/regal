@@ -20,52 +20,90 @@ package de.nrw.hbz.regal.datatypes;
  * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
-@SuppressWarnings("javadoc")
 public class Link {
     boolean isLiteral = false;
     private String predicate = null;
     private String object = null;
 
+    /**
+     * Creates a new link
+     */
     public Link() {
 
     }
 
+    /**
+     * @param predicate
+     *            a rdf predicate
+     * @param object
+     *            a rdf object
+     * @param isLiteral
+     *            is the object a literal?
+     */
     public Link(String predicate, String object, boolean isLiteral) {
 	this.predicate = predicate;
 	this.object = object;
 	this.isLiteral = isLiteral;
     }
 
+    /**
+     * @return true if the object is literal. Default is false.
+     */
     public boolean isLiteral() {
 	return isLiteral;
     }
 
+    /**
+     * @param isLiteral
+     *            true if the object is literal. Default is false.
+     */
     public void setLiteral(boolean isLiteral) {
 	this.isLiteral = isLiteral;
     }
 
+    /**
+     * @return the rdf predicate as string
+     */
     public String getPredicate() {
 	return predicate;
     }
 
+    /**
+     * @param predicate
+     *            the rdf predicate as string
+     */
     public void setPredicate(String predicate) {
 	this.predicate = predicate;
     }
 
+    /**
+     * @return the rdf object as string
+     */
     public String getObject() {
 	return object;
     }
 
+    /**
+     * @param object
+     *            the rdf object as string
+     * @param isLiteral
+     *            true if the object is a literal
+     */
     public void setObject(String object, boolean isLiteral) {
 	this.object = object;
 	this.isLiteral = isLiteral;
 
     }
 
-    public void setObject(String object) {
-	this.object = object;
-
-    }
+    // /**
+    // * @param object
+    // * the rdf object as string.
+    // *
+    // */
+    // public void setObject(String object) {
+    // this.object = object;
+    //
+    // }
 
     @Override
     public boolean equals(Object obj) {
