@@ -20,7 +20,7 @@ package de.nrw.hbz.regal.api.helper;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public class OaiSet {
+class OaiSet {
     String name = null;
     String spec = null;
     String pid = null;

@@ -304,11 +304,12 @@ class Services {
 	cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 	cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
 	Client c = Client.create(cc);
+	WebResource index = null;
 	try {
 
 	    // TODO configure port and host
-	    WebResource index = c.resource("http://localhost:9200/" + namespace
-		    + "/titel/" + pid);
+	    index = c.resource("http://localhost:9200/" + namespace + "/titel/"
+		    + pid);
 	    index.accept("application/json");
 	    URL url = new URL("http://localhost/resource/" + pid + "/about");
 	    URLConnection con = url.openConnection();
@@ -319,10 +320,11 @@ class Services {
 	    IOUtils.copy(in, writer, "UTF-8");
 	    viewAsString = writer.toString();
 	    in.close();
-	    message = index.put(String.class, viewAsString);
 	} catch (Exception e) {
 	    throw new ArchiveException("Error! " + message + e.getMessage(), e);
 	}
+	message = index.put(String.class, viewAsString);
+
 	return "Success! " + message + "\n" + viewAsString;
     }
 

@@ -2,6 +2,8 @@ package de.nrw.hbz.regal.api;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import de.nrw.hbz.regal.api.helper.ObjectType;
+
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
@@ -17,6 +19,14 @@ public class CreateObjectBean {
      */
     public CreateObjectBean() {
 
+    }
+
+    /**
+     * @param t
+     *            a valid type
+     */
+    public CreateObjectBean(ObjectType t) {
+	type = t.toString();
     }
 
     /**

@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public class OaiSetBuilder {
+class OaiSetBuilder {
     final static Logger logger = LoggerFactory.getLogger(OaiSetBuilder.class);
 
     /**

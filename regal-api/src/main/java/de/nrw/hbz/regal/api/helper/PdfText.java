@@ -27,6 +27,8 @@ import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 
+import de.nrw.hbz.regal.exceptions.ArchiveException;
+
 /**
  * provides text extraction with itext and pdfbox.
  * 
@@ -48,9 +50,9 @@ public class PdfText {
 	    String text = stripper.getText(doc);
 	    return text;
 	} catch (IOException e) {
-	    throw new HttpArchiveException(500, e);
+	    throw new ArchiveException(e);
 	} catch (Exception e) {
-	    throw new HttpArchiveException(500, e);
+	    throw new ArchiveException(e);
 	} finally {
 	    if (doc != null) {
 		try {

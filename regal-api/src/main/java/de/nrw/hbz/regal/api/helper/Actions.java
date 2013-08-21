@@ -25,13 +25,11 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -760,45 +758,5 @@ public class Actions {
 	public InternalUrlException(Throwable e) {
 	    super(e);
 	}
-    }
-
-    @SuppressWarnings("unused")
-    private String getCacheUri(String pid) throws UnsupportedEncodingException {
-	String cacheUri = null;
-	String pidWithoutNamespace = pid.substring(pid.indexOf(':') + 1);
-	String namespace = pid.substring(0, pid.indexOf(':'));
-
-	if (pid.contains("edoweb") || pid.contains("ellinet")) {
-	    if (pid.length() <= 17) {
-		cacheUri = this.server + "/" + namespace + "base/"
-			+ pidWithoutNamespace;
-
-	    }
-	}
-	if (pid.contains("dipp")) {
-	    cacheUri = this.server
-		    + "/"
-		    + namespace
-		    + "base/"
-		    + URLEncoder.encode(URLEncoder.encode(pid, "utf-8"),
-			    "utf-8");
-
-	}
-	if (pid.contains("ubm")) {
-	    cacheUri = this.server + "/" + namespace + "base/"
-		    + pidWithoutNamespace;
-
-	}
-	if (pid.contains("fhdd")) {
-	    cacheUri = this.server + "/" + namespace + "base/"
-		    + pidWithoutNamespace;
-
-	}
-	if (pid.contains("kola")) {
-	    cacheUri = this.server + "/" + namespace + "base/"
-		    + pidWithoutNamespace;
-
-	}
-	return cacheUri;
     }
 }
