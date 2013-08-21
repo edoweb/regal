@@ -715,6 +715,8 @@ public class Actions {
     }
 
     /**
+     * @param type
+     *            a type
      * @return all objects in a html list
      */
     public String getAllAsHtml(String type) {
@@ -761,6 +763,11 @@ public class Actions {
 	}
     }
 
+    /**
+     * @param type
+     *            a contentType
+     * @return all objects of contentType type
+     */
     public List<String> getAll(String type) {
 	if (type == null || type.isEmpty())
 	    return getAll();

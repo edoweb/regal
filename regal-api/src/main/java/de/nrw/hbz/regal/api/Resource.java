@@ -107,6 +107,8 @@ public class Resource {
     }
 
     /**
+     * @param type
+     *            a contentType
      * @return a list of all archived objects
      */
     @GET
@@ -119,6 +121,8 @@ public class Resource {
     }
 
     /**
+     * @param type
+     *            a contentType
      * @return a list of resources as html
      */
     @GET
