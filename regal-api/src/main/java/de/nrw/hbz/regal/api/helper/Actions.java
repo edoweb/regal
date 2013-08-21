@@ -437,6 +437,7 @@ public class Actions {
      * @return a list of all objects
      */
     public List<String> getAll() {
+
 	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
 	InputStream stream = fedora.findTriples(query, FedoraVocabulary.SPO,
 		FedoraVocabulary.N3);
@@ -716,8 +717,8 @@ public class Actions {
     /**
      * @return all objects in a html list
      */
-    public String getAllAsHtml() {
-	return representations.getAllAsHtml(getAll());
+    public String getAllAsHtml(String type) {
+	return representations.getAllAsHtml(getAll(type));
     }
 
     /**
@@ -758,5 +759,12 @@ public class Actions {
 	public InternalUrlException(Throwable e) {
 	    super(e);
 	}
+    }
+
+    public List<String> getAll(String type) {
+	if (type == null || type.isEmpty())
+	    return getAll();
+	else
+	    return findByType(type);
     }
 }

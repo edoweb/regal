@@ -33,6 +33,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
@@ -110,8 +111,9 @@ public class Resource {
      */
     @GET
     @Produces({ "application/json", "application/xml" })
-    public Response getAll() {
-	ObjectList rem = new ObjectList(actions.getAll());
+    public Response getAll(@QueryParam("type") String type) {
+
+	ObjectList rem = new ObjectList(actions.getAll(type));
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();
     }
@@ -121,8 +123,8 @@ public class Resource {
      */
     @GET
     @Produces({ "text/html" })
-    public Response getAllAsHtml() {
-	String rem = actions.getAllAsHtml();
+    public Response getAllAsHtml(@QueryParam("type") String type) {
+	String rem = actions.getAllAsHtml(type);
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();
     }
