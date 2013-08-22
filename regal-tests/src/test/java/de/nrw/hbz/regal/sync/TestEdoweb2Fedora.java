@@ -73,7 +73,7 @@ public class TestEdoweb2Fedora {
     @SuppressWarnings("static-access")
     @Test
     public void mainTest() throws IOException {
-	Main main = new Main();
+	DippMain main = new DippMain();
 	pidreporterPidFile = getClass().getResource("/pidlist.txt").getPath();
 	main.main(new String[] { "--mode", "DELE", "--user", user,
 		"--password", password, "--dtl", piddownloaderServer, "-cache",

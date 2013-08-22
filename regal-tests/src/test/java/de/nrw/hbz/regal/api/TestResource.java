@@ -66,8 +66,7 @@ public class TestResource {
 	c = Client.create(cc);
 	c.addFilter(new HTTPBasicAuthFilter(properties.getProperty("user"),
 		properties.getProperty("password")));
-	properties = new Properties();
-	properties.load(getClass().getResourceAsStream("/test.properties"));
+
 	apiUrl = properties.getProperty("apiUrl");
 	cleanUp();
     }
