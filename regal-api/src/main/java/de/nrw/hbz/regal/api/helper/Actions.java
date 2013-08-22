@@ -367,7 +367,7 @@ public class Actions {
      */
     public String updateMetadata(String pid, String content) throws IOException {
 
-	if (content == null || content.isEmpty()) {
+	if (content == null) {
 	    throw new HttpArchiveException(406, pid
 		    + "You've tried to upload an empty string."
 		    + " This action is not supported."
