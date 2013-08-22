@@ -1,4 +1,4 @@
-function EasyEllinetSearch(step) {
+function Search(step) {
 	this.host = "localhost";
 	this.step = step;
 	this.from = 0;
@@ -6,7 +6,7 @@ function EasyEllinetSearch(step) {
 	this.buildIndexSelection();
 	this.indices;
 }
-EasyEllinetSearch.prototype.buildIndexSelection = function(parameter) {
+Search.prototype.buildIndexSelection = function(parameter) {
 
 	var request = {
 		type : "GET",
@@ -35,11 +35,11 @@ EasyEllinetSearch.prototype.buildIndexSelection = function(parameter) {
 	};
 	jQuery.ajax(request);
 }
-EasyEllinetSearch.prototype.alert = function(parameter) {
+Search.prototype.alert = function(parameter) {
 	alert("Hello " + parameter);
 }
 
-EasyEllinetSearch.prototype.search = function() {
+Search.prototype.search = function() {
 	this.from = 0;
 	this.to = this.step;
 	var myQuery = $("#queryForm").val();
@@ -66,7 +66,7 @@ EasyEllinetSearch.prototype.search = function() {
 
 }
 
-EasyEllinetSearch.prototype.searchNext = function(from, to) {
+Search.prototype.searchNext = function(from, to) {
 	var myQuery = $("#queryForm").val();
 	var searchterm = $("#searchterm").val();
 
@@ -91,15 +91,15 @@ EasyEllinetSearch.prototype.searchNext = function(from, to) {
 
 }
 
-EasyEllinetSearch.prototype.htmlEncode = function(value) {
+Search.prototype.htmlEncode = function(value) {
 	return $('<div/>').text(value).html();
 }
 
-EasyEllinetSearch.prototype.htmlDecode = function(value) {
+Search.prototype.htmlDecode = function(value) {
 	return $('<div/>').html(value).text();
 }
 
-EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
+Search.prototype.request = function(myQuery, searchterm) {
 
 	var indexStr = "";
 
@@ -283,5 +283,5 @@ EasyEllinetSearch.prototype.request = function(myQuery, searchterm) {
 	jQuery.ajax(request);
 }
 
-EasyEllinetSearch.prototype.callback = function(data) {
+Search.prototype.callback = function(data) {
 }
