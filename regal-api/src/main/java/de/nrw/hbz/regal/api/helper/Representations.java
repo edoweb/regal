@@ -46,7 +46,9 @@ class Representations {
 
     public Representations(FedoraInterface fedora, String server) {
 	this.fedora = fedora;
+	this.server = server;
 	uriPrefix = server + "/" + "resource" + "/";
+
     }
 
     /**
