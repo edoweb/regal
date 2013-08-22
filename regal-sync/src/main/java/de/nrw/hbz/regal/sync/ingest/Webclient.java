@@ -168,7 +168,7 @@ public class Webclient {
 	try {
 	    updateMetadata(resource + "/metadata", metadata);
 	} catch (Exception e) {
-	    logger.error(dtlBean.getPid() + " " + e.getMessage());
+	    logger.error(pid + " " + e.getMessage());
 	}
 
     }
@@ -199,7 +199,7 @@ public class Webclient {
 	DigitalEntity fulltextObject = null;
 
 	Stream dataStream = dtlBean.getStream(StreamType.DATA);
-	if (dataStream.getMimeType() != null
+	if (dataStream != null && dataStream.getMimeType() != null
 		&& dataStream.getMimeType().compareTo(expectedMime) == 0)
 	    return dtlBean;
 
