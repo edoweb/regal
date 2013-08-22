@@ -249,6 +249,10 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
-	
+		<dependency>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>ellinet-sync</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project> 

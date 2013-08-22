@@ -27,9 +27,9 @@ import de.nrw.hbz.regal.sync.ingest.EllinetIngester;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class Main {
+public class EllinetMain {
 
-    final static Logger logger = LoggerFactory.getLogger(Main.class);
+    final static Logger logger = LoggerFactory.getLogger(EdowebMain.class);
 
     /**
      * @param args

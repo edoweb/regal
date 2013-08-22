@@ -27,8 +27,8 @@ import de.nrw.hbz.regal.sync.ingest.OpusIngester;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class Main {
-    final static Logger logger = LoggerFactory.getLogger(Main.class);
+public class OpusMain {
+    final static Logger logger = LoggerFactory.getLogger(OpusMain.class);
 
     /**
      * @param args

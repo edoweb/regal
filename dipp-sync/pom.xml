@@ -28,7 +28,7 @@
 							<classpathPrefix>lib</classpathPrefix>
 							<classpathLayoutType>repository</classpathLayoutType>
 							<classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
-							<mainClass>de.nrw.hbz.regal.sync.Main</mainClass>
+							<mainClass>de.nrw.hbz.regal.sync.DippMain</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -41,7 +41,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.nrw.hbz.regal.sync.Main</mainClass>
+							<mainClass>de.nrw.hbz.regal.sync.DippMain</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

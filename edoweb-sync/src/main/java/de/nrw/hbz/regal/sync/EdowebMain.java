@@ -19,23 +19,24 @@ package de.nrw.hbz.regal.sync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.nrw.hbz.regal.sync.ingest.DippDigitalEntityBuilder;
-import de.nrw.hbz.regal.sync.ingest.DippDownloader;
-import de.nrw.hbz.regal.sync.ingest.DippIngester;
+import de.nrw.hbz.regal.sync.ingest.DigitoolDownloader;
+import de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder;
+import de.nrw.hbz.regal.sync.ingest.EdowebIngester;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
+ * 
  */
-public class Main {
-    final static Logger logger = LoggerFactory.getLogger(Main.class);
+public class EdowebMain {
+    final static Logger logger = LoggerFactory.getLogger(EdowebMain.class);
 
     /**
      * @param args
-     *            Standard args
+     *            standard args see Syncer
      */
     public static void main(String[] args) {
-	Syncer syncer = new Syncer(new DippIngester(), new DippDownloader(),
-		new DippDigitalEntityBuilder());
+	Syncer syncer = new Syncer(new EdowebIngester(),
+		new DigitoolDownloader(), new EdowebDigitalEntityBuilder());
 	syncer.main(args);
     }
 }
