@@ -661,9 +661,6 @@ public class Resource {
     public String updateMetadata(@PathParam("pid") String pid, String content) {
 	try {
 	    return actions.updateMetadata(pid, content);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	} catch (IOException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
