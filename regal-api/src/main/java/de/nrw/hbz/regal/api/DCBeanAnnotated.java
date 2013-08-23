@@ -22,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Vector;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,6 +41,7 @@ import de.nrw.hbz.regal.datatypes.Node;
  * 
  */
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class DCBeanAnnotated {
     Vector<String> contributer = new Vector<String>();
     Vector<String> coverage = new Vector<String>();
