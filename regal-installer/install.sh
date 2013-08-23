@@ -147,21 +147,21 @@ echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "RewriteEngine on" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/fedora/(.*) http://localhost:$TOMCAT_PORT/fedora/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/search/(.*) http://localhost:$ELASTICSEARCH_PORT/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/resource/(.*) http://localhost:$TOMCAT_PORT/api/resource/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/utils/(.*)  http://localhost:$TOMCAT_PORT/api/utils/\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/journal/(.*) http://localhost:$TOMCAT_PORT/api/resource/\$1?type=journal [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/monograph/(.*) http://localhost:$TOMCAT_PORT/api/resource/\$1?type=monograph [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/webpage/(.*) http://localhost:$TOMCAT_PORT/api/resource/\$1?type=webpage [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/volume/(.*)  http://localhost:$TOMCAT_PORT/api/resource/\$1?type=volume [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/version/(.*)  http://localhost:$TOMCAT_PORT/api/resource/\$1?type=version [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/file/(.*)  http://localhost:$TOMCAT_PORT/api/resource/\$1?type=file [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/issue/(.*)  http://localhost:$TOMCAT_PORT/api/resource/\$1?type=issue [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/article/(.*)  http://localhost:$TOMCAT_PORT/api/resource/\$1?type=article [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/supplement/(.*)  http://localhost:$TOMCAT_PORT/api/resource/\$1?type=supplement [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/fedora(.*) http://localhost:$TOMCAT_PORT/fedora\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/search(.*) http://localhost:$ELASTICSEARCH_PORT\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/resource(.*) http://localhost:$TOMCAT_PORT/api/resource\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/utils(.*)  http://localhost:$TOMCAT_PORT/api/utils\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/journal(.*) http://localhost:$TOMCAT_PORT/api/resource\$1?type=journal [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/monograph(.*) http://localhost:$TOMCAT_PORT/api/resource\$1?type=monograph [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/webpage(.*) http://localhost:$TOMCAT_PORT/api/resource\$1?type=webpage [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/volume(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=volume [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/version(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=version [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/file(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=file [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/issue(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=issue [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/article(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=article [P]" >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/supplement(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=supplement [P]" >> $ARCHIVE_HOME/conf/site.conf
 
-echo -e "RewriteRule ^/oai-pmh/(.*) http://localhost:$TOMCAT_PORT/oai-pmh/\$1 [P] " >> $ARCHIVE_HOME/conf/site.conf
+echo -e "RewriteRule ^/oai-pmh(.*) http://localhost:$TOMCAT_PORT/oai-pmh\$1 [P] " >> $ARCHIVE_HOME/conf/site.conf
 echo -e "" >> $ARCHIVE_HOME/conf/site.conf
 echo -e "</VirtualHost>" >> $ARCHIVE_HOME/conf/site.conf
 
@@ -255,6 +255,28 @@ mvn -e clean install -DskipTests --settings settings.xml
 cd -
 }
 
+
+function correctSwagger()
+{
+var=$1
+cd /opt/regal/src/regal-ui/htdocs/api/
+number=`grep -n "models" ${var}.json |cut -f1 -d:`
+number=`expr $number - 1`
+head -$number ${var}.json > tmpres
+echo '"swaggerVersion" : "1.1","resourcePath" : "/${var}"}' >> tmpres
+mv tmpres ${var}.json
+cd -
+}
+
+function copySwagger()
+{
+cp  $ARCHIVE_HOME/src/regal-api/target/classes/apidocs/* $ARCHIVE_HOME/src/regal-ui/htdocs/api/
+correctSwagger utils;
+correctSwagger resource;
+}
+
+
+
 function rollout()
 {
 SRC=$ARCHIVE_HOME/src
@@ -282,6 +304,7 @@ fi
 cd $SRC/regal-api
 echo "Install Webapi"
 mvn -q -e war:war -DskipTests --settings ../settings.xml
+mvn package
 cd -
 rm -rf  $WEBAPPS/api*
 cp $SRC/regal-api/target/api.war $WEBAPPS/api.war
@@ -319,6 +342,7 @@ then
 fi
 
 echo "copy html"
+copySwagger
 cp -r $ARCHIVE_HOME/src/regal-ui/htdocs/* $ARCHIVE_HOME/html/
 sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/EasyEllinetSearch.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/EasyEllinetSearch.js"
 
@@ -374,4 +398,3 @@ else
 	echo -e $usage
     fi
 fi
-
