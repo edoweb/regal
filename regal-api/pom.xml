@@ -51,7 +51,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 		</dependency>
-	
 		<dependency>
 			<groupId>org.lobid</groupId>
 			<artifactId>lodmill-rd</artifactId>
@@ -127,7 +126,7 @@
 			<artifactId>antlr4</artifactId>
 			<version>4.0</version>
 		</dependency>
-	<dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
 			<version>${logback.version}</version>
@@ -163,6 +162,78 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12.4</version>
 			</plugin>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>generate-service-docs</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <doclet>com.hypnoticocelot.jaxrs.doclet.ServiceDoclet</doclet>
+                            <docletArtifact>
+                                <groupId>com.hypnoticocelot</groupId>
+                                <artifactId>jaxrs-doclet</artifactId>
+                                <version>0.0.2-SNAPSHOT</version>
+                            </docletArtifact>
+                            <reportOutputDirectory>${project.build.outputDirectory}</reportOutputDirectory>
+                            <useStandardDocletOptions>false</useStandardDocletOptions>
+                            <additionalparam>-apiVersion 1 -docBasePath http://localhost/api -apiBasePath /</additionalparam>
+                        </configuration>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-javadoc-plugin
+										</artifactId>
+										<versionRange>
+											[2.8,)
+										</versionRange>
+										<goals>
+											<goal>javadoc</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
+	<repositories>
+        <repository>
+            <id>com.hypnoticocelot</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
