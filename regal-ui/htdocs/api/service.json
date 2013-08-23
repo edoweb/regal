@@ -1,0 +1,12 @@
+{
+  "apiVersion" : "1",
+  "basePath" : "http://localhost/api",
+  "apis" : [ {
+    "path" : "/resource.{format}",
+    "description" : ""
+  }, {
+    "path" : "/utils.{format}",
+    "description" : ""
+  } ],
+  "swaggerVersion" : "1.1"
+}
