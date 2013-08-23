@@ -107,6 +107,8 @@ public class Resource {
     }
 
     /**
+     * Returns all resources of a certain type (optional).
+     * 
      * @param type
      *            a contentType
      * @return a list of all archived objects
@@ -121,6 +123,8 @@ public class Resource {
     }
 
     /**
+     * Returns all resources of a certain type (optional) in HTML.
+     * 
      * @param type
      *            a contentType
      * @return a list of resources as html
@@ -134,6 +138,8 @@ public class Resource {
     }
 
     /**
+     * Returns a json representation of the aggregation (Deprecated!!).
+     * 
      * @param pid
      *            the pid of the resource the pid of the resource
      * @param namespace
@@ -155,6 +161,8 @@ public class Resource {
     }
 
     /**
+     * Returns a OAI-ORE representation as rdf+xml.
+     * 
      * @param pid
      *            the pid of the resource the pid of the resource
      * @param namespace
@@ -176,6 +184,8 @@ public class Resource {
     }
 
     /**
+     * Returns a OAI-ORE representation as n-triples.
+     * 
      * @param pid
      *            the pid of the resource the pid of the resource
      * @param namespace
@@ -196,6 +206,8 @@ public class Resource {
     }
 
     /**
+     * Returns a OAI-ORE representation as json-ld.
+     * 
      * @param pid
      *            the pid of the resource the pid of the resource
      * @param namespace
@@ -216,6 +228,8 @@ public class Resource {
     }
 
     /**
+     * Returns a OAI-ORE representation as html.
+     * 
      * @param pid
      *            the pid of the resource
      * @param namespace
@@ -237,6 +251,8 @@ public class Resource {
     }
 
     /**
+     * Returns a OAI-ORE representation as json.
+     * 
      * @param pid
      *            the pid of the resource
      * @param namespace
@@ -258,6 +274,8 @@ public class Resource {
     }
 
     /**
+     * Returns a json representation for elasticsearch.
+     * 
      * @param pid
      *            the pid of the resource the pid of the resource
      * @param namespace
