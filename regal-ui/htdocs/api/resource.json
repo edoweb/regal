@@ -32,34 +32,16 @@
       } ],
       "summary" : "Returns all resources of a certain type (optional) in HTML.",
       "notes" : ""
-    } ]
-  }, {
-    "path" : "/resource/type/{type}",
-    "description" : "",
-    "operations" : [ {
-      "httpMethod" : "GET",
-      "nickname" : "getAllOfType",
-      "responseClass" : "ObjectList",
-      "parameters" : [ {
-        "paramType" : "path",
-        "name" : "type",
-        "description" : "the type of the resources that must be returned",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
     }, {
       "httpMethod" : "DELETE",
       "nickname" : "deleteAllOfType",
       "responseClass" : "string",
       "parameters" : [ {
-        "paramType" : "path",
+        "paramType" : "query",
         "name" : "type",
         "description" : "the type of resources that will be deleted",
         "dataType" : "string",
-        "required" : true,
+        "required" : false,
         "allowableValues" : null
       } ],
       "summary" : "Deletes all Resources of a certain type.",
@@ -69,111 +51,6 @@
     "path" : "/resource/{namespace}:{pid}",
     "description" : "",
     "operations" : [ {
-      "httpMethod" : "GET",
-      "nickname" : "getJsonRegal",
-      "responseClass" : "Response",
-      "parameters" : [ {
-        "paramType" : "path",
-        "name" : "pid",
-        "description" : "the pid of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      }, {
-        "paramType" : "path",
-        "name" : "namespace",
-        "description" : "the namespace of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    }, {
-      "httpMethod" : "GET",
-      "nickname" : "getJson",
-      "responseClass" : "Response",
-      "parameters" : [ {
-        "paramType" : "path",
-        "name" : "pid",
-        "description" : "the pid of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      }, {
-        "paramType" : "path",
-        "name" : "namespace",
-        "description" : "the namespace of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    }, {
-      "httpMethod" : "GET",
-      "nickname" : "getRdfXml",
-      "responseClass" : "Response",
-      "parameters" : [ {
-        "paramType" : "path",
-        "name" : "pid",
-        "description" : "the pid of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      }, {
-        "paramType" : "path",
-        "name" : "namespace",
-        "description" : "the namespace of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    }, {
-      "httpMethod" : "GET",
-      "nickname" : "getHtml",
-      "responseClass" : "Response",
-      "parameters" : [ {
-        "paramType" : "path",
-        "name" : "pid",
-        "description" : "the pid of the resource the pid of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      }, {
-        "paramType" : "path",
-        "name" : "namespace",
-        "description" : "the namespace of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    }, {
-      "httpMethod" : "GET",
-      "nickname" : "getNtriple",
-      "responseClass" : "Response",
-      "parameters" : [ {
-        "paramType" : "path",
-        "name" : "pid",
-        "description" : "the pid of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      }, {
-        "paramType" : "path",
-        "name" : "namespace",
-        "description" : "the namespace of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    }, {
       "httpMethod" : "PUT",
       "nickname" : "create",
       "responseClass" : "string",
@@ -248,15 +125,53 @@
         "required" : true,
         "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Deletes a pid",
       "notes" : ""
-    } ]
-  }, {
-    "path" : "/resource/{namespace}:{pid}.dc",
-    "description" : "",
-    "operations" : [ {
+    }, {
       "httpMethod" : "GET",
-      "nickname" : "getDC",
+      "nickname" : "getJson",
+      "responseClass" : "Response",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "the namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "Returns OAI-ORE as json-ld",
+      "notes" : ""
+    }, {
+      "httpMethod" : "GET",
+      "nickname" : "getRdfXml",
+      "responseClass" : "Response",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "the namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "Returns OAI-ORE as rdf-xml",
+      "notes" : ""
+    }, {
+      "httpMethod" : "GET",
+      "nickname" : "getHtml",
       "responseClass" : "Response",
       "parameters" : [ {
         "paramType" : "path",
@@ -273,7 +188,28 @@
         "required" : true,
         "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Returns a html view of the resource",
+      "notes" : ""
+    }, {
+      "httpMethod" : "GET",
+      "nickname" : "getNtriple",
+      "responseClass" : "Response",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "the namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "Returns OAI-ORE as n-triple",
       "notes" : ""
     } ]
   }, {
@@ -324,6 +260,31 @@
         "allowableValues" : null
       } ],
       "summary" : "Returns a OAI-ORE representation as json-ld.",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/resource/{namespace}:{pid}.oaidc",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "GET",
+      "nickname" : "getDC",
+      "responseClass" : "Response",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid of the resource the pid of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "the namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "Returns a oai-dc representation converted from the metadata",
       "notes" : ""
     } ]
   }, {
@@ -497,7 +458,7 @@
         "required" : true,
         "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Updates the actual data of the aggregated resource",
       "notes" : ""
     }, {
       "httpMethod" : "POST",
@@ -525,7 +486,109 @@
         "required" : true,
         "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Updates the actual data of the aggregated resource",
+      "notes" : ""
+    }, {
+      "httpMethod" : "DELETE",
+      "nickname" : "deleteData",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid of the resource the pid of the resource that data must\n            be deleted",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "Deletes the data stream",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/resource/{namespace}:{pid}/dc",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "GET",
+      "nickname" : "readDC",
+      "responseClass" : "DCBeanAnnotated",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid of the resource the pid of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "Returns Dublin Core metadata of the resource",
+      "notes" : ""
+    }, {
+      "httpMethod" : "PUT",
+      "nickname" : "updateDC",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "body",
+        "name" : "content",
+        "description" : "dublin core",
+        "dataType" : "DCBeanAnnotated",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "Updates Dublin Core metadata",
+      "notes" : ""
+    }, {
+      "httpMethod" : "POST",
+      "nickname" : "updateDCPost",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "body",
+        "name" : "content",
+        "description" : "dublin core",
+        "dataType" : "DCBeanAnnotated",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "Updates dublin core metadata",
       "notes" : ""
     } ]
   }, {
@@ -550,7 +613,7 @@
         "required" : true,
         "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Returns a xepicur stream for the resource",
       "notes" : ""
     } ]
   }, {
@@ -575,114 +638,11 @@
         "required" : true,
         "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Returns a text extraction, if the data is of mimetype application/pdf",
       "notes" : ""
     } ]
   }, {
-    "path" : "/resource/{namespace}:{pid}/oai_dc",
-    "description" : "",
-    "operations" : [ {
-      "httpMethod" : "GET",
-      "nickname" : "getOAI_DC",
-      "responseClass" : "Response",
-      "parameters" : [ {
-        "paramType" : "path",
-        "name" : "pid",
-        "description" : "the pid of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      }, {
-        "paramType" : "path",
-        "name" : "namespace",
-        "description" : "the namespace of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    } ]
-  }, {
-    "path" : "/resource/{pid}/data",
-    "description" : "",
-    "operations" : [ {
-      "httpMethod" : "DELETE",
-      "nickname" : "deleteData",
-      "responseClass" : "string",
-      "parameters" : [ {
-        "paramType" : "path",
-        "name" : "pid",
-        "description" : "the pid of the resource the pid of the resource that data must\n            be deleted",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    } ]
-  }, {
-    "path" : "/resource/{pid}/dc",
-    "description" : "",
-    "operations" : [ {
-      "httpMethod" : "GET",
-      "nickname" : "readDC",
-      "responseClass" : "DCBeanAnnotated",
-      "parameters" : [ {
-        "paramType" : "path",
-        "name" : "pid",
-        "description" : "the pid of the resource the pid of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    }, {
-      "httpMethod" : "PUT",
-      "nickname" : "updateDC",
-      "responseClass" : "string",
-      "parameters" : [ {
-        "paramType" : "path",
-        "name" : "pid",
-        "description" : "the pid of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      }, {
-        "paramType" : "body",
-        "name" : "content",
-        "description" : "dublin core",
-        "dataType" : "DCBeanAnnotated",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    }, {
-      "httpMethod" : "POST",
-      "nickname" : "updateDCPost",
-      "responseClass" : "string",
-      "parameters" : [ {
-        "paramType" : "body",
-        "name" : "pid",
-        "description" : "the pid of the resource",
-        "dataType" : "string",
-        "required" : true,
-        "allowableValues" : null
-      }, {
-        "paramType" : "body",
-        "name" : "content",
-        "description" : "dublin core",
-        "dataType" : "DCBeanAnnotated",
-        "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    } ]
-  }, {
-    "path" : "/resource/{pid}/metadata",
+    "path" : "/resource/{namespace}:{pid}/metadata",
     "description" : "",
     "operations" : [ {
       "httpMethod" : "GET",
@@ -695,8 +655,15 @@
         "dataType" : "string",
         "required" : true,
         "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Returns the metadata of the resource",
       "notes" : ""
     }, {
       "httpMethod" : "PUT",
@@ -710,6 +677,13 @@
         "required" : true,
         "allowableValues" : null
       }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
         "paramType" : "body",
         "name" : "content",
         "description" : "the metadata as n-triple rdf",
@@ -717,7 +691,7 @@
         "required" : true,
         "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Updates the metadata of the resource",
       "notes" : ""
     }, {
       "httpMethod" : "POST",
@@ -731,6 +705,13 @@
         "required" : true,
         "allowableValues" : null
       }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
         "paramType" : "body",
         "name" : "content",
         "description" : "the metadata as n-triple rdf",
@@ -738,7 +719,7 @@
         "required" : true,
         "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Updates the metadata of the resource",
       "notes" : ""
     }, {
       "httpMethod" : "DELETE",
@@ -751,12 +732,19 @@
         "dataType" : "string",
         "required" : true,
         "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Deletes the metadata of the resource",
       "notes" : ""
     } ]
   }, {
-    "path" : "/resource/{pid}/parents",
+    "path" : "/resource/{namespace}:{pid}/parents",
     "description" : "",
     "operations" : [ {
       "httpMethod" : "GET",
@@ -769,12 +757,19 @@
         "dataType" : "string",
         "required" : true,
         "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Lists all parents of the resource",
       "notes" : ""
     } ]
   }, {
-    "path" : "/resource/{pid}/parts",
+    "path" : "/resource/{namespace}:{pid}/parts",
     "description" : "",
     "operations" : [ {
       "httpMethod" : "GET",
@@ -787,8 +782,15 @@
         "dataType" : "string",
         "required" : true,
         "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
       } ],
-      "summary" : "",
+      "summary" : "Lists all children of the resource",
       "notes" : ""
     } ]
   } ],
