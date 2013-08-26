@@ -148,7 +148,7 @@ public class TestResource {
     private void testDublinCore(String pid, String namespace)
 	    throws IOException {
 	Resource resource = new Resource();
-	DCBeanAnnotated dc = resource.readDC(namespace + ":" + pid);
+	DCBeanAnnotated dc = resource.readDC(pid, namespace);
 	Assert.assertEquals("Test", dc.getCreator().get(0));
     }
 
@@ -157,7 +157,7 @@ public class TestResource {
 	Resource resource = new Resource();
 	DCBeanAnnotated dc = new DCBeanAnnotated();
 	dc.addCreator("Test");
-	resource.updateDC(namespace + ":" + pid, dc);
+	resource.updateDC(pid, namespace, dc);
     }
 
     private void uploadMetadata(String pid, String namespace)
@@ -166,7 +166,7 @@ public class TestResource {
 	String content = CopyUtils.copyToString(Thread.currentThread()
 		.getContextClassLoader().getResourceAsStream("test.nt"),
 		"utf-8");
-	resource.updateMetadata(namespace + ":" + pid, content);
+	resource.updateMetadata(pid, namespace, content);
 
     }
 
