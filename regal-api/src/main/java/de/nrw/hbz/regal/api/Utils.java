@@ -80,9 +80,8 @@ public class Utils {
     public String makeOaiSet(@PathParam("pid") String pid) {
 	try {
 	    return actions.makeOAISet(pid);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
+	} catch (RuntimeException e) {
+	    throw new HttpArchiveException(500, e);
 	}
 
     }

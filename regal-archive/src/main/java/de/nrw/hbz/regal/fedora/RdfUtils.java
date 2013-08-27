@@ -428,7 +428,7 @@ public class RdfUtils {
 		    URI object = f.createURI(link.getObject());
 		    con.add(subject, predicate, object);
 		} catch (IllegalArgumentException e) {
-		    System.out.println(link.getObject());
+		    // TODO implement
 		}
 	    }
 	}
