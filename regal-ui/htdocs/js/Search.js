@@ -125,7 +125,7 @@ Search.prototype.request = function(myQuery, searchterm) {
 			var totalHits = obj.hits.total;
 			$("#hitsDiv").empty().append("<b>Treffer: </b>", totalHits);
 			$("#hitsDiv").append(
-					"<div>" + elli.from + " - " + elli.to + "</div>");
+					"<div>" + search.from + " - " + search.to + "</div>");
 
 			if (totalHits == 0) {
 				// $("#debugDiv").empty().append(JSON.stringify(data, null, '
@@ -139,7 +139,7 @@ Search.prototype.request = function(myQuery, searchterm) {
 			// $("#debugDiv").append(JSON.stringify(data, null, ' '));
 			$("#outputDiv").empty();// .append("<h3>Output</h3>");
 			$("#outputDiv").append(
-					"<ol id=\"resultList\" start=\"" + elli.from + "\"> ");
+					"<ol id=\"resultList\" start=\"" + search.from + "\"> ");
 			var hit;
 			var index = 0;
 			for (hit in obj.hits.hits) {
@@ -215,9 +215,9 @@ Search.prototype.request = function(myQuery, searchterm) {
 			$("#outputDiv").append("</ol>");
 
 			/*
-			 * WTF: elli.XXXX heißt, dass das Ding im Kontext der aufrufenden
+			 * WTF: search.XXXX heißt, dass das Ding im Kontext der aufrufenden
 			 * Instanz läuft..Nicht schön: reiner Zufall, dass ich den Namen der
-			 * Variable elli kenn.
+			 * Variable search kenn.
 			 * 
 			 * 
 			 */
@@ -230,9 +230,9 @@ Search.prototype.request = function(myQuery, searchterm) {
 						.append(
 								"<input value=\"prev\" class=\"prev\" type=\"button\">");
 				$(".prev").click(function() {
-					elli.from = elli.from - elli.step;
-					elli.to = elli.to - elli.step;
-					elli.searchNext(elli.from, elli.step);
+					search.from = search.from - search.step;
+					search.to = search.to - search.step;
+					search.searchNext(search.from, search.step);
 
 				});
 			}
@@ -252,9 +252,9 @@ Search.prototype.request = function(myQuery, searchterm) {
 				$(".allSteps").change(function() {
 					// * 1 makes it a number
 					val = $(".allSteps").val() * 1;
-					elli.from = val;
-					elli.to = val + elli.step;
-					elli.searchNext(elli.from, elli.step);
+					search.from = val;
+					search.to = val + search.step;
+					search.searchNext(search.from, search.step);
 
 				});
 			}
@@ -267,9 +267,9 @@ Search.prototype.request = function(myQuery, searchterm) {
 								"<input value=\"next\" class=\"next\" type=\"button\">");
 				$(".next").click(function() {
 
-					elli.from = elli.from + elli.step;
-					elli.to = elli.to + elli.step;
-					elli.searchNext(elli.from, elli.step);
+					search.from = search.from + search.step;
+					search.to = search.to + search.step;
+					search.searchNext(search.from, search.step);
 
 				});
 			}
