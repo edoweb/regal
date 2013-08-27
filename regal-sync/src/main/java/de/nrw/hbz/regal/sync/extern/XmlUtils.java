@@ -156,7 +156,7 @@ public class XmlUtils {
      */
     public static String fileToString(File file) throws Exception {
 	if (file == null || !file.exists()) {
-	    System.out.println("NO MARC METADATA");
+	    // /System.out.println("NO MARC METADATA");
 	    return "";
 	}
 	byte[] buffer = new byte[(int) file.length()];

@@ -41,6 +41,29 @@ import de.nrw.hbz.regal.fedora.FedoraInterface;
 import de.nrw.hbz.regal.fedora.RdfUtils;
 
 class Services {
+    public class MetadataNotFoundException extends RuntimeException {
+
+	public MetadataNotFoundException() {
+	    // TODO Auto-generated constructor stub
+	}
+
+	public MetadataNotFoundException(String arg0) {
+	    super(arg0);
+	    // TODO Auto-generated constructor stub
+	}
+
+	public MetadataNotFoundException(Throwable arg0) {
+	    super(arg0);
+	    // TODO Auto-generated constructor stub
+	}
+
+	public MetadataNotFoundException(String arg0, Throwable arg1) {
+	    super(arg0, arg1);
+	    // TODO Auto-generated constructor stub
+	}
+
+    }
+
     final static Logger logger = LoggerFactory.getLogger(Services.class);
     FedoraInterface fedora = null;
     String uriPrefix = null;
@@ -256,7 +279,7 @@ class Services {
 	    return pid + " successfully created oai sets!";
 
 	} catch (Exception e) {
-	    throw new HttpArchiveException(500, e);
+	    throw new MetadataNotFoundException(e);
 	}
     }
 

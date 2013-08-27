@@ -95,16 +95,6 @@ public class Link {
 
     }
 
-    // /**
-    // * @param object
-    // * the rdf object as string.
-    // *
-    // */
-    // public void setObject(String object) {
-    // this.object = object;
-    //
-    // }
-
     @Override
     public boolean equals(Object obj) {
 	if (obj == null)

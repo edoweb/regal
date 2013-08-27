@@ -72,7 +72,7 @@ public class DigitalEntity {
 	if (pid == null)
 	    throw new Exception("Can't set Attribute please set PID first.");
 	if (file == null || !file.exists()) {
-	    System.out.println("NO MARC METADATA");
+	    // System.out.println("NO MARC METADATA");
 	    return "";
 	}
 	byte[] buffer = new byte[(int) file.length()];

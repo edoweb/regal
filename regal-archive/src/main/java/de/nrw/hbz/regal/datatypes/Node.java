@@ -830,12 +830,12 @@ public class Node {
 	Vector<Link> removed = new Vector<Link>();
 	for (Link rel : relsExt) {
 	    if (rel.getPredicate().compareTo(predicate) == 0) {
-		System.out.println("REMOVE: " + this.pid + " <"
-			+ rel.getPredicate() + "> " + rel.getObject());
+		// System.out.println("REMOVE: " + this.pid + " <"
+		// + rel.getPredicate() + "> " + rel.getObject());
 		removed.add(rel);
 	    } else {
-		System.out.println("ADD: " + this.pid + " <"
-			+ rel.getPredicate() + "> " + rel.getObject());
+		// System.out.println("ADD: " + this.pid + " <"
+		// + rel.getPredicate() + "> " + rel.getObject());
 		newRels.add(rel);
 	    }
 	}

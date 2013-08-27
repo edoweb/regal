@@ -63,7 +63,7 @@ class OaiSetBuilder {
 	    if (object.startsWith("http://dewey.info/class/")) {
 		String ddc = object.subSequence(object.length() - 4,
 			object.length() - 1).toString();
-		System.out.println("Found rdf ddc: " + ddc);
+		// System.out.println("Found rdf ddc: " + ddc);
 
 		name = ddcmap(ddc);
 		spec = "ddc:" + ddc;

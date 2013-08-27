@@ -842,17 +842,6 @@ public class Utils {
 
     }
 
-    /**
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description:
-     * </p>
-     * 
-     * @param user2
-     * @param objXML
-     */
     String setOwnerToXMLString(String objXML) {
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	try {
@@ -909,32 +898,10 @@ public class Utils {
 	return null;
     }
 
-    /**
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description:
-     * </p>
-     * 
-     * @param textContent
-     * @return
-     */
     private String transformFromXMLEntity(String textContent) {
 	return textContent.replaceAll("[&]amp;", "&");
     }
 
-    /**
-     * <p>
-     * <em>Title: </em>
-     * </p>
-     * <p>
-     * Description:
-     * </p>
-     * 
-     * @param string
-     * @return
-     */
     private String transformToXMLEntity(String string) {
 	final StringBuilder result = new StringBuilder();
 	final StringCharacterIterator iterator = new StringCharacterIterator(
