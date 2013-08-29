@@ -91,6 +91,116 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  */
 class FedoraFacade implements FedoraInterface {
+
+    private class DeleteException extends ArchiveException {
+
+	private static final long serialVersionUID = -7879667636793687166L;
+
+	public DeleteException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+
+    }
+
+    private class ReadNodeException extends ArchiveException {
+
+	private static final long serialVersionUID = 7338818611992590876L;
+
+	public ReadNodeException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+
+    }
+
+    private class InitializeFedoraFacadeException extends ArchiveException {
+
+	private static final long serialVersionUID = 5357635794214927895L;
+
+	public InitializeFedoraFacadeException(final String message,
+		final Throwable cause) {
+	    super(message, cause);
+	}
+
+	public InitializeFedoraFacadeException(final Throwable cause) {
+	    super(cause);
+	}
+
+    }
+
+    public class XmlException extends ArchiveException {
+
+	private static final long serialVersionUID = -4955991522087336862L;
+
+	public XmlException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class UpdateContentModel extends ArchiveException {
+
+	private static final long serialVersionUID = 1794883693210840141L;
+
+	public UpdateContentModel(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class DeleteDatastreamException extends ArchiveException {
+
+	private static final long serialVersionUID = 128120359698836741L;
+
+	public DeleteDatastreamException(final String message,
+		final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class GetPidException extends ArchiveException {
+
+	private static final long serialVersionUID = 5316657644921457520L;
+
+	public GetPidException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class CreateNodeException extends ArchiveException {
+
+	private static final long serialVersionUID = 8569995140758544941L;
+
+	public CreateNodeException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+
+	public CreateNodeException(final Throwable cause) {
+	    super(cause);
+	}
+
+    }
+
+    public class SearchException extends ArchiveException {
+
+	private static final long serialVersionUID = -276889477323963368L;
+
+	public SearchException(final String message, final Throwable cause) {
+	    super(message, cause);
+	}
+    }
+
+    public class NodeNotFoundException extends ArchiveException {
+
+	private static final long serialVersionUID = 8851350561350951329L;
+
+	public NodeNotFoundException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+
+	public NodeNotFoundException(String message) {
+	    super(message);
+	}
+
+    }
+
     final static Logger logger = LoggerFactory.getLogger(FedoraFacade.class);
 
     static FedoraFacade me = null;
@@ -691,184 +801,4 @@ class FedoraFacade implements FedoraInterface {
 		.content(cmBuilder.getWsdl(cm)).execute();
 
     }
-
-    private class DeleteException extends ArchiveException {
-
-	private static final long serialVersionUID = -7879667636793687166L;
-
-	public DeleteException(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-
-    }
-
-    private class ReadNodeException extends ArchiveException {
-
-	private static final long serialVersionUID = 7338818611992590876L;
-
-	public ReadNodeException(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-
-    }
-
-    private class InitializeFedoraFacadeException extends ArchiveException {
-
-	private static final long serialVersionUID = 5357635794214927895L;
-
-	public InitializeFedoraFacadeException(final String message,
-		final Throwable cause) {
-	    super(message, cause);
-	}
-
-	public InitializeFedoraFacadeException(final Throwable cause) {
-	    super(cause);
-	}
-
-    }
-
-    public class XmlException extends ArchiveException {
-
-	private static final long serialVersionUID = -4955991522087336862L;
-
-	public XmlException(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-    }
-
-    public class UpdateContentModel extends ArchiveException {
-
-	private static final long serialVersionUID = 1794883693210840141L;
-
-	public UpdateContentModel(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-    }
-
-    public class DeleteDatastreamException extends ArchiveException {
-
-	private static final long serialVersionUID = 128120359698836741L;
-
-	public DeleteDatastreamException(final String message,
-		final Throwable cause) {
-	    super(message, cause);
-	}
-    }
-
-    public class GetPidException extends ArchiveException {
-
-	private static final long serialVersionUID = 5316657644921457520L;
-
-	public GetPidException(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-    }
-
-    public class CreateNodeException extends ArchiveException {
-
-	private static final long serialVersionUID = 8569995140758544941L;
-
-	public CreateNodeException(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-
-	public CreateNodeException(final Throwable cause) {
-	    super(cause);
-	}
-
-    }
-
-    public class SearchException extends ArchiveException {
-
-	private static final long serialVersionUID = -276889477323963368L;
-
-	public SearchException(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-    }
-
-    public class NodeNotFoundException extends ArchiveException {
-
-	private static final long serialVersionUID = 8851350561350951329L;
-
-	public NodeNotFoundException(String message, Throwable cause) {
-	    super(message, cause);
-	}
-
-	public NodeNotFoundException(String message) {
-	    super(message);
-	}
-
-    }
-    // public Node createComplexObject(ComplexObject tree) {
-    // Node object = tree.getRoot();
-    // createNode(object);
-    // for (int i = 0; i < tree.sizeOfChildren(); i++) {
-    // ComplexObjectNode node = tree.getChild(i);
-    // iterateCreate(node, object);
-    // }
-    // return readNode(object.getPID());
-    //
-    // }
-    //
-    // private void iterateCreate(ComplexObjectNode tnode, Node parent) {
-    // Node node = tnode.getMe();
-    // node = createNode(parent, node);
-    // for (int i = 0; i < tnode.sizeOfChildren(); i++) {
-    // ComplexObjectNode n1 = tnode.getChild(i);
-    // iterateCreate(n1, node);
-    // }
-    // }
-    //
-    // public ComplexObject readComplexObject(String rootPID) {
-    // Node object = readNode(rootPID);
-    // ComplexObject complexObject = new ComplexObject(object);
-    // Vector<Link> rels = object.getRelsExt();
-    // for (Link rel : rels) {
-    // if (rel.getPredicate().compareTo(HAS_PART) == 0) {
-    // String pid = removeUriPrefix(rel.getObject());
-    // if (pid.compareTo(rootPID) == 0)
-    // continue;
-    // Node child = readNode(pid);
-    // ComplexObjectNode cn = new ComplexObjectNode(child);
-    // complexObject.addChild(cn);
-    // add(rootPID, cn, child.getRelsExt());
-    // }
-    // }
-    // return complexObject;
-    // }
-    //
-    // private void add(String rootPID, ComplexObjectNode cn, Vector<Link> rels)
-    // {
-    // for (Link rel : rels) {
-    // if (rel.getPredicate().compareTo(HAS_PART) == 0) {
-    // String pid = removeUriPrefix(rel.getObject());
-    // if (pid.compareTo(rootPID) == 0)
-    // continue;
-    // Node child = readNode(pid);
-    // ComplexObjectNode cn2 = new ComplexObjectNode(child);
-    // cn.addChild(cn2);
-    // add(rootPID, cn2, child.getRelsExt());
-    // }
-    // }
-    // }
-
-    // @Override
-    // public void updateComplexObject(ComplexObject tree) {
-    // Node object = tree.getRoot();
-    // for (int i = 0; i < tree.sizeOfChildren(); i++) {
-    // ComplexObjectNode node = tree.getChild(i);
-    // iterateUpdate(node, object);
-    // }
-    // updateNode(object);
-    // }
-    //
-    // private void iterateUpdate(ComplexObjectNode tnode, Node parent) {
-    // Node node = tnode.getMe();
-    // updateNode(node);
-    // for (int i = 0; i < tnode.sizeOfChildren(); i++) {
-    // ComplexObjectNode n1 = tnode.getChild(i);
-    // iterateUpdate(n1, node);
-    // }
-    // }
 }

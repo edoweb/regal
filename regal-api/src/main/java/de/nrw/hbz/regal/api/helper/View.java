@@ -83,18 +83,6 @@ public class View {
 
     private Date lastModified = null;
 
-    // Vector<String> htmlUrl = null;
-    // Vector<String> metsUrl = null;
-    // Vector<String> oaioreUrl = null;
-    // Vector<String> oaidcUrl = null;
-    // Vector<String> xepicurUrl = null;
-    // Vector<String> xmetadissplusUrl = null;
-    // Vector<String> alephMarcUrl = null;
-    // Vector<String> editorUrl = null;
-    // Vector<String> oaiPmhUrl = null;
-    // Vector<String> qdcUrl = null;
-    // Vector<String> jsonUrl = null;
-
     /**
      * Creates an empty view with preinitialised datastructs
      */
@@ -140,114 +128,8 @@ public class View {
 	identifier = new Vector<String>();
 	predicates = new Vector<SimpleEntry>();
 	contributer = new Vector<String>();
-	// Not Implemented yet: First make Cool URIs!
-	// metsUrl = new Vector<String>();
-	// oaioreUrl = new Vector<String>();
-	// oaidcUrl = new Vector<String>();
-	// xepicurUrl = new Vector<String>();
-	// xmetadissplusUrl = new Vector<String>();
-	// alephMarcUrl = new Vector<String>();
-	// editorUrl = new Vector<String>();
-	// oaiPmhUrl = new Vector<String>();
-	// qdcUrl = new Vector<String>();
-	// htmlUrl = new Vector<String>();
-	// jsonUrl = new Vector<String>();
-    }
 
-    // public Vector<String> getQdcUrl()
-    // {
-    // return qdcUrl;
-    // }
-    //
-    // public void setQdcUrl(Vector<String> qdcUrl)
-    // {
-    // this.qdcUrl = qdcUrl;
-    // }
-    //
-    // public Vector<String> getMetsUrl()
-    // {
-    // return metsUrl;
-    // }
-    //
-    // public void setMetsUrl(Vector<String> metsUrl)
-    // {
-    // this.metsUrl = metsUrl;
-    // }
-    //
-    // public Vector<String> getOaioreUrl()
-    // {
-    // return oaioreUrl;
-    // }
-    //
-    // public void setOaioreUrl(Vector<String> oaioreUrl)
-    // {
-    // this.oaioreUrl = oaioreUrl;
-    // }
-    //
-    // public Vector<String> getOaidcUrl()
-    // {
-    // return oaidcUrl;
-    // }
-    //
-    // public void setOaidcUrl(Vector<String> oaidcUrl)
-    // {
-    // this.oaidcUrl = oaidcUrl;
-    // }
-    //
-    // public Vector<String> getXepicurUrl()
-    // {
-    // return xepicurUrl;
-    // }
-    //
-    // public void setXepicurUrl(Vector<String> xepicurUrl)
-    // {
-    // this.xepicurUrl = xepicurUrl;
-    // }
-    //
-    // public Vector<String> getXmetadissplusUrl()
-    // {
-    // return xmetadissplusUrl;
-    // }
-    //
-    // public void setXmetadissplusUrl(Vector<String> xmetadissplusUrl)
-    // {
-    // this.xmetadissplusUrl = xmetadissplusUrl;
-    // }
-    //
-    // public Vector<String> getAlephMarcUrl()
-    // {
-    // return alephMarcUrl;
-    // }
-    //
-    // public void setAlephMarcUrl(Vector<String> alephMarcUrl)
-    // {
-    // this.alephMarcUrl = alephMarcUrl;
-    // }
-    //
-    // public Vector<String> getEditorUrl()
-    // {
-    // return editorUrl;
-    // }
-    //
-    // public void setEditorUrl(Vector<String> editorUrl)
-    // {
-    // this.editorUrl = editorUrl;
-    // }
-    //
-    // public Vector<String> getOaiPmhUrl()
-    // {
-    // return oaiPmhUrl;
-    // }
-    //
-    // public void setOaiPmhUrl(Vector<String> oaiPmhUrl)
-    // {
-    // this.oaiPmhUrl = oaiPmhUrl;
-    // }
-    //
-    // public Vector<String> getVerbundUrl()
-    // {
-    // return verbundUrl;
-    // }
+    }
 
     public Vector<String> getContributer() {
 	return contributer;
@@ -483,16 +365,6 @@ public class View {
 	return creator;
     }
 
-    // public Vector<String> getHtmlUrl()
-    // {
-    // return htmlUrl;
-    // }
-    //
-    // public void setHtmlUrl(Vector<String> htmlUrl)
-    // {
-    // this.htmlUrl = htmlUrl;
-    // }
-
     public void setCreator(Vector<String> creator) {
 	this.creator = creator;
     }
@@ -655,36 +527,6 @@ public class View {
 	return rights.add(e);
     }
 
-    // public boolean addQdcUrl(String e)
-    // {
-    // return qdcUrl.add(e);
-    // }
-    //
-    // public boolean addOaiOreUrl(String e)
-    // {
-    // return oaioreUrl.add(e);
-    // }
-    //
-    // public boolean addHtmlUrl(String e)
-    // {
-    // return htmlUrl.add(e);
-    // }
-    //
-    // public boolean addJsonUrl(String e)
-    // {
-    // return jsonUrl.add(e);
-    // }
-    //
-    // public Vector<String> getJsonUrl()
-    // {
-    // return jsonUrl;
-    // }
-    //
-    // public void setJsonUrl(Vector<String> jsonUrl)
-    // {
-    // this.jsonUrl = jsonUrl;
-    // }
-
     public String getFirstAlephId() {
 	if (alephid.isEmpty())
 	    return "";
@@ -833,38 +675,6 @@ public class View {
 	    str = "";
 	return str;
     }
-
-    // public String getFirstQdcUrl()
-    // {
-    // String str = qdcUrl.firstElement();
-    // if (str == null)
-    // str = "";
-    // return str;
-    // }
-    //
-    // public String getFirstOaiOreUrl()
-    // {
-    // String str = oaioreUrl.firstElement();
-    // if (str == null)
-    // str = "";
-    // return str;
-    // }
-    //
-    // public String getFirstHtmlUrl()
-    // {
-    // String str = htmlUrl.firstElement();
-    // if (str == null)
-    // str = "";
-    // return str;
-    // }
-    //
-    // public String getFirstJsonUrl()
-    // {
-    // String str = jsonUrl.firstElement();
-    // if (str == null)
-    // str = "";
-    // return str;
-    // }
 
     public void addIdentifier(String id) {
 	identifier.add(id);

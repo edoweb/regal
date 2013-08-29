@@ -79,11 +79,8 @@ public class RdfUtils {
 	    RDFFormat outf, String accept) {
 
 	Graph myGraph = null;
-	try {
-	    myGraph = readRdfUrlToGraph(url, inf, accept);
-	} catch (IOException e) {
-	    throw new RdfException(e);
-	}
+
+	myGraph = readRdfUrlToGraph(url, inf, accept);
 
 	StringWriter out = new StringWriter();
 	RDFWriter writer = Rio.createWriter(outf, out);
@@ -108,16 +105,17 @@ public class RdfUtils {
      * @param accept
      *            the accept header
      * @return a Graph with the rdf
-     * @throws IOException
-     *             if something goes wrong
      */
-    public static Graph readRdfUrlToGraph(URL url, RDFFormat inf, String accept)
-	    throws IOException {
-	URLConnection con = url.openConnection();
-	con.setRequestProperty("Accept", accept);
-	con.connect();
-	InputStream inputStream = con.getInputStream();
-	return readRdfInputstreamToGraph(inputStream, inf, url.toString());
+    public static Graph readRdfUrlToGraph(URL url, RDFFormat inf, String accept) {
+	try {
+	    URLConnection con = url.openConnection();
+	    con.setRequestProperty("Accept", accept);
+	    con.connect();
+	    InputStream inputStream = con.getInputStream();
+	    return readRdfInputstreamToGraph(inputStream, inf, url.toString());
+	} catch (Exception e) {
+	    throw new RdfException(e);
+	}
     }
 
     /**
@@ -128,11 +126,9 @@ public class RdfUtils {
      * @param baseUrl
      *            see sesame docu
      * @return a Graph representing the rdf in the input stream
-     * @throws IOException
-     *             if something goes wrong
      */
     public static Graph readRdfInputstreamToGraph(InputStream inputStream,
-	    RDFFormat inf, String baseUrl) throws IOException {
+	    RDFFormat inf, String baseUrl) {
 	RDFParser rdfParser = Rio.createParser(inf);
 	org.openrdf.model.Graph myGraph = new TreeModel();
 	StatementCollector collector = new StatementCollector(myGraph);
