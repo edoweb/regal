@@ -53,7 +53,7 @@ public class ContentModelFactory {
 	cm.setServiceDeploymentPID(namespace + "CM:pdfServiceDeployment");
 
 	cm.addMethod("pdfbox", "http://localhost/utils/pdfbox/(pid)");
-	cm.addMethod("itext", "http://localhost/utils/itext/(pid)");
+	cm.addMethod("pdfa", "http://localhost/utils/pdfa/(pid)");
 
 	return cm;
     }
@@ -124,6 +124,34 @@ public class ContentModelFactory {
 	cm.setContentModelPID(namespace + "CM:VersionObjectModel");
 	cm.setServiceDefinitionPID(namespace + "CM:VersionServiceDefinition");
 	cm.setServiceDeploymentPID(namespace + "CM:VersionServiceDeployment");
+
+	return cm;
+    }
+
+    /**
+     * @param namespace
+     *            Contentmodels live in their own namespaces
+     * @return a ContentModel object
+     */
+    public static ContentModel createFileModel(String namespace) {
+	ContentModel cm = new ContentModel();
+	cm.setContentModelPID(namespace + "CM:FileObjectModel");
+	cm.setServiceDefinitionPID(namespace + "CM:FileServiceDefinition");
+	cm.setServiceDeploymentPID(namespace + "CM:FileServiceDeployment");
+
+	return cm;
+    }
+
+    /**
+     * @param namespace
+     *            Contentmodels live in their own namespaces
+     * @return a ContentModel object
+     */
+    public static ContentModel createIssueModel(String namespace) {
+	ContentModel cm = new ContentModel();
+	cm.setContentModelPID(namespace + "CM:IssueObjectModel");
+	cm.setServiceDefinitionPID(namespace + "CM:IssueServiceDefinition");
+	cm.setServiceDeploymentPID(namespace + "CM:IssueServiceDeployment");
 
 	return cm;
     }

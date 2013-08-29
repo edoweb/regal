@@ -39,12 +39,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.nrw.hbz.regal.api.helper.ObjectType;
+import de.nrw.hbz.regal.api.helper.XmlUtils;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityRelation;
 import de.nrw.hbz.regal.sync.extern.RelatedDigitalEntity;
 import de.nrw.hbz.regal.sync.extern.StreamType;
-import de.nrw.hbz.regal.sync.extern.XmlUtils;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de

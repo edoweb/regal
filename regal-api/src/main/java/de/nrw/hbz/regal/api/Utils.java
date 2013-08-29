@@ -17,6 +17,7 @@
 package de.nrw.hbz.regal.api;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -190,6 +191,52 @@ public class Utils {
 	    // the user's information was modified, return it
 	    if (builder == null) {
 		builder = Response.ok(actions.pdfbox(node));
+	    }
+
+	    // the user's information was not modified, return a 304
+	    return builder.cacheControl(cacheControl)
+		    .lastModified(node.getLastModified()).tag(eTag).build();
+
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
+	}
+    }
+
+    /**
+     * @param pid
+     *            the pid must contain a data stream with mime type
+     *            application/pdf
+     * @param request
+     *            lastModified is checked.
+     * @return a text/plain message containing the extracted text
+     */
+    @GET
+    @Path("/pdfa/{pid}")
+    @Produces({ "text/plain; charset=UTF-8" })
+    public Response pdfa(@PathParam("pid") String pid, @Context Request request) {
+	try {
+	    Node node = actions.readNode(pid);
+
+	    final EntityTag eTag = new EntityTag(node.getPID() + "_"
+		    + node.getLastModified().getTime());
+
+	    final CacheControl cacheControl = new CacheControl();
+	    cacheControl.setMaxAge(-1);
+
+	    ResponseBuilder builder = request.evaluatePreconditions(
+		    node.getLastModified(), eTag);
+
+	    // the user's information was modified, return it
+	    if (builder == null) {
+		String redirectUrl = actions.pdfa(node);
+		try {
+		    builder = Response.temporaryRedirect(
+			    new java.net.URI(redirectUrl)).status(303);
+		} catch (URISyntaxException e) {
+		    throw new HttpArchiveException(
+			    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
+		}
 	    }
 
 	    // the user's information was not modified, return a 304

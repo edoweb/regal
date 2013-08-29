@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -26,6 +27,7 @@ import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -472,5 +474,33 @@ class Services {
 	    fedora.createNode(oaiset);
 
 	}
+    }
+
+    public String pdfa(Node node, String fedoraExtern) {
+	String redirectUrl = null;
+	try {
+	    URL pdfaConverter = new URL(
+		    "http://nyx.hbz-nrw.de/pdfa/api/convertFromUrl?inputFile="
+			    + fedoraExtern + "/objects/" + node.getPID()
+			    + "/datastreams/data/content");
+
+	    HttpURLConnection connection = (HttpURLConnection) pdfaConverter
+		    .openConnection();
+	    connection.setRequestMethod("POST");
+	    connection.setRequestProperty("Accept", "application/xml");
+	    Element root = XmlUtils.getDocument(connection.getInputStream());
+	    List<Element> elements = XmlUtils.getElements("//resultFileUrl",
+		    root, null);
+	    if (elements.size() != 1)
+		throw new HttpArchiveException(500,
+			"PDFa conversion returns wrong numbers of resultFileUrls: "
+				+ elements.size());
+	    redirectUrl = elements.get(0).getTextContent();
+
+	    return redirectUrl;
+	} catch (Exception e) {
+	    throw new HttpArchiveException(500, e);
+	}
+
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal.sync.extern;
+package de.nrw.hbz.regal.api.helper;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Vector;
 
@@ -88,28 +89,11 @@ public class XmlUtils {
      *             RuntimeException if something goes wrong
      */
     public static Element getDocument(File digitalEntityFile) {
-
 	try {
-	    DocumentBuilderFactory factory = DocumentBuilderFactory
-		    .newInstance();
-	    factory.setNamespaceAware(true);
-	    DocumentBuilder docBuilder = factory.newDocumentBuilder();
-
-	    Document doc = docBuilder.parse(new BufferedInputStream(
-		    new FileInputStream(digitalEntityFile)));
-	    Element root = doc.getDocumentElement();
-	    root.normalize();
-	    return root;
+	    return getDocument(new FileInputStream(digitalEntityFile));
 	} catch (FileNotFoundException e) {
 	    throw new XmlException(e);
-	} catch (SAXException e) {
-	    throw new XmlException(e);
-	} catch (IOException e) {
-	    throw new XmlException(e);
-	} catch (ParserConfigurationException e) {
-	    throw new XmlException(e);
 	}
-
     }
 
     /**
@@ -120,33 +104,7 @@ public class XmlUtils {
      *             RuntimeException if something goes wrong
      */
     public static Element getDocument(String xmlString) {
-	try {
-	    DocumentBuilderFactory factory = DocumentBuilderFactory
-		    .newInstance();
-	    factory.setNamespaceAware(true);
-	    DocumentBuilder docBuilder;
-
-	    docBuilder = factory.newDocumentBuilder();
-
-	    Document doc = docBuilder.parse(new BufferedInputStream(
-		    new ByteArrayInputStream(xmlString.getBytes())));
-	    Element root = doc.getDocumentElement();
-	    root.normalize();
-	    return root;
-	} catch (FileNotFoundException e) {
-	    throw new XmlException(e);
-	} catch (SAXException e) {
-
-	    throw new XmlException(e);
-	} catch (IOException e) {
-
-	    throw new XmlException(e);
-	} catch (ParserConfigurationException e) {
-
-	    throw new XmlException(e);
-	} catch (Exception e) {
-	    throw new XmlException(e);
-	}
+	return getDocument(new ByteArrayInputStream(xmlString.getBytes()));
 
     }
 
@@ -220,7 +178,8 @@ public class XmlUtils {
 	    NamespaceContext nscontext) {
 	XPathFactory xpathFactory = XPathFactory.newInstance();
 	XPath xpath = xpathFactory.newXPath();
-	xpath.setNamespaceContext(nscontext);
+	if (nscontext != null)
+	    xpath.setNamespaceContext(nscontext);
 	NodeList elements;
 	try {
 	    elements = (NodeList) xpath.evaluate(xPathStr, root,
@@ -238,6 +197,37 @@ public class XmlUtils {
 	    return result;
 	} catch (XPathExpressionException e1) {
 	    throw new XPathException(e1);
+	}
+
+    }
+
+    /**
+     * @param inputStream
+     *            the xml stream
+     * @return the root element as org.w3c.dom.Element
+     * @throws XmlException
+     *             RuntimeException if something goes wrong
+     */
+    public static Element getDocument(InputStream inputStream) {
+	try {
+	    DocumentBuilderFactory factory = DocumentBuilderFactory
+		    .newInstance();
+	    factory.setNamespaceAware(true);
+	    DocumentBuilder docBuilder = factory.newDocumentBuilder();
+
+	    Document doc = docBuilder
+		    .parse(new BufferedInputStream(inputStream));
+	    Element root = doc.getDocumentElement();
+	    root.normalize();
+	    return root;
+	} catch (FileNotFoundException e) {
+	    throw new XmlException(e);
+	} catch (SAXException e) {
+	    throw new XmlException(e);
+	} catch (IOException e) {
+	    throw new XmlException(e);
+	} catch (ParserConfigurationException e) {
+	    throw new XmlException(e);
 	}
 
     }

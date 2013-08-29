@@ -28,7 +28,7 @@ import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.nrw.hbz.regal.sync.extern.XmlUtils;
+import de.nrw.hbz.regal.api.helper.XmlUtils;
 
 /**
  * http://193.30.112.23:9280/fedora/get/dipp:1001?xml=true

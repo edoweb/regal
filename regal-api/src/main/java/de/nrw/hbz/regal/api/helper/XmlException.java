@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal.sync.extern;
+package de.nrw.hbz.regal.api.helper;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de

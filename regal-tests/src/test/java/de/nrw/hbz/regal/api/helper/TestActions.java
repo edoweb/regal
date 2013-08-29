@@ -144,6 +144,35 @@ public class TestActions {
     }
 
     @Test
+    public void pdfa() throws IOException, URISyntaxException {
+	createTestObject("123");
+	Node node = actions.readNode("test:123");
+	String response = actions.pdfa(node);
+	Assert.assertNotNull(response);
+	System.out.println(response);
+    }
+
+    @Test
+    public void pdfbox() throws IOException, URISyntaxException {
+	createTestObject("123");
+	Node node = actions.readNode("test:123");
+	String response = actions.pdfbox(node);
+	Assert.assertNotNull(response);
+	Assert.assertEquals("test\n", response);
+	System.out.println(response);
+    }
+
+    @Test
+    public void itext() throws IOException, URISyntaxException {
+	createTestObject("123");
+	Node node = actions.readNode("test:123");
+	String response = actions.itext(node);
+	Assert.assertNotNull(response);
+	Assert.assertEquals("test", response);
+	System.out.println(response);
+    }
+
+    @Test
     public void html() throws IOException {
 	createTestObject("123");
 	String str = actions.getReM("test:123", "text/html");

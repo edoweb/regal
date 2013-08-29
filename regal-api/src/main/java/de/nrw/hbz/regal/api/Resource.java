@@ -118,6 +118,12 @@ public class Resource {
 	    } else if (input.type.compareTo(ObjectType.volume.toString()) == 0) {
 		models.add(ContentModelFactory.createVolumeModel(namespace));
 		models.add(ContentModelFactory.createPdfModel(namespace));
+	    } else if (input.type.compareTo(ObjectType.file.toString()) == 0) {
+		models.add(ContentModelFactory.createFileModel(namespace));
+		models.add(ContentModelFactory.createPdfModel(namespace));
+	    } else if (input.type.compareTo(ObjectType.issue.toString()) == 0) {
+		models.add(ContentModelFactory.createIssueModel(namespace));
+		models.add(ContentModelFactory.createPdfModel(namespace));
 	    }
 	    models.add(ContentModelFactory.createHeadModel(namespace));
 	    Node node = actions.createResource(input, pid, namespace, models);

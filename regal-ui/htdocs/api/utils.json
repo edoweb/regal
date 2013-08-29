@@ -142,6 +142,24 @@
       "notes" : ""
     } ]
   }, {
+    "path" : "/utils/pdfa/{pid}",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "GET",
+      "nickname" : "pdfa",
+      "responseClass" : "Response",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid must contain a data stream with mime type\n            application/pdf",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
     "path" : "/utils/pdfbox/{pid}",
     "description" : "",
     "operations" : [ {
@@ -160,4 +178,4 @@
       "notes" : ""
     } ]
   } ],
-"swaggerVersion" : "1.1","resourcePath" : "/${var}"}
+"swaggerVersion" : "1.1","resourcePath" : "/utils"}

@@ -774,4 +774,8 @@ public class Actions {
 	else
 	    return findByType(type);
     }
+
+    public String pdfa(Node node) {
+	return services.pdfa(node, fedoraExtern);
+    }
 }

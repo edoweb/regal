@@ -20,6 +20,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
 
+import de.nrw.hbz.regal.api.helper.XmlUtils;
+
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 

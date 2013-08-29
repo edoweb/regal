@@ -90,6 +90,26 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  */
 public class Utils {
 
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class NoPidFoundException extends RuntimeException {
+
+	public NoPidFoundException() {
+	}
+
+	public NoPidFoundException(String arg0) {
+	    super(arg0);
+	}
+
+	public NoPidFoundException(Throwable arg0) {
+	    super(arg0);
+	}
+
+	public NoPidFoundException(String arg0, Throwable arg1) {
+	    super(arg0, arg1);
+	}
+
+    }
+
     private String user = null;
 
     /**
@@ -960,30 +980,6 @@ public class Utils {
 		    // + curHBZLink.getObject() + ">");
 		}
 	    }
-    }
-
-    @SuppressWarnings({ "javadoc", "serial" })
-    public class NoPidFoundException extends RuntimeException {
-
-	public NoPidFoundException() {
-	    // TODO Auto-generated constructor stub
-	}
-
-	public NoPidFoundException(String arg0) {
-	    super(arg0);
-	    // TODO Auto-generated constructor stub
-	}
-
-	public NoPidFoundException(Throwable arg0) {
-	    super(arg0);
-	    // TODO Auto-generated constructor stub
-	}
-
-	public NoPidFoundException(String arg0, Throwable arg1) {
-	    super(arg0, arg1);
-	    // TODO Auto-generated constructor stub
-	}
-
     }
 
 }

@@ -2,9 +2,9 @@ package de.nrw.hbz.regal.sync;
 
 import org.junit.Test;
 
+import de.nrw.hbz.regal.api.helper.XmlUtils;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.StreamType;
-import de.nrw.hbz.regal.sync.extern.XmlUtils;
 import de.nrw.hbz.regal.sync.ingest.DigitoolDownloader;
 import de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder;
 
