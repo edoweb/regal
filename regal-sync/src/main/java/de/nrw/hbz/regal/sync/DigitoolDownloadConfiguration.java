@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 
@@ -28,50 +27,43 @@ import org.apache.commons.configuration.Configuration;
  * @author Jan Schnasse
  * 
  */
-public class DigitoolDownloadConfiguration
-{
-	private CompositeConfiguration config = null;
+public class DigitoolDownloadConfiguration {
+    private CompositeConfiguration config = null;
 
-	/**
-	 * @param args
-	 *            Command line arguments
-	 * @param options
-	 *            Command line options
-	 * @param cl
-	 *            Calling class
-	 * @throws ParseException
-	 *             When the configuration cannot be parsed
-	 * 
-	 * @author Jan Schnasse, schnasse@hbz-nrw.de
-	 * 
-	 */
-	public DigitoolDownloadConfiguration(String[] args, Options options,
-			Class<?> cl) throws ParseException
-	{
-		Collection<Configuration> confs = new ArrayList<Configuration>();
-		confs.add(new MyConfiguration(args, options));
-		confs.add(new MyPreferences(cl));
-		this.config = new CompositeConfiguration(confs);
-	}
+    /**
+     * @param args
+     *            Command line arguments
+     * @param options
+     *            Command line options
+     * @param cl
+     *            Calling class
+     * @author Jan Schnasse, schnasse@hbz-nrw.de
+     * 
+     */
+    public DigitoolDownloadConfiguration(String[] args, Options options,
+	    Class<?> cl) {
+	Collection<Configuration> confs = new ArrayList<Configuration>();
+	confs.add(new MyConfiguration(args, options));
+	confs.add(new MyPreferences(cl));
+	this.config = new CompositeConfiguration(confs);
+    }
 
-	/**
-	 * @param key
-	 *            Option key to check
-	 * @return <code>true</code> if the configuration contains the key
-	 */
-	public boolean hasOption(String key)
-	{
-		return this.config.containsKey(key);
-	}
+    /**
+     * @param key
+     *            Option key to check
+     * @return <code>true</code> if the configuration contains the key
+     */
+    public boolean hasOption(String key) {
+	return this.config.containsKey(key);
+    }
 
-	/**
-	 * @param key
-	 *            Option key to retrieve
-	 * @return Value of the option key
-	 */
-	public String getOptionValue(String key)
-	{
-		return this.config.getString(key);
-	}
+    /**
+     * @param key
+     *            Option key to retrieve
+     * @return Value of the option key
+     */
+    public String getOptionValue(String key) {
+	return this.config.getString(key);
+    }
 
 }

@@ -24,62 +24,65 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.configuration.BaseConfiguration;
 
-class MyConfiguration extends BaseConfiguration
-{
-	/**
-	 * 
-	 * generates the configuration in terms of arguments and options
-	 * 
-	 * @param args
-	 *            Command line arguments
-	 * @param options
-	 *            Command line options
-	 * @throws ParseException
-	 *             When the configuration cannot be parsed
-	 * 
-	 * @author Jan Schnasse, schnasse@hbz-nrw.de
-	 * 
-	 */
-	MyConfiguration(String[] args, Options options) throws ParseException
-	{
-		CommandLineParser parser = new BasicParser();
-		CommandLine commandLine = parser.parse(options, args);
-		for (Option option : commandLine.getOptions())
-		{
-			String key = option.getLongOpt();
-			// System.out.println(key);
-			if (key.compareTo("set") == 0)
-			{
-				String[] vals = option.getValues();
-				if (vals == null || vals.length == 0)
-				{
-					this.addProperty(key, "N/A");
-				}
-				else
-				{
-					StringBuffer val = new StringBuffer();
-					for (int i = 0; i < vals.length; i++)
-					{
-						val.append(vals[i]);
-						val.append(",");
-					}
-					val.delete(val.length(), val.length());
-					this.addProperty(key, val.toString());
-				}
-			}
-			else
-			{
-				String val = option.getValue();
-				if (val == null)
-				{
-					this.addProperty(key, "N/A");
-				}
-				else
-				{
+/**
+ * 
+ * 
+ * @author Jan Schnasse, schnasse@hbz-nrw.de
+ * 
+ * 
+ */
+class MyConfiguration extends BaseConfiguration {
 
-					this.addProperty(key, val);
-				}
-			}
-		}
+    @SuppressWarnings("serial")
+    public class ConfigurationParseException extends RuntimeException {
+	public ConfigurationParseException(Throwable cause) {
+	    super(cause);
 	}
+    }
+
+    /**
+     * 
+     * generates the configuration in terms of arguments and options
+     * 
+     * @param args
+     *            Command line arguments
+     * @param options
+     *            Command line options
+     * @throws ParseException
+     *             When the configuration cannot be parsed
+     */
+    MyConfiguration(String[] args, Options options) {
+	try {
+	    CommandLineParser parser = new BasicParser();
+	    CommandLine commandLine = parser.parse(options, args);
+	    for (Option option : commandLine.getOptions()) {
+		String key = option.getLongOpt();
+		// System.out.println(key);
+		if (key.compareTo("set") == 0) {
+		    String[] vals = option.getValues();
+		    if (vals == null || vals.length == 0) {
+			this.addProperty(key, "N/A");
+		    } else {
+			StringBuffer val = new StringBuffer();
+			for (int i = 0; i < vals.length; i++) {
+			    val.append(vals[i]);
+			    val.append(",");
+			}
+			val.delete(val.length(), val.length());
+			this.addProperty(key, val.toString());
+		    }
+		} else {
+		    String val = option.getValue();
+		    if (val == null) {
+			this.addProperty(key, "N/A");
+		    } else {
+
+			this.addProperty(key, val);
+		    }
+		}
+	    }
+	} catch (ParseException e) {
+	    throw new ConfigurationParseException(e);
+	}
+    }
 }

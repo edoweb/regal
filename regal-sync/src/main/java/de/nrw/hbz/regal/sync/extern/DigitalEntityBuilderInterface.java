@@ -31,8 +31,6 @@ public interface DigitalEntityBuilderInterface {
      * @param pid
      *            the pid of the object
      * @return a DigitalEntity java representation of the digitool object
-     * @throws Exception
-     *             if something goes wrong you probably want to stop.
      */
-    public DigitalEntity build(String location, String pid) throws Exception;
+    public DigitalEntity build(String location, String pid);
 }

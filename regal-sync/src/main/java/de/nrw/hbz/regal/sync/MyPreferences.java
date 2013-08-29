@@ -25,21 +25,15 @@ import org.apache.commons.configuration.BaseConfiguration;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-class MyPreferences extends BaseConfiguration
-{
-	MyPreferences(Class<?> cl)
-	{
-		try
-		{
-			Preferences p = Preferences.userNodeForPackage(cl);
-			for (String preference : p.keys())
-			{
-				this.addProperty(preference, p.get(preference, null));
-			}
-		}
-		catch (BackingStoreException e)
-		{
-			// then we end up with an empty set of preferences, no big deal
-		}
+class MyPreferences extends BaseConfiguration {
+    MyPreferences(Class<?> cl) {
+	try {
+	    Preferences p = Preferences.userNodeForPackage(cl);
+	    for (String preference : p.keys()) {
+		this.addProperty(preference, p.get(preference, null));
+	    }
+	} catch (BackingStoreException e) {
+	    // empty preferences are ok
 	}
+    }
 }

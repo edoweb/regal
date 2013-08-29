@@ -35,6 +35,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -45,6 +47,38 @@ import org.xml.sax.SAXException;
  * 
  */
 public class XmlUtils {
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public static class XPathException extends RuntimeException {
+
+	public XPathException(Throwable cause) {
+	    super(cause);
+	}
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public static class ReadException extends RuntimeException {
+	public ReadException(String message) {
+	    super(message);
+	}
+
+	public ReadException(Throwable cause) {
+	    super(cause);
+	}
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public static class StreamNotClosedException extends RuntimeException {
+	public StreamNotClosedException(String message) {
+	    super(message);
+	}
+
+	public StreamNotClosedException(Throwable cause) {
+	    super(cause);
+	}
+    }
+
+    final static Logger logger = LoggerFactory.getLogger(XmlUtils.class);
 
     /**
      * @param digitalEntityFile
@@ -122,25 +156,24 @@ public class XmlUtils {
      * @param str
      *            the string will be stored in file
      * @return a file containing the string
-     * @throws Exception
-     *             if something goes wrong
      */
-    public static File stringToFile(File file, String str) throws Exception {
-	file.createNewFile();
+    public static File stringToFile(File file, String str) {
 	FileOutputStream writer = null;
 	try {
+	    file.createNewFile();
+
 	    writer = new FileOutputStream(file);
 	    writer.write(str.replace("\n", " ").replace("  ", " ")
 		    .getBytes("utf-8"));
 	} catch (IOException e) {
-
-	    e.printStackTrace();
+	    throw new ReadException(e);
 	} finally {
 	    if (writer != null)
 		try {
 		    writer.flush();
 		    writer.close();
 		} catch (IOException ignored) {
+		    throw new StreamNotClosedException(ignored);
 		}
 	}
 	str = null;
@@ -151,24 +184,24 @@ public class XmlUtils {
      * @param file
      *            the contents of this file will be converted to a string
      * @return a string with the content of the file
-     * @throws Exception
-     *             if something goes wrong
      */
-    public static String fileToString(File file) throws Exception {
+    public static String fileToString(File file) {
 	if (file == null || !file.exists()) {
-	    // /System.out.println("NO MARC METADATA");
-	    return "";
+	    throw new ReadException("");
 	}
 	byte[] buffer = new byte[(int) file.length()];
 	BufferedInputStream f = null;
 	try {
 	    f = new BufferedInputStream(new FileInputStream(file));
 	    f.read(buffer);
+	} catch (IOException e) {
+	    throw new ReadException(e);
 	} finally {
 	    if (f != null)
 		try {
 		    f.close();
 		} catch (IOException ignored) {
+		    throw new StreamNotClosedException(ignored);
 		}
 	}
 	return new String(buffer);
@@ -182,27 +215,30 @@ public class XmlUtils {
      * @param nscontext
      *            a NamespaceContext
      * @return a list of elements
-     * @throws XPathExpressionException
-     *             if the xPathStr is malformed
      */
     public static List<Element> getElements(String xPathStr, Element root,
-	    NamespaceContext nscontext) throws XPathExpressionException {
+	    NamespaceContext nscontext) {
 	XPathFactory xpathFactory = XPathFactory.newInstance();
 	XPath xpath = xpathFactory.newXPath();
 	xpath.setNamespaceContext(nscontext);
-	NodeList elements = (NodeList) xpath.evaluate(xPathStr, root,
-		XPathConstants.NODESET);
+	NodeList elements;
+	try {
+	    elements = (NodeList) xpath.evaluate(xPathStr, root,
+		    XPathConstants.NODESET);
 
-	List<Element> result = new Vector<Element>();
-	for (int i = 0; i < elements.getLength(); i++) {
-	    try {
-		Element element = (Element) elements.item(i);
-		result.add(element);
-	    } catch (ClassCastException e) {
-		e.printStackTrace();
+	    List<Element> result = new Vector<Element>();
+	    for (int i = 0; i < elements.getLength(); i++) {
+		try {
+		    Element element = (Element) elements.item(i);
+		    result.add(element);
+		} catch (ClassCastException e) {
+		    logger.warn(e.getMessage());
+		}
 	    }
+	    return result;
+	} catch (XPathExpressionException e1) {
+	    throw new XPathException(e1);
 	}
-	return result;
-    }
 
+    }
 }

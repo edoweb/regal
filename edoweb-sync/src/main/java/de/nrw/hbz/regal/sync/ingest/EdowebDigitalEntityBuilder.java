@@ -79,7 +79,7 @@ public class EdowebDigitalEntityBuilder implements
     Map<String, String> groupIds2FileIds = new HashMap<String, String>();
 
     @Override
-    public DigitalEntity build(String location, String pid) throws Exception {
+    public DigitalEntity build(String location, String pid) {
 	DigitalEntity dtlDe = buildSimpleBean(location, pid);
 	dtlDe = prepareMetsStructure(dtlDe);
 	dtlDe = addSiblings(dtlDe);

@@ -16,10 +16,7 @@
  */
 package de.nrw.hbz.regal.sync.extern;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -28,6 +25,18 @@ import java.util.Vector;
  * 
  */
 public class DigitalEntity {
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class NoPidException extends RuntimeException {
+
+	public NoPidException(String message) {
+	    super(message);
+	}
+
+	public NoPidException(Throwable cause) {
+	    super(cause);
+	}
+    }
 
     private boolean isParent = true;
     private String pid = null;
@@ -65,31 +74,6 @@ public class DigitalEntity {
 	this.pid = pid;
 	related = new Vector<RelatedDigitalEntity>();
 	streams = new HashMap<StreamType, Stream>();
-    }
-
-    private String fileToString(File file, String streamId) throws Exception {
-	// String str = "";
-	if (pid == null)
-	    throw new Exception("Can't set Attribute please set PID first.");
-	if (file == null || !file.exists()) {
-	    // System.out.println("NO MARC METADATA");
-	    return "";
-	}
-	byte[] buffer = new byte[(int) file.length()];
-	BufferedInputStream f = null;
-	try {
-	    f = new BufferedInputStream(new FileInputStream(file));
-	    f.read(buffer);
-	} finally {
-	    if (f != null)
-		try {
-		    f.close();
-		} catch (IOException ignored) {
-		}
-	}
-
-	return new String(buffer);
-
     }
 
     /**
@@ -278,13 +262,10 @@ public class DigitalEntity {
     /**
      * TODO: Remove:Digitool Specific
      * 
-     * @return dc string
-     * @throws Exception
-     *             if io fails
+     * @return dc string if io fails
      */
-    public String getDc() throws Exception {
-	return fileToString(streams.get(StreamType.DC).getFile(),
-		StreamType.DC.toString());
+    public String getDc() {
+	return XmlUtils.fileToString(streams.get(StreamType.DC).getFile());
     }
 
     /**

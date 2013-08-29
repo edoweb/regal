@@ -44,7 +44,7 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilderInterface {
     HashMap<String, DigitalEntity> map = new HashMap<String, DigitalEntity>();
 
     @Override
-    public DigitalEntity build(String baseDir, String pid) throws Exception {
+    public DigitalEntity build(String baseDir, String pid) {
 
 	if (!map.containsKey(pid)) {
 	    DigitalEntity e = new DigitalEntity(baseDir);
