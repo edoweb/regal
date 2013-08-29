@@ -20,11 +20,13 @@ import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -50,6 +52,134 @@ import de.nrw.hbz.regal.PIDReporter;
  * 
  */
 public abstract class Downloader implements DownloaderInterface {
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class CopyException extends RuntimeException {
+
+	public CopyException() {
+	}
+
+	public CopyException(String message) {
+	    super(message);
+	}
+
+	public CopyException(Throwable cause) {
+	    super(cause);
+	}
+
+	public CopyException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class ZipDownloaderException extends RuntimeException {
+
+	public ZipDownloaderException() {
+	}
+
+	public ZipDownloaderException(String message) {
+	    super(message);
+	}
+
+	public ZipDownloaderException(Throwable cause) {
+	    super(cause);
+	}
+
+	public ZipDownloaderException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class LoadPropertiesException extends RuntimeException {
+
+	public LoadPropertiesException() {
+	}
+
+	public LoadPropertiesException(String message) {
+	    super(message);
+	}
+
+	public LoadPropertiesException(Throwable cause) {
+	    super(cause);
+	}
+
+	public LoadPropertiesException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class DeleteDirectoryException extends RuntimeException {
+
+	public DeleteDirectoryException() {
+	}
+
+	public DeleteDirectoryException(String message) {
+	    super(message);
+	}
+
+	public DeleteDirectoryException(Throwable cause) {
+	    super(cause);
+	}
+
+	public DeleteDirectoryException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class EncodingException extends RuntimeException {
+
+	public EncodingException() {
+	}
+
+	public EncodingException(String message) {
+	    super(message);
+	}
+
+	public EncodingException(Throwable cause) {
+	    super(cause);
+	}
+
+	public EncodingException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class AlreadyVisitedException extends RuntimeException {
+
+	public AlreadyVisitedException() {
+	}
+
+	public AlreadyVisitedException(String message) {
+	    super(message);
+	}
+
+	public AlreadyVisitedException(Throwable cause) {
+	    super(cause);
+	}
+
+	public AlreadyVisitedException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class DownloadException extends RuntimeException {
+
+	public DownloadException(Throwable e) {
+	    super(e);
+	}
+    }
+
     /**
      * A logger for the Downloader
      */
@@ -75,17 +205,21 @@ public abstract class Downloader implements DownloaderInterface {
     protected abstract void downloadObject(File downloadDirectory, String pid);
 
     @Override
-    public String download(String pid) throws IOException {
+    public String download(String pid) {
 	return download(pid, true);
     }
 
     @Override
-    public String download(String pid, boolean forceDownload)
-	    throws IOException {
+    public String download(String pid, boolean forceDownload) {
 	if (map.containsKey(pid))
-	    throw new IOException(pid + " already visited!");
-	String objectDirectory = downloadLocation + File.separator
-		+ URLEncoder.encode(pid, "utf-8");
+	    throw new AlreadyVisitedException(pid + " already visited!");
+	String objectDirectory = null;
+	try {
+	    objectDirectory = downloadLocation + File.separator
+		    + URLEncoder.encode(pid, "utf-8");
+	} catch (UnsupportedEncodingException e1) {
+	    throw new EncodingException(e1);
+	}
 	File dir = new File(objectDirectory);
 	if (!dir.exists()) {
 	    logger.info("Create Directory " + dir.getAbsoluteFile()
@@ -97,7 +231,7 @@ public abstract class Downloader implements DownloaderInterface {
 		    map.put(pid, pid);
 
 		} else {
-		    throw new Exception(pid + " already visited!");
+		    throw new AlreadyVisitedException(pid + " already visited!");
 		}
 		downloadObject(dir, pid);
 	    } catch (Exception e) {
@@ -108,7 +242,11 @@ public abstract class Downloader implements DownloaderInterface {
 	} else if (forceDownload) {
 	    logger.info("Directory " + dir.getAbsoluteFile()
 		    + " exists. Force override.");
-	    FileUtils.deleteDirectory(dir);
+	    try {
+		FileUtils.deleteDirectory(dir);
+	    } catch (IOException e1) {
+		throw new DeleteDirectoryException(e1);
+	    }
 	    dir.mkdirs();
 
 	    try {
@@ -116,7 +254,7 @@ public abstract class Downloader implements DownloaderInterface {
 		    map.put(pid, pid);
 
 		} else {
-		    throw new Exception(pid + " already visited!");
+		    throw new AlreadyVisitedException(pid + " already visited!");
 		}
 		downloadObject(dir, pid);
 	    } catch (Exception e) {
@@ -217,16 +355,15 @@ public abstract class Downloader implements DownloaderInterface {
      *            a property file with two properties piddownloader.server - for
      *            the server to download from piddownloader.downloadLocation -
      *            for the local directory to download to
-     * @throws IOException
-     *             if the file can not be read
      */
-    protected void run(String propFile) throws IOException {
+    protected void run(String propFile) {
 	Properties properties = new Properties();
 	try {
 	    properties.load(new BufferedInputStream(new FileInputStream(
 		    propFile)));
 	} catch (IOException e) {
-	    throw new IOException("Could not open " + propFile + "!");
+	    throw new LoadPropertiesException("Could not open " + propFile
+		    + "!");
 	}
 	this.server = properties.getProperty("piddownloader.server");
 	this.downloadLocation = properties
@@ -314,17 +451,17 @@ public abstract class Downloader implements DownloaderInterface {
      *            the directory will be zipped
      * @param zipfile
      *            the Outputfile
-     * @throws IOException
-     *             if something goes wrong
      */
     @SuppressWarnings("resource")
-    protected void zip(File directory, File zipfile) throws IOException {
-	URI base = directory.toURI();
-	Deque<File> queue = new LinkedList<File>();
-	queue.push(directory);
-	OutputStream out = new FileOutputStream(zipfile);
-	Closeable res = out;
+    protected void zip(File directory, File zipfile) {
+	Closeable res = null;
 	try {
+	    URI base = directory.toURI();
+	    Deque<File> queue = new LinkedList<File>();
+	    queue.push(directory);
+	    OutputStream out = new FileOutputStream(zipfile);
+	    res = out;
+
 	    ZipOutputStream zout = new ZipOutputStream(out);
 
 	    res = zout;
@@ -343,77 +480,83 @@ public abstract class Downloader implements DownloaderInterface {
 		    }
 		}
 	    }
+	} catch (IOException e) {
+	    throw new ZipDownloaderException(e);
 	} finally {
-	    res.close();
-
-	}
-    }
-
-    /**
-     * @param in
-     *            read from this
-     * @param out
-     *            copy to this
-     * @throws IOException
-     *             if something goes wrong
-     */
-    protected void copy(InputStream in, OutputStream out) throws IOException {
-	byte[] buffer = new byte[1024];
-	while (true) {
-	    int readCount = in.read(buffer);
-	    if (readCount < 0) {
-		break;
+	    try {
+		if (res != null)
+		    res.close();
+	    } catch (IOException e) {
+		throw new ZipDownloaderException(e);
 	    }
-	    out.write(buffer, 0, readCount);
-	}
-    }
 
-    /**
-     * @param file
-     *            read from this
-     * @param out
-     *            copy to this
-     * @throws IOException
-     *             if something goes wrong
-     */
-    protected void copy(File file, OutputStream out) throws IOException {
-	InputStream in = new FileInputStream(file);
-	try {
-	    copy(in, out);
-	} finally {
-	    in.close();
 	}
     }
 
     /**
      * @param in
      *            read from this
-     * @param file
+     * @param out
      *            copy to this
-     * @throws IOException
-     *             if something goes wrong
      */
-    protected void copy(InputStream in, File file) throws IOException {
-	OutputStream out = new FileOutputStream(file);
+    protected void copy(InputStream in, OutputStream out) {
 	try {
-	    copy(in, out);
-	} finally {
-	    out.close();
+	    byte[] buffer = new byte[1024];
+	    while (true) {
+		int readCount = in.read(buffer);
+		if (readCount < 0) {
+		    break;
+		}
+		out.write(buffer, 0, readCount);
+	    }
+	} catch (Exception e) {
+	    throw new CopyException(e);
 	}
     }
 
     /**
-     * @author Jan Schnasse schnasse@hbz-nrw.de
-     * 
+     * @param file
+     *            read from here
+     * @param out
+     *            copy to here
      */
-    @SuppressWarnings("serial")
-    public class DownloadException extends RuntimeException {
-	/**
-	 * @param e
-	 *            If problems occure during download
-	 */
-	public DownloadException(Throwable e) {
-	    super(e);
+    protected void copy(File file, OutputStream out) {
+	InputStream in = null;
+	try {
+	    in = new FileInputStream(file);
+	    copy(in, out);
+	} catch (FileNotFoundException e) {
+	    throw new CopyException(e);
+	} finally {
+	    try {
+		if (in != null)
+		    in.close();
+	    } catch (IOException e) {
+		throw new CopyException(e);
+	    }
+	}
+    }
+
+    /**
+     * @param in
+     *            read from here
+     * @param file
+     *            copy to here
+     */
+    protected void copy(InputStream in, File file) {
+	OutputStream out = null;
+	try {
+	    out = new FileOutputStream(file);
+	    copy(in, out);
+	} catch (FileNotFoundException e) {
+	    throw new CopyException(e);
+	} finally {
+	    try {
+		if (out != null)
+		    out.close();
+	    } catch (IOException e) {
+		throw new CopyException(e);
+	    }
 	}
     }
 

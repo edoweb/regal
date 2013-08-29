@@ -223,13 +223,9 @@ public class DippDownloader extends Downloader {
 	    System.exit(1);
 	}
 
-	try {
-	    Downloader downloader = new DippDownloader();
-	    downloader.run(argv[0]);
-	} catch (IOException e) {
-	    logger.warn(e.getMessage());
-	    System.exit(2);
-	}
+	Downloader downloader = new DippDownloader();
+	downloader.run(argv[0]);
+
     }
 
 }

@@ -153,12 +153,9 @@ public class OpusDownloader extends Downloader {
 	}
 
 	OpusDownloader main = new OpusDownloader();
-	try {
-	    main.run(argv[0]);
-	} catch (IOException e) {
-	    logger.warn(e.getMessage());
-	    System.exit(2);
-	}
+
+	main.run(argv[0]);
+
     }
 
 }

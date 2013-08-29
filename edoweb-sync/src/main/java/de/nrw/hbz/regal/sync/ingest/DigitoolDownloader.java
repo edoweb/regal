@@ -349,12 +349,9 @@ public class DigitoolDownloader extends Downloader {
 	}
 
 	DigitoolDownloader main = new DigitoolDownloader();
-	try {
-	    main.run(argv[0]);
-	} catch (IOException e) {
-	    logger.warn(e.getMessage());
-	    System.exit(2);
-	}
+
+	main.run(argv[0]);
+
     }
 
     @SuppressWarnings({ "javadoc", "serial" })

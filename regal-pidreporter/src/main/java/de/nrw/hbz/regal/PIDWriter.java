@@ -29,64 +29,42 @@ import org.slf4j.LoggerFactory;
 /**
  * Class PIDWriter
  * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * 
- * </p>
- * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-class PIDWriter
-{
-	final Logger logger = LoggerFactory.getLogger(PIDWriter.class);
+class PIDWriter {
+    final Logger logger = LoggerFactory.getLogger(PIDWriter.class);
 
-	void print(Vector<String> pids, String path)
-	{
+    void print(Vector<String> pids, String path) {
 
-		logger.info("Print pids separated by newline to " + path + " !");
-		BufferedOutputStream out = null;
-		try
-		{
-			out = new BufferedOutputStream(new FileOutputStream(path));
+	logger.info("Print pids separated by newline to " + path + " !");
+	BufferedOutputStream out = null;
+	try {
+	    out = new BufferedOutputStream(new FileOutputStream(path));
 
-			for (String pid : pids)
-			{
-				pid = pid + "\n";
-				out.write(pid.getBytes("UTF-8"));
+	    for (String pid : pids) {
+		pid = pid + "\n";
+		out.write(pid.getBytes("UTF-8"));
 
-			}
-		}
-		catch (FileNotFoundException e)
-		{
+	    }
+	} catch (FileNotFoundException e) {
 
-			e.printStackTrace();
-		}
-		catch (UnsupportedEncodingException e)
-		{
+	    e.printStackTrace();
+	} catch (UnsupportedEncodingException e) {
 
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
+	    e.printStackTrace();
+	} catch (IOException e) {
 
-			e.printStackTrace();
-		}
-		finally
-		{
+	    e.printStackTrace();
+	} finally {
 
-			try
-			{
-				if (out != null)
-					out.close();
-			}
-			catch (IOException e)
-			{
+	    try {
+		if (out != null)
+		    out.close();
+	    } catch (IOException e) {
 
-				e.printStackTrace();
-			}
-		}
+		e.printStackTrace();
+	    }
 	}
+    }
 }

@@ -32,6 +32,18 @@ import org.slf4j.LoggerFactory;
  */
 public class PIDReporter {
 
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class LoadPropertiesException extends RuntimeException {
+
+	public LoadPropertiesException(String message) {
+	    super(message);
+	}
+
+	public LoadPropertiesException(Throwable cause) {
+	    super(cause);
+	}
+    }
+
     final static Logger logger = LoggerFactory.getLogger(PIDReporter.class);
 
     String pidFile = null;
@@ -74,16 +86,15 @@ public class PIDReporter {
      * @param propFile
      *            a properties file
      * @return a list of pids
-     * @throws IOException
-     *             if something goes wrong
      */
-    public Vector<String> getPids(String propFile) throws IOException {
+    public Vector<String> getPids(String propFile) {
 	Properties properties = new Properties();
 	try {
 	    properties.load(new BufferedInputStream(new FileInputStream(
 		    propFile)));
 	} catch (IOException e) {
-	    throw new IOException("Could not open " + propFile + "!");
+	    throw new LoadPropertiesException("Could not open " + propFile
+		    + "!");
 	}
 
 	String server = properties.getProperty("pidreporter.server");
@@ -107,7 +118,7 @@ public class PIDReporter {
 	return grabber.harvest(sets, harvestFromScratch);
     }
 
-    private void run(String propFile) throws IOException {
+    private void run(String propFile) {
 	PIDWriter writer = new PIDWriter();
 	writer.print(getPids(propFile), pidFile);
     }
@@ -127,12 +138,9 @@ public class PIDReporter {
 	    System.exit(1);
 	}
 	PIDReporter main = new PIDReporter();
-	try {
-	    main.run(argv[0]);
-	} catch (IOException e) {
-	    logger.warn(e.getMessage());
-	    System.exit(2);
-	}
+
+	main.run(argv[0]);
+
     }
 
 }
