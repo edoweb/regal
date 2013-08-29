@@ -17,13 +17,10 @@
 package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -31,6 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
@@ -39,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
@@ -55,6 +52,26 @@ import de.nrw.hbz.regal.sync.extern.XmlUtils;
  */
 public class EdowebDigitalEntityBuilder implements
 	DigitalEntityBuilderInterface {
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class TypeNotFoundException extends RuntimeException {
+
+	public TypeNotFoundException(String message) {
+	    super(message);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class XPathException extends RuntimeException {
+	public XPathException(Throwable cause) {
+	    super(cause);
+	}
+
+	public XPathException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+    }
 
     final static Logger logger = LoggerFactory
 	    .getLogger(EdowebDigitalEntityBuilder.class);
@@ -74,16 +91,37 @@ public class EdowebDigitalEntityBuilder implements
 	DigitalEntity dtlDe = new DigitalEntity(location, pid);
 	dtlDe.setXml(new File(dtlDe.getLocation() + File.separator + pid
 		+ ".xml"));
-	try {
-	    Element root = getXmlRepresentation(dtlDe);
-	    dtlDe.setLabel(getLabel(root));
-	    loadMetadataStreams(dtlDe, root);
-	    loadDataStream(dtlDe, root);
-	    linkToParent(dtlDe);
-	} catch (Exception e) {
 
-	}
+	Element root = getXmlRepresentation(dtlDe);
+	dtlDe.setLabel(getLabel(root));
+	loadMetadataStreams(dtlDe, root);
+	setType(dtlDe);
+	loadDataStream(dtlDe, root);
+	linkToParent(dtlDe);
+
 	return dtlDe;
+    }
+
+    private void setType(DigitalEntity dtlBean) {
+	Element root = XmlUtils.getDocument(dtlBean.getStream(
+		StreamType.CONTROL).getFile());
+	XPathFactory factory = XPathFactory.newInstance();
+	XPath xpath = factory.newXPath();
+
+	try {
+	    XPathExpression expr = xpath.compile("//partition_c");
+	    Object result = expr.evaluate(root, XPathConstants.NODESET);
+	    NodeList nodes = (NodeList) result;
+	    if (nodes.getLength() != 1) {
+		throw new TypeNotFoundException("Found " + nodes.getLength()
+			+ " types");
+	    }
+
+	    dtlBean.setType(nodes.item(0).getTextContent());
+	    logger.info(dtlBean.getType());
+	} catch (XPathExpressionException e) {
+	    throw new XPathException(e);
+	}
     }
 
     private DigitalEntity prepareMetsStructure(final DigitalEntity entity) {
@@ -282,9 +320,7 @@ public class EdowebDigitalEntityBuilder implements
 	return root.getElementsByTagName("label").item(0).getTextContent();
     }
 
-    private Element getXmlRepresentation(final DigitalEntity dtlDe)
-	    throws FileNotFoundException, ParserConfigurationException,
-	    SAXException, IOException {
+    private Element getXmlRepresentation(final DigitalEntity dtlDe) {
 	File digitalEntityFile = new File(dtlDe.getLocation() + File.separator
 		+ dtlDe.getPid() + ".xml");
 	return XmlUtils.getDocument(digitalEntityFile);

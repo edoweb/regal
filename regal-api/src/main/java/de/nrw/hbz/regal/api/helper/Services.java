@@ -41,6 +41,8 @@ import de.nrw.hbz.regal.fedora.FedoraInterface;
 import de.nrw.hbz.regal.fedora.RdfUtils;
 
 class Services {
+
+    @SuppressWarnings("serial")
     public class MetadataNotFoundException extends RuntimeException {
 
 	public MetadataNotFoundException() {

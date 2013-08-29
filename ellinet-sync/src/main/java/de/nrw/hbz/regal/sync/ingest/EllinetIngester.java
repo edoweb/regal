@@ -56,12 +56,7 @@ public class EllinetIngester implements IngestInterface {
 	String partitionC = null;
 	String pid = null;
 	pid = dtlBean.getPid();
-	try {
-	    ControlBean control = new ControlBean(dtlBean);
-	    partitionC = control.getPartitionC().firstElement();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+	partitionC = dtlBean.getType();
 	try {
 
 	    if (partitionC.compareTo("HSS00DZM") == 0) {
@@ -87,7 +82,6 @@ public class EllinetIngester implements IngestInterface {
     private void updateMonographs(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
-
 	    webclient.createObject(dtlBean, "application/pdf",
 		    ObjectType.monograph);
 	    logger.info(pid + " Found monograph.");

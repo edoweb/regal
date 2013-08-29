@@ -290,19 +290,6 @@ public class DigitalEntity {
     /**
      * TODO: Remove:Digitool Specific
      * 
-     * @return control section of a digitool object
-     * @throws Exception
-     *             if something goes wrong
-     */
-    public String getControl() throws Exception {
-	return fileToString(streams.get(StreamType.CONTROL).getFile(),
-		StreamType.CONTROL.toString());
-
-    }
-
-    /**
-     * TODO: Remove:Digitool Specific
-     * 
      * @return all related Objects with part_of relation
      */
     public Vector<DigitalEntity> getParts() {

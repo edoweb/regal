@@ -55,12 +55,9 @@ public class EdowebIngester implements IngestInterface {
 	String partitionC = null;
 	String pid = null;
 	pid = dtlBean.getPid();
-	try {
-	    ControlBean control = new ControlBean(dtlBean);
-	    partitionC = control.getPartitionC().firstElement();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+
+	partitionC = dtlBean.getType();
+
 	try {
 
 	    if (partitionC.compareTo("EJO01") == 0) {
@@ -115,12 +112,9 @@ public class EdowebIngester implements IngestInterface {
 	String partitionC = null;
 	String pid = null;
 	pid = dtlBean.getPid();
-	try {
-	    ControlBean control = new ControlBean(dtlBean);
-	    partitionC = control.getPartitionC().firstElement();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+
+	partitionC = dtlBean.getType();
+
 	try {
 
 	    if (partitionC.compareTo("EJO01") == 0) {

@@ -12,7 +12,7 @@ import de.nrw.hbz.regal.sync.ingest.EdowebDigitalEntityBuilder;
 public class TestEdowebDigitalEntityBuilder {
 
     @Test
-    public void test() throws Exception {
+    public void testEdowebDigitalEntityBulder() throws Exception {
 	String server = "http://klio.hbz-nrw.de:1801";
 	String downloadLocation = "/tmp/edowebbase/";
 	String pid = "3237397";
