@@ -333,7 +333,6 @@ class Services {
 	Client c = Client.create(cc);
 	WebResource index = null;
 	try {
-
 	    // TODO configure port and host
 	    index = c.resource("http://localhost:9200/" + namespace + "/titel/"
 		    + pid);
