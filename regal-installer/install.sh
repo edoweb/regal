@@ -14,7 +14,7 @@ mkdir -v -p $ARCHIVE_HOME/src
 mkdir -v $ARCHIVE_HOME/html
 mkdir -v $ARCHIVE_HOME/sync
 mkdir -v $ARCHIVE_HOME/fedora
-if [ $MODULE != "" ]
+if [ -n $MODULE ]
 then
 mkdir -v $ARCHIVE_HOME/${MODULE}base
 fi
@@ -94,6 +94,7 @@ mv elasticsearch-0.19.11 $ARCHIVE_HOME/elasticsearch
 $ARCHIVE_HOME/elasticsearch/bin/elasticsearch
 pwd
 cp variables.conf $ARCHIVE_HOME/bin/
+cp -r templates $ARCHIVE_HOME/bin/
 }
 
 function copyConfig()
