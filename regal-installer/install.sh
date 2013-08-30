@@ -14,7 +14,10 @@ mkdir -v -p $ARCHIVE_HOME/src
 mkdir -v $ARCHIVE_HOME/html
 mkdir -v $ARCHIVE_HOME/sync
 mkdir -v $ARCHIVE_HOME/fedora
+if [ $MODULE != "" ]
+then
 mkdir -v $ARCHIVE_HOME/${MODULE}base
+fi
 mkdir -v $ARCHIVE_HOME/logs
 mkdir -v $ARCHIVE_HOME/conf
 mkdir -v $ARCHIVE_HOME/bin
@@ -25,146 +28,25 @@ mkdir -v -p $ARCHIVE_HOME/proai/schemas
 
 function createConfig()
 {
-echo "write install.properties"
+substituteVars install.properties $ARCHIVE_HOME/conf/install.properties
+substituteVars fedora-users.xml $ARCHIVE_HOME/conf/fedora-users.xml
+substituteVars api.properties $ARCHIVE_HOME/conf/api.properties
+substituteVars tomcat-users.xml $ARCHIVE_HOME/conf/tomcat-users.xml
+substituteVars setenv.sh $ARCHIVE_HOME/conf/setenv.sh
+substituteVars elasticsearch.yml $ARCHIVE_HOME/conf/elasticsearch.yml
+substituteVars site.conf $ARCHIVE_HOME/conf/site.conf
+}
 
-echo "keystore.file=default" > $ARCHIVE_HOME/conf/install.properties
-echo "ri.enabled=true" >> $ARCHIVE_HOME/conf/install.properties
-echo "messaging.enabled=true" >> $ARCHIVE_HOME/conf/install.properties
-echo "apia.auth.required=false" >> $ARCHIVE_HOME/conf/install.properties
-echo "database.jdbcDriverClass=org.apache.derby.jdbc.EmbeddedDriver" >> $ARCHIVE_HOME/conf/install.properties
-echo "upstream.auth.enabled=false" >> $ARCHIVE_HOME/conf/install.properties
-echo "tomcat.ssl.port=8443" >> $ARCHIVE_HOME/conf/install.properties
-echo "ssl.available=true" >> $ARCHIVE_HOME/conf/install.properties
-echo "database.jdbcURL=jdbc\:derby\:$ARCHIVE_HOME/fedora/derby/fedora3;create\=true" >> $ARCHIVE_HOME/conf/install.properties
-echo "messaging.uri=vm\:(broker\:(tcp\://localhost\:61616))" >> $ARCHIVE_HOME/conf/install.properties
-echo "database.password=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/install.properties
-echo "keystore.type=JKS" >> $ARCHIVE_HOME/conf/install.properties
-echo "database.username=$ARCHIVE_USER" >> $ARCHIVE_HOME/conf/install.properties
-echo "fesl.authz.enabled=false" >> $ARCHIVE_HOME/conf/install.properties
-echo "tomcat.shutdown.port=8005" >> $ARCHIVE_HOME/conf/install.properties
-echo "deploy.local.services=false" >> $ARCHIVE_HOME/conf/install.properties
-echo "xacml.enabled=true" >> $ARCHIVE_HOME/conf/install.properties
-echo "tomcat.http.port=$TOMCAT_PORT" >> $ARCHIVE_HOME/conf/install.properties
-echo "fedora.serverHost=$SERVER" >> $ARCHIVE_HOME/conf/install.properties
-echo "database=included" >> $ARCHIVE_HOME/conf/install.properties
-echo "database.driver=included" >> $ARCHIVE_HOME/conf/install.properties
-echo "fedora.serverContext=fedora" >> $ARCHIVE_HOME/conf/install.properties
-echo "keystore.password=changeit" >> $ARCHIVE_HOME/conf/install.properties
-echo "llstore.type=akubra-fs" >> $ARCHIVE_HOME/conf/install.properties
-echo "tomcat.home=$ARCHIVE_HOME/fedora/tomcat" >> $ARCHIVE_HOME/conf/install.properties
-echo "fesl.authn.enabled=false" >> $ARCHIVE_HOME/conf/install.properties
-echo "fedora.home=$ARCHIVE_HOME/fedora" >> $ARCHIVE_HOME/conf/install.properties
-echo "install.type=custom" >> $ARCHIVE_HOME/conf/install.properties
-echo "servlet.engine=included" >> $ARCHIVE_HOME/conf/install.properties
-echo "apim.ssl.required=false" >> $ARCHIVE_HOME/conf/install.properties
-echo "fedora.admin.pass=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/install.properties
-echo "apia.ssl.required=false" >> $ARCHIVE_HOME/conf/install.properties
-echo >> $ARCHIVE_HOME/conf/install.properties
-
-echo "write fedora-users.xml"
-
-echo -e "<?xml version='1.0' ?>" > $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "  <users>" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "    <user name=\"$ARCHIVE_USER\" password=\"$ARCHIVE_PASSWORD\">" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "      <attribute name=\"fedoraRole\">" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "        <value>administrator</value>" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "      </attribute>" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "    </user>" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "    <user name=\"fedoraIntCallUser\" password=\"changeme\">" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "      <attribute name=\"fedoraRole\">" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "        <value>fedoraInternalCall-1</value>" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "        <value>fedoraInternalCall-2</value>" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "      </attribute>" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "    </user>" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "  </users>" >> $ARCHIVE_HOME/conf/fedora-users.xml
-echo -e "" >> $ARCHIVE_HOME/conf/fedora-users.xml
-
-
-echo "write api.properties"
-
-echo "serverName=http://$SERVER"  > $ARCHIVE_HOME/conf/api.properties
-echo "fedoraExtern=http://$SERVER/fedora"  >> $ARCHIVE_HOME/conf/api.properties
-echo "fedoraIntern=http://localhost:$TOMCAT_PORT/fedora" >> $ARCHIVE_HOME/conf/api.properties
-echo "user=$ARCHIVE_USER" >> $ARCHIVE_HOME/conf/api.properties
-echo "password=$ARCHIVE_PASSWORD" >> $ARCHIVE_HOME/conf/api.properties
-echo >> $ARCHIVE_HOME/conf/api.properties
-
-echo "write tomcat-users.xml"
-
-echo "<?xml version='1.0' encoding='utf-8'?>" > $ARCHIVE_HOME/conf/tomcat-users.xml
-echo "<tomcat-users>" >> $ARCHIVE_HOME/conf/tomcat-users.xml
-echo "<role rolename=\"manager\"/>" >>$ARCHIVE_HOME/conf/tomcat-users.xml
-echo -e "<user username=\"$ARCHIVE_USER\" password=\"$ARCHIVE_PASSWORD\" roles=\"manager\"/>" >> $ARCHIVE_HOME/conf/tomcat-users.xml
-echo "</tomcat-users>" >> $ARCHIVE_HOME/conf/tomcat-users.xml
-echo >> $ARCHIVE_HOME/conf/tomcat-users.xml
-
-echo "write setenv.xml"
-
-echo -e "CATALINA_OPTS=\" \\"  > $ARCHIVE_HOME/conf/setenv.sh
-echo -e "-Xms1536m \\" >> $ARCHIVE_HOME/conf/setenv.sh
-echo -e "-Xmx1536m \\" >> $ARCHIVE_HOME/conf/setenv.sh
-echo -e "-XX:NewSize=256m \\" >> $ARCHIVE_HOME/conf/setenv.sh
-echo -e "-XX:MaxNewSize=256m \\" >> $ARCHIVE_HOME/conf/setenv.sh
-echo -e "-XX:PermSize=256m \\"  >> $ARCHIVE_HOME/conf/setenv.sh
-echo -e "-XX:MaxPermSize=256m \\" >> $ARCHIVE_HOME/conf/setenv.sh
-echo -e "-server \\" >> $ARCHIVE_HOME/conf/setenv.sh
-echo -e "-Djava.awt.headless=true \\" >> $ARCHIVE_HOME/conf/setenv.sh
-echo -e "-Dorg.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER=true\"" >> $ARCHIVE_HOME/conf/setenv.sh
-echo >> $ARCHIVE_HOME/conf/setenv.sh
-echo -e "export CATALINA_OPTS" >> $ARCHIVE_HOME/conf/setenv.sh
-echo >> $ARCHIVE_HOME/conf/setenv.sh
-
-echo "write elasticsearch.yml"
-
-echo "cluster.name: $SERVER" > $ARCHIVE_HOME/conf/elasticsearch.yml
-echo >> $ARCHIVE_HOME/conf/elasticsearch.yml
-
-echo "write site.conf"
-
-echo -e "<VirtualHost *:80>" > $ARCHIVE_HOME/conf/site.conf
-echo -e "    ServerName $SERVER" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    ServerAdmin $EMAIL" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    DocumentRoot $ARCHIVE_HOME/html" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    <Directory />" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "	Options FollowSymLinks" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "	AllowOverride None" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    </Directory>" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    <Directory \"$ARCHIVE_HOME/html\">" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    	       Options Indexes FollowSymLinks" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    	       AllowOverride All" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    	       Order allow,deny" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    	       Allow from all" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    </Directory>" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    ProxyRequests Off" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    ProxyPreserveHost On" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "    <Proxy *>" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "       Order deny,allow" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "       Allow from all" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "     </Proxy>" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteEngine on" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/fedora(.*) http://localhost:$TOMCAT_PORT/fedora\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/search(.*) http://localhost:$ELASTICSEARCH_PORT\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/resource(.*) http://localhost:$TOMCAT_PORT/api/resource\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/utils(.*)  http://localhost:$TOMCAT_PORT/api/utils\$1 [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/journal(.*) http://localhost:$TOMCAT_PORT/api/resource\$1?type=journal [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/monograph(.*) http://localhost:$TOMCAT_PORT/api/resource\$1?type=monograph [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/webpage(.*) http://localhost:$TOMCAT_PORT/api/resource\$1?type=webpage [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/volume(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=volume [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/version(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=version [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/file(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=file [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/issue(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=issue [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/article(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=article [P]" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "RewriteRule ^/supplement(.*)  http://localhost:$TOMCAT_PORT/api/resource\$1?type=supplement [P]" >> $ARCHIVE_HOME/conf/site.conf
-
-echo -e "RewriteRule ^/oai-pmh(.*) http://localhost:$TOMCAT_PORT/oai-pmh\$1 [P] " >> $ARCHIVE_HOME/conf/site.conf
-echo -e "" >> $ARCHIVE_HOME/conf/site.conf
-echo -e "</VirtualHost>" >> $ARCHIVE_HOME/conf/site.conf
-
+function substituteVars()
+{
+file=templates/$1
+target=$2
+sed -e "s,\$ARCHIVE_HOME,$ARCHIVE_HOME,g" \
+-e "s,\$ARCHIVE_USER,$ARCHIVE_USER,g" \
+-e "s,\$ARCHIVE_PASSWORD,$ARCHIVE_PASSWORD,g" \
+-e "s,\$SERVER,$SERVER,g" \
+-e "s,\$TOMCAT_PORT,$TOMCAT_PORT,g" \
+-e "s,\$ELASTICSEARCH_PORT,$ELASTICSEARCH_PORT,g" $file > $target
 }
 
 function install()
@@ -177,6 +59,11 @@ then
 else
 	git clone https://github.com/edoweb/regal.git $ARCHIVE_HOME/src
 	cd $ARCHIVE_HOME/src
+	if [ $? -ne 0 ]
+	then
+		echo "Can not fetch code from git. FAILED: git clone http://github.com/edoweb/regal.git $ARCHIVE_HOME/src "
+		exit 2;
+	fi
  	git checkout -b test origin/test
 	git checkout master
 	cd -
@@ -218,9 +105,6 @@ cp  $ARCHIVE_HOME/conf/setenv.sh $ARCHIVE_HOME/fedora/tomcat/bin
 echo "copy elasticsearch config"
 mv $ARCHIVE_HOME/elasticsearch/config/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/elasticsearch.yml.bck
 cp $ARCHIVE_HOME/conf/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/
-#echo "copy apache conf"
-#cp $APACHE_CONF $ARCHIVE_HOME/conf/httpd.conf
-#echo "Include $ARCHIVE_HOME/conf/site.conf" >> $ARCHIVE_HOME/conf/httpd.conf
 echo "install archive"
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
 }
@@ -259,7 +143,7 @@ cd -
 function correctSwagger()
 {
 var=$1
-cd /opt/regal/src/regal-ui/htdocs/api/
+cd $ARCHIVE_HOME/src/regal-ui/htdocs/api/
 number=`grep -n "models" ${var}.json |cut -f1 -d:`
 number=`expr $number - 1`
 head -$number ${var}.json > tmpres
@@ -270,7 +154,11 @@ cd -
 
 function copySwagger()
 {
-cp  $ARCHIVE_HOME/src/regal-api/target/classes/apidocs/* $ARCHIVE_HOME/src/regal-ui/htdocs/api/
+cp -r $ARCHIVE_HOME/src/regal-api/target/classes/apidocs $ARCHIVE_HOME/src/regal-ui/htdocs/api
+if [ $? -ne 0 ]
+then
+return;
+fi
 correctSwagger utils;
 correctSwagger resource;
 }
@@ -342,11 +230,12 @@ then
 fi
 
 echo "copy html"
-copySwagger
 cp -r $ARCHIVE_HOME/src/regal-ui/htdocs/* $ARCHIVE_HOME/html/
-sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/EasyEllinetSearch.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/EasyEllinetSearch.js"
-
-#cp $SRC/regal-ui/conf/proai.properties $WEBAPPS/oai-pmh/WEB-INF/classes
+echo "Edit $ARCHIVE_HOME/html/js/Search.js"
+sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/Search.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/Search.js"
+echo "Copy api Doku"
+copySwagger
+echo "Update installer"
 cp $SRC/regal-installer/install.sh $ARCHIVE_HOME/bin/
 }
 
@@ -357,7 +246,6 @@ then
 	createConfig
 	install
 	copyConfig
-        updateMaster
 	rollout
 elif [ $# -eq 1 ]
 then
