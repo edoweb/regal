@@ -178,4 +178,4 @@
       "notes" : ""
     } ]
   } ],
-"swaggerVersion" : "1.1","resourcePath" : "/utils"}
+"swaggerVersion" : "1.1","resourcePath" : "/${var}"}

@@ -794,4 +794,4 @@
       "notes" : ""
     } ]
   } ],
-"swaggerVersion" : "1.1","resourcePath" : "/resource"}
+"swaggerVersion" : "1.1","resourcePath" : "/${var}"}
