@@ -775,6 +775,11 @@ public class Actions {
 	    return findByType(type);
     }
 
+    /**
+     * @param node
+     *            a node with a pdf data stream
+     * @return a URL to a PDF/A Conversion
+     */
     public String pdfa(Node node) {
 	return services.pdfa(node, fedoraExtern);
     }
