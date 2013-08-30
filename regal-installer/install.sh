@@ -154,7 +154,7 @@ cd -
 
 function copySwagger()
 {
-cp -r $ARCHIVE_HOME/src/regal-api/target/classes/apidocs $ARCHIVE_HOME/src/regal-ui/htdocs/api
+cp -r $ARCHIVE_HOME/src/regal-api/target/classes/apidocs/* $ARCHIVE_HOME/src/regal-ui/htdocs/api
 if [ $? -ne 0 ]
 then
 return;
