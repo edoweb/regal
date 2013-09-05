@@ -610,35 +610,6 @@ class Representations {
     /**
      * @param list
      *            a list with pids
-     * @return all objects in a html list
-     */
-    public String getAllAsHtml(List<String> list) {
-	String result = "";
-	try {
-	    java.net.URL fileLocation = Thread.currentThread()
-		    .getContextClassLoader().getResource("list.html");
-
-	    StringWriter writer = new StringWriter();
-	    IOUtils.copy(fileLocation.openStream(), writer);
-	    String data = writer.toString();
-
-	    ST st = new ST(data, '$', '$');
-	    st.add("type", "resource");
-	    for (String item : list) {
-		st.add("items", "<li><a href=\"" + uriPrefix + item + "\">"
-			+ item + "</a></li>");
-	    }
-	    result = st.render();
-	} catch (IOException e) {
-	    throw new HttpArchiveException(500, e);
-	}
-
-	return result;
-    }
-
-    /**
-     * @param list
-     *            a list with pids
      * @param type
      *            the type to be displaye
      * @return html listing of all objects
