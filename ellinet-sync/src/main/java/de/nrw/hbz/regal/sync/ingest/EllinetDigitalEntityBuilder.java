@@ -38,6 +38,7 @@ import de.nrw.hbz.regal.sync.extern.StreamType;
  * 
  */
 public class EllinetDigitalEntityBuilder extends EdowebDigitalEntityBuilder {
+    @SuppressWarnings("javadoc")
     public class DcNamespaceContext implements NamespaceContext {
 
 	public String getNamespaceURI(String prefix) {
@@ -56,6 +57,7 @@ public class EllinetDigitalEntityBuilder extends EdowebDigitalEntityBuilder {
 	}
 
 	// This method isn't necessary for XPath processing either.
+	@SuppressWarnings("rawtypes")
 	public Iterator getPrefixes(String uri) {
 	    throw new UnsupportedOperationException();
 	}
@@ -66,15 +68,12 @@ public class EllinetDigitalEntityBuilder extends EdowebDigitalEntityBuilder {
 
 	Element root = XmlUtils.getDocument(dtlDe.getStream(StreamType.DC)
 		.getFile());
-	System.out.println(XmlUtils.fileToString(dtlDe.getStream(StreamType.DC)
-		.getFile()));
 	XPathFactory factory = XPathFactory.newInstance();
 	XPath xpath = factory.newXPath();
 	xpath.setNamespaceContext(new DcNamespaceContext());
 	try {
 	    XPathExpression expr = xpath.compile("//dc:alephsyncid");
 	    Object result = expr.evaluate(root, XPathConstants.NODESET);
-	    System.out.println(result);
 	    NodeList nodes = (NodeList) result;
 	    if (nodes.getLength() != 1) {
 		throw new CatalogIdNotFoundException("Found "

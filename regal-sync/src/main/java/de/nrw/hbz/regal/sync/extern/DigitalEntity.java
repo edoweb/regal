@@ -82,10 +82,19 @@ public class DigitalEntity {
 	identifier = new Vector<String>();
     }
 
+    /**
+     * A DigitalEntity has identifiers
+     * 
+     * @return a list of identifiers
+     */
     public List<String> getIdentifier() {
 	return identifier;
     }
 
+    /**
+     * @param identifier
+     *            a list of identifiers
+     */
     public void setIdentifier(List<String> identifier) {
 	this.identifier = identifier;
     }
@@ -347,6 +356,12 @@ public class DigitalEntity {
 	return buffer.toString();
     }
 
+    /**
+     * Adds a identifier
+     * 
+     * @param id
+     *            a identifier
+     */
     public void addIdentifier(String id) {
 	identifier.add(id);
     }

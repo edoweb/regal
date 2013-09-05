@@ -55,6 +55,7 @@ import de.nrw.hbz.regal.sync.extern.StreamType;
  */
 public class EdowebDigitalEntityBuilder implements
 	DigitalEntityBuilderInterface {
+    @SuppressWarnings("javadoc")
     public class MarcNamespaceContext implements NamespaceContext {
 
 	public String getNamespaceURI(String prefix) {
@@ -73,6 +74,7 @@ public class EdowebDigitalEntityBuilder implements
 	}
 
 	// This method isn't necessary for XPath processing either.
+	@SuppressWarnings("rawtypes")
 	public Iterator getPrefixes(String uri) {
 	    throw new UnsupportedOperationException();
 	}
