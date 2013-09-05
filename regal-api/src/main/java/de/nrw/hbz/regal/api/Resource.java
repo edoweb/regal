@@ -169,6 +169,8 @@ public class Resource {
     @GET
     @Produces({ "application/json", "application/xml" })
     public Response getAll(@QueryParam("type") String type) {
+
+	logger.debug("Hey you!");
 	ObjectList rem = new ObjectList(actions.getAll(type));
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();
@@ -388,10 +390,7 @@ public class Resource {
 		throw new HttpArchiveException(404,
 			"Datastream does not exist!");
 	    return res;
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	} catch (URISyntaxException e) {
+	} catch (Exception e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
