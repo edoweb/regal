@@ -23,14 +23,6 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 
 /**
- * Class FedoraIngester
- * 
- * <p>
- * <em>Title: </em>
- * </p>
- * <p>
- * Description:
- * </p>
  * 
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
