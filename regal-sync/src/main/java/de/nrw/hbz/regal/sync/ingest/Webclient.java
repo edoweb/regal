@@ -94,11 +94,21 @@ public class Webclient {
      */
     public void autoGenerateMetdata(DigitalEntity dtlBean) {
 	try {
+	    setIdentifier(dtlBean);
+
 	    lobidify(dtlBean);
 	} catch (Exception e) {
 	    logger.error(dtlBean.getPid() + " " + e.getMessage());
 	}
 
+    }
+
+    private void setIdentifier(DigitalEntity dtlBean) {
+	DCBeanAnnotated dc = new DCBeanAnnotated();
+	dc.setIdentifier(dtlBean.getIdentifier());
+	String pid = namespace + ":" + dtlBean.getPid();
+	String resource = endpoint + "/resource/" + pid + "/dc";
+	updateDc(resource, dc);
     }
 
     /**
@@ -204,7 +214,7 @@ public class Webclient {
 
 	String pid = namespace + ":" + dtlBean.getPid();
 	String ppid = dtlBean.getParentPid();
-	logger.info(pid + " -parent is: " + dtlBean.getParentPid());
+	logger.info(pid + " is child of " + dtlBean.getParentPid());
 	String parentPid = namespace + ":" + ppid;
 	String resourceUrl = endpoint + "/resource/" + pid;
 	WebResource resource = webclient.resource(resourceUrl);
@@ -259,6 +269,11 @@ public class Webclient {
     private void updateMetadata(String url, String metadata) {
 	WebResource metadataRes = webclient.resource(url);
 	metadataRes.put(metadata);
+    }
+
+    private void updateDc(String url, DCBeanAnnotated dc) {
+	WebResource metadataRes = webclient.resource(url);
+	metadataRes.put(dc);
     }
 
     private void updateLabel(String url, DigitalEntity dtlBean) {
