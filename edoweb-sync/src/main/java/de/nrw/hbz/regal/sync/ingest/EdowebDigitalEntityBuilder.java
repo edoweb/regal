@@ -118,7 +118,7 @@ public class EdowebDigitalEntityBuilder implements
 	    }
 
 	    dtlBean.setType(nodes.item(0).getTextContent());
-	    logger.info(dtlBean.getType());
+	    logger.info(dtlBean.getPid() + " setType to: " + dtlBean.getType());
 	} catch (XPathExpressionException e) {
 	    throw new XPathException(e);
 	}
