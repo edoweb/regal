@@ -124,6 +124,13 @@ public class TestResource {
 	}
     }
 
+    @Test
+    public void listAll() throws IOException {
+	Resource resource = new Resource();
+	resource.getAll("monograph");
+
+    }
+
     private void deleteWS(String pid) {
 	WebResource resource = c.resource(properties.getProperty("apiUrl")
 		+ "/resource/" + pid);

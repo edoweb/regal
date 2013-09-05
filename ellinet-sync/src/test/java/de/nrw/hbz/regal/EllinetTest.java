@@ -1,4 +1,5 @@
 package de.nrw.hbz.regal;
+
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -24,7 +25,7 @@ import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.regal.sync.EdowebMain;
+import de.nrw.hbz.regal.sync.EllinetMain;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -78,12 +79,12 @@ public class EllinetTest {
 
 	pidlist = Thread.currentThread().getContextClassLoader()
 		.getResource(pidlist).toString().substring(5);
-	EdowebMain.main(new String[] { "--mode", "PIDL", "--user", user,
+	EllinetMain.main(new String[] { "--mode", "PIDL", "--user", user,
 		"--password", password, "--dtl", downloadHost, "-cache",
 		localcache, "--oai", oaiHost, "--set", oaiSet, "--timestamp",
 		oaitimestamp, "--fedoraBase", fedoraUrl, "--host",
 		"http://localhost", "-list", pidlist, "-namespace", "test" });
-	EdowebMain.main(new String[] { "--mode", "DELE", "--user", user,
+	EllinetMain.main(new String[] { "--mode", "DELE", "--user", user,
 		"--password", password, "--dtl", downloadHost, "-cache",
 		localcache, "--oai", oaiHost, "--set", oaiSet, "--timestamp",
 		oaitimestamp, "--fedoraBase", fedoraUrl, "--host",

@@ -19,8 +19,11 @@ package de.nrw.hbz.regal.sync.ingest;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -52,11 +55,43 @@ import de.nrw.hbz.regal.sync.extern.StreamType;
  */
 public class EdowebDigitalEntityBuilder implements
 	DigitalEntityBuilderInterface {
+    public class MarcNamespaceContext implements NamespaceContext {
+
+	public String getNamespaceURI(String prefix) {
+	    if (prefix == null)
+		throw new NullPointerException("Null prefix");
+	    else if ("marc".equals(prefix))
+		return "http://www.loc.gov/MARC21/slim";
+	    else if ("xml".equals(prefix))
+		return XMLConstants.XML_NS_URI;
+	    return XMLConstants.NULL_NS_URI;
+	}
+
+	// This method isn't necessary for XPath processing.
+	public String getPrefix(String uri) {
+	    throw new UnsupportedOperationException();
+	}
+
+	// This method isn't necessary for XPath processing either.
+	public Iterator getPrefixes(String uri) {
+	    throw new UnsupportedOperationException();
+	}
+
+    }
 
     @SuppressWarnings({ "javadoc", "serial" })
     public class TypeNotFoundException extends RuntimeException {
 
 	public TypeNotFoundException(String message) {
+	    super(message);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class CatalogIdNotFoundException extends RuntimeException {
+
+	public CatalogIdNotFoundException(String message) {
 	    super(message);
 	}
 
@@ -96,10 +131,42 @@ public class EdowebDigitalEntityBuilder implements
 	dtlDe.setLabel(getLabel(root));
 	loadMetadataStreams(dtlDe, root);
 	setType(dtlDe);
+	setCatalogId(dtlDe);
 	loadDataStream(dtlDe, root);
 	linkToParent(dtlDe);
 
 	return dtlDe;
+    }
+
+    /**
+     * Tries to find the catalog id (aleph)
+     * 
+     * @param dtlDe
+     *            the digital entity
+     */
+    protected void setCatalogId(DigitalEntity dtlDe) {
+	Element root = XmlUtils.getDocument(dtlDe.getStream(StreamType.MARC)
+		.getFile());
+
+	XPathFactory factory = XPathFactory.newInstance();
+	XPath xpath = factory.newXPath();
+	xpath.setNamespaceContext(new MarcNamespaceContext());
+	try {
+	    XPathExpression expr = xpath
+		    .compile("//marc:controlfield[@tag='001']");
+	    Object result = expr.evaluate(root, XPathConstants.NODESET);
+	    NodeList nodes = (NodeList) result;
+	    if (nodes.getLength() != 1) {
+		throw new CatalogIdNotFoundException("Found "
+			+ nodes.getLength() + " ids");
+	    }
+	    String id = nodes.item(0).getTextContent();
+	    dtlDe.addIdentifier(id);
+	    logger.info(dtlDe.getPid() + " add id " + id);
+	} catch (XPathExpressionException e) {
+	    throw new XPathException(e);
+	}
+
     }
 
     private void setType(DigitalEntity dtlBean) {
