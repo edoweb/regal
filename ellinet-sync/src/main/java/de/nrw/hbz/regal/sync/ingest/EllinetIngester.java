@@ -82,8 +82,7 @@ public class EllinetIngester implements IngestInterface {
     private void updateMonographs(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
-	    webclient.createObject(dtlBean, "application/pdf",
-		    ObjectType.monograph);
+	    webclient.createObject(dtlBean, ObjectType.monograph);
 	    logger.info(pid + " Found monograph.");
 	    webclient.autoGenerateMetdata(dtlBean);
 	    webclient.publish(dtlBean);

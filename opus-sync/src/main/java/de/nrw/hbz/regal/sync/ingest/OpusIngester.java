@@ -74,8 +74,7 @@ public class OpusIngester implements IngestInterface {
 
 	map.clear();
 	try {
-	    webclient.createObject(dtlBean, "application/pdf",
-		    ObjectType.monograph);
+	    webclient.createObject(dtlBean, ObjectType.monograph);
 	    logger.info(pid + " " + "updated.\n");
 	    OpusMapping mapper = new OpusMapping();
 	    String metadata = mapper.map(
