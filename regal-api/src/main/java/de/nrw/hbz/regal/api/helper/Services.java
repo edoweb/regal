@@ -95,7 +95,7 @@ class Services {
 	    }
 	}
 	if (alephid.isEmpty()) {
-	    throw new HttpArchiveException(204, pid + " no Catalog-Id found");
+	    throw new HttpArchiveException(500, pid + " no Catalog-Id found");
 	}
 
 	String lobidUri = "http://lobid.org/resource/" + alephid;
