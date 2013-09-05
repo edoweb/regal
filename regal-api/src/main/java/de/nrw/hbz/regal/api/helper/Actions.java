@@ -101,7 +101,6 @@ public class Actions {
     public String deleteAll(List<String> pids) {
 	if (pids == null || pids.isEmpty())
 	    throw new HttpArchiveException(304, "Nothing to delete!");
-	logger.info("Delete All");
 	StringBuffer msg = new StringBuffer();
 	for (String pid : pids) {
 
@@ -184,7 +183,7 @@ public class Actions {
      */
     public List<String> findObject(String pid, String pred) {
 	String query = "<info:fedora/" + pid + "> <" + pred + "> *";
-	logger.info(query);
+	logger.debug(query);
 	InputStream stream = fedora.findTriples(query, FedoraVocabulary.SPO,
 		FedoraVocabulary.N3);
 	return RdfUtils.getFedoraObjects(stream);
@@ -194,26 +193,19 @@ public class Actions {
      * @param pid
      *            The pid to read the data from
      * @return the data part of the pid
-     * @throws URISyntaxException
-     *             if the data url is not wellformed
      */
-    public Response readData(String pid) throws URISyntaxException {
+    public Response readData(String pid) {
+	try {
 
-	Node node = null;
+	    logger.debug("Redirect to " + fedoraExtern + "/objects/" + pid
+		    + "/datastreams/data/content");
 
-	node = fedora.readNode(pid);
-
-	if (node != null) {
-	    Response redirect = Response.temporaryRedirect(
+	    return Response.temporaryRedirect(
 		    new java.net.URI(fedoraExtern + "/objects/" + pid
 			    + "/datastreams/data/content")).build();
-
-	    int status = redirect.getStatus();
-	    if (status != 200)
-		throw new HttpArchiveException(status);
+	} catch (URISyntaxException e) {
+	    throw new HttpArchiveException(500, "Wrong setup!");
 	}
-	return null;
-
     }
 
     /**
@@ -222,9 +214,6 @@ public class Actions {
      * @return A DCBeanAnnotated java object.
      */
     public DCBeanAnnotated readDC(String pid) {
-
-	logger.info("Read DC");
-
 	Node node = fedora.readNode(pid);
 	if (node != null)
 	    return new DCBeanAnnotated(node);
@@ -328,8 +317,6 @@ public class Actions {
      * @return a short message
      */
     public String updateDC(String pid, DCBeanAnnotated content) {
-
-	logger.info("Update DC");
 
 	content.trim();
 	Node node = fedora.readNode(pid);
@@ -716,19 +703,10 @@ public class Actions {
 
     /**
      * @param type
-     *            a type
-     * @return all objects in a html list
-     */
-    public String getAllAsHtml(String type) {
-	return representations.getAllAsHtml(getAll(type));
-    }
-
-    /**
-     * @param type
      *            the type to be displaye
      * @return html listing of all objects
      */
-    public String getAllOfTypeAsHtml(String type) {
+    public String getAllAsHtml(String type) {
 	List<String> list = findByType(type);
 	return representations.getAllOfTypeAsHtml(list, type);
     }
