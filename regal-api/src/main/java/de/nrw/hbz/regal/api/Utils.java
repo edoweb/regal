@@ -117,12 +117,7 @@ public class Utils {
     @Path("/lobidify/{pid}")
     @Produces({ "application/json", "application/xml" })
     public String lobidify(@PathParam("pid") String pid) {
-	try {
-	    return actions.lobidify(pid);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+	return actions.lobidify(pid);
     }
 
     /**
