@@ -35,6 +35,8 @@ substituteVars tomcat-users.xml $ARCHIVE_HOME/conf/tomcat-users.xml
 substituteVars setenv.sh $ARCHIVE_HOME/conf/setenv.sh
 substituteVars elasticsearch.yml $ARCHIVE_HOME/conf/elasticsearch.yml
 substituteVars site.conf $ARCHIVE_HOME/conf/site.conf
+substituteVars logging.properties $ARCHIVE_HOME/conf/logging.properties
+substituteVars catalina.out $ARCHIVE_HOME/conf/catalina.out
 }
 
 function substituteVars()
@@ -100,9 +102,11 @@ cp -r templates $ARCHIVE_HOME/bin/
 function copyConfig()
 {
 echo "copy tomcat config"
-cp  $ARCHIVE_HOME/conf/tomcat-users.xml $ARCHIVE_HOME/fedora/tomcat/conf
-cp  $ARCHIVE_HOME/conf/fedora-users.xml $ARCHIVE_HOME/fedora/server/config/
-cp  $ARCHIVE_HOME/conf/setenv.sh $ARCHIVE_HOME/fedora/tomcat/bin
+cp $ARCHIVE_HOME/conf/tomcat-users.xml $ARCHIVE_HOME/fedora/tomcat/conf
+cp $ARCHIVE_HOME/conf/fedora-users.xml $ARCHIVE_HOME/fedora/server/config/
+cp $ARCHIVE_HOME/conf/setenv.sh $ARCHIVE_HOME/fedora/tomcat/bin
+cp $ARCHIVE_HOME/conf/logging.properties $ARCHIVE_HOME/fedora/tomcat/conf
+cp $ARCHIVE_HOME/conf/catalina.out $ARCHIVE_HOME/fedora/tomcat/logs/catalina.out
 echo "copy elasticsearch config"
 mv $ARCHIVE_HOME/elasticsearch/config/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/elasticsearch.yml.bck
 cp $ARCHIVE_HOME/conf/elasticsearch.yml $ARCHIVE_HOME/elasticsearch/config/
@@ -160,6 +164,9 @@ if [ $? -ne 0 ]
 then
 return;
 fi
+cd $ARCHIVE_HOME/src/regal-ui/htdocs/api/
+sed "s/localhost/$SERVER/g" service.json > tmp && mv tmp service.json
+cd -
 correctSwagger utils;
 correctSwagger resource;
 }

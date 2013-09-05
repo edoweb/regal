@@ -1,6 +1,6 @@
 {
   "apiVersion" : "1",
-  "basePath" : "http://localhost/api",
+  "basePath" : "http://schnasse.hbz-nrw.de/api",
   "apis" : [ {
     "path" : "/resource.{format}",
     "description" : ""
