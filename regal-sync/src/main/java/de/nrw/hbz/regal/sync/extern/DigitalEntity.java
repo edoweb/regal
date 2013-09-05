@@ -18,6 +18,7 @@ package de.nrw.hbz.regal.sync.extern;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import de.nrw.hbz.regal.api.helper.XmlUtils;
@@ -44,9 +45,10 @@ public class DigitalEntity {
     private String pid = null;
     private String usageType = null;
     private String location = null;
+    private List<String> identifier = null;
 
     private HashMap<StreamType, Stream> streams = null;
-    private Vector<RelatedDigitalEntity> related = null;
+    private List<RelatedDigitalEntity> related = null;
 
     private String parentPid;
     private String label = null;
@@ -63,6 +65,7 @@ public class DigitalEntity {
 
 	related = new Vector<RelatedDigitalEntity>();
 	streams = new HashMap<StreamType, Stream>();
+	identifier = new Vector<String>();
     }
 
     /**
@@ -76,6 +79,15 @@ public class DigitalEntity {
 	this.pid = pid;
 	related = new Vector<RelatedDigitalEntity>();
 	streams = new HashMap<StreamType, Stream>();
+	identifier = new Vector<String>();
+    }
+
+    public List<String> getIdentifier() {
+	return identifier;
+    }
+
+    public void setIdentifier(List<String> identifier) {
+	this.identifier = identifier;
     }
 
     /**
@@ -189,7 +201,7 @@ public class DigitalEntity {
     /**
      * @return all related entities
      */
-    public Vector<RelatedDigitalEntity> getRelated() {
+    public List<RelatedDigitalEntity> getRelated() {
 	return related;
     }
 
@@ -197,7 +209,7 @@ public class DigitalEntity {
      * @param related
      *            alle related entities
      */
-    public void setRelated(Vector<RelatedDigitalEntity> related) {
+    public void setRelated(List<RelatedDigitalEntity> related) {
 	this.related = related;
     }
 
@@ -333,6 +345,10 @@ public class DigitalEntity {
 	for (int i = 0; i < indent; i++)
 	    buffer.append("\t");
 	return buffer.toString();
+    }
+
+    public void addIdentifier(String id) {
+	identifier.add(id);
     }
 
 }
