@@ -18,6 +18,7 @@ package de.nrw.hbz.regal.api.helper;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,49 +38,49 @@ public class View {
     String contentType = null;
     String apiUrl = null;
 
-    Vector<String> title = null;
-    Vector<String> creator = null;
-    Vector<String> year = null;
-    Vector<String> type = null;
-    Vector<String> subject = null;
-    Vector<String> description = null;
-    Vector<String> ddc = null;
-    Vector<String> language = null;
-    Vector<String> location = null;
-    Vector<String> publisher = null;
-    Vector<String> isPartOf = null;
-    Vector<String> isPartOfName = null;
-    Vector<String> hasPart = null;
-    Vector<String> hasPartName = null;
-    Vector<String> medium = null;
-    Vector<String> pid = null;
-    Vector<String> doi = null;
-    Vector<String> urn = null;
-    Vector<String> url = null;
-    Vector<String> alephid = null;
-    Vector<String> rights = null;
-    Vector<String> identifier = null;
-    Vector<String> contributer = null;
+    List<String> title = null;
+    List<String> creator = null;
+    List<String> year = null;
+    List<String> type = null;
+    List<String> subject = null;
+    List<String> description = null;
+    List<String> ddc = null;
+    List<String> language = null;
+    List<String> location = null;
+    List<String> publisher = null;
+    List<String> isPartOf = null;
+    List<String> isPartOfName = null;
+    List<String> hasPart = null;
+    List<String> hasPartName = null;
+    List<String> medium = null;
+    List<String> pid = null;
+    List<String> doi = null;
+    List<String> urn = null;
+    List<String> url = null;
+    List<String> alephid = null;
+    List<String> rights = null;
+    List<String> identifier = null;
+    List<String> contributer = null;
     @SuppressWarnings("rawtypes")
-    Vector<SimpleEntry> predicates = null;
+    List<SimpleEntry> predicates = null;
 
     // TODO refactor names
-    Vector<String> pdfUrl = null;
-    Vector<String> zipUrl = null;
-    Vector<String> thumbnailUrl = null;
-    Vector<String> ocrUrl = null;
+    List<String> pdfUrl = null;
+    List<String> zipUrl = null;
+    List<String> thumbnailUrl = null;
+    List<String> ocrUrl = null;
 
     // TODO make this configurable
-    Vector<String> verbundUrl = null;
-    Vector<String> dataciteUrl = null;
-    Vector<String> lobidUrl = null;
-    Vector<String> culturegraphUrl = null;
-    Vector<String> baseUrl = null;
-    Vector<String> originalObjectUrl = null;
-    Vector<String> cacheUrl = null;
-    Vector<String> fedoraUrl = null;
-    Vector<String> risearchUrl = null;
-    Vector<String> message = null;
+    List<String> verbundUrl = null;
+    List<String> dataciteUrl = null;
+    List<String> lobidUrl = null;
+    List<String> culturegraphUrl = null;
+    List<String> baseUrl = null;
+    List<String> originalObjectUrl = null;
+    List<String> cacheUrl = null;
+    List<String> fedoraUrl = null;
+    List<String> risearchUrl = null;
+    List<String> message = null;
 
     private Date lastModified = null;
 
@@ -131,273 +132,273 @@ public class View {
 
     }
 
-    public Vector<String> getContributer() {
+    public List<String> getContributer() {
 	return contributer;
     }
 
     /**
      * @return
      */
-    public Vector<String> getIsPartOfName() {
+    public List<String> getIsPartOfName() {
 	return isPartOfName;
     }
 
     /**
      * @param isPartOfName
      */
-    public void setIsPartOfName(Vector<String> isPartOfName) {
+    public void setIsPartOfName(List<String> isPartOfName) {
 	this.isPartOfName = isPartOfName;
     }
 
-    public Vector<String> getHasPartName() {
+    public List<String> getHasPartName() {
 	return hasPartName;
     }
 
-    public void setHasPartName(Vector<String> hasPart) {
+    public void setHasPartName(List<String> hasPart) {
 	this.hasPartName = hasPart;
     }
 
-    public Vector<String> getDescription() {
+    public List<String> getDescription() {
 	return description;
     }
 
-    public void setDescription(Vector<String> description) {
+    public void setDescription(List<String> description) {
 	this.description = description;
     }
 
-    public Vector<String> getRights() {
+    public List<String> getRights() {
 	return rights;
     }
 
-    public void setRights(Vector<String> rights) {
+    public void setRights(List<String> rights) {
 	this.rights = rights;
     }
 
-    public Vector<String> getOriginalObjectUrl() {
+    public List<String> getOriginalObjectUrl() {
 	return originalObjectUrl;
     }
 
-    public void setOriginalObjectUrl(Vector<String> originalObject) {
+    public void setOriginalObjectUrl(List<String> originalObject) {
 	this.originalObjectUrl = originalObject;
     }
 
-    public Vector<String> getCacheUrl() {
+    public List<String> getCacheUrl() {
 	return cacheUrl;
     }
 
-    public void setCacheUrl(Vector<String> cacheUrl) {
+    public void setCacheUrl(List<String> cacheUrl) {
 	this.cacheUrl = cacheUrl;
     }
 
-    public Vector<String> getFedoraUrl() {
+    public List<String> getFedoraUrl() {
 	return fedoraUrl;
     }
 
-    public void setFedoraUrl(Vector<String> fedoraUrl) {
+    public void setFedoraUrl(List<String> fedoraUrl) {
 	this.fedoraUrl = fedoraUrl;
     }
 
-    public Vector<String> getRisearchUrl() {
+    public List<String> getRisearchUrl() {
 	return risearchUrl;
     }
 
-    public void setRisearchUrl(Vector<String> risearchUrl) {
+    public void setRisearchUrl(List<String> risearchUrl) {
 	this.risearchUrl = risearchUrl;
     }
 
-    public Vector<String> getHasPart() {
+    public List<String> getHasPart() {
 	return hasPart;
     }
 
-    public Vector<String> getZipUrl() {
+    public List<String> getZipUrl() {
 	return zipUrl;
     }
 
-    public void setZipUrl(Vector<String> zipUrl) {
+    public void setZipUrl(List<String> zipUrl) {
 	this.zipUrl = zipUrl;
     }
 
-    public void setHasPart(Vector<String> hasPart) {
+    public void setHasPart(List<String> hasPart) {
 	this.hasPart = hasPart;
     }
 
-    public Vector<String> getDataciteUrl() {
+    public List<String> getDataciteUrl() {
 	return dataciteUrl;
     }
 
-    public void setDataciteUrl(Vector<String> dataciteUrl) {
+    public void setDataciteUrl(List<String> dataciteUrl) {
 	this.dataciteUrl = dataciteUrl;
     }
 
-    public Vector<String> getBaseUrl() {
+    public List<String> getBaseUrl() {
 	return baseUrl;
     }
 
-    public void setBaseUrl(Vector<String> baseUrl) {
+    public void setBaseUrl(List<String> baseUrl) {
 	this.baseUrl = baseUrl;
     }
 
-    public void setVerbundUrl(Vector<String> verbundUrl) {
+    public void setVerbundUrl(List<String> verbundUrl) {
 	this.verbundUrl = verbundUrl;
     }
 
-    public Vector<String> getDdc() {
+    public List<String> getDdc() {
 	return ddc;
     }
 
-    public void setDdc(Vector<String> ddc) {
+    public void setDdc(List<String> ddc) {
 	this.ddc = ddc;
     }
 
-    public Vector<String> getSubject() {
+    public List<String> getSubject() {
 	return subject;
     }
 
-    public void setSubject(Vector<String> subject) {
+    public void setSubject(List<String> subject) {
 	this.subject = subject;
     }
 
-    public Vector<String> getCulturegraphUrl() {
+    public List<String> getCulturegraphUrl() {
 	return culturegraphUrl;
     }
 
-    public void setCulturegraphUrl(Vector<String> culturegraphUrl) {
+    public void setCulturegraphUrl(List<String> culturegraphUrl) {
 	this.culturegraphUrl = culturegraphUrl;
     }
 
-    public Vector<String> getLobidUrl() {
+    public List<String> getLobidUrl() {
 	return lobidUrl;
     }
 
-    public void setLobidUrl(Vector<String> lobidUrl) {
+    public void setLobidUrl(List<String> lobidUrl) {
 	this.lobidUrl = lobidUrl;
     }
 
-    public Vector<String> getLanguage() {
+    public List<String> getLanguage() {
 	return language;
     }
 
-    public void setLanguage(Vector<String> language) {
+    public void setLanguage(List<String> language) {
 	this.language = language;
     }
 
-    public Vector<String> getDoi() {
+    public List<String> getDoi() {
 	return doi;
     }
 
-    public void setDoi(Vector<String> doi) {
+    public void setDoi(List<String> doi) {
 	this.doi = doi;
     }
 
-    public Vector<String> getUrn() {
+    public List<String> getUrn() {
 	return urn;
     }
 
-    public void setUrn(Vector<String> urn) {
+    public void setUrn(List<String> urn) {
 	this.urn = urn;
     }
 
-    public Vector<String> getUrl() {
+    public List<String> getUrl() {
 	return url;
     }
 
-    public void setUrl(Vector<String> url) {
+    public void setUrl(List<String> url) {
 	this.url = url;
     }
 
-    public Vector<String> getLocation() {
+    public List<String> getLocation() {
 	return location;
     }
 
-    public void setLocation(Vector<String> location) {
+    public void setLocation(List<String> location) {
 	this.location = location;
     }
 
-    public Vector<String> getIsPartOf() {
+    public List<String> getIsPartOf() {
 	return isPartOf;
     }
 
-    public void setIsPartOf(Vector<String> isPartOf) {
+    public void setIsPartOf(List<String> isPartOf) {
 	this.isPartOf = isPartOf;
     }
 
-    public Vector<String> getMedium() {
+    public List<String> getMedium() {
 	return medium;
     }
 
-    public void setMedium(Vector<String> medium) {
+    public void setMedium(List<String> medium) {
 	this.medium = medium;
     }
 
-    public Vector<String> getAlephid() {
+    public List<String> getAlephid() {
 	return alephid;
     }
 
-    public void setAlephid(Vector<String> alephid) {
+    public void setAlephid(List<String> alephid) {
 	this.alephid = alephid;
     }
 
-    public Vector<String> getType() {
+    public List<String> getType() {
 	return type;
     }
 
-    public void setType(Vector<String> type) {
+    public void setType(List<String> type) {
 	this.type = type;
     }
 
-    public Vector<String> getPid() {
+    public List<String> getPid() {
 	return pid;
     }
 
-    public void setPid(Vector<String> pid) {
+    public void setPid(List<String> pid) {
 	this.pid = pid;
     }
 
-    public Vector<String> getTitle() {
+    public List<String> getTitle() {
 	return title;
     }
 
-    public void setTitle(Vector<String> title) {
+    public void setTitle(List<String> title) {
 	this.title = title;
     }
 
-    public Vector<String> getCreator() {
+    public List<String> getCreator() {
 	return creator;
     }
 
-    public void setCreator(Vector<String> creator) {
+    public void setCreator(List<String> creator) {
 	this.creator = creator;
     }
 
-    public Vector<String> getPublisher() {
+    public List<String> getPublisher() {
 	return publisher;
     }
 
-    public void setPublisher(Vector<String> publisher) {
+    public void setPublisher(List<String> publisher) {
 	this.publisher = publisher;
     }
 
-    public Vector<String> getYear() {
+    public List<String> getYear() {
 	return year;
     }
 
-    public void setYear(Vector<String> year) {
+    public void setYear(List<String> year) {
 	this.year = year;
     }
 
-    public Vector<String> getPdfUrl() {
+    public List<String> getPdfUrl() {
 	return pdfUrl;
     }
 
-    public void setPdfUrl(Vector<String> pdfUrl) {
+    public void setPdfUrl(List<String> pdfUrl) {
 	this.pdfUrl = pdfUrl;
     }
 
-    public Vector<String> getThumbnailUrl() {
+    public List<String> getThumbnailUrl() {
 	return thumbnailUrl;
     }
 
-    public void setThumbnailUrl(Vector<String> thumbnailUrl) {
+    public void setThumbnailUrl(List<String> thumbnailUrl) {
 	this.thumbnailUrl = thumbnailUrl;
     }
 
@@ -530,7 +531,7 @@ public class View {
     public String getFirstAlephId() {
 	if (alephid.isEmpty())
 	    return "";
-	String str = alephid.firstElement();
+	String str = alephid.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -539,7 +540,7 @@ public class View {
     public String getFirstPdfUrl() {
 	if (pdfUrl.isEmpty())
 	    return "";
-	String str = pdfUrl.firstElement();
+	String str = pdfUrl.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -548,7 +549,7 @@ public class View {
     public String getFirstThumbnailUrl() {
 	if (thumbnailUrl.isEmpty())
 	    return "";
-	String str = thumbnailUrl.firstElement();
+	String str = thumbnailUrl.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -557,7 +558,7 @@ public class View {
     public String getFirstLobidUrl() {
 	if (lobidUrl.isEmpty())
 	    return "";
-	String str = lobidUrl.firstElement();
+	String str = lobidUrl.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -566,7 +567,7 @@ public class View {
     public String getFirstPid() {
 	if (pid.isEmpty())
 	    return "";
-	String str = pid.firstElement();
+	String str = pid.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -575,17 +576,17 @@ public class View {
     public String getFirstVerbundUrl() {
 	if (verbundUrl.isEmpty())
 	    return "";
-	String str = verbundUrl.firstElement();
+	String str = verbundUrl.get(0);
 	if (str == null)
 	    str = "";
 	return str;
     }
 
-    public Vector<String> getOcrUrl() {
+    public List<String> getOcrUrl() {
 	return ocrUrl;
     }
 
-    public void setOcrUrl(Vector<String> ocrUrl) {
+    public void setOcrUrl(List<String> ocrUrl) {
 	this.ocrUrl = ocrUrl;
     }
 
@@ -597,11 +598,11 @@ public class View {
 	this.uri = uri;
     }
 
-    public Vector<String> getMessage() {
+    public List<String> getMessage() {
 	return message;
     }
 
-    public void setMessage(Vector<String> message) {
+    public void setMessage(List<String> message) {
 	this.message = message;
     }
 
@@ -609,14 +610,14 @@ public class View {
 	return message.add(e);
     }
 
-    public Vector<String> getVerbundUrl() {
+    public List<String> getVerbundUrl() {
 	return verbundUrl;
     }
 
     public String getFirstDoi() {
 	if (doi.isEmpty())
 	    return "";
-	String str = doi.firstElement();
+	String str = doi.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -625,7 +626,7 @@ public class View {
     public String getFirstZipUrl() {
 	if (zipUrl.isEmpty())
 	    return "";
-	String str = zipUrl.firstElement();
+	String str = zipUrl.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -634,7 +635,7 @@ public class View {
     public String getFirstFedoraUrl() {
 	if (fedoraUrl.isEmpty())
 	    return "";
-	String str = fedoraUrl.firstElement();
+	String str = fedoraUrl.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -643,7 +644,7 @@ public class View {
     public String getFirstCacheUrl() {
 	if (cacheUrl.isEmpty())
 	    return "";
-	String str = cacheUrl.firstElement();
+	String str = cacheUrl.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -652,7 +653,7 @@ public class View {
     public String getFirstOriginalObjectUrl() {
 	if (originalObjectUrl.isEmpty())
 	    return "";
-	String str = originalObjectUrl.firstElement();
+	String str = originalObjectUrl.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -661,7 +662,7 @@ public class View {
     public String getFirstRisearchUrl() {
 	if (risearchUrl.isEmpty())
 	    return "";
-	String str = risearchUrl.firstElement();
+	String str = risearchUrl.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -670,7 +671,7 @@ public class View {
     public String getFirstDescription() {
 	if (description.isEmpty())
 	    return "";
-	String str = description.firstElement();
+	String str = description.get(0);
 	if (str == null)
 	    str = "";
 	return str;
@@ -680,21 +681,21 @@ public class View {
 	identifier.add(id);
     }
 
-    public Vector<String> getIdentifier() {
+    public List<String> getIdentifier() {
 	return identifier;
     }
 
-    public void setIdentifier(Vector<String> identifier) {
+    public void setIdentifier(List<String> identifier) {
 	this.identifier = identifier;
     }
 
     @SuppressWarnings("rawtypes")
-    public Vector<SimpleEntry> getPredicates() {
+    public List<SimpleEntry> getPredicates() {
 	return predicates;
     }
 
     public void setPredicates(
-	    @SuppressWarnings("rawtypes") Vector<SimpleEntry> predicates) {
+	    @SuppressWarnings("rawtypes") List<SimpleEntry> predicates) {
 	this.predicates = predicates;
     }
 
@@ -726,7 +727,7 @@ public class View {
 	this.apiUrl = apiUrl;
     }
 
-    public void setContributer(Vector<String> contributer) {
+    public void setContributer(List<String> contributer) {
 	this.contributer = contributer;
     }
 

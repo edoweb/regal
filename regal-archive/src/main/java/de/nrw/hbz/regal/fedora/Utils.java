@@ -647,21 +647,21 @@ public class Utils {
 
 	StringBuffer update = new StringBuffer();
 
-	Vector<String> contributer = null;
-	Vector<String> coverage = null;
-	Vector<String> creator = null;
-	Vector<String> date = null;
-	Vector<String> description = null;
-	Vector<String> format = null;
-	Vector<String> identifier = null;
+	List<String> contributer = null;
+	List<String> coverage = null;
+	List<String> creator = null;
+	List<String> date = null;
+	List<String> description = null;
+	List<String> format = null;
+	List<String> identifier = null;
 	// String[] label = null;
-	Vector<String> language = null;
-	Vector<String> publisher = null;
-	Vector<String> rights = null;
-	Vector<String> source = null;
-	Vector<String> subject = null;
-	Vector<String> title = null;
-	Vector<String> type = null;
+	List<String> language = null;
+	List<String> publisher = null;
+	List<String> rights = null;
+	List<String> source = null;
+	List<String> subject = null;
+	List<String> title = null;
+	List<String> type = null;
 
 	if ((contributer = node.getContributer()) != null) {
 	    for (String str : contributer) {

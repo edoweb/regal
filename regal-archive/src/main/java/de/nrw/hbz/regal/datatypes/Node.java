@@ -355,7 +355,7 @@ public class Node {
     /**
      * @return dc:format
      */
-    public Vector<String> getFormat() {
+    public List<String> getFormat() {
 	return bean.getFormat();
     }
 
@@ -462,42 +462,42 @@ public class Node {
     /**
      * @return dc:title
      */
-    public Vector<String> getTitle() {
+    public List<String> getTitle() {
 	return bean.getTitle();
     }
 
     /**
      * @return dc:contributer
      */
-    public Vector<String> getContributer() {
+    public List<String> getContributer() {
 	return bean.getContributer();
     }
 
     /**
      * @return dc:coverage
      */
-    public Vector<String> getCoverage() {
+    public List<String> getCoverage() {
 	return bean.getCoverage();
     }
 
     /**
      * @return dc:description
      */
-    public Vector<String> getDescription() {
+    public List<String> getDescription() {
 	return bean.getDescription();
     }
 
     /**
      * @return dc:date
      */
-    public Vector<String> getDate() {
+    public List<String> getDate() {
 	return bean.getDate();
     }
 
     /**
      * @return dc:creator
      */
-    public Vector<String> getCreator() {
+    public List<String> getCreator() {
 	return bean.getCreator();
     }
 
@@ -767,56 +767,56 @@ public class Node {
     /**
      * @return dc:identifier
      */
-    public Vector<String> getIdentifier() {
+    public List<String> getIdentifier() {
 	return bean.getIdentifier();
     }
 
     /**
      * @return dc:language
      */
-    public Vector<String> getLanguage() {
+    public List<String> getLanguage() {
 	return bean.getLanguage();
     }
 
     /**
      * @return dc:publisher
      */
-    public Vector<String> getPublisher() {
+    public List<String> getPublisher() {
 	return bean.getPublisher();
     }
 
     /**
      * @return dc:rights
      */
-    public Vector<String> getRights() {
+    public List<String> getRights() {
 	return bean.getRights();
     }
 
     /**
      * @return dc:source
      */
-    public Vector<String> getSource() {
+    public List<String> getSource() {
 	return bean.getSource();
     }
 
     /**
      * @return dc:subject
      */
-    public Vector<String> getSubject() {
+    public List<String> getSubject() {
 	return bean.getSubject();
     }
 
     /**
      * @return dc:type
      */
-    public Vector<String> getType() {
+    public List<String> getType() {
 	return bean.getType();
     }
 
     /**
      * @return dc:Relation
      */
-    public Vector<String> getDCRelation() {
+    public List<String> getDCRelation() {
 	return bean.getRelation();
     }
 

@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -43,21 +44,21 @@ import de.nrw.hbz.regal.datatypes.Node;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DCBeanAnnotated {
-    Vector<String> contributer = new Vector<String>();
-    Vector<String> coverage = new Vector<String>();
-    Vector<String> creator = new Vector<String>();
-    Vector<String> date = new Vector<String>();
-    Vector<String> description = new Vector<String>();
-    Vector<String> format = new Vector<String>();
-    Vector<String> identifier = new Vector<String>();
-    Vector<String> language = new Vector<String>();
-    Vector<String> publisher = new Vector<String>();
-    Vector<String> relation = new Vector<String>();
-    Vector<String> rights = new Vector<String>();
-    Vector<String> source = new Vector<String>();
-    Vector<String> subject = new Vector<String>();
-    Vector<String> title = new Vector<String>();
-    Vector<String> type = new Vector<String>();
+    List<String> contributer = new Vector<String>();
+    List<String> coverage = new Vector<String>();
+    List<String> creator = new Vector<String>();
+    List<String> date = new Vector<String>();
+    List<String> description = new Vector<String>();
+    List<String> format = new Vector<String>();
+    List<String> identifier = new Vector<String>();
+    List<String> language = new Vector<String>();
+    List<String> publisher = new Vector<String>();
+    List<String> relation = new Vector<String>();
+    List<String> rights = new Vector<String>();
+    List<String> source = new Vector<String>();
+    List<String> subject = new Vector<String>();
+    List<String> title = new Vector<String>();
+    List<String> type = new Vector<String>();
 
     /**
      * An empty DCBean
@@ -167,7 +168,7 @@ public class DCBeanAnnotated {
     /**
      * @return dc:contributer
      */
-    public Vector<String> getContributer() {
+    public List<String> getContributer() {
 	return contributer;
     }
 
@@ -176,7 +177,7 @@ public class DCBeanAnnotated {
      *            dc:contributer
      * @return this
      */
-    public DCBeanAnnotated setContributer(Vector<String> contributer) {
+    public DCBeanAnnotated setContributer(List<String> contributer) {
 	this.contributer = contributer;
 	return this;
     }
@@ -195,18 +196,18 @@ public class DCBeanAnnotated {
      * @return dc:contributer
      */
     public String getFirstContributer() {
-	Vector<String> elements = getContributer();
+	List<String> elements = getContributer();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:coverae
      */
-    public Vector<String> getCoverage() {
+    public List<String> getCoverage() {
 	return coverage;
     }
 
@@ -215,7 +216,7 @@ public class DCBeanAnnotated {
      *            dc:coverage
      * @return this
      */
-    public DCBeanAnnotated setCoverage(Vector<String> coverage) {
+    public DCBeanAnnotated setCoverage(List<String> coverage) {
 	this.coverage = coverage;
 	return this;
     }
@@ -234,18 +235,18 @@ public class DCBeanAnnotated {
      * @return dc:coverage
      */
     public String getFirstCoverage() {
-	Vector<String> elements = getCoverage();
+	List<String> elements = getCoverage();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:creator
      */
-    public Vector<String> getCreator() {
+    public List<String> getCreator() {
 	return creator;
     }
 
@@ -254,7 +255,7 @@ public class DCBeanAnnotated {
      *            dc:creator
      * @return this
      */
-    public DCBeanAnnotated setCreator(Vector<String> creator) {
+    public DCBeanAnnotated setCreator(List<String> creator) {
 	this.creator = creator;
 	return this;
     }
@@ -273,18 +274,18 @@ public class DCBeanAnnotated {
      * @return dc:creator
      */
     public String getFirstCreator() {
-	Vector<String> elements = getCreator();
+	List<String> elements = getCreator();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:date
      */
-    public Vector<String> getDate() {
+    public List<String> getDate() {
 	return date;
     }
 
@@ -293,7 +294,7 @@ public class DCBeanAnnotated {
      *            dc:date
      * @return this
      */
-    public DCBeanAnnotated setDate(Vector<String> date) {
+    public DCBeanAnnotated setDate(List<String> date) {
 	this.date = date;
 	return this;
     }
@@ -312,18 +313,18 @@ public class DCBeanAnnotated {
      * @return dc:date
      */
     public String getFirstDate() {
-	Vector<String> elements = getDate();
+	List<String> elements = getDate();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:description
      */
-    public Vector<String> getDescription() {
+    public List<String> getDescription() {
 	return description;
     }
 
@@ -332,7 +333,7 @@ public class DCBeanAnnotated {
      *            dc:description
      * @return this
      */
-    public DCBeanAnnotated setDescription(Vector<String> description) {
+    public DCBeanAnnotated setDescription(List<String> description) {
 	this.description = description;
 	return this;
     }
@@ -351,18 +352,18 @@ public class DCBeanAnnotated {
      * @return dc:description
      */
     public String getFirstDescription() {
-	Vector<String> elements = getDescription();
+	List<String> elements = getDescription();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:format
      */
-    public Vector<String> getFormat() {
+    public List<String> getFormat() {
 	return format;
     }
 
@@ -371,7 +372,7 @@ public class DCBeanAnnotated {
      *            dc:format
      * @return this
      */
-    public DCBeanAnnotated setFormat(Vector<String> format) {
+    public DCBeanAnnotated setFormat(List<String> format) {
 	this.format = format;
 	return this;
     }
@@ -390,28 +391,28 @@ public class DCBeanAnnotated {
      * @return dc:format
      */
     public String getFirstFormat() {
-	Vector<String> elements = getFormat();
+	List<String> elements = getFormat();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:identifier
      */
-    public Vector<String> getIdentifier() {
+    public List<String> getIdentifier() {
 	return identifier;
     }
 
     /**
-     * @param identifier
+     * @param list
      *            dc:identifier
      * @return this
      */
-    public DCBeanAnnotated setIdentifier(Vector<String> identifier) {
-	this.identifier = identifier;
+    public DCBeanAnnotated setIdentifier(List<String> list) {
+	this.identifier = list;
 	return this;
     }
 
@@ -429,18 +430,18 @@ public class DCBeanAnnotated {
      * @return dc:identifier
      */
     public String getFirstIdentifier() {
-	Vector<String> elements = getIdentifier();
+	List<String> elements = getIdentifier();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:language
      */
-    public Vector<String> getLanguage() {
+    public List<String> getLanguage() {
 	return language;
     }
 
@@ -449,7 +450,7 @@ public class DCBeanAnnotated {
      *            dc:language
      * @return this
      */
-    public DCBeanAnnotated setLanguage(Vector<String> language) {
+    public DCBeanAnnotated setLanguage(List<String> language) {
 	this.language = language;
 	return this;
     }
@@ -468,18 +469,18 @@ public class DCBeanAnnotated {
      * @return dc:language
      */
     public String getFirstLanguage() {
-	Vector<String> elements = getLanguage();
+	List<String> elements = getLanguage();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:publisher
      */
-    public Vector<String> getPublisher() {
+    public List<String> getPublisher() {
 	return publisher;
     }
 
@@ -488,7 +489,7 @@ public class DCBeanAnnotated {
      *            dc:publisher
      * @return this
      */
-    public DCBeanAnnotated setPublisher(Vector<String> publisher) {
+    public DCBeanAnnotated setPublisher(List<String> publisher) {
 	this.publisher = publisher;
 	return this;
     }
@@ -507,18 +508,18 @@ public class DCBeanAnnotated {
      * @return dc:publisher
      */
     public String getFirstPublisher() {
-	Vector<String> elements = getPublisher();
+	List<String> elements = getPublisher();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:relation
      */
-    public Vector<String> getRelation() {
+    public List<String> getRelation() {
 	return relation;
     }
 
@@ -527,7 +528,7 @@ public class DCBeanAnnotated {
      *            dc:relation
      * @return this
      */
-    public DCBeanAnnotated setRelation(Vector<String> relation) {
+    public DCBeanAnnotated setRelation(List<String> relation) {
 	this.relation = relation;
 	return this;
     }
@@ -546,18 +547,18 @@ public class DCBeanAnnotated {
      * @return dc:relation
      */
     public String getFirstRelation() {
-	Vector<String> elements = getRelation();
+	List<String> elements = getRelation();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:rights
      */
-    public Vector<String> getRights() {
+    public List<String> getRights() {
 	return rights;
     }
 
@@ -566,7 +567,7 @@ public class DCBeanAnnotated {
      *            dc:rights
      * @return this
      */
-    public DCBeanAnnotated setRights(Vector<String> rights) {
+    public DCBeanAnnotated setRights(List<String> rights) {
 	this.rights = rights;
 	return this;
     }
@@ -585,18 +586,18 @@ public class DCBeanAnnotated {
      * @return dc:rights
      */
     public String getFirstRights() {
-	Vector<String> elements = getRights();
+	List<String> elements = getRights();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:source
      */
-    public Vector<String> getSource() {
+    public List<String> getSource() {
 	return source;
     }
 
@@ -605,7 +606,7 @@ public class DCBeanAnnotated {
      *            dc:source
      * @return this
      */
-    public DCBeanAnnotated setSource(Vector<String> source) {
+    public DCBeanAnnotated setSource(List<String> source) {
 	this.source = source;
 	return this;
     }
@@ -624,18 +625,18 @@ public class DCBeanAnnotated {
      * @return dc:source
      */
     public String getFirstSource() {
-	Vector<String> elements = getSource();
+	List<String> elements = getSource();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:subject
      */
-    public Vector<String> getSubject() {
+    public List<String> getSubject() {
 	return subject;
     }
 
@@ -644,7 +645,7 @@ public class DCBeanAnnotated {
      *            dc:subject
      * @return this
      */
-    public DCBeanAnnotated setSubject(Vector<String> subject) {
+    public DCBeanAnnotated setSubject(List<String> subject) {
 	this.subject = subject;
 	return this;
     }
@@ -663,18 +664,18 @@ public class DCBeanAnnotated {
      * @return dc:subject
      */
     public String getFirstSubject() {
-	Vector<String> elements = getSubject();
+	List<String> elements = getSubject();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:title
      */
-    public Vector<String> getTitle() {
+    public List<String> getTitle() {
 	return title;
     }
 
@@ -683,7 +684,7 @@ public class DCBeanAnnotated {
      *            dc:title
      * @return this
      */
-    public DCBeanAnnotated setTitle(Vector<String> title) {
+    public DCBeanAnnotated setTitle(List<String> title) {
 	this.title = title;
 	return this;
     }
@@ -702,18 +703,18 @@ public class DCBeanAnnotated {
      * @return dc:title
      */
     public String getFirstTitle() {
-	Vector<String> elements = getTitle();
+	List<String> elements = getTitle();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**
      * @return dc:type
      */
-    public Vector<String> getType() {
+    public List<String> getType() {
 	return type;
     }
 
@@ -722,7 +723,7 @@ public class DCBeanAnnotated {
      *            dc:type
      * @return this
      */
-    public DCBeanAnnotated setType(Vector<String> type) {
+    public DCBeanAnnotated setType(List<String> type) {
 	this.type = type;
 	return this;
     }
@@ -741,12 +742,12 @@ public class DCBeanAnnotated {
      * @return dc:type
      */
     public String getFirstType() {
-	Vector<String> elements = getType();
+	List<String> elements = getType();
 	if (elements == null || elements.size() == 0) {
 	    return "";
 	}
 
-	return elements.elementAt(0);
+	return elements.get(0);
     }
 
     /**

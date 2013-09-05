@@ -18,7 +18,7 @@ package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public class DippIngester implements IngestInterface {
 	} else {
 	    map.put(pid, pid);
 	}
-	Vector<RelatedDigitalEntity> related = dtlBean.getRelated();
+	List<RelatedDigitalEntity> related = dtlBean.getRelated();
 	int num = related.size();
 	int count = 1;
 	// logger.info(pid + " Found " + num + " parts.");
@@ -111,7 +111,7 @@ public class DippIngester implements IngestInterface {
     private boolean isParent(DigitalEntity dtlBean) {
 	if (dtlBean.getPid().contains("oai"))
 	    return false;
-	Vector<RelatedDigitalEntity> related = dtlBean.getRelated();
+	List<RelatedDigitalEntity> related = dtlBean.getRelated();
 	int num = related.size();
 	int count = 1;
 	for (RelatedDigitalEntity relation : related) {
