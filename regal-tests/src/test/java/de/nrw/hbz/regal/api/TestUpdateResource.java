@@ -140,13 +140,15 @@ public class TestUpdateResource {
 
     public void cleanUp() {
 	try {
-	    WebResource deleteNs = client.resource(apiUrl
-		    + "/utils/deleteNamespace/test");
-	    String response = deleteNs.delete(String.class);
-	    System.out.println(response);
+	    WebResource deleteNs = client.resource(properties
+		    .getProperty("apiUrl") + "/utils/deleteNamespace/test");
+	    deleteNs.delete();
+
+	    WebResource deleteTestCM = client.resource(properties
+		    .getProperty("apiUrl") + "/utils/deleteNamespace/testCM");
+	    deleteTestCM.delete();
 	} catch (Exception e) {
 
 	}
-
     }
 }

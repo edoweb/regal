@@ -268,6 +268,10 @@ public class TestResource {
 	    WebResource deleteNs = c.resource(properties.getProperty("apiUrl")
 		    + "/utils/deleteNamespace/test");
 	    deleteNs.delete();
+
+	    WebResource deleteTestCM = c.resource(properties
+		    .getProperty("apiUrl") + "/utils/deleteNamespace/testCM");
+	    deleteTestCM.delete();
 	} catch (Exception e) {
 
 	}
