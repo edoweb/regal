@@ -99,8 +99,9 @@ public class Actions {
      * @return A short message.
      */
     public String deleteAll(List<String> pids) {
-	if (pids == null || pids.isEmpty())
-	    throw new HttpArchiveException(304, "Nothing to delete!");
+	if (pids == null || pids.isEmpty()) {
+	    return "Nothing to delete!";
+	}
 	StringBuffer msg = new StringBuffer();
 	for (String pid : pids) {
 
