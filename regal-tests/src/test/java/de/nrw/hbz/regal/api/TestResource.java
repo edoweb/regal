@@ -41,6 +41,7 @@ import com.sun.jersey.multipart.BodyPart;
 import com.sun.jersey.multipart.MultiPart;
 import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
+import de.nrw.hbz.regal.api.helper.HttpArchiveException;
 import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 import de.nrw.hbz.regal.fedora.CopyUtils;
@@ -245,6 +246,16 @@ public class TestResource {
 	String response = dc.put(String.class, new CreateObjectBean(type));
 	System.out.println(response);
 	return dc;
+    }
+
+    @Test(expected = HttpArchiveException.class)
+    public void deleteData() throws IOException, URISyntaxException {
+	Resource resource = new Resource();
+	create("123", "test", ObjectType.monograph);
+	resource.readData("123", "test");
+	resource.deleteMetadata("123", "test");
+	resource.deleteData("123", "test");
+	resource.readData("123", "test");
     }
 
     @After
