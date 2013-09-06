@@ -97,6 +97,9 @@ $ARCHIVE_HOME/elasticsearch/bin/elasticsearch
 pwd
 cp variables.conf $ARCHIVE_HOME/bin/
 cp -r templates $ARCHIVE_HOME/bin/
+cd $ARCHIVE_HOME/src/
+mvn clean install
+cd -
 }
 
 function copyConfig()
@@ -200,15 +203,16 @@ export FEDORA_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_HOME=$FEDORA_HOME/tomcat
 
 }
+
 function updateInstaller
 {
 SRC=$ARCHIVE_HOME/src
 echo "Update installer"
 cp $SRC/regal-installer/install.sh $ARCHIVE_HOME/bin/
 }
+
 function copyHtml
 {
-
 echo "copy html"
 cp -r $ARCHIVE_HOME/src/regal-ui/htdocs/* $ARCHIVE_HOME/html/
 echo "Edit $ARCHIVE_HOME/html/js/Search.js"
@@ -216,10 +220,12 @@ sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/Search.js > tmp && mv tmp "$AR
 echo "Copy api Doku"
 copySwagger
 }
+
 function startUpTomcat
 {
 $ARCHIVE_HOME/fedora/tomcat/bin/startup.sh
 }
+
 function installOaiPmh
 {
 SRC=$ARCHIVE_HOME/src
@@ -227,19 +233,20 @@ WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
 rm -rf  $WEBAPPS/oai-pmh*
 cp $SRC/regal-ui/bin/oai-pmh.war $WEBAPPS
 }
+
 function installApi
 {
 SRC=$ARCHIVE_HOME/src
 WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
 cd $SRC/regal-api
 echo "Install Webapi"
-mvn -q -e war:war -DskipTests --settings ../settings.xml
+mvn war:war -DskipTests
 mvn package
 cd -
 rm -rf  $WEBAPPS/api*
 cp $SRC/regal-api/target/api.war $WEBAPPS/api.war
-
 }
+
 function shutdownTomcat
 {
 $ARCHIVE_HOME/fedora/tomcat/bin/shutdown.sh > /dev/null 2>&1
