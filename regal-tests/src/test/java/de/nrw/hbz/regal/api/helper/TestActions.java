@@ -18,7 +18,6 @@ package de.nrw.hbz.regal.api.helper;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Properties;
 
 import javax.ws.rs.core.Response;
 
@@ -41,24 +40,18 @@ import de.nrw.hbz.regal.fedora.CopyUtils;
  */
 @SuppressWarnings("javadoc")
 public class TestActions {
-    Properties properties;
+
     Actions actions;
 
     @Before
     public void setUp() throws IOException {
-	properties = new Properties();
-	properties.load(getClass().getResourceAsStream("/test.properties"));
 	actions = new Actions();
 	cleanUp();
     }
 
     private void cleanUp() {
-	try {
-	    actions.deleteNamespace("test");
-	    actions.deleteNamespace("testCM");
-	} catch (Exception e) {
-
-	}
+	actions.deleteNamespace("test");
+	actions.deleteNamespace("testCM");
     }
 
     @Test
@@ -112,15 +105,6 @@ public class TestActions {
 
 	actions.outdex("test:" + pid);
 	actions.readDC("test:" + pid);
-    }
-
-    @Test(expected = HttpArchiveException.class)
-    public void deleteData() throws IOException, URISyntaxException {
-	createTestObject("123");
-	actions.readData("test:123");
-	actions.deleteMetadata("test:123");
-	actions.deleteData("test:123");
-	actions.readData("test:123");
     }
 
     @Test(expected = HttpArchiveException.class)
@@ -181,6 +165,6 @@ public class TestActions {
 
     @After
     public void tearDown() throws IOException {
-	// cleanUp();
+	cleanUp();
     }
 }
