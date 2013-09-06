@@ -43,7 +43,8 @@ public class TestDigitoolDownloader {
     public TestDigitoolDownloader() throws IOException {
 
 	properties = new Properties();
-	properties.load(getClass().getResourceAsStream("/test.properties"));
+	properties.load(getClass().getResourceAsStream(
+		"/testDippDownloader.properties"));
 
 	piddownloaderServer = properties.getProperty("piddownloader.server");
 	piddownloaderDownloadLocation = properties
