@@ -40,14 +40,12 @@ import de.nrw.hbz.regal.datatypes.Vocabulary;
 @SuppressWarnings("javadoc")
 public class FedoraFacadeTest {
 
-    Properties properties = null;
     FedoraInterface facade = null;
     Node object = null;
 
     @Before
     public void setUp() throws IOException {
-
-	properties = new Properties();
+	Properties properties = new Properties();
 	properties.load(getClass().getResourceAsStream("/test.properties"));
 
 	// System.out.println(XmlSchemaCollection.class
@@ -182,7 +180,7 @@ public class FedoraFacadeTest {
     @Test
     public void createHierarchy() {
 	Node node = new Node();
-	node.setPID(facade.getPid("namespace"));
+	node.setPID(facade.getPid("test"));
 	Node parent = facade.createRootObject("test");
 	node = facade.createNode(parent, node);
 	for (Link link : node.getRelsExt()) {
