@@ -98,7 +98,7 @@ pwd
 cp variables.conf $ARCHIVE_HOME/bin/
 cp -r templates $ARCHIVE_HOME/bin/
 cd $ARCHIVE_HOME/src/
-mvn clean install
+mvn clean install -DskipTests
 cd -
 }
 
