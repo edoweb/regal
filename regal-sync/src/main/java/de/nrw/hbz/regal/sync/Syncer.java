@@ -432,12 +432,12 @@ public class Syncer {
 	} catch (IOException e) {
 	    throw new ReadFileException(e);
 	} finally {
-
-	    try {
-		reader.close();
-	    } catch (IOException e) {
-		throw new CloseReaderException(e);
-	    }
+	    if (reader != null)
+		try {
+		    reader.close();
+		} catch (IOException e) {
+		    throw new CloseReaderException(e);
+		}
 
 	}
 	return result;

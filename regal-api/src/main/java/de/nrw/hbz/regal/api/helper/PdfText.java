@@ -56,8 +56,7 @@ public class PdfText {
 	} finally {
 	    if (doc != null) {
 		try {
-		    if (doc != null)
-			doc.close();
+		    doc.close();
 		} catch (IOException e) {
 
 		}

@@ -798,7 +798,7 @@ public class DCBeanAnnotated {
      */
     public static Element getDocument(String xmlString)
 	    throws NullPointerException {
-	if (xmlString.isEmpty() || xmlString == null)
+	if (xmlString == null || xmlString.isEmpty())
 	    throw new NullPointerException("XMLUtils: XMLString is null!");
 	try {
 	    DocumentBuilderFactory factory = DocumentBuilderFactory

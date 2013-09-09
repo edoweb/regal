@@ -299,7 +299,7 @@ public class DigitalEntity {
     public Vector<DigitalEntity> getParts() {
 	Vector<DigitalEntity> links = new Vector<DigitalEntity>();
 	for (RelatedDigitalEntity rel : related) {
-	    if (rel.relation == DigitalEntityRelation.part_of.toString())
+	    if (rel.relation.equals(DigitalEntityRelation.part_of.toString()))
 		links.add(rel.entity);
 	}
 	return links;

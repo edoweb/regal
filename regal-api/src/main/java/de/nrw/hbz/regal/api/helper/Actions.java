@@ -300,8 +300,8 @@ public class Actions {
 	tmp.deleteOnExit();
 	CopyUtils.copy(content, tmp);
 	Node node = fedora.readNode(pid);
-	node.setFileLabel(name);
 	if (node != null) {
+	    node.setFileLabel(name);
 	    node.setUploadData(tmp.getAbsolutePath(), mimeType);
 	    fedora.updateNode(node);
 	}
@@ -378,10 +378,8 @@ public class Actions {
      * @return a message
      */
     public String updateMetadata(Node node) {
+	fedora.updateNode(node);
 	String pid = node.getPID();
-	if (node != null) {
-	    fedora.updateNode(node);
-	}
 	return pid + " metadata successfully updated!";
     }
 
