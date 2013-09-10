@@ -97,6 +97,10 @@ public class EdowebDigitalEntityBuilder implements
 	    super(message);
 	}
 
+	public CatalogIdNotFoundException(Throwable cause) {
+	    super(cause);
+	}
+
     }
 
     @SuppressWarnings({ "javadoc", "serial" })
@@ -133,7 +137,12 @@ public class EdowebDigitalEntityBuilder implements
 	dtlDe.setLabel(getLabel(root));
 	loadMetadataStreams(dtlDe, root);
 	setType(dtlDe);
-	setCatalogId(dtlDe);
+	try {
+	    setCatalogId(dtlDe);
+	} catch (CatalogIdNotFoundException e) {
+	    logger.warn(e.getLocalizedMessage() + "\n\t"
+		    + e.getCause().toString());
+	}
 	loadDataStream(dtlDe, root);
 	linkToParent(dtlDe);
 
@@ -147,13 +156,14 @@ public class EdowebDigitalEntityBuilder implements
      *            the digital entity
      */
     protected void setCatalogId(DigitalEntity dtlDe) {
-	Element root = XmlUtils.getDocument(dtlDe.getStream(StreamType.MARC)
-		.getFile());
-
-	XPathFactory factory = XPathFactory.newInstance();
-	XPath xpath = factory.newXPath();
-	xpath.setNamespaceContext(new MarcNamespaceContext());
 	try {
+	    Element root = XmlUtils.getDocument(dtlDe
+		    .getStream(StreamType.MARC).getFile());
+
+	    XPathFactory factory = XPathFactory.newInstance();
+	    XPath xpath = factory.newXPath();
+	    xpath.setNamespaceContext(new MarcNamespaceContext());
+
 	    XPathExpression expr = xpath
 		    .compile("//marc:controlfield[@tag='001']");
 	    Object result = expr.evaluate(root, XPathConstants.NODESET);
@@ -165,8 +175,8 @@ public class EdowebDigitalEntityBuilder implements
 	    String id = nodes.item(0).getTextContent();
 	    dtlDe.addIdentifier(id);
 	    logger.info(dtlDe.getPid() + " add id " + id);
-	} catch (XPathExpressionException e) {
-	    throw new XPathException(e);
+	} catch (Exception e) {
+	    throw new CatalogIdNotFoundException(e);
 	}
 
     }
