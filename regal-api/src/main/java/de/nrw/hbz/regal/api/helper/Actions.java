@@ -502,25 +502,6 @@ public class Actions {
      *            the plain pid
      * @param namespace
      *            namespace of the pid
-     * @return a epicur yml
-     * @throws URISyntaxException
-     *             if redirect coded wrong
-     */
-    public Response getEpicur(String pid, String namespace)
-	    throws URISyntaxException {
-
-	return Response.temporaryRedirect(
-		new java.net.URI(fedoraExtern + "/objects/" + namespace + ":"
-			+ pid + "/methods/" + namespace
-			+ "CM:headServiceDefinition/epicur")).build();
-
-    }
-
-    /**
-     * @param pid
-     *            the plain pid
-     * @param namespace
-     *            namespace of the pid
      * @return oai dc yml
      * @throws URISyntaxException
      *             if coded wrong
@@ -609,7 +590,7 @@ public class Actions {
      * @return a epicur display for the pid
      */
     public String epicur(String pid, String namespace) {
-	View view = getView(pid);
+	View view = getView(namespace + ":" + pid);
 	return services.epicur(pid, namespace, view);
     }
 

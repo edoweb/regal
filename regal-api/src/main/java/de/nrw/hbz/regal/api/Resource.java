@@ -810,15 +810,11 @@ public class Resource {
      */
     @GET
     @Path("/{namespace}:{pid}/epicur")
-    @Produces({ "application/xml", "application/json" })
-    public Response getEpicur(@PathParam("pid") String pid,
+    @Produces({ "application/xml" })
+    public String getEpicur(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	try {
-	    return actions.getEpicur(pid, namespace);
-	} catch (URISyntaxException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+
+	return actions.epicur(pid, namespace);
 
     }
 

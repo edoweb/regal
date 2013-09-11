@@ -19,8 +19,6 @@ package de.nrw.hbz.regal.api.helper;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import javax.ws.rs.core.Response;
-
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -120,11 +118,31 @@ public class TestActions {
     public void epicur() throws IOException, URISyntaxException {
 	createTestObject("123");
 
+	String assumed = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xmlns:xsi=\"http://www.w3.com/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
+		+ "\t<administrative_data>\n"
+		+ "\t\t<delivery>\n"
+		+ "\t\t\t<update_status type=\""
+		+ "urn_new"
+		+ "\"></update_status>\n"
+		+ "\t\t\t<transfer type=\"oai\"></transfer>\n"
+		+ "\t\t</delivery>\n"
+		+ "\t</administrative_data>\n"
+		+ "<record>\n"
+		+ "\t<identifier scheme=\"urn:nbn:de\">"
+		+ "urn:nbn:de:test-1231"
+		+ "</identifier>\n"
+		+ "\t<resource>\n"
+		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
+		+ "http://localhost/resource/test:123"
+		+ "</identifier>\n"
+		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
+		+ "\t</resource>" + "</record>\n" + "</epicur> ";
 	Services services = actions.getServices();
 	Assert.assertEquals("urn:nbn:de:test-1231", services.generateUrn("123",
 		"test", actions.getView("test:123")));
-	Response response = actions.getEpicur("123", "test");
-	System.out.println(response.getEntity());
+	String response = actions.epicur("123", "test");
+	System.out.println(response);
+	Assert.assertEquals(response, assumed);
     }
 
     @Test
