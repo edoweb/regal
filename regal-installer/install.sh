@@ -37,6 +37,7 @@ substituteVars elasticsearch.yml $ARCHIVE_HOME/conf/elasticsearch.yml
 substituteVars site.conf $ARCHIVE_HOME/conf/site.conf
 substituteVars logging.properties $ARCHIVE_HOME/conf/logging.properties
 substituteVars catalina.out $ARCHIVE_HOME/conf/catalina.out
+substituteVars Identify.xml $ARCHIVE_HOME/conf/Identify.xml
 }
 
 function substituteVars()
@@ -215,6 +216,7 @@ function copyHtml
 {
 echo "copy html"
 cp -r $ARCHIVE_HOME/src/regal-ui/htdocs/* $ARCHIVE_HOME/html/
+cp $ARCHIVE_HOME/conf/Identify.xml $ARCHIVE_HOME/html/
 echo "Edit $ARCHIVE_HOME/html/js/Search.js"
 sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/Search.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/Search.js"
 echo "Copy api Doku"
