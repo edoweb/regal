@@ -461,7 +461,7 @@ class Representations {
 
 	Node node = fedora.readNode(pid);
 	fedora.readDcToNode(node, new ByteArrayInputStream(oaidc.getBytes()),
-		"oai_dc");
+		"dc");
 	return getView(node, fedoraExtern);
 
     }
