@@ -100,11 +100,10 @@ class Services {
 
 	String lobidUri = "http://lobid.org/resource/" + alephid;
 	try {
-	    URL lobidUrl = new URL(
-		    "http://lobid.org/sparql/?query=describe+%3Chttp%3A%2F%2Flobid.org%2Fresource%2F"
-			    + alephid + "%3E");
+	    URL lobidUrl = new URL("http://api.lobid.org/resource?id="
+		    + alephid);
 
-	    String str = RdfUtils.readRdfToString(lobidUrl, RDFFormat.TURTLE,
+	    String str = RdfUtils.readRdfToString(lobidUrl, RDFFormat.NTRIPLES,
 		    RDFFormat.NTRIPLES, "text/plain");
 	    str = Pattern.compile(lobidUri).matcher(str)
 		    .replaceAll(Matcher.quoteReplacement(pid))
