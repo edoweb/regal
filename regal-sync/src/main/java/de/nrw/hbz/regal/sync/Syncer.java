@@ -263,7 +263,7 @@ public class Syncer {
 		}
 
 	    } catch (Exception e) {
-		throw new IngestItemException(e);
+		logger.error(e.toString());
 	    }
 	}
 
@@ -302,7 +302,7 @@ public class Syncer {
 		}
 
 	    } catch (Exception e) {
-		throw new IngestItemException(e);
+		logger.error(e.toString());
 	    }
 	}
 
@@ -334,7 +334,7 @@ public class Syncer {
 		}
 
 	    } catch (Exception e) {
-		throw new IngestItemException(e);
+		logger.error(e.getCause().toString());
 	    }
 	}
 
@@ -366,7 +366,7 @@ public class Syncer {
 		dtlBean = null;
 
 	    } catch (Exception e) {
-		throw new IngestItemException(e);
+		logger.error(e.getCause().toString());
 	    }
 	}
     }
@@ -401,7 +401,7 @@ public class Syncer {
 		}
 
 	    } catch (Exception e) {
-		throw new IngestItemException(e);
+		logger.error(e.getCause().toString());
 	    }
 	}
 
