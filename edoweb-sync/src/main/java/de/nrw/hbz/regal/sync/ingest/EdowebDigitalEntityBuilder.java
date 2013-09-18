@@ -396,9 +396,7 @@ public class EdowebDigitalEntityBuilder implements
     }
 
     private String getLabel(Element root) {
-
 	return root.getElementsByTagName("label").item(0).getTextContent();
-
     }
 
     private Element getXmlRepresentation(final DigitalEntity dtlDe) {
