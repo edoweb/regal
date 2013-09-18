@@ -334,7 +334,7 @@ public class Syncer {
 		}
 
 	    } catch (Exception e) {
-		logger.error(e.getCause().toString());
+		logger.error(e.toString());
 	    }
 	}
 
@@ -366,7 +366,7 @@ public class Syncer {
 		dtlBean = null;
 
 	    } catch (Exception e) {
-		logger.error(e.getCause().toString());
+		logger.error(e.toString());
 	    }
 	}
     }
@@ -401,7 +401,7 @@ public class Syncer {
 		}
 
 	    } catch (Exception e) {
-		logger.error(e.getCause().toString());
+		logger.error(e.toString());
 	    }
 	}
 
