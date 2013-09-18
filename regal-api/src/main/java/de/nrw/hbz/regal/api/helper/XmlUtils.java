@@ -121,6 +121,7 @@ public class XmlUtils {
 	    file.createNewFile();
 
 	    writer = new FileOutputStream(file);
+	    // TODO uhh prevent memory overload
 	    writer.write(str.replace("\n", " ").replace("  ", " ")
 		    .getBytes("utf-8"));
 	} catch (IOException e) {
