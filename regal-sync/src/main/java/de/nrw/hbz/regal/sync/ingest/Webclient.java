@@ -16,6 +16,7 @@
  */
 package de.nrw.hbz.regal.sync.ingest;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -305,15 +306,19 @@ public class Webclient {
 	try {
 	    logger.info(pid + " Update data: " + dataStream.getMimeType());
 	    MultiPart multiPart = new MultiPart();
+
+	    File uploadFile = dataStream.getFile();
+	    String uploadFileName = uploadFile.getName();
+	    String uploadFileMimeType = dataStream.getMimeType();
+
 	    multiPart.bodyPart(new StreamDataBodyPart("InputStream",
-		    new FileInputStream(dataStream.getFile()), dataStream
-			    .getFile().getName()));
-	    multiPart.bodyPart(new BodyPart(dataStream.getMimeType(),
+		    new FileInputStream(uploadFile), uploadFileName));
+	    multiPart.bodyPart(new BodyPart(uploadFileMimeType,
 		    MediaType.TEXT_PLAIN_TYPE));
 
-	    logger.info("Upload: " + dataStream.getFile().getName());
-	    multiPart.bodyPart(new BodyPart(dataStream.getFile().getName(),
-		    MediaType.TEXT_PLAIN_TYPE));
+	    logger.info("Upload: " + dataStream.getFile().getAbsolutePath());
+	    multiPart.bodyPart(new BodyPart(uploadFileName.substring(0,
+		    uploadFileName.indexOf('.')), MediaType.TEXT_PLAIN_TYPE));
 	    data.type("multipart/mixed").post(multiPart);
 
 	} catch (UniformInterfaceException e) {
