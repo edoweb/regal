@@ -99,7 +99,7 @@ public class Webclient {
 
 	    lobidify(dtlBean);
 	} catch (Exception e) {
-	    logger.error(dtlBean.getPid() + " " + e.getMessage());
+	    logger.error(dtlBean.getPid() + " " + e.getMessage(), e);
 	}
 
     }
@@ -121,12 +121,12 @@ public class Webclient {
 	try {
 	    index(dtlBean);
 	} catch (Exception e) {
-	    logger.error(dtlBean.getPid() + " " + e.getMessage());
+	    logger.error(dtlBean.getPid() + " " + e.getMessage(), e);
 	}
 	try {
 	    oaiProvide(dtlBean);
 	} catch (Exception e) {
-	    logger.error(dtlBean.getPid() + " " + e.getMessage());
+	    logger.error(dtlBean.getPid() + " " + e.getMessage(), e);
 	}
     }
 
@@ -151,14 +151,14 @@ public class Webclient {
 	    m = readMetadata(resource + "/metadata", dtlBean);
 
 	} catch (Exception e) {
-	    logger.error(dtlBean.getPid() + " " + e.getMessage());
+	    logger.error(dtlBean.getPid() + " " + e.getMessage(), e);
 	}
 	try {
 	    String merge = appendMetadata(m, metadata);
 	    logger.debug("MERGE: " + metadata);
 	    updateMetadata(resource + "/metadata", merge);
 	} catch (Exception e) {
-	    logger.error(dtlBean.getPid() + " " + e.getMessage());
+	    logger.error(dtlBean.getPid() + " " + e.getMessage(), e);
 	}
     }
 
@@ -176,7 +176,7 @@ public class Webclient {
 	try {
 	    updateMetadata(resource + "/metadata", metadata);
 	} catch (Exception e) {
-	    logger.error(pid + " " + e.getMessage());
+	    logger.error(pid + " " + e.getMessage(), e);
 	}
 
     }
@@ -231,7 +231,7 @@ public class Webclient {
 	try {
 	    resource.put(input);
 	} catch (UniformInterfaceException e) {
-	    logger.info(pid + " " + e.getMessage());
+	    logger.info(pid + " " + e.getMessage(), e);
 	}
     }
 
@@ -289,11 +289,9 @@ public class Webclient {
 	    webpageDC.put(dc);
 
 	} catch (UniformInterfaceException e) {
-	    logger.info(pid + " " + e.getMessage());
-	    // e.printStackTrace();
+	    logger.info(pid + " " + e.getMessage(), e);
 	} catch (Exception e) {
-	    logger.debug(pid + " " + e.getMessage());
-	    // e.printStackTrace();
+	    logger.debug(pid + " " + e.getMessage(), e);
 	}
     }
 
@@ -322,12 +320,12 @@ public class Webclient {
 	    data.type("multipart/mixed").post(multiPart);
 
 	} catch (UniformInterfaceException e) {
-	    logger.error(pid + " " + e.getMessage());
+	    logger.error(pid + " " + e.getMessage(), e);
 	} catch (FileNotFoundException e) {
 	    logger.error(pid + " " + "FileNotFound "
-		    + dataStream.getFile().getAbsolutePath());
+		    + dataStream.getFile().getAbsolutePath(), e);
 	} catch (Exception e) {
-	    logger.error(pid + " " + e.getMessage());
+	    logger.error(pid + " " + e.getMessage(), e);
 	}
 
     }
@@ -341,7 +339,7 @@ public class Webclient {
 	{
 	    lobid.type("text/plain").post();
 	} catch (UniformInterfaceException e) {
-	    logger.warn(pid + " fetching lobid-data failed");
+	    logger.warn(pid + " fetching lobid-data failed", e);
 	}
     }
 
@@ -355,9 +353,9 @@ public class Webclient {
 	    logger.info(pid + ": got indexed!");
 	} catch (UniformInterfaceException e) {
 	    logger.warn(pid + " " + "Not indexed! "
-		    + e.getResponse().getEntity(String.class));
+		    + e.getResponse().getEntity(String.class), e);
 	} catch (Exception e) {
-	    logger.warn(pid + " " + "Not indexed! " + e.getMessage());
+	    logger.warn(pid + " " + "Not indexed! " + e.getMessage(), e);
 	}
     }
 
@@ -368,7 +366,7 @@ public class Webclient {
 	try {
 	    oaiSet.post();
 	} catch (UniformInterfaceException e) {
-	    logger.warn(pid + " " + "Not oai provided! " + e.getMessage());
+	    logger.warn(pid + " " + "Not oai provided! " + e.getMessage(), e);
 	}
     }
 
@@ -405,7 +403,7 @@ public class Webclient {
 	try {
 	    delete.delete();
 	} catch (UniformInterfaceException e) {
-	    logger.info(pid + " Can't delete!" + e.getMessage());
+	    logger.info(pid + " Can't delete!" + e.getMessage(), e);
 	}
     }
 
