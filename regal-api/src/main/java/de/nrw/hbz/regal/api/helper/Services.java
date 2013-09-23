@@ -181,7 +181,7 @@ class Services {
 	if (node == null)
 	    return "No node with pid " + pid + " found";
 
-	String metadata = "http://localhost/resource/" + pid + "/metadata";
+	String metadata = this.uriPrefix + pid + "/metadata";
 	try {
 	    File outfile = File.createTempFile("oaidc", "xml");
 	    outfile.deleteOnExit();

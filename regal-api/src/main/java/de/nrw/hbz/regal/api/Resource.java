@@ -830,14 +830,11 @@ public class Resource {
     @GET
     @Path("/{namespace}:{pid}.oaidc")
     @Produces({ "application/xml" })
-    public Response getDC(@PathParam("pid") String pid,
+    public String getDC(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	try {
-	    return actions.getOAI_DC(pid, namespace);
-	} catch (URISyntaxException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+
+	return actions.oaidc(namespace + ":" + pid);
+
     }
 
     /**

@@ -497,26 +497,7 @@ public class Actions {
 
     }
 
-    /**
-     * @param pid
-     *            the plain pid
-     * @param namespace
-     *            namespace of the pid
-     * @return oai dc yml
-     * @throws URISyntaxException
-     *             if coded wrong
-     */
-    public Response getOAI_DC(String pid, String namespace)
-	    throws URISyntaxException {
-
-	return Response.temporaryRedirect(
-		new java.net.URI(fedoraExtern + "/objects/" + namespace + ":"
-			+ pid + "/methods/" + namespace
-			+ "CM:headServiceDefinition/oai_dc")).build();
-
-    }
-
-    /**
+  /**
      * @param pid
      *            the pid
      * @return the last modified date
