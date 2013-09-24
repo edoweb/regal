@@ -174,7 +174,7 @@ public class EdowebDigitalEntityBuilder implements
 	    }
 	    String id = nodes.item(0).getTextContent();
 	    dtlDe.addIdentifier(id);
-	    logger.info(dtlDe.getPid() + " add id " + id);
+	    logger.debug(dtlDe.getPid() + " add id " + id);
 	} catch (Exception e) {
 	    throw new CatalogIdNotFoundException(e);
 	}
@@ -448,7 +448,11 @@ public class EdowebDigitalEntityBuilder implements
 			.getTextContent();
 		String type = ((Element) item).getElementsByTagName("type")
 			.item(0).getTextContent();
+		String mimeType = ((Element) item)
+			.getElementsByTagName("mime_type").item(0)
+			.getTextContent();
 		if (type.compareTo(DigitalEntityRelation.include.toString()) == 0
+			&& mimeType.equals("application/pdf")
 			&& (usageType.compareTo(DigitalEntityRelation.ARCHIVE
 				.toString()) != 0)) {
 		    try {
