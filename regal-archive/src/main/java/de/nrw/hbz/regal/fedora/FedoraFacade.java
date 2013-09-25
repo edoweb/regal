@@ -65,7 +65,7 @@ import com.yourmediashelf.fedora.client.FedoraClientException;
 import com.yourmediashelf.fedora.client.FedoraCredentials;
 import com.yourmediashelf.fedora.client.request.AddDatastream;
 import com.yourmediashelf.fedora.client.request.FedoraRequest;
-import com.yourmediashelf.fedora.client.request.GetDatastreamDissemination;
+import com.yourmediashelf.fedora.client.request.GetDatastream;
 import com.yourmediashelf.fedora.client.request.GetNextPID;
 import com.yourmediashelf.fedora.client.request.GetObjectProfile;
 import com.yourmediashelf.fedora.client.request.Ingest;
@@ -74,6 +74,7 @@ import com.yourmediashelf.fedora.client.request.ModifyDatastream;
 import com.yourmediashelf.fedora.client.request.PurgeObject;
 import com.yourmediashelf.fedora.client.request.RiSearch;
 import com.yourmediashelf.fedora.client.response.FedoraResponse;
+import com.yourmediashelf.fedora.client.response.GetDatastreamResponse;
 import com.yourmediashelf.fedora.client.response.GetNextPIDResponse;
 import com.yourmediashelf.fedora.client.response.GetObjectProfileResponse;
 import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
@@ -353,12 +354,12 @@ class FedoraFacade implements FedoraInterface {
 	}
 
 	try {
-	    FedoraResponse response = new GetDatastreamDissemination(pid,
-		    "data").download(true).execute();
-	    node.setMimeType(response.getType());
+	    GetDatastreamResponse response = new GetDatastream(pid, "data")
+		    .execute();
+	    node.setMimeType(response.getDatastreamProfile().getDsMIME());
+	    node.setLabel(response.getDatastreamProfile().getDsLabel());
 	} catch (FedoraClientException e) {
-	    // The node must not have a mimetype
-	    // throw new ReadNodeException(pid, e);
+	    logger.debug("Missed mimetype and label", e);
 	}
 
 	return node;

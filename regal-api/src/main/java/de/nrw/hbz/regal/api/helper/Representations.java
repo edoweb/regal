@@ -82,7 +82,7 @@ class Representations {
 	String oreNamespace = "http://www.openarchives.org/ore/terms/";
 	@SuppressWarnings("unused")
 	String rdfNamespace = " http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-	@SuppressWarnings("unused")
+
 	String rdfsNamespace = "http://www.w3.org/2000/01/rdf-schema#";
 	String regalNamespace = "http://hbz-nrw.de/regal#";
 
@@ -115,6 +115,7 @@ class Representations {
 	    Literal cType = f.createLiteral(node.getContentType());
 	    Literal lastTimeModified = f.createLiteral(lastModified);
 	    String mime = node.getMimeType();
+	    String label = node.getLabel();
 
 	    // Predicates
 	    // ore
@@ -130,6 +131,8 @@ class Representations {
 	    URI creator = f.createURI(dctermsNamespace, "creator");
 	    URI dcFormat = f.createURI(dctermsNamespace, "format");
 	    URI dcHasFormat = f.createURI(dctermsNamespace, "hasFormat");
+	    // rdfs
+	    URI rdfsLabel = f.createURI(rdfsNamespace, "label");
 	    // regal
 	    URI contentType = f.createURI(regalNamespace, "contentType");
 
@@ -144,6 +147,11 @@ class Representations {
 		    con.add(data, dcHasFormat, fulltext);
 		}
 
+	    }
+
+	    if (label != null && !label.isEmpty()) {
+		Literal labelLiteral = f.createLiteral(label);
+		con.add(aggregation, rdfsLabel, labelLiteral);
 	    }
 
 	    String str = getOriginalUri(pid);
