@@ -27,6 +27,7 @@ import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -168,9 +169,7 @@ public class Resource {
      */
     @GET
     @Produces({ "application/json", "application/xml" })
-    public Response getAll(@QueryParam("type") String type) {
-
-	logger.debug("Hey you!");
+    public Response getAll(@DefaultValue("") @QueryParam("type") String type) {
 	ObjectList rem = new ObjectList(actions.getAll(type));
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();
@@ -185,7 +184,8 @@ public class Resource {
      */
     @GET
     @Produces({ "text/html" })
-    public Response getAllAsHtml(@QueryParam("type") String type) {
+    public Response getAllAsHtml(
+	    @DefaultValue("") @QueryParam("type") String type) {
 	String rem = actions.getAllAsHtml(type);
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();

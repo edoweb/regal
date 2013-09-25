@@ -420,17 +420,6 @@ public class Actions {
     }
 
     /**
-     * @return a list of all objects
-     */
-    public List<String> getAll() {
-
-	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
-	InputStream stream = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	return RdfUtils.getFedoraSubject(stream);
-    }
-
-    /**
      * Initialises all content models for one namespace
      * 
      * @param namespace
@@ -497,7 +486,7 @@ public class Actions {
 
     }
 
-  /**
+    /**
      * @param pid
      *            the pid
      * @return the last modified date
@@ -664,11 +653,39 @@ public class Actions {
 
     /**
      * @param type
+     *            a contentType
+     * @return all objects of contentType type
+     */
+    public List<String> getAll(String type) {
+
+	if (type == null || type.isEmpty())
+	    return getAll();
+	else
+	    return findByType(type);
+    }
+
+    /**
+     * @return a list of all objects
+     */
+    public List<String> getAll() {
+
+	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
+	InputStream stream = fedora.findTriples(query, FedoraVocabulary.SPO,
+		FedoraVocabulary.N3);
+	return RdfUtils.getFedoraSubject(stream);
+    }
+
+    /**
+     * @param type
      *            the type to be displaye
      * @return html listing of all objects
      */
     public String getAllAsHtml(String type) {
-	List<String> list = findByType(type);
+	List<String> list = null;
+	if (type == null || type.isEmpty())
+	    list = getAll();
+	else
+	    list = findByType(type);
 	return representations.getAllOfTypeAsHtml(list, type);
     }
 
@@ -700,18 +717,6 @@ public class Actions {
 	public InternalUrlException(Throwable e) {
 	    super(e);
 	}
-    }
-
-    /**
-     * @param type
-     *            a contentType
-     * @return all objects of contentType type
-     */
-    public List<String> getAll(String type) {
-	if (type == null || type.isEmpty())
-	    return getAll();
-	else
-	    return findByType(type);
     }
 
     /**
