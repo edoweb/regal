@@ -112,13 +112,14 @@ public class FedoraFacadeTest {
 	Vector<String> newTitle = new Vector<String>();
 	newTitle.add("Neuer Titel");
 	object.setTitle(newTitle);
-	URL url = this.getClass().getResource("/logback.xml");
+	URL url = Thread.currentThread().getContextClassLoader()
+		.getResource("logback-test.xml");
 	object.setUploadData(url.getPath(), "text/xml");
 	facade.updateNode(object);
 	Node readObject = facade.readNode(object.getPID());
 	// System.out.println("DataUrl:" + readObject.getDataUrl().toString());
-	Assert.assertEquals(0,
-		"Neuer Titel".compareTo(readObject.getFirstTitle()));
+	Assert.assertEquals("Neuer Titel", readObject.getFirstTitle());
+	Assert.assertEquals("logback-test.xml", readObject.getFileLabel());
 
     }
 
