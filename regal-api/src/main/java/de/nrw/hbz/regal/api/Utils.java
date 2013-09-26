@@ -25,6 +25,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.EntityTag;
@@ -156,6 +157,26 @@ public class Utils {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
+    }
+
+    /**
+     * @param id
+     *            pid without namespace
+     * @param namespace
+     *            the namespace
+     * @param snid
+     *            a urn snid
+     * @return urn
+     */
+    @GET
+    @Path("/addUrn")
+    @Produces({ "application/json", "application/xml" })
+    public String addUrn(@QueryParam("id") final String id,
+	    @QueryParam("namespace") final String namespace,
+	    @QueryParam("snid") final String snid) {
+
+	return actions.addUrn(id, namespace);
+
     }
 
     /**

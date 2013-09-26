@@ -119,7 +119,7 @@ class Services {
 		    + "\" .";
 
 	    if (str.contains("http://www.w3.org/2002/07/owl#sameAs")) {
-		str = RdfUtils.includeSameAs(str, pid);
+		str = RdfUtils.followSameAsAndInclude(lobidUrl, pid);
 	    }
 	    File metadataFile = CopyUtils.copyStringToFile(str);
 
@@ -138,11 +138,12 @@ class Services {
      *            the pid of the object
      * @param namespace
      *            the namespace
-     * @param view
-     *            a view object
+     * @param urn
+     *            the urn
+     * 
      * @return a epicur display for the pid
      */
-    public String epicur(String pid, String namespace, View view) {
+    public String epicur(String pid, String namespace, String urn) {
 	String status = "urn_new";
 	String result = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xmlns:xsi=\"http://www.w3.com/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
 		+ "\t<administrative_data>\n"
@@ -155,7 +156,7 @@ class Services {
 		+ "\t</administrative_data>\n"
 		+ "<record>\n"
 		+ "\t<identifier scheme=\"urn:nbn:de\">"
-		+ generateUrn(pid, namespace, view)
+		+ urn
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
@@ -265,6 +266,9 @@ class Services {
 		String object = st.getObject().stringValue();
 
 		OaiSet set = oaiSetBuilder.getSet(subject, predicate, object);
+		if (set == null) {
+		    continue;
+		}
 		if (!fedora.nodeExists(set.getPid())) {
 		    createOAISet(set.getName(), set.getSpec(), set.getPid());
 		}
@@ -354,36 +358,17 @@ class Services {
     }
 
     /**
-     * Generates a urn or returns an existing urn.
+     * Generates a urn
      * 
-     * @param pid
-     *            the pid of an object
-     * @param namespace
-     *            the namespace
-     * @param view
-     *            a view of the pid
+     * @param niss
+     *            usually the pid of an object
+     * @param snid
+     *            usually the namespace
      * @return the urn
      */
-    public String generateUrn(String pid, String namespace, View view) {
-	try {
-	    List<String> urns = view.getUrn();
-	    if (urns != null && !urns.isEmpty()) {
-		if (urns.size() > 1) {
-		    logger.warn("Found multiple urns " + urns.size());
-		} else {
-		    return urns.get(0);
-		}
-	    }
-	} catch (Exception e) {
-	    logger.warn("You attempt to create an urn for non-existing object.");
-	}
-
-	String snid = namespace;
-	String niss = pid;
-
+    public String generateUrn(String niss, String snid) {
 	URN urn = new URN(snid, niss);
 	return urn.toString();
-
     }
 
     /**
@@ -489,14 +474,18 @@ class Services {
 	    Element root = XmlUtils.getDocument(connection.getInputStream());
 	    List<Element> elements = XmlUtils.getElements("//resultFileUrl",
 		    root, null);
-	    if (elements.size() != 1)
-		throw new HttpArchiveException(500,
+	    if (elements.size() != 1) {
+		throw new ArchiveException(
 			"PDFa conversion returns wrong numbers of resultFileUrls: "
 				+ elements.size());
+	    }
 	    redirectUrl = elements.get(0).getTextContent();
 
 	    return redirectUrl;
-	} catch (Exception e) {
+
+	} catch (MalformedURLException e) {
+	    throw new HttpArchiveException(500, e);
+	} catch (IOException e) {
 	    throw new HttpArchiveException(500, e);
 	}
 
