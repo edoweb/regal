@@ -524,12 +524,7 @@ public class Resource {
     @Produces({ "text/plain" })
     public String updateMetadata(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace, String content) {
-	try {
-	    return actions.updateMetadata(namespace + ":" + pid, content);
-	} catch (IOException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+	return actions.updateMetadata(namespace + ":" + pid, content);
     }
 
     /**
