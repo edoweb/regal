@@ -441,13 +441,13 @@ public class Actions {
     public String contentModelsInit(String namespace) {
 	try {
 
-	    fedora.updateContentModel(ContentModelFactory
-		    .createHeadModel(namespace));
+	    fedora.updateContentModel(ContentModelFactory.createHeadModel(
+		    namespace, server));
 
 	    fedora.updateContentModel(ContentModelFactory
 		    .createEJournalModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createMonographModel(namespace));
+	    fedora.updateContentModel(ContentModelFactory.createMonographModel(
+		    namespace, server));
 	    fedora.updateContentModel(ContentModelFactory
 		    .createWebpageModel(namespace));
 	    fedora.updateContentModel(ContentModelFactory
@@ -455,8 +455,8 @@ public class Actions {
 	    fedora.updateContentModel(ContentModelFactory
 		    .createVolumeModel(namespace));
 
-	    fedora.updateContentModel(ContentModelFactory
-		    .createPdfModel(namespace));
+	    fedora.updateContentModel(ContentModelFactory.createPdfModel(
+		    namespace, server));
 
 	    return "Success!";
 	} catch (ArchiveException e) {
