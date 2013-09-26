@@ -446,8 +446,8 @@ public class Actions {
 
 	    fedora.updateContentModel(ContentModelFactory
 		    .createEJournalModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory.createMonographModel(
-		    namespace, server));
+	    fedora.updateContentModel(ContentModelFactory
+		    .createMonographModel(namespace));
 	    fedora.updateContentModel(ContentModelFactory
 		    .createWebpageModel(namespace));
 	    fedora.updateContentModel(ContentModelFactory

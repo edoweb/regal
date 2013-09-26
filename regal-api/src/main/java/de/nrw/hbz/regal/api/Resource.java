@@ -107,8 +107,7 @@ public class Resource {
 	try {
 	    List<ContentModel> models = new Vector<ContentModel>();
 	    if (input.type.compareTo(ObjectType.monograph.toString()) == 0) {
-		models.add(ContentModelFactory.createMonographModel(namespace,
-			actions.getServer()));
+		models.add(ContentModelFactory.createMonographModel(namespace)));
 		models.add(ContentModelFactory.createPdfModel(namespace,
 			actions.getServer()));
 	    } else if (input.type.compareTo(ObjectType.journal.toString()) == 0) {

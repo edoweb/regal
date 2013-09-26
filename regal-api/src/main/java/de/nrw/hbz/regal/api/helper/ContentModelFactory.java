@@ -34,8 +34,8 @@ public class ContentModelFactory {
 	cm.setServiceDefinitionPID(namespace + "CM:headServiceDefinition");
 	cm.setServiceDeploymentPID(namespace + "CM:headServiceDeployment");
 
-	cm.addMethod("oai_dc", "http://" + server + "/utils/oaidc/(pid)");
-	cm.addMethod("epicur", "http://" + server + "/utils/epicur/(pid)");
+	cm.addMethod("oai_dc", server + "/utils/oaidc/(pid)");
+	cm.addMethod("epicur", server + "/utils/epicur/(pid)");
 
 	return cm;
     }
@@ -52,8 +52,8 @@ public class ContentModelFactory {
 	cm.setServiceDefinitionPID(namespace + "CM:pdfServiceDefinition");
 	cm.setServiceDeploymentPID(namespace + "CM:pdfServiceDeployment");
 
-	cm.addMethod("pdfbox", "http://" + server + "/utils/pdfbox/(pid)");
-	cm.addMethod("pdfa", "http://" + server + "/utils/pdfa/(pid)");
+	cm.addMethod("pdfbox", server + "/utils/pdfbox/(pid)");
+	cm.addMethod("pdfa", server + "/utils/pdfa/(pid)");
 
 	return cm;
     }
@@ -63,8 +63,7 @@ public class ContentModelFactory {
      *            Contentmodels live in their own namespaces
      * @return a ContentModel object
      */
-    public static ContentModel createMonographModel(String namespace,
-	    String server) {
+    public static ContentModel createMonographModel(String namespace) {
 	ContentModel cm = new ContentModel();
 	cm.setContentModelPID(namespace + "CM:MonographObjectModel");
 	cm.setServiceDefinitionPID(namespace + "CM:MonographServiceDefinition");
