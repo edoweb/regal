@@ -150,7 +150,6 @@ public class TestActions {
 
     }
 
-    @Test
     public void pdfa() throws IOException, URISyntaxException {
 	createTestObject("123");
 	Node node = actions.readNode("test:123");
