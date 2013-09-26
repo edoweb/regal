@@ -262,9 +262,11 @@ public class Utils {
 	    UploadResponse response = new Upload(file).execute();
 
 	    String location = response.getUploadLocation();
-
+	    String label = node.getFileLabel();
+	    if (label == null || label.isEmpty())
+		label = file.getName();
 	    new AddDatastream(node.getPID(), "data").versionable(true)
-		    .dsLabel(file.getName()).dsState("A").controlGroup("M")
+		    .dsLabel(label).dsState("A").controlGroup("M")
 		    .mimeType(node.getMimeType()).dsLocation(location)
 		    .execute();
 
@@ -919,10 +921,14 @@ public class Utils {
     }
 
     private String transformFromXMLEntity(String textContent) {
+	if (textContent == null)
+	    return null;
 	return textContent.replaceAll("[&]amp;", "&");
     }
 
     private String transformToXMLEntity(String string) {
+	if (string == null)
+	    return null;
 	final StringBuilder result = new StringBuilder();
 	final StringCharacterIterator iterator = new StringCharacterIterator(
 		string);
