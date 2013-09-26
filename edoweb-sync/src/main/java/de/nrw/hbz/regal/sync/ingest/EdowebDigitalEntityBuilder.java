@@ -534,7 +534,7 @@ public class EdowebDigitalEntityBuilder implements
 			+ "), child of " + entity.entity.getPid() + " ("
 			+ entity.entity.getLabel() + ") child of "
 			+ dtlDe.getPid() + " (" + dtlDe.getLabel() + ")");
-		related.setUsageType(ObjectType.issue.toString());
+		related.setUsageType(ObjectType.file.toString());
 		return entity.entity;
 	    }
 	}
