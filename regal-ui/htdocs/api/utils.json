@@ -63,6 +63,38 @@
       "notes" : ""
     } ]
   }, {
+    "path" : "/utils/generateUrn",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "GET",
+      "nickname" : "generateUrn",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "query",
+        "name" : "id",
+        "description" : null,
+        "dataType" : "string",
+        "required" : false,
+        "allowableValues" : null
+      }, {
+        "paramType" : "query",
+        "name" : "namespace",
+        "description" : "the namespace",
+        "dataType" : "string",
+        "required" : false,
+        "allowableValues" : null
+      }, {
+        "paramType" : "query",
+        "name" : "snid",
+        "description" : null,
+        "dataType" : "string",
+        "required" : false,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
     "path" : "/utils/index/{namespace}:{pid}",
     "description" : "",
     "operations" : [ {
