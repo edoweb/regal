@@ -76,6 +76,7 @@ public class TestResource {
     public void delete() throws FileNotFoundException, IOException,
 	    URISyntaxException {
 	for (ObjectType type : ObjectType.values()) {
+
 	    delete(type);
 	    deleteWS(type);
 	}
@@ -147,7 +148,8 @@ public class TestResource {
     private void create(String pid, String namespace, ObjectType type)
 	    throws IOException {
 	createResource(pid, namespace, type);
-	uploadData(pid, namespace);
+	// FIXME uploadData doesn't work, see below
+	uploadDataWs(namespace + ":" + pid);
 	uploadMetadata(pid, namespace);
 	uploadDublinCore(pid, namespace);
 	testDublinCore(pid, namespace);
@@ -178,15 +180,20 @@ public class TestResource {
 
     }
 
+    /**
+     * FIXME see below
+     */
+    @SuppressWarnings("unused")
     private void uploadData(String pid, String namespace) throws IOException {
-	// Resource Resource = new Resource();
-	// MultiPart multiPart = new MultiPart();
-	// multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
-	// .currentThread().getContextClassLoader()
-	// .getResourceAsStream("test.pdf"), "test.pdf"));
-	// multiPart.bodyPart(new BodyPart("application/pdf",
-	// MediaType.TEXT_PLAIN_TYPE));
-	// Resource.updateResourceData(pid, namespace, multiPart);
+	Resource Resource = new Resource();
+	MultiPart multiPart = new MultiPart();
+	multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
+		.currentThread().getContextClassLoader()
+		.getResourceAsStream("test.pdf")));
+	multiPart.bodyPart(new BodyPart("application/pdf",
+		MediaType.TEXT_PLAIN_TYPE));
+	multiPart.bodyPart(new BodyPart("test.pdf", MediaType.TEXT_PLAIN_TYPE));
+	Resource.updateData(pid, namespace, multiPart);
 
     }
 
@@ -198,21 +205,20 @@ public class TestResource {
 
     private void createWS(String pid, ObjectType type) throws IOException {
 
-	createResource(pid, type);
-	uploadData(pid, type);
-	uploadMetadata(pid, type);
-	uploadDublinCore(pid, type);
-
-	testDublinCore(pid, type);
+	createResourceWs(pid, type);
+	uploadDataWs(pid);
+	uploadMetadataWs(pid);
+	uploadDublinCoreWs(pid);
+	testDublinCoreWs(pid);
     }
 
-    private void testDublinCore(String pid, ObjectType type) {
+    private void testDublinCoreWs(String pid) {
 	WebResource dc = c.resource(apiUrl + "/resource/" + pid + "/dc");
 	DCBeanAnnotated content = dc.get(DCBeanAnnotated.class);
 	Assert.assertEquals("Test", content.getCreator().get(0));
     }
 
-    private void uploadDublinCore(String pid, ObjectType type) {
+    private void uploadDublinCoreWs(String pid) {
 	WebResource dc = c.resource(apiUrl + "/resource/" + pid + "/dc");
 	DCBeanAnnotated content = dc.get(DCBeanAnnotated.class);
 	Vector<String> v = new Vector<String>();
@@ -221,7 +227,7 @@ public class TestResource {
 	dc.accept("application/json").type("application/json").put(content);
     }
 
-    private void uploadMetadata(String pid, ObjectType type) throws IOException {
+    private void uploadMetadataWs(String pid) throws IOException {
 	WebResource metadata = c.resource(apiUrl + "/resource/" + pid
 		+ "/metadata");
 	byte[] content = IOUtils.toByteArray(Thread.currentThread()
@@ -229,33 +235,50 @@ public class TestResource {
 	metadata.type("text/plain").post(content);
     }
 
-    private void uploadData(String pid, ObjectType type) {
+    private void uploadDataWs(String pid) {
 	WebResource data = c.resource(apiUrl + "/resource/" + pid + "/data");
 	MultiPart multiPart = new MultiPart();
 	multiPart.bodyPart(new StreamDataBodyPart("InputStream", Thread
 		.currentThread().getContextClassLoader()
-		.getResourceAsStream("test.pdf"), "test.pdf"));
+		.getResourceAsStream("test.pdf")));
 	multiPart.bodyPart(new BodyPart("application/pdf",
 		MediaType.TEXT_PLAIN_TYPE));
+	multiPart.bodyPart(new BodyPart("test.pdf", MediaType.TEXT_PLAIN_TYPE));
 	data.type("multipart/mixed").post(multiPart);
     }
 
-    private WebResource createResource(String pid, ObjectType type) {
+    private WebResource createResourceWs(String pid, ObjectType type) {
 	WebResource dc = c.resource(apiUrl + "/resource/" + pid);
-
 	String response = dc.put(String.class, new CreateObjectBean(type));
 	System.out.println(response);
 	return dc;
     }
 
-    @Test(expected = HttpArchiveException.class)
+    @Test
     public void deleteData() throws IOException, URISyntaxException {
 	Resource resource = new Resource();
 	create("123", "test", ObjectType.monograph);
 	resource.readData("123", "test");
 	resource.deleteMetadata("123", "test");
 	resource.deleteData("123", "test");
-	resource.readData("123", "test");
+	try {
+	    resource.readData("123", "test");
+	} catch (HttpArchiveException e) {
+	    Assert.assertEquals(404, e.getResponse().getStatus());
+	}
+    }
+
+    @Test
+    public void deleteMetadata() throws IOException, URISyntaxException {
+	Resource resource = new Resource();
+	create("123", "test", ObjectType.monograph);
+	resource.readMetadata("123", "test");
+	resource.deleteMetadata("123", "test");
+	try {
+	    resource.readMetadata("123", "test");
+	} catch (HttpArchiveException e) {
+	    Assert.assertEquals(404, e.getResponse().getStatus());
+	}
     }
 
     @After
