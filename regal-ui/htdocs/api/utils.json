@@ -2,6 +2,38 @@
   "apiVersion" : "1",
   "basePath" : "/",
   "apis" : [ {
+    "path" : "/utils/addUrn",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "GET",
+      "nickname" : "addUrn",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "query",
+        "name" : "id",
+        "description" : "pid without namespace",
+        "dataType" : "string",
+        "required" : false,
+        "allowableValues" : null
+      }, {
+        "paramType" : "query",
+        "name" : "namespace",
+        "description" : "the namespace",
+        "dataType" : "string",
+        "required" : false,
+        "allowableValues" : null
+      }, {
+        "paramType" : "query",
+        "name" : "snid",
+        "description" : "a urn snid",
+        "dataType" : "string",
+        "required" : false,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
     "path" : "/utils/contentModels/{namespace}/init",
     "description" : "",
     "operations" : [ {
@@ -57,38 +89,6 @@
         "description" : "the namespace",
         "dataType" : "string",
         "required" : true,
-        "allowableValues" : null
-      } ],
-      "summary" : "",
-      "notes" : ""
-    } ]
-  }, {
-    "path" : "/utils/generateUrn",
-    "description" : "",
-    "operations" : [ {
-      "httpMethod" : "GET",
-      "nickname" : "generateUrn",
-      "responseClass" : "string",
-      "parameters" : [ {
-        "paramType" : "query",
-        "name" : "id",
-        "description" : null,
-        "dataType" : "string",
-        "required" : false,
-        "allowableValues" : null
-      }, {
-        "paramType" : "query",
-        "name" : "namespace",
-        "description" : "the namespace",
-        "dataType" : "string",
-        "required" : false,
-        "allowableValues" : null
-      }, {
-        "paramType" : "query",
-        "name" : "snid",
-        "description" : null,
-        "dataType" : "string",
-        "required" : false,
         "allowableValues" : null
       } ],
       "summary" : "",
