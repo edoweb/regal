@@ -133,16 +133,21 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ "http://localhost/resource/test:123"
+		+ actions.getServer()
+		+ "/resource/test:123"
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
 	Services services = actions.getServices();
-	Assert.assertEquals("urn:nbn:de:test-1231", services.generateUrn("123",
-		"test", actions.getView("test:123")));
+	Assert.assertEquals("urn:nbn:de:test-1231",
+		services.generateUrn("123", "test"));
+	actions.addUrn("123", "test");
 	String response = actions.epicur("123", "test");
 	System.out.println(response);
-	Assert.assertEquals(response, assumed);
+	Assert.assertEquals(assumed, response);
+	response = actions.readMetadata("test:123");
+	System.out.println(response);
+
     }
 
     @Test
