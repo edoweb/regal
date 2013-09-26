@@ -58,7 +58,8 @@ public class FedoraFacadeTest {
 
 	object = new Node().setNamespace("test").setPID("test:234")
 		.addCreator("Jan Schnasse").setLabel("Ein Testobjekt")
-		.addTitle("Ein Testtitel").setType(Vocabulary.TYPE_OBJECT);
+		.setFileLabel("test").addTitle("Ein Testtitel")
+		.setType(Vocabulary.TYPE_OBJECT);
 
 	// object.addContentModel(ContentModelFactory.createMonographModel("test"));
 	// object.addContentModel(ContentModelFactory.createHeadModel("test"));
@@ -95,14 +96,13 @@ public class FedoraFacadeTest {
 
 	Assert.assertEquals(0,
 		node.getNodeType().compareTo(object.getNodeType()));
-	Assert.assertEquals(0, "test:234".compareTo(node.getPID()));
-	// System.out.println(node.getNamespace());
-	Assert.assertEquals(0, "test".compareTo(node.getNamespace()));
-	Assert.assertEquals(0, "Jan Schnasse".compareTo(node.getFirstCreator()));
-	Assert.assertEquals(0, "Ein Testobjekt".compareTo(node.getLabel()));
-	Assert.assertEquals(0, "Ein Testtitel".compareTo(node.getFirstTitle()));
-	// Assert.assertEquals(0, "data".compareTo(node.getFileName()));
-	Assert.assertEquals(0, "application/pdf".compareTo(node.getMimeType()));
+	Assert.assertEquals("test:234", node.getPID());
+	Assert.assertEquals("test", node.getNamespace());
+	Assert.assertEquals("Jan Schnasse", node.getFirstCreator());
+	Assert.assertEquals("Ein Testobjekt", node.getLabel());
+	Assert.assertEquals("test", node.getFileLabel());
+	Assert.assertEquals("Ein Testtitel", node.getFirstTitle());
+	Assert.assertEquals("application/pdf", node.getMimeType());
 
     }
 
