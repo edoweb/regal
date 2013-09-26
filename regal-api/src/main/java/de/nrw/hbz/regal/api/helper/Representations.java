@@ -115,7 +115,7 @@ class Representations {
 	    Literal cType = f.createLiteral(node.getContentType());
 	    Literal lastTimeModified = f.createLiteral(lastModified);
 	    String mime = node.getMimeType();
-	    String label = node.getLabel();
+	    String label = node.getFileLabel();
 
 	    // Predicates
 	    // ore
