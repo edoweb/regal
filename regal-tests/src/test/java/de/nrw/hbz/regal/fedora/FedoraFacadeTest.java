@@ -63,7 +63,8 @@ public class FedoraFacadeTest {
 
 	// object.addContentModel(ContentModelFactory.createMonographModel("test"));
 	// object.addContentModel(ContentModelFactory.createHeadModel("test"));
-	object.addContentModel(ContentModelFactory.createPdfModel("test"));
+	object.addContentModel(ContentModelFactory.createPdfModel("test",
+		"http://localhost"));
 
 	URL url = this.getClass().getResource("/test.pdf");
 	object.setUploadData(url.getPath(), "application/pdf");
@@ -153,8 +154,8 @@ public class FedoraFacadeTest {
     public void makeContentModel() {
 	facade.createNode(object);
 	String namespace = "test";
-	facade.updateContentModel(ContentModelFactory
-		.createHeadModel(namespace));
+	facade.updateContentModel(ContentModelFactory.createHeadModel(
+		namespace, "http://localhost"));
 	facade.updateContentModel(ContentModelFactory
 		.createEJournalModel(namespace));
 	facade.updateContentModel(ContentModelFactory
@@ -165,7 +166,8 @@ public class FedoraFacadeTest {
 		.createVersionModel(namespace));
 	facade.updateContentModel(ContentModelFactory
 		.createVolumeModel(namespace));
-	facade.updateContentModel(ContentModelFactory.createPdfModel(namespace));
+	facade.updateContentModel(ContentModelFactory.createPdfModel(namespace,
+		"http://localhost"));
 
 	// TODO Assertion
 
