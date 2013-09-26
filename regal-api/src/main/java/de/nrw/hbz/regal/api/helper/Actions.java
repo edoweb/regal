@@ -103,6 +103,7 @@ public class Actions {
     private FedoraInterface fedora = null;
     private String fedoraExtern = null;
     private String server = null;
+    private String urnbase = null;
 
     // String namespace = null;
 
@@ -115,6 +116,7 @@ public class Actions {
 	properties.load(getClass().getResourceAsStream("/api.properties"));
 	fedoraExtern = properties.getProperty("fedoraExtern");
 	server = properties.getProperty("serverName");
+	urnbase = properties.getProperty("urnbase");
 	fedora = FedoraFactory.getFedoraImpl(
 		properties.getProperty("fedoraIntern"),
 		properties.getProperty("user"),
@@ -605,8 +607,8 @@ public class Actions {
      * @return a epicur display for the pid
      */
     public String epicur(String pid, String namespace) {
-
-	return services.epicur(pid, namespace, getUrn(pid, namespace));
+	String url = urnbase + namespace + ":" + pid;
+	return services.epicur(url, getUrn(pid, namespace));
     }
 
     /**

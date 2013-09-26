@@ -143,7 +143,7 @@ class Services {
      * 
      * @return a epicur display for the pid
      */
-    public String epicur(String pid, String namespace, String urn) {
+    public String epicur(String url, String urn) {
 	String status = "urn_new";
 	String result = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xmlns:xsi=\"http://www.w3.com/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
 		+ "\t<administrative_data>\n"
@@ -160,11 +160,7 @@ class Services {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ uriPrefix
-		+ ""
-		+ namespace
-		+ ":"
-		+ pid
+		+ url
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
