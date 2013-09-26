@@ -18,9 +18,7 @@ package de.nrw.hbz.regal.fedora;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
@@ -28,8 +26,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
-import org.openrdf.OpenRDFException;
 import org.openrdf.model.Graph;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
@@ -38,6 +34,7 @@ import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.TreeModel;
 import org.openrdf.query.BindingSet;
+import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
@@ -56,7 +53,6 @@ import org.openrdf.rio.helpers.StatementCollector;
 import org.openrdf.sail.memory.MemoryStore;
 
 import de.nrw.hbz.regal.datatypes.Link;
-import de.nrw.hbz.regal.exceptions.ArchiveException;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -107,15 +103,18 @@ public class RdfUtils {
      * @return a Graph with the rdf
      */
     public static Graph readRdfUrlToGraph(URL url, RDFFormat inf, String accept) {
+
+	URLConnection con = null;
+	InputStream inputStream = null;
 	try {
-	    URLConnection con = url.openConnection();
+	    con = url.openConnection();
 	    con.setRequestProperty("Accept", accept);
 	    con.connect();
-	    InputStream inputStream = con.getInputStream();
-	    return readRdfInputstreamToGraph(inputStream, inf, url.toString());
-	} catch (Exception e) {
-	    throw new RdfException(e);
+	    inputStream = con.getInputStream();
+	} catch (IOException e) {
+	    throw new UrlConnectionException(e);
 	}
+	return readRdfInputstreamToGraph(inputStream, inf, url.toString());
     }
 
     /**
@@ -151,17 +150,12 @@ public class RdfUtils {
      *            rdf data in RDFFormat.N3
      * @return all subjects without info:fedora/ at the beginning
      */
-    public static Vector<String> getFedoraSubject(InputStream in) {
+    public static List<String> getFedoraSubject(InputStream in) {
 	Vector<String> pids = new Vector<String>();
 	String findpid = null;
-	RepositoryConnection con = null;
-	Repository myRepository = new SailRepository(new MemoryStore());
 	try {
-	    myRepository.initialize();
-	    con = myRepository.getConnection();
-	    String baseURI = "";
-
-	    con.add(in, baseURI, RDFFormat.N3);
+	    RepositoryConnection con = RdfUtils.readRdfInputStreamToRepository(
+		    in, RDFFormat.N3);
 
 	    RepositoryResult<Statement> statements = con.getStatements(null,
 		    null, null, true);
@@ -172,23 +166,8 @@ public class RdfUtils {
 			.replace("info:fedora/", "");
 		pids.add(findpid);
 	    }
-	} catch (RepositoryException e) {
-
-	    e.printStackTrace();
-	} catch (RDFParseException e) {
-
-	    e.printStackTrace();
-	} catch (IOException e) {
-
-	    e.printStackTrace();
-	} finally {
-	    if (con != null) {
-		try {
-		    con.close();
-		} catch (RepositoryException e) {
-		    e.printStackTrace();
-		}
-	    }
+	} catch (Exception e) {
+	    throw new RdfException(e);
 	}
 	return pids;
     }
@@ -196,87 +175,56 @@ public class RdfUtils {
     /**
      * Follows the first sameAs link
      * 
-     * @param str
-     *            rdf data as RDFFormat.NTRIPLES
+     * @param url
+     *            a url pointing to rdf data
      * @param pid
      *            the pid will become a subject
      * @return the original string plus the data from the sameAs resource
      */
-    public static String includeSameAs(String str, String pid) {
-	// <edoweb:4245081> <http://www.w3.org/2002/07/owl#sameAs>
-	// <http://lobid.org/resource/ZDB2502002-X>
-	// System.out.println(pid + " include sameAs");
-	URL url = null;
-	try {
-	    Repository myRepository = new SailRepository(new MemoryStore());
-	    myRepository.initialize();
-
-	    String baseURI = "http://example.org/example/local";
-
-	    RepositoryConnection con = myRepository.getConnection();
-	    try {
-		con.add(new StringReader(str), baseURI, RDFFormat.NTRIPLES);
-
-		String queryString = "SELECT x, y FROM {x} <http://www.w3.org/2002/07/owl#sameAs> {y}";
-
-		TupleQuery tupleQuery = con.prepareTupleQuery(
-			QueryLanguage.SERQL, queryString);
-		TupleQueryResult result = tupleQuery.evaluate();
-		try {
-		    while (result.hasNext()) {
-			BindingSet bindingSet = result.next();
-			Value valueOfY = bindingSet.getValue("y");
-			url = new URL(valueOfY.stringValue());
-
-		    }
-		} catch (MalformedURLException e) {
-		    e.printStackTrace();
-		} finally {
-		    result.close();
-		}
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    } finally {
-		con.close();
-	    }
-	} catch (OpenRDFException e) {
-	    e.printStackTrace();
-	}
-
-	if (url == null) {
-
+    public static String followSameAsAndInclude(URL url, String pid) {
+	URL followMe = null;
+	String str = readRdfToString(url, RDFFormat.NTRIPLES,
+		RDFFormat.NTRIPLES, "text/plain");
+	followMe = getSameAsLink(url);
+	if (followMe == null) {
 	    return str;
 	}
+	String str1 = readRdfToString(followMe, RDFFormat.NTRIPLES,
+		RDFFormat.NTRIPLES, "text/plain");
+	str1 = Pattern.compile(followMe.toString()).matcher(str1)
+		.replaceAll(Matcher.quoteReplacement(pid));
+	return str + "\n" + str1;
+    }
 
-	InputStream in = null;
+    private static URL getSameAsLink(URL sameAsUrl) {
+	TupleQueryResult result = null;
 	try {
+	    RepositoryConnection con = RdfUtils.readRdfUrlToRepository(
+		    sameAsUrl, RDFFormat.NTRIPLES);
 
-	    URLConnection con = url.openConnection();
-	    con.setRequestProperty("Accept", "text/plain");
-	    con.connect();
+	    String queryString = "SELECT x, y FROM {x} <http://www.w3.org/2002/07/owl#sameAs> {y}";
 
-	    in = con.getInputStream();
-	    StringWriter writer = new StringWriter();
-	    IOUtils.copy(in, writer, "UTF-8");
-	    String str1 = writer.toString();
+	    TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SERQL,
+		    queryString);
+	    result = tupleQuery.evaluate();
 
-	    str1 = Pattern.compile(url.toString()).matcher(str1)
-		    .replaceAll(Matcher.quoteReplacement(pid));
-	    return str + "\n" + str1;
-
-	} catch (IOException e) {
-	    throw new ArchiveException(pid
-		    + " IOException happens during copy operation.", e);
-	} finally {
-	    try {
-		if (in != null)
-		    in.close();
-	    } catch (IOException e) {
-		throw new ArchiveException(pid
-			+ " wasn't able to close stream.", e);
+	    while (result.hasNext()) {
+		BindingSet bindingSet = result.next();
+		Value valueOfY = bindingSet.getValue("y");
+		return new URL(valueOfY.stringValue());
 	    }
+	} catch (Exception e) {
+	    throw new RdfException(e);
+	} finally {
+	    if (result != null)
+		try {
+		    result.close();
+		} catch (QueryEvaluationException e) {
+
+		}
 	}
-	// throw new ArchiveException("Not able to include sameAs data.");
+
+	return null;
     }
 
     /**
@@ -286,14 +234,9 @@ public class RdfUtils {
      */
     public static List<String> getFedoraObjects(InputStream stream) {
 	Vector<String> findpids = new Vector<String>();
-	RepositoryConnection con = null;
-	Repository myRepository = new SailRepository(new MemoryStore());
 	try {
-	    myRepository.initialize();
-	    con = myRepository.getConnection();
-	    String baseURI = "";
-
-	    con.add(stream, baseURI, RDFFormat.N3);
+	    RepositoryConnection con = RdfUtils.readRdfInputStreamToRepository(
+		    stream, RDFFormat.N3);
 
 	    RepositoryResult<Statement> statements = con.getStatements(null,
 		    null, null, true);
@@ -304,23 +247,8 @@ public class RdfUtils {
 			.replace("info:fedora/", ""));
 
 	    }
-	} catch (RepositoryException e) {
-
-	    e.printStackTrace();
-	} catch (RDFParseException e) {
-
-	    e.printStackTrace();
-	} catch (IOException e) {
-
-	    e.printStackTrace();
-	} finally {
-	    if (con != null) {
-		try {
-		    con.close();
-		} catch (RepositoryException e) {
-		    e.printStackTrace();
-		}
-	    }
+	} catch (Exception e) {
+	    throw new RdfException(e);
 	}
 	return findpids;
     }
@@ -331,35 +259,16 @@ public class RdfUtils {
      * @return all rdf statements
      */
     public static RepositoryResult<Statement> getStatements(URL metadata) {
-	InputStream in = null;
-	RepositoryConnection con = null;
 	try {
-	    in = metadata.openStream();
-
-	    Repository myRepository = new SailRepository(new MemoryStore());
-
-	    myRepository.initialize();
-	    con = myRepository.getConnection();
-	    String baseURI = "";
-
-	    con.add(in, baseURI, RDFFormat.NTRIPLES);
-
+	    RepositoryConnection con = RdfUtils.readRdfUrlToRepository(
+		    metadata, RDFFormat.NTRIPLES);
 	    RepositoryResult<Statement> statements = con.getStatements(null,
 		    null, null, true);
-
 	    return statements;
-
 	} catch (Exception e) {
 	    throw new RdfException(e);
-	} finally {
-	    if (con != null) {
-		try {
-		    con.close();
-		} catch (RepositoryException e) {
-		    throw new RdfException(e);
-		}
-	    }
 	}
+
     }
 
     /**
@@ -424,9 +333,82 @@ public class RdfUtils {
 		    URI object = f.createURI(link.getObject());
 		    con.add(subject, predicate, object);
 		} catch (IllegalArgumentException e) {
-		    // TODO implement
+
 		}
 	    }
+	}
+    }
+
+    /**
+     * @param subject
+     *            find triples with this subject
+     * @param predicate
+     *            find triples with this predicate
+     * @param rdfUrl
+     *            url with rdf data
+     * @param inf
+     *            format of the rdf data
+     * @param accept
+     *            accept header for the url
+     * @return a list of rdf objects
+     */
+    public static List<String> findRdfObjects(String subject, String predicate,
+	    URL rdfUrl, RDFFormat inf, String accept) {
+	RepositoryConnection con = RdfUtils.readRdfUrlToRepository(rdfUrl, inf);
+	return findRdfObjects(subject, predicate, con);
+    }
+
+    private static List<String> findRdfObjects(String subject,
+	    String predicate, RepositoryConnection con) {
+
+	List<String> list = new Vector<String>();
+	TupleQueryResult result = null;
+	try {
+	    String queryString = "SELECT  x, y FROM {x} <" + predicate
+		    + "> {y}";
+	    TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SERQL,
+		    queryString);
+	    result = tupleQuery.evaluate();
+
+	    while (result.hasNext()) {
+		BindingSet bindingSet = result.next();
+		Value valueOfY = bindingSet.getValue("y");
+		list.add(valueOfY.stringValue());
+	    }
+	    return list;
+	} catch (Exception e) {
+	    throw new RdfException(e);
+	}
+    }
+
+    private static RepositoryConnection readRdfUrlToRepository(URL rdfUrl,
+	    RDFFormat inf) {
+	RepositoryConnection con = null;
+	try {
+	    Repository myRepository = new SailRepository(new MemoryStore());
+	    myRepository.initialize();
+	    con = myRepository.getConnection();
+	    String baseURI = rdfUrl.toString();
+	    con.add(rdfUrl, baseURI, inf);
+	    return con;
+	} catch (Exception e) {
+	    throw new RdfException(e);
+	}
+    }
+
+    private static RepositoryConnection readRdfInputStreamToRepository(
+	    InputStream is, RDFFormat inf) {
+	RepositoryConnection con = null;
+	try {
+
+	    Repository myRepository = new SailRepository(new MemoryStore());
+	    myRepository.initialize();
+	    con = myRepository.getConnection();
+	    String baseURI = "";
+	    con.add(is, baseURI, inf);
+	    return con;
+	} catch (Exception e) {
+	    throw new RdfException(e);
 	}
     }
 }
