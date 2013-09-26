@@ -211,30 +211,30 @@ public class DigitoolDownloader extends Downloader {
 
     }
 
-    private String getParent(File digitalEntityFile, String pid)
-	    throws IOException {
-	// File indexFile = null;
-	Element root = XmlUtils.getDocument(digitalEntityFile);
-	if (root == null) {
-	    logger.error("Not able to download related files. XML parsing error: "
-		    + pid);
-	    return null;
-	}
-	NodeList list = root.getElementsByTagName("relation");
-	for (int i = 0; i < list.getLength(); i++) {
-	    Node item = list.item(i);
-	    String relPid = ((Element) item).getElementsByTagName("pid")
-		    .item(0).getTextContent();
-	    String type = ((Element) item).getElementsByTagName("type").item(0)
-		    .getTextContent();
-
-	    if (type.compareTo("part_of") == 0) {
-		return relPid;
-	    }
-	}
-	return null;
-
-    }
+    // private String getParent(File digitalEntityFile, String pid)
+    // throws IOException {
+    // // File indexFile = null;
+    // Element root = XmlUtils.getDocument(digitalEntityFile);
+    // if (root == null) {
+    // logger.error("Not able to download related files. XML parsing error: "
+    // + pid);
+    // return null;
+    // }
+    // NodeList list = root.getElementsByTagName("relation");
+    // for (int i = 0; i < list.getLength(); i++) {
+    // Node item = list.item(i);
+    // String relPid = ((Element) item).getElementsByTagName("pid")
+    // .item(0).getTextContent();
+    // String type = ((Element) item).getElementsByTagName("type").item(0)
+    // .getTextContent();
+    //
+    // if (type.compareTo("part_of") == 0) {
+    // return relPid;
+    // }
+    // }
+    // return null;
+    //
+    // }
 
     /**
      * @param pid
