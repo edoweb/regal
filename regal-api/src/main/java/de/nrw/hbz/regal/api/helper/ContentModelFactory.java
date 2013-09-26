@@ -26,6 +26,8 @@ public class ContentModelFactory {
     /**
      * @param namespace
      *            the namespace. Contentmodels live in their own namespaces
+     * @param server
+     *            the server that hosts the method call
      * @return a ContentModel object
      */
     public static ContentModel createHeadModel(String namespace, String server) {
@@ -44,6 +46,8 @@ public class ContentModelFactory {
      * @param namespace
      *            a namespace for the model.Contentmodels live in their own
      *            namespaces
+     * @param server
+     *            the server that hosts the method call
      * @return a ContentModel object
      */
     public static ContentModel createPdfModel(String namespace, String server) {

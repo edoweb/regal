@@ -134,10 +134,8 @@ class Services {
     }
 
     /**
-     * @param pid
-     *            the pid of the object
-     * @param namespace
-     *            the namespace
+     * @param url
+     *            the url the urn must point to
      * @param urn
      *            the urn
      * 
