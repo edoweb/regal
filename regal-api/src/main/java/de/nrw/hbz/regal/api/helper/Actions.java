@@ -25,11 +25,9 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -37,6 +35,7 @@ import java.util.Vector;
 
 import javax.ws.rs.core.Response;
 
+import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,9 @@ import de.nrw.hbz.regal.fedora.CopyUtils;
 import de.nrw.hbz.regal.fedora.FedoraFactory;
 import de.nrw.hbz.regal.fedora.FedoraInterface;
 import de.nrw.hbz.regal.fedora.FedoraVocabulary;
+import de.nrw.hbz.regal.fedora.RdfException;
 import de.nrw.hbz.regal.fedora.RdfUtils;
+import de.nrw.hbz.regal.fedora.UrlConnectionException;
 
 /**
  * Actions provide a single class to access the archive. All endpoints are using
@@ -61,6 +62,39 @@ import de.nrw.hbz.regal.fedora.RdfUtils;
  * 
  */
 public class Actions {
+
+    @SuppressWarnings({ "serial", "javadoc" })
+    public class UrnException extends RuntimeException {
+
+	public UrnException(String arg0) {
+	    super(arg0);
+	}
+
+	public UrnException(Throwable arg0) {
+	    super(arg0);
+	}
+
+	public UrnException(String arg0, Throwable arg1) {
+	    super(arg0, arg1);
+	}
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class UpdateNodeException extends RuntimeException {
+
+	public UpdateNodeException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+
+	public UpdateNodeException(String message) {
+	    super(message);
+	}
+
+	public UpdateNodeException(Throwable cause) {
+	    super(cause);
+	}
+
+    }
 
     final static Logger logger = LoggerFactory.getLogger(Actions.class);
 
@@ -91,6 +125,13 @@ public class Actions {
 
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
+    }
+
+    /**
+     * @return the host name
+     */
+    public String getServer() {
+	return server;
     }
 
     /**
@@ -163,7 +204,7 @@ public class Actions {
      *            The objectTyp
      * @return A list of pids with type {@type}
      */
-    public Vector<String> findByType(String type) {
+    public List<String> findByType(String type) {
 
 	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
 	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
@@ -197,10 +238,8 @@ public class Actions {
      */
     public Response readData(String pid) {
 	try {
-
 	    logger.debug("Redirect to " + fedoraExtern + "/objects/" + pid
 		    + "/datastreams/data/content");
-
 	    return Response.temporaryRedirect(
 		    new java.net.URI(fedoraExtern + "/objects/" + pid
 			    + "/datastreams/data/content")).build();
@@ -229,50 +268,21 @@ public class Actions {
      * @return n-triple metadata
      */
     public String readMetadata(String pid) {
-
-	String result = null;
-	Node node = fedora.readNode(pid);
-	InputStream is = null;
-	if (node != null) {
-	    URLConnection connection = null;
-	    try {
-		URL url = new URL(fedoraExtern + "/objects/" + pid
-			+ "/datastreams/metadata/content");
-		connection = url.openConnection();
-
-		is = connection.getInputStream();
-		result = CopyUtils.copyToString(is, "utf-8");
-		return result;
-	    } catch (Exception e) {
-		if (connection != null)
-		    throwExceptionWithStatusCode(connection, e);
-
-		throw new HttpArchiveException(500, e);
-	    }
-
-	}
-	throw new HttpArchiveException(404, "Datastream does not exist!");
-    }
-
-    private void throwExceptionWithStatusCode(URLConnection connection,
-	    Exception cause) {
+	String metadataAdress = fedoraExtern + "/objects/" + pid
+		+ "/datastreams/metadata/content";
 	try {
-	    if (connection instanceof HttpURLConnection) {
-		HttpURLConnection httpConn = (HttpURLConnection) connection;
-		int statusCode = httpConn.getResponseCode();
-		if (statusCode == 401) {
-		    throw new HttpArchiveException(
-			    404,
-			    "Access Denied. Login to verify if datastream exists or is marked as deleted?",
-			    cause);
-		} else if (statusCode != 200) {
-		    throw new HttpArchiveException(statusCode,
-			    httpConn.getResponseMessage(), cause);
-		}
-	    }
-	} catch (IOException e) {
 
+	    return RdfUtils.readRdfToString(new URL(metadataAdress),
+		    RDFFormat.NTRIPLES, RDFFormat.NTRIPLES, "text/plain");
+	} catch (MalformedURLException e) {
+	    throw new HttpArchiveException(500, "Wrong Metadata adress: "
+		    + metadataAdress);
+	} catch (RdfException e) {
+	    throw new HttpArchiveException(500, e);
+	} catch (UrlConnectionException e) {
+	    throw new HttpArchiveException(404, e);
 	}
+
     }
 
     /**
@@ -350,25 +360,27 @@ public class Actions {
      * @param content
      *            The metadata as rdf string
      * @return a short message
-     * @throws IOException
-     *             if the metadata can not be cached
      */
-    public String updateMetadata(String pid, String content) throws IOException {
+    public String updateMetadata(String pid, String content) {
 
-	if (content == null) {
-	    throw new HttpArchiveException(406, pid
-		    + "You've tried to upload an empty string."
-		    + " This action is not supported."
-		    + " Use HTTP DELETE instead.");
-	}
-	File file = CopyUtils.copyStringToFile(content);
-	Node node = fedora.readNode(pid);
-	if (node != null) {
-	    node.setMetadataFile(file.getAbsolutePath());
-	    fedora.updateNode(node);
-	}
+	try {
+	    if (content == null) {
+		throw new HttpArchiveException(406, pid
+			+ "You've tried to upload an empty string."
+			+ " This action is not supported."
+			+ " Use HTTP DELETE instead.");
+	    }
+	    File file = CopyUtils.copyStringToFile(content);
+	    Node node = fedora.readNode(pid);
+	    if (node != null) {
+		node.setMetadataFile(file.getAbsolutePath());
+		fedora.updateNode(node);
+	    }
 
-	return pid + " metadata successfully updated!";
+	    return pid + " metadata successfully updated!";
+	} catch (IOException e) {
+	    throw new UpdateNodeException(e);
+	}
 
     }
 
@@ -553,6 +565,39 @@ public class Actions {
     }
 
     /**
+     * Generates a urn or returns an existing urn.
+     * 
+     * @param pid
+     *            the pid of an object
+     * @param namespace
+     *            the namespace
+     * @return the urn
+     */
+    public String getUrn(String pid, String namespace) {
+	try {
+
+	    String metadataAdress = fedoraExtern + "/objects/" + namespace
+		    + ":" + pid + "/datastreams/metadata/content";
+	    URL url = new URL(metadataAdress);
+	    List<String> urns = RdfUtils.findRdfObjects(namespace + ":" + pid,
+		    "http://geni-orca.renci.org/owl/topology.owl#hasURN", url,
+		    RDFFormat.NTRIPLES, "text/plain");
+	    if (urns == null || urns.isEmpty()) {
+		throw new UrnException("Found no urn!");
+	    }
+	    if (urns.size() != 1) {
+		throw new UrnException("Found " + urns.size() + " urns. "
+			+ urns + "\n Expected exactly one urn.");
+	    }
+	    return urns.get(0);
+
+	} catch (Exception e) {
+	    throw new UrnException(e);
+	}
+
+    }
+
+    /**
      * @param pid
      *            the pid of the object
      * @param namespace
@@ -560,8 +605,8 @@ public class Actions {
      * @return a epicur display for the pid
      */
     public String epicur(String pid, String namespace) {
-	View view = getView(namespace + ":" + pid);
-	return services.epicur(pid, namespace, view);
+
+	return services.epicur(pid, namespace, getUrn(pid, namespace));
     }
 
     /**
@@ -726,5 +771,29 @@ public class Actions {
      */
     public String pdfa(Node node) {
 	return services.pdfa(node, fedoraExtern);
+    }
+
+    /**
+     * Generates a urn
+     * 
+     * @param pid
+     *            usually the pid of an object
+     * @param namespace
+     *            usually the namespace
+     * @return the urn
+     */
+    public String addUrn(String pid, String namespace) {
+	String urn = services.generateUrn(pid, namespace);
+	String subject = namespace + ":" + pid;
+	String hasUrn = "http://geni-orca.renci.org/owl/topology.owl#hasURN";
+	String sameAs = "http://www.w3.org/2002/07/owl#sameAs";
+	String metadata = readMetadata(subject);
+	metadata = metadata + "\n<" + subject + "> <" + hasUrn + "> \"" + urn
+		+ "\" .";
+	metadata = metadata + "\n<" + subject + "> <" + sameAs
+		+ "> <http://nbn-resolving.de/" + urn + "> .";
+	updateMetadata(namespace + ":" + pid, metadata);
+
+	return "Update " + subject + " metadata " + metadata;
     }
 }
