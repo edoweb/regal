@@ -182,7 +182,7 @@ public class EdowebIngester implements IngestInterface {
     private void updateVersion(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
-	    ObjectType t = ObjectType.issue;
+	    ObjectType t = ObjectType.version;
 	    webclient.createObject(dtlBean, t);
 	    logger.info(pid + " " + "Found webpage version.");
 
@@ -245,6 +245,7 @@ public class EdowebIngester implements IngestInterface {
 
     private void updateFile(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
+
 	try {
 	    ObjectType t = ObjectType.file;
 	    webclient.createObject(dtlBean, t);
