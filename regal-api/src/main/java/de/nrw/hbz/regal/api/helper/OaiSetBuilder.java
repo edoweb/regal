@@ -69,12 +69,16 @@ class OaiSetBuilder {
 		spec = "ddc:" + ddc;
 		pid = "oai:" + ddc;
 
+	    } else {
+		return null;
 	    }
 	} else if (predicate.compareTo("http://hbz-nrw.de/regal#contentType") == 0) {
 	    String docType = object;
 	    name = docmap(docType);
 	    spec = "contentType:" + docType;
 
+	} else {
+	    return null;
 	}
 
 	return new OaiSet(name, spec, pid);
