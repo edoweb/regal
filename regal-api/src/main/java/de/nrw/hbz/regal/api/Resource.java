@@ -810,7 +810,7 @@ public class Resource {
      * @return an epicur entry for the resource
      */
     @GET
-    @Path("/{namespace}:{pid}/epicur")
+    @Path("/{namespace}:{pid}.epicur")
     @Produces({ "application/xml" })
     public String getEpicur(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
