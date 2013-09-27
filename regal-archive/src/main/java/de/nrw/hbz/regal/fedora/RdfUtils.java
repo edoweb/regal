@@ -16,9 +16,11 @@
  */
 package de.nrw.hbz.regal.fedora;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
@@ -285,17 +287,17 @@ public class RdfUtils {
 	    myRepository.initialize();
 	    con = myRepository.getConnection();
 	    addStatements(pid, links, con, myRepository);
-	    return writeStatements(con);
+	    return writeStatements(con, RDFFormat.RDFXML);
 	} catch (RepositoryException e) {
 	    throw new RdfException(e);
 	}
 
     }
 
-    private static String writeStatements(RepositoryConnection con)
-	    throws RepositoryException {
+    private static String writeStatements(RepositoryConnection con,
+	    RDFFormat outf) {
 	StringWriter out = new StringWriter();
-	RDFWriter writer = Rio.createWriter(RDFFormat.RDFXML, out);
+	RDFWriter writer = Rio.createWriter(outf, out);
 	String result = null;
 	try {
 	    writer.startRDF();
@@ -310,6 +312,8 @@ public class RdfUtils {
 	    result = out.toString();
 
 	} catch (RDFHandlerException e) {
+	    throw new RdfException(e);
+	} catch (RepositoryException e) {
 	    throw new RdfException(e);
 	}
 	return result;
@@ -410,5 +414,58 @@ public class RdfUtils {
 	} catch (Exception e) {
 	    throw new RdfException(e);
 	}
+    }
+
+    /**
+     * Adds the given statement to the stream and removes all statements with
+     * same subject and predicate
+     * 
+     * @param subject
+     *            rdf subject
+     * @param predicate
+     *            rdf predicate
+     * @param object
+     *            rdf object
+     * @param isLiteral
+     *            true if the object is a literl
+     * @param metadata
+     *            the metadata as String
+     * @return modified Metadata
+     */
+    public static String replaceTriple(String subject, String predicate,
+	    String object, boolean isLiteral, final String metadata) {
+	try {
+
+	    InputStream is = new ByteArrayInputStream(
+		    metadata.getBytes("UTF-8"));
+	    RepositoryConnection con = readRdfInputStreamToRepository(is,
+		    RDFFormat.NTRIPLES);
+	    ValueFactory f = con.getValueFactory();
+	    URI s = f.createURI(subject);
+	    URI p = f.createURI(predicate);
+	    Value o = null;
+	    if (!isLiteral) {
+		o = f.createURI(object);
+	    } else {
+		o = f.createLiteral(object);
+	    }
+	    RepositoryResult<Statement> statements = con.getStatements(null,
+		    null, null, true);
+	    while (statements.hasNext()) {
+		Statement st = statements.next();
+		if (st.getSubject().stringValue().equals(subject)
+			&& st.getPredicate().stringValue().equals(predicate)) {
+		    con.remove(st);
+		}
+	    }
+
+	    con.add(s, p, o);
+	    return writeStatements(con, RDFFormat.NTRIPLES);
+	} catch (RepositoryException e) {
+	    throw new RdfException(e);
+	} catch (UnsupportedEncodingException e) {
+	    throw new RdfException(e);
+	}
+
     }
 }
