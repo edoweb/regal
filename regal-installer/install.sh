@@ -38,6 +38,7 @@ substituteVars site.conf $ARCHIVE_HOME/conf/site.conf
 substituteVars logging.properties $ARCHIVE_HOME/conf/logging.properties
 substituteVars catalina.out $ARCHIVE_HOME/conf/catalina.out
 substituteVars Identify.xml $ARCHIVE_HOME/conf/Identify.xml
+substituteVars proai.properties $ARCHIVE_HOME/conf/proai.properties
 }
 
 function substituteVars()
@@ -49,6 +50,7 @@ sed -e "s,\$ARCHIVE_HOME,$ARCHIVE_HOME,g" \
 -e "s,\$ARCHIVE_PASSWORD,$ARCHIVE_PASSWORD,g" \
 -e "s,\$SERVER,$SERVER,g" \
 -e "s,\$TOMCAT_PORT,$TOMCAT_PORT,g" \
+-e "s,\$EMAIL,$EMAIL,g" \
 -e "s,\$ELASTICSEARCH_PORT,$ELASTICSEARCH_PORT,g" $file > $target
 }
 
@@ -152,7 +154,7 @@ cd -
 function correctSwagger()
 {
 var=$1
-cd $ARCHIVE_HOME/src/regal-ui/htdocs/api/
+cd $ARCHIVE_HOME/html/api/
 number=`grep -n "models" ${var}.json |cut -f1 -d:`
 number=`expr $number - 1`
 head -$number ${var}.json > tmpres
@@ -163,12 +165,13 @@ cd -
 
 function copySwagger()
 {
-cp -r $ARCHIVE_HOME/src/regal-api/target/classes/apidocs/* $ARCHIVE_HOME/src/regal-ui/htdocs/api
+mkdir -p $ARCHIVE_HOME/html/api
+cp -r $ARCHIVE_HOME/src/regal-api/target/classes/apidocs/* $ARCHIVE_HOME/html/api
 if [ $? -ne 0 ]
 then
 return;
 fi
-cd $ARCHIVE_HOME/src/regal-ui/htdocs/api/
+cd $ARCHIVE_HOME/html/api/
 sed "s/localhost/$SERVER/g" service.json > tmp && mv tmp service.json
 cd -
 correctSwagger utils;
@@ -230,10 +233,11 @@ $ARCHIVE_HOME/fedora/tomcat/bin/startup.sh
 
 function installOaiPmh
 {
-SRC=$ARCHIVE_HOME/src
-WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
-rm -rf  $WEBAPPS/oai-pmh*
-cp $SRC/regal-ui/bin/oai-pmh.war $WEBAPPS
+echo "Please install proai manually"
+#SRC=$ARCHIVE_HOME/src
+#WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
+#rm -rf  $WEBAPPS/oai-pmh*
+#cp $SRC/regal-ui/bin/oai-pmh.war $WEBAPPS
 }
 
 function installApi
