@@ -567,7 +567,8 @@ public class Actions {
     }
 
     /**
-     * Generates a urn or returns an existing urn.
+     * Returns an existing urn. Throws UrnException if found 0 urn or more than
+     * 1 urns.
      * 
      * @param pid
      *            the pid of an object
@@ -782,20 +783,18 @@ public class Actions {
      *            usually the pid of an object
      * @param namespace
      *            usually the namespace
+     * @param snid
+     *            the urn subnamespace id
      * @return the urn
      */
-    public String addUrn(String pid, String namespace) {
-	String urn = services.generateUrn(pid, namespace);
+    public String addUrn(String pid, String namespace, String snid) {
 	String subject = namespace + ":" + pid;
+	String urn = services.generateUrn(subject, snid);
 	String hasUrn = "http://geni-orca.renci.org/owl/topology.owl#hasURN";
-	String sameAs = "http://www.w3.org/2002/07/owl#sameAs";
+	// String sameAs = "http://www.w3.org/2002/07/owl#sameAs";
 	String metadata = readMetadata(subject);
-	metadata = metadata + "\n<" + subject + "> <" + hasUrn + "> \"" + urn
-		+ "\" .";
-	metadata = metadata + "\n<" + subject + "> <" + sameAs
-		+ "> <http://nbn-resolving.de/" + urn + "> .";
+	metadata = RdfUtils.replaceTriple(subject, hasUrn, urn, true, metadata);
 	updateMetadata(namespace + ":" + pid, metadata);
-
 	return "Update " + subject + " metadata " + metadata;
     }
 }
