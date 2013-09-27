@@ -151,7 +151,7 @@ class Representations {
 
 	    if (label != null && !label.isEmpty()) {
 		Literal labelLiteral = f.createLiteral(label);
-		con.add(aggregation, rdfsLabel, labelLiteral);
+		con.add(data, rdfsLabel, labelLiteral);
 	    }
 
 	    String str = getOriginalUri(pid);
