@@ -208,7 +208,7 @@ public class Resource {
     @Produces({ "application/json", "application/xml" })
     public String deleteAllOfType(@QueryParam("type") String type) {
 	try {
-	    return actions.deleteAll(actions.findByType(type));
+	    return actions.deleteAll(actions.getAll(type));
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
