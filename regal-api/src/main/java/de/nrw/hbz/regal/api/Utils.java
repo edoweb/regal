@@ -168,15 +168,13 @@ public class Utils {
      *            a urn snid
      * @return urn
      */
-    @GET
+    @POST
     @Path("/addUrn")
     @Produces({ "application/json", "application/xml" })
     public String addUrn(@QueryParam("id") final String id,
 	    @QueryParam("namespace") final String namespace,
 	    @QueryParam("snid") final String snid) {
-
-	return actions.addUrn(id, namespace);
-
+	return actions.addUrn(id, namespace, snid);
     }
 
     /**
