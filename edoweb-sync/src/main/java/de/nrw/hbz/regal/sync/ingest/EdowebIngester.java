@@ -175,7 +175,7 @@ public class EdowebIngester implements IngestInterface {
 	    updateVersion(dtlBean);
 	} else // if (usageType.compareTo(ObjectType.issue.toString()) == 0)
 	{
-	    updateIssue(dtlBean);
+	    updateFile(dtlBean);
 	}
     }
 
@@ -217,31 +217,31 @@ public class EdowebIngester implements IngestInterface {
 	logger.info(pid + " Found " + num + " issues.");
 	for (DigitalEntity issue : issues) {
 	    logger.info("Part: " + (count++) + "/" + num);
-	    updateIssue(issue);
+	    updateFile(issue);
 	}
 
 	logger.info(pid + " " + "updated.\n");
     }
 
-    private void updateIssue(DigitalEntity dtlBean) {
-	String pid = namespace + ":" + dtlBean.getPid();
-	try {
-	    ObjectType t = ObjectType.issue;
-	    webclient.createObject(dtlBean, t);
-	    logger.info(pid + " " + "Found eJournal issue.");
-
-	    String metadata = "<" + pid
-		    + "> <http://purl.org/ontology/bibo/issue> \""
-		    + dtlBean.getLabel() + "\" .\n" + "<" + pid
-		    + "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
-		    + dtlBean.getLabel() + "\" .\n";
-	    webclient.setMetadata(dtlBean, metadata);
-	    logger.info(pid + " " + "updated.\n");
-	} catch (IllegalArgumentException e) {
-	    logger.debug(e.getMessage());
-	}
-
-    }
+    // private void updateIssues(DigitalEntity dtlBean) {
+    // String pid = namespace + ":" + dtlBean.getPid();
+    // try {
+    // ObjectType t = ObjectType.issue;
+    // webclient.createObject(dtlBean, t);
+    // logger.info(pid + " " + "Found eJournal issue.");
+    //
+    // String metadata = "<" + pid
+    // + "> <http://purl.org/ontology/bibo/issue> \""
+    // + dtlBean.getLabel() + "\" .\n" + "<" + pid
+    // + "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
+    // + dtlBean.getLabel() + "\" .\n";
+    // webclient.setMetadata(dtlBean, metadata);
+    // logger.info(pid + " " + "updated.\n");
+    // } catch (IllegalArgumentException e) {
+    // logger.debug(e.getMessage());
+    // }
+    //
+    // }
 
     private void updateFile(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
