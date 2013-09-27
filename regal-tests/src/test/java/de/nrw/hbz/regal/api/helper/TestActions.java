@@ -207,7 +207,7 @@ public class TestActions {
     @Test
     public void html() throws IOException {
 	createTestObject("123");
-	String str = actions.getReM("test:123", "text/html");
+	actions.getReM("test:123", "text/html");
     }
 
     @After
