@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-archive</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${regal.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>geronimo-servlet_2.5_spec</artifactId>

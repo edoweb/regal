@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-pidreporter</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${regal.version}</version>
 		</dependency>
 	</dependencies>
 </project>
