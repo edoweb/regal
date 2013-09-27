@@ -21,7 +21,7 @@
 
 	<groupId>de.nrw.hbz.regal</groupId>
 	<artifactId>regal</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<packaging>pom</packaging>
 	<name>regal</name>
 	<url>http://www.hbz-nrw.de/</url>
@@ -42,7 +42,7 @@
 
 	<issueManagement>
 		<system>none</system>
-		<url>none</url>
+		<url>http://issues.apache.org/jira/browse/IO</url>
 	</issueManagement>
 
 	<ciManagement>
