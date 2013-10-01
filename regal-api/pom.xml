@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>regal</artifactId>
 		<groupId>de.nrw.hbz.regal</groupId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.1.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>regal-api</artifactId>
@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-archive</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${regal.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>geronimo-servlet_2.5_spec</artifactId>
@@ -108,7 +108,7 @@
 		<dependency>
 			<groupId>com.github.jsonld-java</groupId>
 			<artifactId>jsonld-java</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>0.2</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-jdk14</artifactId>
@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>com.github.jsonld-java</groupId>
 			<artifactId>jsonld-java-sesame</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>
@@ -175,7 +175,7 @@
                             <docletArtifact>
                                 <groupId>com.hypnoticocelot</groupId>
                                 <artifactId>jaxrs-doclet</artifactId>
-                                <version>0.0.2-SNAPSHOT</version>
+                                <version>0.0.2</version>
                             </docletArtifact>
                             <reportOutputDirectory>${project.build.outputDirectory}</reportOutputDirectory>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
@@ -227,7 +227,7 @@
 	<repositories>
         <repository>
             <id>com.hypnoticocelot</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>

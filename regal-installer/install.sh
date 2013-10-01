@@ -157,9 +157,12 @@ var=$1
 cd $ARCHIVE_HOME/html/api/
 number=`grep -n "models" ${var}.json |cut -f1 -d:`
 number=`expr $number - 1`
+if [ $? -eq 0 ]
+then
 head -$number ${var}.json > tmpres
 echo '"swaggerVersion" : "1.1","resourcePath" : "/${var}"}' >> tmpres
 mv tmpres ${var}.json
+fi
 cd -
 }
 

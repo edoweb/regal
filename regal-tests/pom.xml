@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>de.nrw.hbz.regal</groupId>
 		<artifactId>regal</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.1.0</version>
 	</parent>
 
 	<artifactId>regal-tests</artifactId>
@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-archive</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${regal.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.openrdf.sesame</groupId>
@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>edoweb-sync</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${regal.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.openrdf.sesame</groupId>
@@ -194,7 +194,7 @@
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>dipp-sync</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${regal.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>sli4j-slf4j-logback</artifactId>
@@ -205,7 +205,7 @@
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>opus-sync</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${regal.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>sli4j-slf4j-logback</artifactId>
@@ -241,7 +241,7 @@
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>ellinet-sync</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${regal.version}</version>
 		</dependency>
 	</dependencies>
 </project> 

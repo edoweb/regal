@@ -27,7 +27,6 @@ import org.junit.Test;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
-import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.fedora.CopyUtils;
 
@@ -83,26 +82,9 @@ public class TestActions {
 	actions.updateData("test:" + pid, Thread.currentThread()
 		.getContextClassLoader().getResourceAsStream("test.pdf"),
 		"application/pdf", "TestFile");
-
-	// TODO Make tests for each action. Add Assertions
-	Link link = new Link();
-	link.setPredicate("http://hbz-nrw.de/regal#testlink");
-	link.setObject("aLiteral", true);
-	actions.addLink("test:" + pid, link);
-	link.setObject("http://hbz-nrw.de/regal#aUri", false);
-	actions.addLink("test:" + pid, link);
-	String result = actions.lobidify("test:" + pid);
-	System.out.println(result);
-	actions.makeOAISet("test:" + pid);
-	actions.pdfbox(actions.readNode("test:" + pid));
-
 	actions.updateMetadata("test:" + pid, CopyUtils.copyToString(
 		Thread.currentThread().getContextClassLoader()
 			.getResourceAsStream("test.nt"), "utf-8"));
-	actions.index(pid, "test");
-
-	actions.outdex("test:" + pid);
-	actions.readDC("test:" + pid);
     }
 
     @Test(expected = HttpArchiveException.class)

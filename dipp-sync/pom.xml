@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>regal</artifactId>
 		<groupId>de.nrw.hbz.regal</groupId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.1.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>dipp-sync</artifactId>
@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${regal.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jena</artifactId>
@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>de.nrw.hbz.regal</groupId>
 			<artifactId>regal-sync</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${regal.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>

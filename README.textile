@@ -9,8 +9,9 @@ For more information visit the "wiki":https://github.com/edoweb/edoweb2/wiki/
 
 h1. Releases
 
-Not released yet! The current status of this project is "in development". 
-Current Version is still SNAPSHOT-0.0.1.
+"current 0.1.0":https://github.com/edoweb/regal/tree/master
+"0.1.0":https://github.com/edoweb/regal/releases/tag/regal-0.1.0
+"0.2.0-SNAPSHOT":https://github.com/edoweb/regal/tree/test
 
 h1. License
 
