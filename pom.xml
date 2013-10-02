@@ -16,13 +16,13 @@
 		<instrumentedTests>**/*Test*__*.class</instrumentedTests>
 		<nestedClassTests>**/*Test*$*.class</nestedClassTests>
 		<integration.test.skip>false</integration.test.skip>
-		<regal.version>0.1.0</regal.version>
+		<regal.version>0.1.1</regal.version>
 	</properties>
 
 
 	<groupId>de.nrw.hbz.regal</groupId>
 	<artifactId>regal</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 	<packaging>pom</packaging>
 	<name>regal</name>
 	<url>http://www.hbz-nrw.de/</url>
