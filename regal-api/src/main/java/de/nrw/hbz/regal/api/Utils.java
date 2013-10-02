@@ -40,6 +40,9 @@ import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
 /**
+ * This class defines some RPC-Like experimental endpoints under /utils. Most of
+ * it will be included in the more resource centric interface at /resource
+ * 
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
@@ -58,6 +61,8 @@ public class Utils {
     }
 
     /**
+     * Deletes all objects in a certain namespace.
+     * 
      * @param namespace
      *            the namespace to delete.
      * @return A message or an ArchiveException
@@ -72,6 +77,8 @@ public class Utils {
     }
 
     /**
+     * Aims to generate OAI-Sets from the metadata of the pid
+     * 
      * @param pid
      *            the pid of the object, that must be published in a oai set.
      * @return a message
@@ -89,6 +96,8 @@ public class Utils {
     }
 
     /**
+     * Aims to pass the object to the elastic search index
+     * 
      * @param pid
      *            the pid to be indexed
      * @param namespace
@@ -110,6 +119,9 @@ public class Utils {
     }
 
     /**
+     * Fetches bibliographic metadata from lobid. A lobid id must be available
+     * on /metadata of the pid
+     * 
      * @param pid
      *            the pid that must be enriched with lobid data
      * @return a message
@@ -122,6 +134,8 @@ public class Utils {
     }
 
     /**
+     * Returns a oai-dc conversion of pid's metadata
+     * 
      * @param pid
      *            the metadata of the identified resource will be transformed to
      *            oaidc
@@ -140,6 +154,8 @@ public class Utils {
     }
 
     /**
+     * Returns epicur for the pid, if urn is available
+     * 
      * @param pid
      *            epicur transformation for this pid
      * @param namespace
@@ -160,6 +176,8 @@ public class Utils {
     }
 
     /**
+     * Adds an Urn to the pid
+     * 
      * @param id
      *            pid without namespace
      * @param namespace
@@ -178,6 +196,8 @@ public class Utils {
     }
 
     /**
+     * Extractes text from pid/data if data exists and is a pdf
+     * 
      * @param pid
      *            the pid must contain a data stream with mime type
      *            application/pdf
@@ -218,6 +238,8 @@ public class Utils {
     }
 
     /**
+     * Convertes pid/data to pdfA if data exists and is a pdf
+     * 
      * @param pid
      *            the pid must contain a data stream with mime type
      *            application/pdf
@@ -264,6 +286,8 @@ public class Utils {
     }
 
     /**
+     * Reininit ContentModels for a certain namespace
+     * 
      * @param namespace
      *            namespace of the model
      * @return a message
