@@ -48,7 +48,6 @@ import de.nrw.hbz.regal.api.helper.Actions;
 import de.nrw.hbz.regal.api.helper.ContentModelFactory;
 import de.nrw.hbz.regal.api.helper.HttpArchiveException;
 import de.nrw.hbz.regal.api.helper.ObjectType;
-import de.nrw.hbz.regal.api.helper.View;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
@@ -854,7 +853,7 @@ public class Resource {
     @Produces({ "application/json" })
     public Response about(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) throws URISyntaxException {
-	View view = actions.getView(namespace + ":" + pid);
+	String view = actions.getReM(namespace + ":" + pid, "application/json");
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
 		.entity(view);
