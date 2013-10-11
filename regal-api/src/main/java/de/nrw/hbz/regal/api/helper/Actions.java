@@ -63,9 +63,8 @@ import de.nrw.hbz.regal.fedora.UrlConnectionException;
  */
 public class Actions {
 
-    @SuppressWarnings({ "serial", "javadoc" })
-    public class UrnException extends RuntimeException {
-
+    @SuppressWarnings({ "serial" })
+    private class UrnException extends RuntimeException {
 	public UrnException(String arg0) {
 	    super(arg0);
 	}
@@ -74,30 +73,16 @@ public class Actions {
 	    super(arg0);
 	}
 
-	public UrnException(String arg0, Throwable arg1) {
-	    super(arg0, arg1);
-	}
     }
 
-    @SuppressWarnings({ "javadoc", "serial" })
-    public class UpdateNodeException extends RuntimeException {
-
-	public UpdateNodeException(String message, Throwable cause) {
-	    super(message, cause);
-	}
-
-	public UpdateNodeException(String message) {
-	    super(message);
-	}
-
+    @SuppressWarnings({ "serial" })
+    private class UpdateNodeException extends RuntimeException {
 	public UpdateNodeException(Throwable cause) {
 	    super(cause);
 	}
-
     }
 
     final static Logger logger = LoggerFactory.getLogger(Actions.class);
-
     Services services = null;
     Representations representations = null;
     private FedoraInterface fedora = null;
@@ -121,10 +106,8 @@ public class Actions {
 		properties.getProperty("fedoraIntern"),
 		properties.getProperty("user"),
 		properties.getProperty("password"));
-
 	properties.load(getClass().getResourceAsStream(
 		"/externalLinks.properties"));
-
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
     }
@@ -183,9 +166,7 @@ public class Actions {
      * @return a message
      */
     public String deleteMetadata(String pid) {
-
 	fedora.deleteDatastream(pid, "metadata");
-
 	return pid + ": metadata - datastream successfully deleted! ";
     }
 
@@ -207,13 +188,10 @@ public class Actions {
      * @return A list of pids with type {@type}
      */
     public List<String> findByType(String type) {
-
 	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
 	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
 		FedoraVocabulary.N3);
-
 	return RdfUtils.getFedoraSubject(in);
-
     }
 
     /**
@@ -259,9 +237,7 @@ public class Actions {
 	Node node = fedora.readNode(pid);
 	if (node != null)
 	    return new DCBeanAnnotated(node);
-
 	return null;
-
     }
 
     /**
@@ -273,7 +249,6 @@ public class Actions {
 	String metadataAdress = fedoraExtern + "/objects/" + pid
 		+ "/datastreams/metadata/content";
 	try {
-
 	    return RdfUtils.readRdfToString(new URL(metadataAdress),
 		    RDFFormat.NTRIPLES, RDFFormat.NTRIPLES, "text/plain");
 	} catch (MalformedURLException e) {
@@ -284,7 +259,6 @@ public class Actions {
 	} catch (UrlConnectionException e) {
 	    throw new HttpArchiveException(404, e);
 	}
-
     }
 
     /**
@@ -302,7 +276,6 @@ public class Actions {
      */
     public String updateData(String pid, InputStream content, String mimeType,
 	    String name) throws IOException {
-
 	if (content == null) {
 	    throw new HttpArchiveException(406, pid
 		    + " you've tried to upload an empty stream."
@@ -317,9 +290,7 @@ public class Actions {
 	    node.setUploadData(tmp.getAbsolutePath(), mimeType);
 	    fedora.updateNode(node);
 	}
-
 	return pid + " data successfully updated!";
-
     }
 
     /**
@@ -330,7 +301,6 @@ public class Actions {
      * @return a short message
      */
     public String updateDC(String pid, DCBeanAnnotated content) {
-
 	content.trim();
 	Node node = fedora.readNode(pid);
 	DCBean dc = node.getBean();
@@ -351,9 +321,7 @@ public class Actions {
 	dc.setType(content.getType());
 	node.setDcBean(dc);
 	fedora.updateNode(node);
-
 	return pid + " dc successfully updated!";
-
     }
 
     /**
@@ -364,7 +332,6 @@ public class Actions {
      * @return a short message
      */
     public String updateMetadata(String pid, String content) {
-
 	try {
 	    if (content == null) {
 		throw new HttpArchiveException(406, pid
@@ -378,12 +345,10 @@ public class Actions {
 		node.setMetadataFile(file.getAbsolutePath());
 		fedora.updateNode(node);
 	    }
-
 	    return pid + " metadata successfully updated!";
 	} catch (IOException e) {
 	    throw new UpdateNodeException(e);
 	}
-
     }
 
     /**
@@ -405,18 +370,12 @@ public class Actions {
      * @return a short message
      */
     public String addLinks(String pid, List<Link> links) {
-
 	Node node = fedora.readNode(pid);
 	for (Link link : links) {
 	    node.addRelation(link);
 	}
-	// long start = System.nanoTime();
 	fedora.updateNode(node);
-	// long elapsed = System.nanoTime() - start;
-	// System.out.println("update node duration: " + elapsed);
-
 	return pid + " " + links + " links successfully added.";
-
     }
 
     /**
@@ -442,10 +401,8 @@ public class Actions {
      */
     public String contentModelsInit(String namespace) {
 	try {
-
 	    fedora.updateContentModel(ContentModelFactory.createHeadModel(
 		    namespace, server));
-
 	    fedora.updateContentModel(ContentModelFactory
 		    .createEJournalModel(namespace));
 	    fedora.updateContentModel(ContentModelFactory
@@ -456,10 +413,8 @@ public class Actions {
 		    .createVersionModel(namespace));
 	    fedora.updateContentModel(ContentModelFactory
 		    .createVolumeModel(namespace));
-
 	    fedora.updateContentModel(ContentModelFactory.createPdfModel(
 		    namespace, server));
-
 	    return "Success!";
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(500, e);
@@ -492,12 +447,10 @@ public class Actions {
      */
     public Response getFulltext(String pid, String namespace)
 	    throws URISyntaxException {
-
 	return Response.temporaryRedirect(
 		new java.net.URI(fedoraExtern + "/objects/" + namespace + ":"
 			+ pid + "/methods/" + namespace
 			+ "CM:pdfServiceDefinition/pdfbox")).build();
-
     }
 
     /**
@@ -524,9 +477,16 @@ public class Actions {
     public Node createResource(CreateObjectBean input, String rawPid,
 	    String namespace, List<ContentModel> models) {
 	logger.info("create " + input.getType());
+	Node node = createNodeIfNotExists(rawPid, namespace, input, models);
+	setNodeType(input, node);
+	linkWithParent(input, node);
+	return node;
+    }
+
+    private Node createNodeIfNotExists(String rawPid, String namespace,
+	    CreateObjectBean input, List<ContentModel> models) {
 	String pid = namespace + ":" + rawPid;
 	Node node = null;
-
 	if (fedora.nodeExists(pid)) {
 	    node = fedora.readNode(pid);
 	} else {
@@ -539,19 +499,20 @@ public class Actions {
 		}
 	    fedora.createNode(node);
 	}
+	return node;
+    }
+
+    private void setNodeType(CreateObjectBean input, Node node) {
 	node.setType(TYPE_OBJECT);
 	node.setContentType(input.getType());
+    }
 
+    private void linkWithParent(CreateObjectBean input, Node node) {
 	String parentPid = input.getParentPid();
-	// remove link from old parent
 	fedora.unlinkParent(node);
-	// link node to new parent
 	fedora.linkToParent(node, parentPid);
-	// link new parent to node
 	fedora.linkParentToNode(parentPid, node.getPID());
-
 	fedora.updateNode(node);
-	return node;
     }
 
     /**
@@ -676,27 +637,10 @@ public class Actions {
      * @return a oai_ore resource map
      */
     public String getReM(String pid, String format) {
-
-	try {
-	    URL metadata = new URL(fedoraExtern + "/objects/" + pid
-		    + "/datastreams/metadata/content");
-	    Date lastModified = getLastModified(pid);
-	    List<String> parents = findObject(pid, IS_PART_OF);
-	    List<String> children = findObject(pid, HAS_PART);
-	    return representations.getReM(pid, format, metadata, lastModified,
-		    fedoraExtern, parents, children);
-	} catch (MalformedURLException e) {
-	    throw new InternalUrlException(e);
-	}
-    }
-
-    /**
-     * @param pid
-     *            The pid of an existing object.
-     * @return the view of the object
-     */
-    public View getView(String pid) {
-	return representations.getView(pid, oaidc(pid), fedoraExtern);
+	List<String> parents = findObject(pid, IS_PART_OF);
+	List<String> children = findObject(pid, HAS_PART);
+	return representations.getReM(pid, format, fedoraExtern, parents,
+		children);
     }
 
     /**
@@ -757,14 +701,6 @@ public class Actions {
 
     Services getServices() {
 	return services;
-    }
-
-    @SuppressWarnings({ "javadoc", "serial" })
-    public class InternalUrlException extends RuntimeException {
-
-	public InternalUrlException(Throwable e) {
-	    super(e);
-	}
     }
 
     /**

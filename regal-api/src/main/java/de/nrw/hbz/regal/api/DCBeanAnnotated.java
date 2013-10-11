@@ -16,23 +16,12 @@
  */
 package de.nrw.hbz.regal.api;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 import de.nrw.hbz.regal.datatypes.DCBean;
 import de.nrw.hbz.regal.datatypes.Node;
@@ -787,52 +776,4 @@ public class DCBeanAnnotated {
 	    ;
     }
 
-    /**
-     * converts a string to an dom element
-     * 
-     * @param xmlString
-     *            the xmlstring
-     * @return the root element
-     * @throws NullPointerException
-     *             if string is empty or null
-     */
-    public static Element getDocument(String xmlString)
-	    throws NullPointerException {
-	if (xmlString == null || xmlString.isEmpty())
-	    throw new NullPointerException("XMLUtils: XMLString is null!");
-	try {
-	    DocumentBuilderFactory factory = DocumentBuilderFactory
-		    .newInstance();
-	    DocumentBuilder docBuilder;
-	    factory.setNamespaceAware(true);
-	    factory.setExpandEntityReferences(false);
-	    docBuilder = factory.newDocumentBuilder();
-
-	    Document doc;
-
-	    doc = docBuilder.parse(new BufferedInputStream(
-		    new ByteArrayInputStream(xmlString.getBytes())));
-	    Element root = doc.getDocumentElement();
-	    root.normalize();
-	    return root;
-
-	} catch (FileNotFoundException e) {
-
-	    e.printStackTrace();
-	} catch (SAXException e) {
-
-	    e.printStackTrace();
-	} catch (IOException e) {
-
-	    e.printStackTrace();
-	} catch (ParserConfigurationException e) {
-
-	    e.printStackTrace();
-	} catch (Exception e) {
-
-	    e.printStackTrace();
-	}
-	return null;
-
-    }
 }

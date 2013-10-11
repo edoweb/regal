@@ -18,7 +18,24 @@ package de.nrw.hbz.regal.fedora;
 
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_CONTENT_TYPE;
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_IS_NODE_TYPE;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.CM_CONTENTMODEL;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL_URI;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_INPUTSPEC;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_INPUTSPEC_URI;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_METHODMAP;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_METHODMAP_URI;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_METHODMAP_WSDL;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_METHODMAP_WSDL_URI;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_WSDL;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_WSDL_URI;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.INFO_NAMESPACE;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_HAS_MODEL;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_HAS_SERVICE;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_IS_CONTRACTOR_OF;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_IS_DEPLOYMENT_OF;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SDEF_CONTENTMODEL;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SDEP_CONTENTMODEL;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -26,10 +43,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
-import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -67,6 +83,7 @@ import com.yourmediashelf.fedora.client.request.AddDatastream;
 import com.yourmediashelf.fedora.client.request.AddRelationship;
 import com.yourmediashelf.fedora.client.request.FindObjects;
 import com.yourmediashelf.fedora.client.request.GetDatastreamDissemination;
+import com.yourmediashelf.fedora.client.request.Ingest;
 import com.yourmediashelf.fedora.client.request.ListDatastreams;
 import com.yourmediashelf.fedora.client.request.ModifyDatastream;
 import com.yourmediashelf.fedora.client.request.PurgeRelationship;
@@ -77,6 +94,7 @@ import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
 import com.yourmediashelf.fedora.client.response.UploadResponse;
 import com.yourmediashelf.fedora.generated.access.DatastreamType;
 
+import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
@@ -110,6 +128,7 @@ public class Utils {
 
     }
 
+    ContentModelBuilder cmBuilder = new ContentModelBuilder();
     private String user = null;
 
     /**
@@ -313,17 +332,6 @@ public class Utils {
 			.mimeType(node.getMimeType()).dsLocation(location)
 			.controlGroup("M").execute();
 	    }
-	    // node.setDataUrl(new URL(host + "/objects/" + node.getPID()
-	    // + "/datastreams/" + node.getFileName() + "/content"));
-	    // Link link = new Link();
-	    // link.setObject(node.getFileName(), true);
-	    // link.setPredicate(HAS_DATASTREAM);
-	    // node.addRelation(link);
-	    //
-	    // link = new Link();
-	    // link.setObject(node.getMimeType(), true);
-	    // link.setPredicate(DATASTREAM_MIME);
-	    // node.addRelation(link);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	    throw new ArchiveException(node.getPID()
@@ -349,189 +357,9 @@ public class Utils {
 			.controlGroup("M").mimeType("text/plain")
 			.dsLocation(location).execute();
 	    }
-	    // node.setDataUrl(new URL(host + "/objects/" + node.getPID()
-	    // + "/datastreams/" + newID + "/content"));
-	    // Link link = new Link();
-	    // link.setObject(node.getMetadataFile(), true);
-	    // link.setPredicate(HAS_METADATASTREAM);
-	    // node.addRelation(link);
-	    //
-	    // link = new Link();
-	    // link.setObject("text/plain", true);
-	    // link.setPredicate(METADATASTREAM_MIME);
-	    // node.addRelation(link);
 	} catch (Exception e) {
 	    throw new ArchiveException(node.getPID()
 		    + " an unknown exception occured.", e);
-	}
-    }
-
-    void readFedoraDcToNode(Node node) throws RemoteException,
-	    FedoraClientException {
-
-	FedoraResponse response = new GetDatastreamDissemination(node.getPID(),
-		"DC").download(true).execute();
-	InputStream ds = response.getEntityInputStream();
-	readDcToNode(node, ds, "dc");
-
-    }
-
-    /**
-     * @param node
-     *            dc stream will be added to this node
-     * @param ds
-     *            stream containing xml dc data
-     * @param ns
-     *            namespace of the dc
-     */
-    public void readDcToNode(Node node, InputStream ds, String ns) {
-	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	factory.setExpandEntityReferences(false);
-	factory.setIgnoringElementContentWhitespace(true);
-
-	try {
-	    DocumentBuilder docBuilder = factory.newDocumentBuilder();
-
-	    Document doc = docBuilder.parse(new BufferedInputStream(ds)); // TODO
-									  // Correct?
-									  // UTF-8?
-	    Element root = doc.getDocumentElement();
-	    root.normalize();
-
-	    NodeList contributer = root.getElementsByTagName(ns
-		    + ":contributer");
-	    NodeList coverage = root.getElementsByTagName(ns + ":coverage");
-	    NodeList creator = root.getElementsByTagName(ns + ":creator");
-	    NodeList date = root.getElementsByTagName(ns + ":date");
-	    NodeList description = root.getElementsByTagName(ns
-		    + ":description");
-	    NodeList format = root.getElementsByTagName(ns + ":format");
-	    NodeList identifier = root.getElementsByTagName(ns + ":identifier");
-	    NodeList label = root.getElementsByTagName(ns + ":label");
-	    NodeList language = root.getElementsByTagName(ns + ":language");
-	    NodeList publisher = root.getElementsByTagName(ns + ":publisher");
-	    NodeList rights = root.getElementsByTagName(ns + ":rights");
-	    NodeList source = root.getElementsByTagName(ns + ":source");
-	    NodeList subject = root.getElementsByTagName(ns + ":subject");
-	    NodeList title = root.getElementsByTagName(ns + ":title");
-	    NodeList type = root.getElementsByTagName(ns + ":type");
-
-	    if (contributer != null && contributer.getLength() != 0) {
-		node.setContributer(new Vector<String>());
-		for (int i = 0; i < contributer.getLength(); i++) {
-		    node.addContributer(transformFromXMLEntity(contributer
-			    .item(i).getTextContent().trim()));
-		}
-	    }
-	    if (coverage != null && coverage.getLength() != 0) {
-		node.setCoverage(new Vector<String>());
-		for (int i = 0; i < coverage.getLength(); i++) {
-		    node.addCoverage(transformFromXMLEntity(coverage.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (creator != null && creator.getLength() != 0) {
-		node.setCreator(new Vector<String>());
-		for (int i = 0; i < creator.getLength(); i++) {
-		    node.addCreator(transformFromXMLEntity(creator.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (date != null && date.getLength() != 0) {
-		node.setDate(new Vector<String>());
-		for (int i = 0; i < date.getLength(); i++) {
-		    node.addDate(transformFromXMLEntity(date.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (description != null && description.getLength() != 0) {
-		node.setDescription(new Vector<String>());
-		for (int i = 0; i < description.getLength(); i++) {
-		    node.addDescription(transformFromXMLEntity(description
-			    .item(i).getTextContent().trim()));
-		}
-	    }
-	    if (format != null && format.getLength() != 0) {
-		node.setFormat(new Vector<String>());
-		for (int i = 0; i < format.getLength(); i++) {
-		    node.addFormat(transformFromXMLEntity(format.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (identifier != null && identifier.getLength() != 0) {
-		node.setIdentifier(new Vector<String>());
-		for (int i = 0; i < identifier.getLength(); i++) {
-		    node.addIdentifier(transformFromXMLEntity(identifier
-			    .item(i).getTextContent().trim()));
-		}
-	    }
-	    if (label != null && label.getLength() != 0) {
-
-		for (int i = 0; i < label.getLength(); i++) {
-		    // TODO set oder add
-		    node.setLabel(transformFromXMLEntity(label.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (language != null && language.getLength() != 0) {
-		node.setLanguage(new Vector<String>());
-		for (int i = 0; i < language.getLength(); i++) {
-		    node.addLanguage(transformFromXMLEntity(language.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (publisher != null && publisher.getLength() != 0) {
-		node.setPublisher(new Vector<String>());
-		for (int i = 0; i < publisher.getLength(); i++) {
-		    node.addPublisher(transformFromXMLEntity(publisher.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (rights != null && rights.getLength() != 0) {
-		node.setRights(new Vector<String>());
-		for (int i = 0; i < rights.getLength(); i++) {
-		    node.addRights(transformFromXMLEntity(rights.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (source != null && source.getLength() != 0) {
-		node.setSource(new Vector<String>());
-		for (int i = 0; i < source.getLength(); i++) {
-		    node.addSource(transformFromXMLEntity(source.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (subject != null && subject.getLength() != 0) {
-		node.setSubject(new Vector<String>());
-		for (int i = 0; i < subject.getLength(); i++) {
-		    node.addSubject(transformFromXMLEntity(subject.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (title != null && title.getLength() != 0) {
-		node.setTitle(new Vector<String>());
-		for (int i = 0; i < title.getLength(); i++) {
-		    node.addTitle(transformFromXMLEntity(title.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-	    if (type != null && type.getLength() != 0) {
-		node.setType(new Vector<String>());
-		for (int i = 0; i < type.getLength(); i++) {
-		    node.addType(transformFromXMLEntity(type.item(i)
-			    .getTextContent().trim()));
-		}
-	    }
-
-	} catch (ParserConfigurationException e) {
-
-	    throw new ArchiveException("An unknown exception occured.", e);
-	} catch (SAXException e) {
-
-	    throw new ArchiveException("An unknown exception occured.", e);
-	} catch (IOException e) {
-
-	    throw new ArchiveException("An unknown exception occured.", e);
 	}
     }
 
@@ -541,9 +369,6 @@ public class Utils {
 	    FedoraResponse response = new GetDatastreamDissemination(
 		    node.getPID(), "RELS-EXT").download(true).execute();
 	    InputStream ds = response.getEntityInputStream();
-
-	    // MIMETypedStream ds = fedoraAccess.getDatastreamDissemination(
-	    // node.getPID(), "RELS-EXT", null);
 
 	    Repository myRepository = new SailRepository(new MemoryStore());
 	    myRepository.initialize();
@@ -591,10 +416,7 @@ public class Utils {
 			    new java.net.URI(object);
 
 			    link.setLiteral(false);
-			    // System.out.println("Is not Literal");
 			} catch (URISyntaxException e) {
-			    // System.out.println(e.getMessage());
-			    // System.out.println("Is Literal");
 			}
 
 			node.addRelation(link);
@@ -634,170 +456,6 @@ public class Utils {
 
     }
 
-    void updateDc(Node node) {
-	String preamble = ""
-		+ "<oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" "
-		+ "xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\""
-		+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-		+ "xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/"
-		+ "http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">";
-	String fazit = "</oai_dc:dc>";
-
-	String tagStart = "<dc:";
-	String tagEnd = ">";
-	String endTagStart = "</dc:";
-
-	StringBuffer update = new StringBuffer();
-
-	List<String> contributer = null;
-	List<String> coverage = null;
-	List<String> creator = null;
-	List<String> date = null;
-	List<String> description = null;
-	List<String> format = null;
-	List<String> identifier = null;
-	// String[] label = null;
-	List<String> language = null;
-	List<String> publisher = null;
-	List<String> rights = null;
-	List<String> source = null;
-	List<String> subject = null;
-	List<String> title = null;
-	List<String> type = null;
-
-	if ((contributer = node.getContributer()) != null) {
-	    for (String str : contributer) {
-		String scontributer = tagStart + "contributer" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart
-			+ "contributer" + tagEnd;
-		update.append(scontributer + "\n");
-	    }
-	}
-	if ((coverage = node.getCoverage()) != null) {
-	    for (String str : coverage) {
-		String scoverage = tagStart + "coverage" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "coverage"
-			+ tagEnd;
-		update.append(scoverage + "\n");
-	    }
-	}
-	if ((creator = node.getCreator()) != null) {
-	    for (String str : creator) {
-
-		String screator = tagStart + "creator" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "creator"
-			+ tagEnd;
-		update.append(screator + "\n");
-	    }
-	}
-	if ((date = node.getDate()) != null) {
-	    for (String str : date) {
-		String sdate = tagStart + "date" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "date"
-
-			+ tagEnd;
-		update.append(sdate + "\n");
-	    }
-	}
-	if ((description = node.getDescription()) != null) {
-	    for (String str : description) {
-		String sdescription = tagStart + "description" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart
-			+ "description" + tagEnd;
-		update.append(sdescription + "\n");
-	    }
-	}
-	if ((format = node.getFormat()) != null) {
-	    for (String str : format) {
-		String sformat = tagStart + "format" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "format"
-			+ tagEnd;
-		update.append(sformat + "\n");
-	    }
-	}
-	if ((identifier = node.getIdentifier()) != null) {
-	    for (String str : identifier) {
-		String sidentifier = tagStart + "identifier" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart
-			+ "identifier" + tagEnd;
-		update.append(sidentifier + "\n");
-	    }
-	}
-	/*
-	 * if ((label = node.getLabel()) != null) { for (int i = 0; i <
-	 * label.length; i++) { String slabel = tagStart + "label" + tagEnd +
-	 * label[i] + endTagStart + "label" + tagEnd; update.append(label +
-	 * "\n"); } }
-	 */
-	if ((language = node.getLanguage()) != null) {
-	    for (String str : language) {
-		String slanguage = tagStart + "language" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "language"
-			+ tagEnd;
-		update.append(slanguage + "\n");
-	    }
-	}
-	if ((publisher = node.getPublisher()) != null) {
-	    for (String str : publisher) {
-		String spublisher = tagStart + "publisher" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "publisher"
-			+ tagEnd;
-		update.append(spublisher + "\n");
-	    }
-	}
-	if ((rights = node.getRights()) != null) {
-	    for (String str : rights) {
-		String srights = tagStart + "rights" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "rights"
-			+ tagEnd;
-		update.append(srights + "\n");
-	    }
-	}
-	if ((source = node.getSource()) != null) {
-	    for (String str : source) {
-		String ssource = tagStart + "source" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "source"
-			+ tagEnd;
-		update.append(ssource + "\n");
-	    }
-	}
-	if ((subject = node.getSubject()) != null) {
-	    for (String str : subject) {
-		String ssubject = tagStart + "subject" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "subject"
-			+ tagEnd;
-		update.append(ssubject + "\n");
-	    }
-	}
-	if ((title = node.getTitle()) != null) {
-	    for (String str : title) {
-		String stitle = tagStart + "title" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "title"
-			+ tagEnd;
-		update.append(stitle + "\n");
-	    }
-	}
-	if ((type = node.getType()) != null) {
-	    for (String str : type) {
-		String stype = tagStart + "type" + tagEnd
-			+ transformToXMLEntity(str) + endTagStart + "type"
-			+ tagEnd;
-		update.append(stype + "\n");
-	    }
-	}
-
-	try {
-	    String result = preamble + update.toString() + fazit;
-
-	    new ModifyDatastream(node.getPID(), "DC").mimeType("text/xml")
-		    .formatURI("http://www.openarchives.org/OAI/2.0/oai_dc/")
-		    .versionable(true).content(result).execute();
-
-	} catch (FedoraClientException e) {
-	    throw new ArchiveException(e.getMessage(), e);
-	}
-    }
-
     /**
      * Creates new Rels-Ext datastream in object 'pid' </p>
      * 
@@ -806,7 +464,6 @@ public class Utils {
      * 
      */
     void createFedoraXmlForRelsExt(String pid) {
-	// System.out.println("Create new REL-EXT "+pid);
 	try {
 
 	    String initialContent = "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:rel=\"info:fedora/fedora-system:def/relations-external#\">"
@@ -882,7 +539,6 @@ public class Utils {
 			.compareTo("info:fedora/fedora-system:def/model#ownerId") == 0) {
 
 		    n.setAttribute("VALUE", user);
-		    // String a = n.getAttribute("VALUE");
 
 		    break;
 		}
@@ -920,59 +576,19 @@ public class Utils {
 	return null;
     }
 
-    private String transformFromXMLEntity(String textContent) {
-	if (textContent == null)
-	    return null;
-	return textContent.replaceAll("[&]amp;", "&");
-    }
-
-    private String transformToXMLEntity(String string) {
-	if (string == null)
-	    return null;
-	final StringBuilder result = new StringBuilder();
-	final StringCharacterIterator iterator = new StringCharacterIterator(
-		string);
-	char character = iterator.current();
-	while (character != CharacterIterator.DONE) {
-	    if (character == '<') {
-		result.append("&lt;");
-	    } else if (character == '>') {
-		result.append("&gt;");
-	    } else if (character == '\"') {
-		result.append("&quot;");
-	    } else if (character == '\'') {
-		result.append("&#039;");
-	    } else if (character == '&') {
-		result.append("&amp;");
-	    } else {
-
-		result.append(character);
-	    }
-	    character = iterator.next();
-	}
-	return result.toString();
-
-    }
-
     private void createRelsExt(String pid, List<Link> links) {
 	if (links != null)
 	    for (Link curHBZLink : links) {
 		if (curHBZLink == null)
 		    return;
-		// System.out.println(" CREATE: <" + pid + "> <"
-		// + curHBZLink.getPredicate() + "> <"
-		// + curHBZLink.getObject() + ">");
-
 		try {
 		    if (curHBZLink.isLiteral()) {
-			// System.out.println("isLiteral");
 
 			new AddRelationship(pid)
 				.predicate(curHBZLink.getPredicate())
 				.object(curHBZLink.getObject(),
 					curHBZLink.isLiteral()).execute();
 		    } else {
-			// System.out.println("NOT isLiteral");
 
 			new AddRelationship(pid)
 				.predicate(curHBZLink.getPredicate())
@@ -981,11 +597,137 @@ public class Utils {
 
 		    }
 		} catch (Exception e) {
-		    // System.out.println("UPDATE: Could not ingest: <" + pid
-		    // + "> <" + curHBZLink.getPredicate() + "> <"
-		    // + curHBZLink.getObject() + ">");
 		}
 	    }
     }
 
+    void updateRelsExt(Node node) {
+	String pid = node.getPID();
+	String type = node.getContentType();
+
+	if (!dataStreamExists(pid, "RELS-EXT")) {
+	    createFedoraXmlForRelsExt(pid);
+	}
+
+	Link link = new Link();
+	link.setPredicate(REL_CONTENT_TYPE);
+	link.setObject(type, true);
+	node.addRelation(link);
+
+	link = new Link();
+	link.setObject(node.getNodeType(), true);
+	link.setPredicate(REL_IS_NODE_TYPE);
+	node.addRelation(link);
+
+	updateFedoraXmlForRelsExt(pid, node.getRelsExt());
+    }
+
+    void createContentModels(Node node) {
+	List<ContentModel> models = node.getContentModels();
+	if (models == null)
+	    return;
+	for (ContentModel m : models) {
+	    createContentModel(m, node);
+	}
+    }
+
+    void createContentModel(ContentModel hbzNodeContentModel, Node node) {
+
+	try {
+	    // If necessary create Model
+	    createContentModel(hbzNodeContentModel);
+	} catch (Exception e) {
+
+	}
+	// Add Model to Object
+	Link link = new Link();
+	link.setPredicate(REL_HAS_MODEL);
+	link.setObject(addUriPrefix(hbzNodeContentModel.getContentModelPID()),
+		false);
+	node.addRelation(link);
+
+    }
+
+    void createContentModel(ContentModel cm) throws FedoraClientException,
+	    UnsupportedEncodingException {
+	String foCMPid = cm.getContentModelPID();
+	String foSDefPid = cm.getServiceDefinitionPID();
+	String foSDepPid = cm.getServiceDeploymentPID();
+
+	new Ingest(foCMPid).label("Content Model").execute();
+
+	new Ingest(foSDefPid).label("ServiceDefinition").execute();
+
+	new Ingest(foSDepPid).label("ServiceDeployment").execute();
+
+	// Add Relations
+	Vector<Link> cmHBZLinks = new Vector<Link>();
+	Link cmHBZLink1 = new Link();
+	cmHBZLink1.setPredicate(REL_HAS_SERVICE);
+	cmHBZLink1.setObject(addUriPrefix(foSDefPid), false);
+
+	cmHBZLinks.add(cmHBZLink1);
+
+	Link cmHBZLink2 = new Link();
+	cmHBZLink2.setPredicate(REL_HAS_MODEL);
+	cmHBZLink2.setObject(addUriPrefix(CM_CONTENTMODEL), false);
+	cmHBZLinks.add(cmHBZLink2);
+
+	addRelationships(foCMPid, cmHBZLinks);
+
+	Vector<Link> sDefHBZLinks = new Vector<Link>();
+	Link sDefHBZLink = new Link();
+	sDefHBZLink.setPredicate(REL_HAS_MODEL);
+	sDefHBZLink.setObject(addUriPrefix(SDEF_CONTENTMODEL), false);
+	sDefHBZLinks.add(sDefHBZLink);
+
+	addRelationships(foSDefPid, sDefHBZLinks);
+
+	Vector<Link> sDepHBZLinks = new Vector<Link>();
+	Link sDepHBZLink1 = new Link();
+	sDepHBZLink1.setPredicate(REL_IS_DEPLOYMENT_OF);
+	sDepHBZLink1.setObject(addUriPrefix(foSDefPid), false);
+	sDepHBZLinks.add(sDepHBZLink1);
+
+	Link sDepHBZLink2 = new Link();
+	sDepHBZLink2.setPredicate(REL_IS_CONTRACTOR_OF);
+	sDepHBZLink2.setObject(addUriPrefix(foCMPid), false);
+	sDepHBZLinks.add(sDepHBZLink2);
+
+	Link sDepHBZLink3 = new Link();
+	sDepHBZLink3.setPredicate(REL_HAS_MODEL);
+	sDepHBZLink3.setObject(addUriPrefix(SDEP_CONTENTMODEL), false);
+	sDepHBZLinks.add(sDepHBZLink3);
+
+	addRelationships(foSDepPid, sDepHBZLinks);
+
+	new AddDatastream(foCMPid, DS_COMPOSITE_MODEL)
+		.dsLabel("DS-Composite-Stream").versionable(true)
+		.formatURI(DS_COMPOSITE_MODEL_URI).dsState("A")
+		.controlGroup("X").mimeType("text/xml")
+		.content(cmBuilder.getDsCompositeModel(cm)).execute();
+
+	new AddDatastream(foSDefPid, DS_METHODMAP).dsLabel("Methodmap-Stream")
+		.versionable(true).formatURI(DS_METHODMAP_URI).dsState("A")
+		.controlGroup("X").mimeType("text/xml")
+		.content(cmBuilder.getMethodMap(cm)).execute();
+
+	new AddDatastream(foSDepPid, DS_METHODMAP_WSDL)
+		.dsLabel("Methodmap-Stream").versionable(true)
+		.formatURI(DS_METHODMAP_WSDL_URI).dsState("A")
+		.controlGroup("X").mimeType("text/xml")
+		.content(cmBuilder.getMethodMapToWsdl(cm)).execute();
+
+	new AddDatastream(foSDepPid, DS_INPUTSPEC)
+		.dsLabel("DSINPUTSPEC-Stream").versionable(true)
+		.formatURI(DS_INPUTSPEC_URI).dsState("A").controlGroup("X")
+		.mimeType("text/xml").content(cmBuilder.getDSInputSpec())
+		.execute();
+
+	new AddDatastream(foSDepPid, DS_WSDL).dsLabel("WSDL-Stream")
+		.versionable(true).formatURI(DS_WSDL_URI).dsState("A")
+		.controlGroup("X").mimeType("text/xml")
+		.content(cmBuilder.getWsdl(cm)).execute();
+
+    }
 }
