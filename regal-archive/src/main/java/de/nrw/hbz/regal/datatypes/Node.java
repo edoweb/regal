@@ -254,13 +254,6 @@ public class Node {
 	return state;
     }
 
-    // /**
-    // * @return all parents of the node
-    // */
-    // public Vector<String> getParents() {
-    // return parentObjects;
-    // }
-
     /**
      * @return the node's pid
      */
