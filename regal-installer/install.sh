@@ -279,7 +279,7 @@ fi
 function buildModule
 {
 SRC=$ARCHIVE_HOME/src
-SYNCER_SRC=$ARCHIVE_HOME/src/${MODULE}-sync/target/${MODULE}-sync-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+SYNCER_SRC=$ARCHIVE_HOME/src/${MODULE}-sync/target/${MODULE}sync.jar
 SYNCER_DEST=$ARCHIVE_HOME/sync/${MODULE}sync.jar
 if [ -n "$MODULE" ]
 then
