@@ -47,8 +47,9 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<finalName>opussync</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
-
 			</plugin>
 		</plugins>
 	</build>

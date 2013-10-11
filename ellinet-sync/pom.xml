@@ -47,6 +47,8 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<finalName>ellinetsync</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 
 			</plugin>
