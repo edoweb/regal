@@ -249,7 +249,7 @@ public class OaiOreMaker {
 
 	    }
 
-	    URI fedoraObject = f.createURI(server + "/objects/" + pid);
+	    URI fedoraObject = f.createURI(server + "/fedora/objects/" + pid);
 
 	    con.add(rem, describes, aggregation);
 	    con.add(rem, modified, lastTimeModified);
@@ -261,8 +261,7 @@ public class OaiOreMaker {
 	    con.add(aggregation, contentType, cType);
 
 	    for (String relPid : parents) {
-		URI relUrl = f.createURI(/* uriPrefix + */relPid);
-
+		URI relUrl = f.createURI(relPid);
 		con.add(aggregation, isAggregatedBy, relUrl);
 		con.add(aggregation, isPartOf, relUrl);
 	    }
