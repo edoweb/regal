@@ -268,8 +268,7 @@ public class OaiOreMaker {
 	    }
 
 	    for (String relPid : children) {
-		URI relUrl = f.createURI(/* uriPrefix + */relPid);
-
+		URI relUrl = f.createURI(relPid);
 		con.add(aggregation, aggregates, relUrl);
 		con.add(aggregation, hasPart, relUrl);
 

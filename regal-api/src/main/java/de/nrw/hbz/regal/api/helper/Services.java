@@ -22,6 +22,9 @@ import org.antlr.runtime.RecognitionException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.culturegraph.mf.Flux;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
@@ -29,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.google.common.collect.ImmutableMap;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
@@ -322,8 +326,6 @@ class Services {
 	String message = "";
 	String viewAsString = "";
 	String pid = namespace + ":" + p;
-	// View view = getView(pid);
-
 	ClientConfig cc = new DefaultClientConfig();
 	cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 	cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
@@ -334,7 +336,7 @@ class Services {
 	    index = c.resource("http://localhost:9200/" + namespace + "/titel/"
 		    + pid);
 	    index.accept("application/json");
-	    URL url = new URL(this.uriPrefix + pid + "/about");
+	    URL url = new URL(this.uriPrefix + pid);
 	    URLConnection con = url.openConnection();
 	    con.setRequestProperty("Accept", "application/json");
 	    con.connect();
@@ -343,9 +345,13 @@ class Services {
 	    IOUtils.copy(in, writer, "UTF-8");
 	    viewAsString = writer.toString();
 	    in.close();
+
+	    viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
+		    (JSONArray) JSONValue.parse(viewAsString)));
 	} catch (Exception e) {
-	    throw new ArchiveException("Error! " + message + e.getMessage(), e);
+	    throw new ArchiveException(e);
 	}
+
 	message = index.put(String.class, viewAsString);
 
 	return "Success! " + message + "\n" + viewAsString;

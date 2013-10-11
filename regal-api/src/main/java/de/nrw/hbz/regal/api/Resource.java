@@ -48,7 +48,6 @@ import de.nrw.hbz.regal.api.helper.Actions;
 import de.nrw.hbz.regal.api.helper.ContentModelFactory;
 import de.nrw.hbz.regal.api.helper.HttpArchiveException;
 import de.nrw.hbz.regal.api.helper.ObjectType;
-import de.nrw.hbz.regal.api.helper.View;
 import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
@@ -755,29 +754,6 @@ public class Resource {
     }
 
     /**
-     * Returns a json representation for elasticsearch.
-     * 
-     * @param pid
-     *            the pid of the resource the pid of the resource
-     * @param namespace
-     *            the namespace of the resource
-     * @return an aggregated representation of the resource
-     */
-    @GET
-    @Path("/{namespace}:{pid}.search")
-    @Produces({ "application/json" })
-    public Response getSearch(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
-	String rem = actions.getReM(namespace + ":" + pid,
-		"application/json+elasticsearch");
-	ResponseBuilder res = Response.ok()
-		.lastModified(actions.getLastModified(namespace + ":" + pid))
-		.entity(rem);
-
-	return res.build();
-    }
-
-    /**
      * Returns a text extraction, if the data is of mimetype application/pdf
      * 
      * @param pid
@@ -836,28 +812,5 @@ public class Resource {
 
 	return actions.oaidc(namespace + ":" + pid);
 
-    }
-
-    /**
-     * Returns a json representation of the aggregation (Deprecated!!).
-     * 
-     * @param pid
-     *            the pid of the resource the pid of the resource
-     * @param namespace
-     *            the namespace of the resource
-     * @return an aggregated representation of the resource
-     * @throws URISyntaxException
-     *             if redirection has been wrong
-     */
-    @GET
-    @Path("/{namespace}:{pid}/about")
-    @Produces({ "application/json" })
-    public Response about(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) throws URISyntaxException {
-	View view = actions.getView(namespace + ":" + pid);
-	ResponseBuilder res = Response.ok()
-		.lastModified(actions.getLastModified(namespace + ":" + pid))
-		.entity(view);
-	return res.build();
     }
 }
