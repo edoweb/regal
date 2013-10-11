@@ -38,30 +38,6 @@ import de.nrw.hbz.regal.datatypes.Node;
 @SuppressWarnings("serial")
 public class OaiOreMaker {
 
-    private class CreateRepositoryException extends RuntimeException {
-	public CreateRepositoryException(Throwable e) {
-	    super(e);
-	}
-    }
-
-    private class AddDescriptiveDataException extends RuntimeException {
-	public AddDescriptiveDataException(Throwable e) {
-	    super(e);
-	}
-    }
-
-    private class AddStructuralDataException extends RuntimeException {
-	public AddStructuralDataException(Throwable e) {
-	    super(e);
-	}
-    }
-
-    private class WriteRdfException extends RuntimeException {
-	public WriteRdfException(Throwable e) {
-	    super(e);
-	}
-    }
-
     final static Logger logger = LoggerFactory.getLogger(OaiOreMaker.class);
     String server = null;
     String uriPrefix = null;
@@ -245,6 +221,7 @@ public class OaiOreMaker {
 	    URI rdfsLabel = f.createURI(rdfsNamespace, "label");
 	    // regal
 	    URI contentType = f.createURI(regalNamespace, "contentType");
+	    URI hasData = f.createURI(regalNamespace, "hasData");
 
 	    // Statements
 
@@ -252,6 +229,7 @@ public class OaiOreMaker {
 		Literal dataMime = f.createLiteral(mime);
 		con.add(data, dcFormat, dataMime);
 		con.add(aggregation, aggregates, data);
+		con.add(aggregation, hasData, data);
 		if (dataMime.toString().compareTo("application/pdf") == 0) {
 		    con.add(aggregation, aggregates, fulltext);
 		    con.add(data, dcHasFormat, fulltext);
@@ -474,6 +452,30 @@ public class OaiOreMaker {
 			+ predicate + "</a></td><td about=\"" + subject + "\">"
 			+ object + "</td></tr>";
 	    }
+	}
+    }
+
+    private class CreateRepositoryException extends RuntimeException {
+	public CreateRepositoryException(Throwable e) {
+	    super(e);
+	}
+    }
+
+    private class AddDescriptiveDataException extends RuntimeException {
+	public AddDescriptiveDataException(Throwable e) {
+	    super(e);
+	}
+    }
+
+    private class AddStructuralDataException extends RuntimeException {
+	public AddStructuralDataException(Throwable e) {
+	    super(e);
+	}
+    }
+
+    private class WriteRdfException extends RuntimeException {
+	public WriteRdfException(Throwable e) {
+	    super(e);
 	}
     }
 
