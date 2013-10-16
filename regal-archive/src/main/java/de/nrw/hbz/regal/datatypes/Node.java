@@ -29,6 +29,11 @@ import java.util.Vector;
  */
 public class Node {
 
+    /**
+     * Dublin Core Metadata
+     */
+    public DCBean dublinCoreData = new DCBean();
+
     private String metadataFile;
     private String uploadFile;
     private String fileLabel;
@@ -42,7 +47,6 @@ public class Node {
     private String namespace = null;
     private String contentType = null;
     private Date lastModified = null;
-    private DCBean bean = new DCBean();
 
     /**
      * Creates a new Node.
@@ -250,13 +254,6 @@ public class Node {
 	return state;
     }
 
-    // /**
-    // * @return all parents of the node
-    // */
-    // public Vector<String> getParents() {
-    // return parentObjects;
-    // }
-
     /**
      * @return the node's pid
      */
@@ -303,433 +300,6 @@ public class Node {
     }
 
     /**
-     * @param e
-     *            dc:contributer
-     * @return this
-     */
-    public Node addContributer(String e) {
-	bean.addContributer(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:coverage
-     * @return this
-     */
-    public Node addCoverage(String e) {
-	bean.addCoverage(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:creator
-     * @return this
-     */
-    public Node addCreator(String e) {
-	bean.addCreator(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:date
-     * @return this
-     */
-    public Node addDate(String e) {
-	bean.addDate(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:description
-     * @return this
-     */
-    public Node addDescription(String e) {
-	bean.addDescription(e);
-	return this;
-    }
-
-    /**
-     * @return dc:format
-     */
-    public List<String> getFormat() {
-	return bean.getFormat();
-    }
-
-    /**
-     * @param e
-     *            dc:format
-     * @return this
-     */
-    public Node addFormat(String e) {
-	bean.addFormat(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:identifier
-     * @return this
-     */
-    public Node addIdentifier(String e) {
-	bean.addIdentifier(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:language
-     * @return this
-     */
-    public Node addLanguage(String e) {
-	bean.addLanguage(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:publisher
-     * @return this
-     */
-    public Node addPublisher(String e) {
-	bean.addPublisher(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:relation
-     * @return this
-     */
-    public Node addDCRelation(String e) {
-	bean.addRelation(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:rights
-     * @return this
-     */
-    public Node addRights(String e) {
-	bean.addRights(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:source
-     * @return this
-     */
-    public Node addSource(String e) {
-	bean.addSource(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:subject
-     * @return this
-     */
-    public Node addSubject(String e) {
-	bean.addSubject(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:title
-     * @return this
-     */
-    public Node addTitle(String e) {
-	bean.addTitle(e);
-	return this;
-    }
-
-    /**
-     * @param e
-     *            dc:type
-     * @return this
-     */
-    public Node addType(String e) {
-	bean.addType(e);
-	return this;
-    }
-
-    /**
-     * @return dc:title
-     */
-    public List<String> getTitle() {
-	return bean.getTitle();
-    }
-
-    /**
-     * @return dc:contributer
-     */
-    public List<String> getContributer() {
-	return bean.getContributer();
-    }
-
-    /**
-     * @return dc:coverage
-     */
-    public List<String> getCoverage() {
-	return bean.getCoverage();
-    }
-
-    /**
-     * @return dc:description
-     */
-    public List<String> getDescription() {
-	return bean.getDescription();
-    }
-
-    /**
-     * @return dc:date
-     */
-    public List<String> getDate() {
-	return bean.getDate();
-    }
-
-    /**
-     * @return dc:creator
-     */
-    public List<String> getCreator() {
-	return bean.getCreator();
-    }
-
-    /**
-     * @return dc:subject
-     */
-    public String getFirstSubject() {
-	return bean.getFirstSubject();
-    }
-
-    /**
-     * @return dc:contributer
-     */
-    public String getFirstContributer() {
-	return bean.getFirstContributer();
-    }
-
-    /**
-     * @return dc:coverage
-     */
-    public String getFirstCoverage() {
-	return bean.getFirstCoverage();
-    }
-
-    /**
-     * @return dc:creator
-     */
-    public String getFirstCreator() {
-	return bean.getFirstCreator();
-    }
-
-    /**
-     * @return dc:date
-     */
-    public String getFirstDate() {
-	return bean.getFirstDate();
-    }
-
-    /**
-     * @return dc:description
-     */
-    public String getFirstDescription() {
-	return bean.getFirstDescription();
-    }
-
-    /**
-     * @return dc:format
-     */
-    public String getFirstFormat() {
-	return bean.getFirstFormat();
-    }
-
-    /**
-     * @return dc:itentifier
-     */
-    public String getFirstIdentifier() {
-	return bean.getFirstIdentifier();
-    }
-
-    /**
-     * @return dc:language
-     */
-    public String getFirstLanguage() {
-	return bean.getFirstLanguage();
-    }
-
-    /**
-     * @return dc:publisher
-     */
-    public String getFirstPublisher() {
-	return bean.getFirstPublisher();
-    }
-
-    /**
-     * @return dc:relation
-     */
-    public String getFirstRelation() {
-	return bean.getFirstRelation();
-    }
-
-    /**
-     * @return dc:title
-     */
-    public String getFirstTitle() {
-	return bean.getFirstTitle();
-    }
-
-    /**
-     * @return dc:type
-     */
-    public String getFirstType() {
-	return bean.getFirstType();
-    }
-
-    /**
-     * @param contributer
-     *            dc:contributer
-     */
-    public void setContributer(Vector<String> contributer) {
-	bean.setContributer(contributer);
-    }
-
-    /**
-     * @param coverage
-     *            dc:coverage
-     */
-    public void setCoverage(Vector<String> coverage) {
-	bean.setCoverage(coverage);
-    }
-
-    /**
-     * @param creator
-     *            dc:creator
-     */
-    public void setCreator(Vector<String> creator) {
-	bean.setCreator(creator);
-    }
-
-    /**
-     * @param date
-     *            dc:date
-     */
-    public void setDate(Vector<String> date) {
-	bean.setDate(date);
-    }
-
-    /**
-     * @param description
-     *            dc:description
-     */
-    public void setDescription(Vector<String> description) {
-	bean.setDescription(description);
-    }
-
-    /**
-     * @param format
-     *            dc:format
-     */
-    public void setFormat(Vector<String> format) {
-	bean.setFormat(format);
-    }
-
-    /**
-     * @param identifier
-     *            dc:identifier
-     */
-    public void setIdentifier(Vector<String> identifier) {
-	bean.setIdentifier(identifier);
-    }
-
-    /**
-     * @param language
-     *            dc:language
-     */
-    public void setLanguage(Vector<String> language) {
-	bean.setLanguage(language);
-    }
-
-    /**
-     * @param publisher
-     *            dc:publisher
-     */
-    public void setPublisher(Vector<String> publisher) {
-	bean.setPublisher(publisher);
-    }
-
-    /**
-     * @param relation
-     *            dc:relation
-     */
-    public void setDCRelation(Vector<String> relation) {
-	bean.setRelation(relation);
-    }
-
-    /**
-     * @param rights
-     *            dc:rights
-     */
-    public void setRights(Vector<String> rights) {
-	bean.setRights(rights);
-    }
-
-    /**
-     * @param source
-     *            dc:source
-     */
-    public void setSource(Vector<String> source) {
-	bean.setSource(source);
-    }
-
-    /**
-     * @param subject
-     *            dc:subject
-     */
-    public void setSubject(Vector<String> subject) {
-	bean.setSubject(subject);
-    }
-
-    /**
-     * @param title
-     *            dc:title
-     */
-    public void setTitle(Vector<String> title) {
-	bean.setTitle(title);
-    }
-
-    /**
-     * @param type
-     *            dc:type
-     */
-    public void setType(Vector<String> type) {
-	bean.setType(type);
-    }
-
-    @Override
-    public int hashCode() {
-	return bean.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-	return bean.equals(obj);
-    }
-
-    /**
-     * @return a dublin core java object representation
-     */
-    public DCBean getBean() {
-	return bean;
-    }
-
-    /**
      * The content type can be used to specify certain content related
      * characteristics. e.g. type is more about the abstract role within the
      * graph.
@@ -764,60 +334,21 @@ public class Node {
 	this.lastModified = lastModified;
     }
 
-    /**
-     * @return dc:identifier
-     */
-    public List<String> getIdentifier() {
-	return bean.getIdentifier();
+    @Override
+    public int hashCode() {
+	return dublinCoreData.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	return dublinCoreData.equals(obj);
     }
 
     /**
-     * @return dc:language
+     * @return a dublin core java object representation
      */
-    public List<String> getLanguage() {
-	return bean.getLanguage();
-    }
-
-    /**
-     * @return dc:publisher
-     */
-    public List<String> getPublisher() {
-	return bean.getPublisher();
-    }
-
-    /**
-     * @return dc:rights
-     */
-    public List<String> getRights() {
-	return bean.getRights();
-    }
-
-    /**
-     * @return dc:source
-     */
-    public List<String> getSource() {
-	return bean.getSource();
-    }
-
-    /**
-     * @return dc:subject
-     */
-    public List<String> getSubject() {
-	return bean.getSubject();
-    }
-
-    /**
-     * @return dc:type
-     */
-    public List<String> getType() {
-	return bean.getType();
-    }
-
-    /**
-     * @return dc:Relation
-     */
-    public List<String> getDCRelation() {
-	return bean.getRelation();
+    public DCBean getBean() {
+	return dublinCoreData;
     }
 
     /**
@@ -866,7 +397,7 @@ public class Node {
      * @return this
      */
     public Node setDcBean(DCBean dc) {
-	this.bean = dc;
+	this.dublinCoreData = dc;
 	return this;
     }
 }

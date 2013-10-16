@@ -57,9 +57,10 @@ public class FedoraFacadeTest {
 		properties.getProperty("password"));
 
 	object = new Node().setNamespace("test").setPID("test:234")
-		.addCreator("Jan Schnasse").setLabel("Ein Testobjekt")
-		.setFileLabel("test").addTitle("Ein Testtitel")
+		.setLabel("Ein Testobjekt").setFileLabel("test")
 		.setType(Vocabulary.TYPE_OBJECT);
+	object.dublinCoreData.addTitle("Ein Testtitel");
+	object.dublinCoreData.addCreator("Jan Schnasse");
 
 	// object.addContentModel(ContentModelFactory.createMonographModel("test"));
 	// object.addContentModel(ContentModelFactory.createHeadModel("test"));
@@ -99,10 +100,12 @@ public class FedoraFacadeTest {
 		node.getNodeType().compareTo(object.getNodeType()));
 	Assert.assertEquals("test:234", node.getPID());
 	Assert.assertEquals("test", node.getNamespace());
-	Assert.assertEquals("Jan Schnasse", node.getFirstCreator());
+	Assert.assertEquals("Jan Schnasse",
+		node.dublinCoreData.getFirstCreator());
 	Assert.assertEquals("Ein Testobjekt", node.getLabel());
 	Assert.assertEquals("test", node.getFileLabel());
-	Assert.assertEquals("Ein Testtitel", node.getFirstTitle());
+	Assert.assertEquals("Ein Testtitel",
+		node.dublinCoreData.getFirstTitle());
 	Assert.assertEquals("application/pdf", node.getMimeType());
 
     }
@@ -112,14 +115,15 @@ public class FedoraFacadeTest {
 	facade.createNode(object);
 	Vector<String> newTitle = new Vector<String>();
 	newTitle.add("Neuer Titel");
-	object.setTitle(newTitle);
+	object.dublinCoreData.setTitle(newTitle);
 	URL url = Thread.currentThread().getContextClassLoader()
 		.getResource("logback-test.xml");
 	object.setUploadData(url.getPath(), "text/xml");
 	facade.updateNode(object);
 	Node readObject = facade.readNode(object.getPID());
 	// System.out.println("DataUrl:" + readObject.getDataUrl().toString());
-	Assert.assertEquals("Neuer Titel", readObject.getFirstTitle());
+	Assert.assertEquals("Neuer Titel",
+		readObject.dublinCoreData.getFirstTitle());
 	Assert.assertEquals("logback-test.xml", readObject.getFileLabel());
 
     }

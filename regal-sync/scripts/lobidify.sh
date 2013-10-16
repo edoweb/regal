@@ -7,11 +7,12 @@ function index()
 type=$1
 user=$2
 password=$3
-for i in `pidlist $type`
+server=$4
+for i in `pidlist $type $server`
 do
-curl -u ${user}:${password} -XPOST http://localhost/utils/lobidify/$i;echo
+curl -s -u ${user}:${password} -XPOST http://localhost/utils/lobidify/$i;echo
 done
 }
 
 
-index $1 $2 $3
+index $1 $2 $3 $4

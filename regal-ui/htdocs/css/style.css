@@ -9,6 +9,7 @@ body {
 	background-attachment: fixed;
 	background-image: -moz-linear-gradient(center top, #CCCCCC 0%, #FFFFFF 100%);
 }
+
 .page
 
 .navigation:before {
@@ -51,11 +52,8 @@ body {
 	background-position: 0 0;
 	background-repeat: repeat;
 	background-size: auto auto;
-	height:105px;
+	height: 105px;
 }
-
-
-
 
 .footer {
 	border-style: solid;
@@ -76,15 +74,17 @@ body {
 	box-shadow: 5px 5px 7px #999999; //
 	border-radius: 15px;
 	padding: 30px;
-	width:800px;
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+}
 
-	margin-left:auto; margin-right:auto;
+#hitsDiv {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
 }
-#hitsDiv
-{
-	width:800px;
-	margin-left:auto; margin-right:auto;
-}
+
 #resultList li {
 	padding: 10px;
 	margin: 20px;
@@ -109,9 +109,10 @@ a:visited {
 }
 
 .searchform {
-	padding-top:20px;
-	width:800px;
-	margin-left:auto; margin-right:auto;
+	padding-top: 20px;
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #queryDiv {
@@ -147,13 +148,19 @@ a:visited {
 	vertical-align: text-top;
 	font-size: 0.9em;
 }
-table
-{
-    float:left;
-}  
+
+table {
+	padding: 30px;
+	list-style: none;
+	background-color: #ffffff;
+	box-shadow: 5px 5px 7px #999999; //
+	border-radius: 15px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 table tr td {
 	font-size: 0.9em;
-
 }
 
 table tr td a {
@@ -194,9 +201,10 @@ td {
 	background-color: #ffffff;
 	box-shadow: 5px 5px 7px #999999; //
 	border-radius: 15px;
-	width:800px;
-	height:2048px;
-	margin-left:auto; margin-right:auto;
+	width: 800px;
+	height: 2048px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #list {

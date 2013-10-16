@@ -18,25 +18,8 @@ package de.nrw.hbz.regal.fedora;
 
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_CONTENT_TYPE;
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_IS_NODE_TYPE;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.CM_CONTENTMODEL;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_COMPOSITE_MODEL_URI;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_INPUTSPEC;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_INPUTSPEC_URI;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_METHODMAP;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_METHODMAP_URI;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_METHODMAP_WSDL;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_METHODMAP_WSDL_URI;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_WSDL;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.DS_WSDL_URI;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.HAS_PART;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_HAS_MODEL;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_HAS_SERVICE;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_IS_CONTRACTOR_OF;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_IS_DEPLOYMENT_OF;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SDEF_CONTENTMODEL;
-import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SDEP_CONTENTMODEL;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SIMPLE;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SPO;
 
@@ -63,7 +46,6 @@ import org.slf4j.LoggerFactory;
 import com.yourmediashelf.fedora.client.FedoraClient;
 import com.yourmediashelf.fedora.client.FedoraClientException;
 import com.yourmediashelf.fedora.client.FedoraCredentials;
-import com.yourmediashelf.fedora.client.request.AddDatastream;
 import com.yourmediashelf.fedora.client.request.FedoraRequest;
 import com.yourmediashelf.fedora.client.request.GetDatastream;
 import com.yourmediashelf.fedora.client.request.GetNextPID;
@@ -207,8 +189,6 @@ class FedoraFacade implements FedoraInterface {
     static FedoraFacade me = null;
     Utils utils = null;
 
-    ContentModelBuilder cmBuilder = new ContentModelBuilder();
-
     /**
      * @param host
      *            The url of the fedora web endpoint
@@ -256,8 +236,8 @@ class FedoraFacade implements FedoraInterface {
 
 	    new Ingest(node.getPID()).label(node.getLabel()).execute();
 
-	    utils.updateDc(node);
-	    createContentModels(node);
+	    DublinCoreHandler.updateDc(node);
+	    utils.createContentModels(node);
 
 	    if (node.getUploadFile() != null) {
 		utils.createManagedStream(node);
@@ -339,7 +319,7 @@ class FedoraFacade implements FedoraInterface {
 	node.setNamespace(pid.substring(0, pid.indexOf(':')));
 
 	try {
-	    utils.readFedoraDcToNode(node);
+	    DublinCoreHandler.readFedoraDcToNode(node);
 	    utils.readRelsExt(node);
 	    // TODO Fix me
 	    // readContentModels(node);
@@ -367,7 +347,7 @@ class FedoraFacade implements FedoraInterface {
 
     @Override
     public void updateNode(Node node) {
-	utils.updateDc(node);
+	DublinCoreHandler.updateDc(node);
 	// updateContentModels(node);
 
 	if (node.getUploadFile() != null) {
@@ -377,7 +357,7 @@ class FedoraFacade implements FedoraInterface {
 	if (node.getMetadataFile() != null) {
 	    utils.updateMetadataStream(node);
 	}
-	updateRelsExt(node);
+	utils.updateRelsExt(node);
 
     }
 
@@ -458,7 +438,7 @@ class FedoraFacade implements FedoraInterface {
 	if (nodeExists(cm.getServiceDeploymentPID()))
 	    deleteNode(cm.getServiceDeploymentPID());
 	try {
-	    createContentModel(cm);
+	    utils.createContentModel(cm);
 	} catch (UnsupportedEncodingException e) {
 	    throw new UpdateContentModel(cm.toString(), e);
 	} catch (FedoraClientException e) {
@@ -496,7 +476,7 @@ class FedoraFacade implements FedoraInterface {
 
     @Override
     public void readDcToNode(Node node, InputStream in, String dcNamespace) {
-	utils.readDcToNode(node, in, dcNamespace);
+	DublinCoreHandler.readDcToNode(node, in, dcNamespace);
     }
 
     @Override
@@ -602,46 +582,6 @@ class FedoraFacade implements FedoraInterface {
 	return false;
     }
 
-    private void updateRelsExt(Node node) {
-	String pid = node.getPID();
-	String type = node.getContentType();
-
-	if (!dataStreamExists(pid, "RELS-EXT")) {
-	    utils.createFedoraXmlForRelsExt(pid);
-	}
-
-	Link link = new Link();
-	link.setPredicate(REL_CONTENT_TYPE);
-	link.setObject(type, true);
-	node.addRelation(link);
-
-	link = new Link();
-	link.setObject(node.getNodeType(), true);
-	link.setPredicate(REL_IS_NODE_TYPE);
-	node.addRelation(link);
-
-	utils.updateFedoraXmlForRelsExt(pid, node.getRelsExt());
-    }
-
-    /*
-     * Mit Letzter Zeile --------After Purge Local------------------- test:123
-     * <info:fedora/fedora-system:def/model#hasModel>
-     * info:fedora/testCM:MonographObjectModel test:123
-     * <info:fedora/fedora-system:def/model#hasModel>
-     * info:fedora/testCM:pdfObjectModel test:123
-     * <info:fedora/fedora-system:def/model#hasModel>
-     * info:fedora/testCM:headObjectModel test:123
-     * <info:fedora/fedora-system:def/relations-external#isPartOf> test:234
-     * --------------------------- --------After Purge Remote-------------------
-     * test:123 <info:fedora/fedora-system:def/model#hasModel>
-     * info:fedora/testCM:MonographObjectModel test:123
-     * <info:fedora/fedora-system:def/model#hasModel>
-     * info:fedora/testCM:pdfObjectModel test:123
-     * <info:fedora/fedora-system:def/model#hasModel>
-     * info:fedora/testCM:headObjectModel test:123
-     * <info:hbz/hbz-ingest:def/model#contentType> monograph
-     * ---------------------------
-     */
     private List<String> findPidsRdf(String rdfQuery, String queryFormat) {
 	InputStream stream = findTriples(rdfQuery, FedoraVocabulary.SPO,
 		FedoraVocabulary.N3);
@@ -690,116 +630,5 @@ class FedoraFacade implements FedoraInterface {
 		}
 	    }
 	}
-    }
-
-    private void createContentModels(Node node) {
-	List<ContentModel> models = node.getContentModels();
-	if (models == null)
-	    return;
-	for (ContentModel m : models) {
-	    createContentModel(m, node);
-	}
-	// cmBuilder.createFedoraXMLForContentModels(node);
-    }
-
-    private void createContentModel(ContentModel hbzNodeContentModel, Node node) {
-
-	try {
-	    // If necessary create Model
-	    createContentModel(hbzNodeContentModel);
-	} catch (Exception e) {
-
-	}
-	// Add Model to Object
-	Link link = new Link();
-	link.setPredicate(REL_HAS_MODEL);
-	link.setObject(
-		utils.addUriPrefix(hbzNodeContentModel.getContentModelPID()),
-		false);
-	node.addRelation(link);
-
-    }
-
-    private void createContentModel(ContentModel cm)
-	    throws FedoraClientException, UnsupportedEncodingException {
-	String foCMPid = cm.getContentModelPID();
-	String foSDefPid = cm.getServiceDefinitionPID();
-	String foSDepPid = cm.getServiceDeploymentPID();
-
-	new Ingest(foCMPid).label("Content Model").execute();
-
-	new Ingest(foSDefPid).label("ServiceDefinition").execute();
-
-	new Ingest(foSDepPid).label("ServiceDeployment").execute();
-
-	// Add Relations
-	Vector<Link> cmHBZLinks = new Vector<Link>();
-	Link cmHBZLink1 = new Link();
-	cmHBZLink1.setPredicate(REL_HAS_SERVICE);
-	cmHBZLink1.setObject(utils.addUriPrefix(foSDefPid), false);
-
-	cmHBZLinks.add(cmHBZLink1);
-
-	Link cmHBZLink2 = new Link();
-	cmHBZLink2.setPredicate(REL_HAS_MODEL);
-	cmHBZLink2.setObject(utils.addUriPrefix(CM_CONTENTMODEL), false);
-	cmHBZLinks.add(cmHBZLink2);
-
-	utils.addRelationships(foCMPid, cmHBZLinks);
-
-	Vector<Link> sDefHBZLinks = new Vector<Link>();
-	Link sDefHBZLink = new Link();
-	sDefHBZLink.setPredicate(REL_HAS_MODEL);
-	sDefHBZLink.setObject(utils.addUriPrefix(SDEF_CONTENTMODEL), false);
-	sDefHBZLinks.add(sDefHBZLink);
-
-	utils.addRelationships(foSDefPid, sDefHBZLinks);
-
-	Vector<Link> sDepHBZLinks = new Vector<Link>();
-	Link sDepHBZLink1 = new Link();
-	sDepHBZLink1.setPredicate(REL_IS_DEPLOYMENT_OF);
-	sDepHBZLink1.setObject(utils.addUriPrefix(foSDefPid), false);
-	sDepHBZLinks.add(sDepHBZLink1);
-
-	Link sDepHBZLink2 = new Link();
-	sDepHBZLink2.setPredicate(REL_IS_CONTRACTOR_OF);
-	sDepHBZLink2.setObject(utils.addUriPrefix(foCMPid), false);
-	sDepHBZLinks.add(sDepHBZLink2);
-
-	Link sDepHBZLink3 = new Link();
-	sDepHBZLink3.setPredicate(REL_HAS_MODEL);
-	sDepHBZLink3.setObject(utils.addUriPrefix(SDEP_CONTENTMODEL), false);
-	sDepHBZLinks.add(sDepHBZLink3);
-
-	utils.addRelationships(foSDepPid, sDepHBZLinks);
-
-	new AddDatastream(foCMPid, DS_COMPOSITE_MODEL)
-		.dsLabel("DS-Composite-Stream").versionable(true)
-		.formatURI(DS_COMPOSITE_MODEL_URI).dsState("A")
-		.controlGroup("X").mimeType("text/xml")
-		.content(cmBuilder.getDsCompositeModel(cm)).execute();
-
-	new AddDatastream(foSDefPid, DS_METHODMAP).dsLabel("Methodmap-Stream")
-		.versionable(true).formatURI(DS_METHODMAP_URI).dsState("A")
-		.controlGroup("X").mimeType("text/xml")
-		.content(cmBuilder.getMethodMap(cm)).execute();
-
-	new AddDatastream(foSDepPid, DS_METHODMAP_WSDL)
-		.dsLabel("Methodmap-Stream").versionable(true)
-		.formatURI(DS_METHODMAP_WSDL_URI).dsState("A")
-		.controlGroup("X").mimeType("text/xml")
-		.content(cmBuilder.getMethodMapToWsdl(cm)).execute();
-
-	new AddDatastream(foSDepPid, DS_INPUTSPEC)
-		.dsLabel("DSINPUTSPEC-Stream").versionable(true)
-		.formatURI(DS_INPUTSPEC_URI).dsState("A").controlGroup("X")
-		.mimeType("text/xml").content(cmBuilder.getDSInputSpec())
-		.execute();
-
-	new AddDatastream(foSDepPid, DS_WSDL).dsLabel("WSDL-Stream")
-		.versionable(true).formatURI(DS_WSDL_URI).dsState("A")
-		.controlGroup("X").mimeType("text/xml")
-		.content(cmBuilder.getWsdl(cm)).execute();
-
     }
 }
