@@ -53,6 +53,7 @@ import de.nrw.hbz.regal.fedora.FedoraVocabulary;
 import de.nrw.hbz.regal.fedora.RdfException;
 import de.nrw.hbz.regal.fedora.RdfUtils;
 import de.nrw.hbz.regal.fedora.UrlConnectionException;
+import de.nrw.hbz.regal.search.Search;
 
 /**
  * Actions provide a single class to access the archive. All endpoints are using
@@ -89,6 +90,7 @@ public class Actions {
     private String fedoraExtern = null;
     private String server = null;
     private String urnbase = null;
+    private Search search = null;
 
     // String namespace = null;
 
@@ -110,6 +112,7 @@ public class Actions {
 		"/externalLinks.properties"));
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
+	search = new Search(server);
     }
 
     /**
@@ -179,8 +182,6 @@ public class Actions {
 	fedora.deleteDatastream(pid, "data");
 	return pid + ": data - datastream successfully deleted! ";
     }
-
-    // -------------------------------------------------------
 
     /**
      * @param type

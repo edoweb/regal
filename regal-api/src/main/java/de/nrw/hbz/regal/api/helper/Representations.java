@@ -67,6 +67,7 @@ class Representations {
 
 	    ST st = new ST(data, '$', '$');
 	    st.add("type", type);
+
 	    for (String item : list) {
 		st.add("items", "<li><a href=\"" + uriPrefix + item + "\">"
 			+ item + "</a></li>");
