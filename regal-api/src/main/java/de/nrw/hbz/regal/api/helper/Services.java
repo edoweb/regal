@@ -336,7 +336,7 @@ class Services {
 	    index = c.resource("http://localhost:9200/" + namespace + "/titel/"
 		    + pid);
 	    index.accept("application/json");
-	    URL url = new URL(this.uriPrefix + pid);
+	    URL url = new URL(this.uriPrefix + pid + ".json");
 	    URLConnection con = url.openConnection();
 	    con.setRequestProperty("Accept", "application/json");
 	    con.connect();
