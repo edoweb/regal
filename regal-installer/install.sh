@@ -174,18 +174,15 @@ function copySwagger()
 {
 
 cp -r $ARCHIVE_HOME/src/regal-api/target/classes/apidocs/* $ARCHIVE_HOME/html/doc
-if [ $? -ne 0 ]
+if [ $? -eq 0 ]
 then
-return;
-fi
 cp $ARCHIVE_HOME/html/doc/service.json templates
 cp $ARCHIVE_HOME/html/index.html templates
 substituteVars service.json $ARCHIVE_HOME/html/doc/service.json
 substituteVars index.html $ARCHIVE_HOME/html/index.html
-
-
 correctSwagger utils;
 correctSwagger resource;
+fi
 }
 
 
@@ -230,8 +227,6 @@ function copyHtml
 echo "copy html"
 cp -r $ARCHIVE_HOME/src/regal-ui/htdocs/* $ARCHIVE_HOME/html/
 cp $ARCHIVE_HOME/conf/Identify.xml $ARCHIVE_HOME/html/
-echo "Edit $ARCHIVE_HOME/html/js/Search.js"
-sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/Search.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/Search.js"
 echo "Copy api Doku"
 copySwagger
 }

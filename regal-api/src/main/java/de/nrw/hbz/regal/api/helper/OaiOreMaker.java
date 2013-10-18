@@ -329,14 +329,14 @@ public class OaiOreMaker {
 		String dataLink = uriPrefix + pid + "/data";
 		String logoLink = "";
 		if (mime.compareTo("application/pdf") == 0) {
-		    logoLink = "/pdflogo.svg";
+		    logoLink = "pdflogo.svg";
 		} else if (mime.compareTo("application/zip") == 0) {
-		    logoLink = "/zip.png";
+		    logoLink = "zip.png";
 		} else {
-		    logoLink = "/data.png";
+		    logoLink = "data.png";
 		}
 		st.add("data", "<tr><td class=\"textlink\"><a	href=\""
-			+ dataLink + "\"><img src=\"" + logoLink
+			+ dataLink + "\"><img src=\"/img/" + logoLink
 			+ "\" width=\"100\" /></a></td></tr>");
 	    } else {
 		st.add("data", "");
