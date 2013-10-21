@@ -616,8 +616,8 @@ public class Actions {
      *            the namespace of the pid
      * @return a short message.
      */
-    public String index(String p, String namespace) {
-	return services.index(p, namespace);
+    public String index(String p, String namespace, String type) {
+	return services.index(p, namespace, type);
     }
 
     /**

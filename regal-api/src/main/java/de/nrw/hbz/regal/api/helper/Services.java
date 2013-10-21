@@ -322,7 +322,7 @@ class Services {
      *            the namespace of the pid
      * @return a short message.
      */
-    public String index(String p, String namespace) {
+    public String index(String p, String namespace, String type) {
 	String message = "";
 	String viewAsString = "";
 	String pid = namespace + ":" + p;
@@ -334,7 +334,7 @@ class Services {
 	try {
 	    // TODO configure port and host
 	    index = c.resource("http://localhost:9200/" + namespace + "/titel/"
-		    + pid);
+		    + type);
 	    index.accept("application/json");
 	    URL url = new URL(this.uriPrefix + pid + ".json");
 	    URLConnection con = url.openConnection();

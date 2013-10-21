@@ -108,9 +108,10 @@ public class Utils {
     @Path("/index/{namespace}:{pid}")
     @Produces({ "application/json", "application/xml" })
     public String index(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
+	    @PathParam("namespace") String namespace,
+	    @QueryParam("type") final String type) {
 	try {
-	    return actions.index(pid, namespace);
+	    return actions.index(pid, namespace, type);
 	} catch (Exception e) {
 
 	    throw new HttpArchiveException(
