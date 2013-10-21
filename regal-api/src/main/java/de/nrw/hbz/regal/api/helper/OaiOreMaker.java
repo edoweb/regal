@@ -436,7 +436,7 @@ public class OaiOreMaker {
 		objectLink = object;
 	    }
 	    if (predicate.compareTo("http://hbz-nrw.de/regal#contentType") == 0) {
-		objectLink = "/" + object + "/";
+		objectLink = "/resource?type=" + object;
 	    }
 	    if (objectLink != null) {
 		return "<tr><td><a href=\"" + subjectLink + "\">" + subject
