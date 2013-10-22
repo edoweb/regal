@@ -35,9 +35,14 @@ import java.util.Vector;
 
 import javax.ws.rs.core.Response;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableMap;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
@@ -84,6 +89,8 @@ public class Actions {
     }
 
     final static Logger logger = LoggerFactory.getLogger(Actions.class);
+    private static Actions actions = null;
+
     Services services = null;
     Representations representations = null;
     private FedoraInterface fedora = null;
@@ -98,7 +105,7 @@ public class Actions {
      * @throws IOException
      *             if properties can not be loaded.
      */
-    public Actions() throws IOException {
+    private Actions() throws IOException {
 	Properties properties = new Properties();
 	properties.load(getClass().getResourceAsStream("/api.properties"));
 	fedoraExtern = properties.getProperty("fedoraExtern");
@@ -113,6 +120,17 @@ public class Actions {
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
 	search = new Search(server);
+    }
+
+    /**
+     * @return an instance of this Actions.class
+     * @throws IOException
+     *             if properties can't be read
+     */
+    public static Actions getInstance() throws IOException {
+	if (actions == null)
+	    actions = new Actions();
+	return actions;
     }
 
     /**
@@ -181,18 +199,6 @@ public class Actions {
     public String deleteData(String pid) {
 	fedora.deleteDatastream(pid, "data");
 	return pid + ": data - datastream successfully deleted! ";
-    }
-
-    /**
-     * @param type
-     *            The objectTyp
-     * @return A list of pids with type {@type}
-     */
-    public List<String> findByType(String type) {
-	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
-	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	return RdfUtils.getFedoraSubject(in);
     }
 
     /**
@@ -620,7 +626,11 @@ public class Actions {
      * @return a short message.
      */
     public String index(String p, String namespace, String type) {
-	return services.index(p, namespace, type);
+	String viewAsString = getReM(namespace + ":" + p, "application/json");
+	viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
+		(JSONArray) JSONValue.parse(viewAsString)));
+	search.index(namespace, type, namespace + ":" + p, viewAsString);
+	return namespace + ":" + p + " indexed!";
     }
 
     /**
@@ -649,39 +659,102 @@ public class Actions {
     /**
      * @param type
      *            a contentType
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es"
      * @return all objects of contentType type
      */
-    public List<String> getAll(String type) {
+    public List<String> list(String type, String namespace, int from,
+	    int until, String getListingFrom) {
 
-	if (type == null || type.isEmpty())
-	    return getAll();
-	else
-	    return findByType(type);
+	List<String> list = null;
+	if (!getListingFrom.equals("es")) {
+	    if (type == null || type.isEmpty())
+		list = listAllFromRepo(namespace, from, until);
+	    else
+		list = listAllFromRepo(type, namespace, from, until);
+	} else {
+	    list = listAllFromSearch(type, namespace, from, until);
+	}
+
+	return list;
     }
 
     /**
-     * @return a list of all objects
+     * @param type
+     *            The objectTyp
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @return A list of pids with type {@type}
      */
-    public List<String> getAll() {
+    public List<String> listAllFromSearch(String type, String namespace,
+	    int from, int until) {
 
-	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
-	InputStream stream = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	return RdfUtils.getFedoraSubject(stream);
+	return search.listIds(namespace, type, from, until);
     }
 
     /**
      * @param type
      *            the type to be displaye
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es"
      * @return html listing of all objects
      */
-    public String getAllAsHtml(String type) {
-	List<String> list = null;
-	if (type == null || type.isEmpty())
-	    list = getAll();
-	else
-	    list = findByType(type);
-	return representations.getAllOfTypeAsHtml(list, type);
+    public String listAsHtml(String type, String namespace, int from,
+	    int until, String getListingFrom) {
+
+	List<String> list = list(type, namespace, from, until, getListingFrom);
+
+	return representations.getAllOfTypeAsHtml(list, type, namespace, from,
+		until);
+    }
+
+    private List<String> listAllFromRepo(String type, String namespace,
+	    int from, int until) {
+	List<String> result = new Vector<String>();
+	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
+	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
+		FedoraVocabulary.N3);
+	List<String> list = RdfUtils.getFedoraSubject(in);
+	if (namespace == null || namespace.isEmpty())
+	    return list;
+	for (String item : list) {
+	    if (item.startsWith(namespace + ":"))
+		result.add(item);
+	}
+	return result;
+    }
+
+    private List<String> listAllFromRepo(String namespace, int from, int until) {
+	List<String> result = new Vector<String>();
+	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
+	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
+		FedoraVocabulary.N3);
+	List<String> list = RdfUtils.getFedoraSubject(in);
+	if (namespace == null || namespace.isEmpty())
+	    return list;
+	for (String item : list) {
+	    if (item.startsWith(namespace + ":"))
+		result.add(item);
+	}
+	return result;
     }
 
     /**

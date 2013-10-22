@@ -52,9 +52,17 @@ class Representations {
      *            a list with pids
      * @param type
      *            the type to be displaye
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * 
      * @return html listing of all objects
      */
-    public String getAllOfTypeAsHtml(List<String> list, String type) {
+    public String getAllOfTypeAsHtml(List<String> list, String type,
+	    String namespace, int from, int until) {
 
 	String result = "";
 	try {
@@ -67,6 +75,9 @@ class Representations {
 
 	    ST st = new ST(data, '$', '$');
 	    st.add("type", type);
+	    st.add("namespace", namespace);
+	    st.add("from", from);
+	    st.add("until", until);
 
 	    for (String item : list) {
 		st.add("items", "<li><a href=\"" + uriPrefix + item + "\">"

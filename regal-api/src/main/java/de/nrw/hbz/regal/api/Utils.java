@@ -48,7 +48,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  */
 @Path("/utils")
 public class Utils {
-    Actions actions = new Actions();
+    Actions actions = null;
 
     /**
      * @throws IOException
@@ -57,7 +57,7 @@ public class Utils {
      */
     public Utils() throws IOException {
 
-	actions = new Actions();
+	actions = Actions.getInstance();
     }
 
     /**
