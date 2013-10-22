@@ -170,10 +170,11 @@ public class Actions {
     public String delete(String pid) {
 
 	String msg = "";
+	Node node = readNode(pid);
 	fedora.deleteComplexObject(pid);
 
 	try {
-	    outdex(pid);
+	    removeFromIndex(node.getNamespace(), node.getContentType(), pid);
 	} catch (Exception e) {
 	    msg = e.getMessage();
 	}
@@ -608,12 +609,17 @@ public class Actions {
     }
 
     /**
+     * @param index
+     *            the elasticsearch index
+     * @param type
+     *            the type of the resource
      * @param pid
      *            The pid to remove from index
      * @return A short message
      */
-    public String outdex(String pid) {
-	return services.outdex(pid);
+    public String removeFromIndex(String index, String type, String pid) {
+	search.delete(index, type, pid);
+	return pid + " removed from index " + index + "!";
     }
 
     /**
