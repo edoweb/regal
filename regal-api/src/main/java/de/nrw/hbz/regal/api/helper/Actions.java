@@ -615,10 +615,12 @@ public class Actions {
      *            The pid that must be indexed
      * @param namespace
      *            the namespace of the pid
+     * @param type
+     *            the type of the resource
      * @return a short message.
      */
-    public String index(String p, String namespace) {
-	return services.index(p, namespace);
+    public String index(String p, String namespace, String type) {
+	return services.index(p, namespace, type);
     }
 
     /**

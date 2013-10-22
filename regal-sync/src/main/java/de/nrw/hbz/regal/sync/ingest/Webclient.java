@@ -118,11 +118,7 @@ public class Webclient {
      *            provider
      */
     public void publish(DigitalEntity dtlBean) {
-	try {
-	    index(dtlBean);
-	} catch (Exception e) {
-	    logger.error(dtlBean.getPid() + " " + e.getMessage(), e);
-	}
+
 	try {
 	    oaiProvide(dtlBean);
 	} catch (Exception e) {
@@ -232,6 +228,11 @@ public class Webclient {
 	    resource.put(input);
 	} catch (UniformInterfaceException e) {
 	    logger.info(pid + " " + e.getMessage(), e);
+	}
+	try {
+	    index(dtlBean);
+	} catch (Exception e) {
+	    logger.error(dtlBean.getPid() + " " + e.getMessage(), e);
 	}
     }
 
@@ -345,10 +346,11 @@ public class Webclient {
 
     private void index(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
+	String type = dtlBean.getType();
 	try {
 
 	    WebResource index = webclient.resource(endpoint + "/utils/index/"
-		    + pid);
+		    + pid + "?type=" + type);
 	    index.post();
 	    logger.info(pid + ": got indexed!");
 	} catch (UniformInterfaceException e) {

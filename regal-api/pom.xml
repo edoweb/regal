@@ -179,7 +179,7 @@
                             </docletArtifact>
                             <reportOutputDirectory>${project.build.outputDirectory}</reportOutputDirectory>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
-                            <additionalparam>-apiVersion 1 -docBasePath http://localhost/api -apiBasePath /</additionalparam>
+                            <additionalparam>-apiVersion 1 -docBasePath http://$BACKEND/doc -apiBasePath /</additionalparam>
                         </configuration>
                         <goals>
                             <goal>javadoc</goal>

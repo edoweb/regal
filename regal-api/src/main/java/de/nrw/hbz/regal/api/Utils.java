@@ -96,21 +96,24 @@ public class Utils {
     }
 
     /**
-     * Aims to pass the object to the elastic search index
+     * Aims to pass the object to the elasticsearch index
      * 
      * @param pid
      *            the pid to be indexed
      * @param namespace
      *            the namespace of the resource
+     * @param type
+     *            the type of the resource
      * @return a message
      */
     @POST
     @Path("/index/{namespace}:{pid}")
     @Produces({ "application/json", "application/xml" })
     public String index(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
+	    @PathParam("namespace") String namespace,
+	    @QueryParam("type") final String type) {
 	try {
-	    return actions.index(pid, namespace);
+	    return actions.index(pid, namespace, type);
 	} catch (Exception e) {
 
 	    throw new HttpArchiveException(
