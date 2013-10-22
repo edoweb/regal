@@ -96,12 +96,14 @@ public class Utils {
     }
 
     /**
-     * Aims to pass the object to the elastic search index
+     * Aims to pass the object to the elasticsearch index
      * 
      * @param pid
      *            the pid to be indexed
      * @param namespace
      *            the namespace of the resource
+     * @param type
+     *            the type of the resource
      * @return a message
      */
     @POST
