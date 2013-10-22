@@ -2,4 +2,4 @@
 
 source pidlist.sh
 
-pidlist $1 $2
+pidlist $1 $2 $3
