@@ -181,7 +181,7 @@ public class Actions {
 	    msg = e.getMessage();
 	}
 
-	return pid + " successfully deleted! " + msg;
+	return pid + " successfully deleted! \n" + msg + "\n";
     }
 
     /**
@@ -736,12 +736,23 @@ public class Actions {
 
     private List<String> listAllFromRepo(String type, String namespace,
 	    int from, int until) {
+	if (from >= until || from < 0 || until < 0)
+	    throw new HttpArchiveException(416, "Can not process. From: "
+		    + from + "Until: " + until + ".");
+
 	List<String> result = new Vector<String>();
 	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
 	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
 		FedoraVocabulary.N3);
 	List<String> list = RdfUtils.getFedoraSubject(in);
-	list = list.subList(from, until);
+	if (from >= list.size()) {
+	    return new Vector<String>();
+	}
+	if (until < list.size()) {
+	    list = list.subList(from, until);
+	} else {
+	    list = list.subList(from, list.size());
+	}
 	if (namespace == null || namespace.isEmpty())
 	    return list;
 	for (String item : list) {
@@ -752,12 +763,23 @@ public class Actions {
     }
 
     private List<String> listAllFromRepo(String namespace, int from, int until) {
+	if (from >= until || from < 0 || until < 0)
+	    throw new HttpArchiveException(416, "Can not process. From: "
+		    + from + "Until: " + until + ".");
+
 	List<String> result = new Vector<String>();
 	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
 	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
 		FedoraVocabulary.N3);
 	List<String> list = RdfUtils.getFedoraSubject(in);
-	list = list.subList(from, until);
+	if (from >= list.size()) {
+	    return new Vector<String>();
+	}
+	if (until < list.size()) {
+	    list = list.subList(from, until);
+	} else {
+	    list = list.subList(from, list.size());
+	}
 	if (namespace == null || namespace.isEmpty())
 	    return list;
 	for (String item : list) {
