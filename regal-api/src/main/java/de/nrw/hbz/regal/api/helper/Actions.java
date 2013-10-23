@@ -98,6 +98,7 @@ public class Actions {
     private String server = null;
     private String urnbase = null;
     private Search search = null;
+    private String escluster = null;
 
     // String namespace = null;
 
@@ -111,6 +112,7 @@ public class Actions {
 	fedoraExtern = properties.getProperty("fedoraExtern");
 	server = properties.getProperty("serverName");
 	urnbase = properties.getProperty("urnbase");
+	escluster = properties.getProperty("escluster");
 	fedora = FedoraFactory.getFedoraImpl(
 		properties.getProperty("fedoraIntern"),
 		properties.getProperty("user"),
@@ -119,7 +121,7 @@ public class Actions {
 		"/externalLinks.properties"));
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
-	search = new Search(server);
+	search = new Search(escluster);
     }
 
     /**
@@ -729,7 +731,7 @@ public class Actions {
 	List<String> list = list(type, namespace, from, until, getListingFrom);
 
 	return representations.getAllOfTypeAsHtml(list, type, namespace, from,
-		until);
+		until, getListingFrom);
     }
 
     private List<String> listAllFromRepo(String type, String namespace,
