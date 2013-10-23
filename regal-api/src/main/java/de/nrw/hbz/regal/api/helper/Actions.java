@@ -741,6 +741,7 @@ public class Actions {
 	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
 		FedoraVocabulary.N3);
 	List<String> list = RdfUtils.getFedoraSubject(in);
+	list = list.subList(from, until);
 	if (namespace == null || namespace.isEmpty())
 	    return list;
 	for (String item : list) {
@@ -756,6 +757,7 @@ public class Actions {
 	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
 		FedoraVocabulary.N3);
 	List<String> list = RdfUtils.getFedoraSubject(in);
+	list = list.subList(from, until);
 	if (namespace == null || namespace.isEmpty())
 	    return list;
 	for (String item : list) {
