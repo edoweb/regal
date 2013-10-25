@@ -333,7 +333,7 @@ public class Resource {
 		.status(303).build();
     }
 
-    /**
+      /**
      * Lists all children of the resource
      * 
      * @param pid
@@ -349,7 +349,7 @@ public class Resource {
     public ObjectList getAllParts(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
 
-	return new ObjectList(actions.findObject(namespace + ":" + pid,
+	return new ObjectList(actions.getRelatives(namespace + ":" + pid,
 		HAS_PART));
     }
 
@@ -369,7 +369,7 @@ public class Resource {
     public ObjectList getAllParents(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
 
-	return new ObjectList(actions.findObject(namespace + ":" + pid,
+	return new ObjectList(actions.getRelatives(namespace + ":" + pid,
 		IS_PART_OF));
     }
 

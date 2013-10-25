@@ -194,23 +194,7 @@ public class Actions {
 	return RdfUtils.getFedoraSubject(in);
     }
 
-    /**
-     * 
-     * @param pid
-     *            The pid
-     * @param pred
-     *            the predicate
-     * @return A list of objects that are referenced by pid/predicate
-     *         combination.
-     */
-    public List<String> findObject(String pid, String pred) {
-	String query = "<info:fedora/" + pid + "> <" + pred + "> *";
-	logger.debug(query);
-	InputStream stream = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	return RdfUtils.getFedoraObjects(stream);
-    }
-
+   
     /**
      * @param pid
      *            The pid to read the data from
@@ -637,10 +621,21 @@ public class Actions {
      * @return a oai_ore resource map
      */
     public String getReM(String pid, String format) {
-	List<String> parents = findObject(pid, IS_PART_OF);
-	List<String> children = findObject(pid, HAS_PART);
+	List<String> parents = getRelatives(pid, IS_PART_OF);
+	List<String> children = getRelatives(pid, HAS_PART);
 	return representations.getReM(pid, format, fedoraExtern, parents,
 		children);
+    }
+
+    public List<String> getRelatives(String pid, String relation) {
+	List<String> result = new Vector<String>();
+	Node node = readNode(pid);
+	List<Link> links = node.getRelsExt();
+	for (Link l : links) {
+	    if (l.getPredicate().equals(relation))
+		result.add(l.getObject());
+	}
+	return result;
     }
 
     /**
