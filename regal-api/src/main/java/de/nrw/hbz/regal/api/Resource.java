@@ -169,16 +169,20 @@ public class Resource {
      * Returns all resources of a certain type (optional).
      * 
      * @param type
-     *            a contentType
+     *            a contentType. Is optional. If no type is set. All resources
+     *            will be returned.
      * @param namespace
-     *            list only objects in this namespace
+     *            list only objects in this namespace. Is optional. If no
+     *            namespace is defined. All resources will be returned.
      * @param from
-     *            show only hits starting at this index
+     *            show only hits starting at this index. Is optional. Defaults
+     *            to 0.
      * @param until
-     *            show only hits ending at this index
+     *            show only hits ending at this index. Is optional. Defaults to
+     *            10.
      * @param getListingFrom
      *            List Resources from elasticsearch or from fedora. Allowed
-     *            values: "repo" and "es"
+     *            values: "repo" and "es". Defaults to "es".
      * @return a list of all archived objects
      */
     @GET
@@ -196,20 +200,24 @@ public class Resource {
     }
 
     /**
-     * Returns all resources of a certain type (optional) in HTML.
+     * Returns all resources of a certain type (optional).
      * 
      * @param type
-     *            a contentType
+     *            a contentType. Is optional. If no type is set. All resources
+     *            will be returned.
      * @param namespace
-     *            list only objects in this namespace
+     *            list only objects in this namespace. Is optional. If no
+     *            namespace is defined. All resources will be returned.
      * @param from
-     *            show only hits starting at this index
+     *            show only hits starting at this index. Is optional. Defaults
+     *            to 0.
      * @param until
-     *            show only hits ending at this index
+     *            show only hits ending at this index. Is optional. Defaults to
+     *            10.
      * @param getListingFrom
      *            List Resources from elasticsearch or from fedora. Allowed
-     *            values: "repo" and "es"
-     * @return a list of resources as html
+     *            values: "repo" and "es". Defaults to "es".
+     * @return a list of all archived objects
      */
     @GET
     @Produces({ "text/html" })
@@ -371,7 +379,7 @@ public class Resource {
 		.status(303).build();
     }
 
-      /**
+    /**
      * Lists all children of the resource
      * 
      * @param pid
