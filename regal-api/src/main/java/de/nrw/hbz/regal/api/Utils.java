@@ -48,7 +48,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  */
 @Path("/utils")
 public class Utils {
-    Actions actions = new Actions();
+    Actions actions = null;
 
     /**
      * @throws IOException
@@ -57,7 +57,7 @@ public class Utils {
      */
     public Utils() throws IOException {
 
-	actions = new Actions();
+	actions = Actions.getInstance();
     }
 
     /**
@@ -77,7 +77,7 @@ public class Utils {
     }
 
     /**
-     * Aims to generate OAI-Sets from the metadata of the pid
+     * Generates OAI-Sets for the object
      * 
      * @param pid
      *            the pid of the object, that must be published in a oai set.
@@ -96,26 +96,47 @@ public class Utils {
     }
 
     /**
-     * Aims to pass the object to the elastic search index
+     * Add an object to the elasticsearch index
      * 
      * @param pid
      *            the pid to be indexed
      * @param namespace
      *            the namespace of the resource
+     * @param type
+     *            the type of the resource
      * @return a message
      */
     @POST
     @Path("/index/{namespace}:{pid}")
     @Produces({ "application/json", "application/xml" })
     public String index(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
-	try {
-	    return actions.index(pid, namespace);
-	} catch (Exception e) {
+	    @PathParam("namespace") String namespace,
+	    @QueryParam("type") final String type) {
 
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+	return actions.index(pid, namespace, type);
+
+    }
+
+    /**
+     * Removes an object from the elasticsearch index
+     * 
+     * @param pid
+     *            the pid of the object
+     * @param namespace
+     *            the namespace of the object
+     * @param type
+     *            the type of the object
+     * @return a message
+     */
+    @DELETE
+    @Path("/index/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String removeFromindex(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace,
+	    @QueryParam("type") final String type) {
+
+	return actions.removeFromIndex(namespace, type, pid);
+
     }
 
     /**

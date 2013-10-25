@@ -5,7 +5,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<junit.version>4.8.2</junit.version>
+		<junit.version>4.10</junit.version>
 		<sesame.version>2.7.0</sesame.version>
 		<logback.version>0.9.30</logback.version>
 		<slf4j.version>1.6.2</slf4j.version>
@@ -16,6 +16,7 @@
 		<instrumentedTests>**/*Test*__*.class</instrumentedTests>
 		<nestedClassTests>**/*Test*$*.class</nestedClassTests>
 		<integration.test.skip>false</integration.test.skip>
+		<es.version>0.90.5</es.version>
 		<regal.version>0.2.0-SNAPSHOT</regal.version>
 	</properties>
 

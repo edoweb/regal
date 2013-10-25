@@ -5,38 +5,23 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.ITEM_ID;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.core.MediaType;
-
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.culturegraph.mf.Flux;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-
-import com.google.common.collect.ImmutableMap;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import de.nrw.hbz.regal.datatypes.DCBean;
 import de.nrw.hbz.regal.datatypes.Link;
@@ -286,75 +271,6 @@ class Services {
 	} catch (Exception e) {
 	    throw new MetadataNotFoundException(e);
 	}
-    }
-
-    /**
-     * @param pid
-     *            The pid to remove from index
-     * @return A short message
-     */
-    public String outdex(String pid) {
-
-	String namespace = pid.substring(0, pid.indexOf(':'));
-	ClientConfig cc = new DefaultClientConfig();
-	cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-	cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-	Client c = Client.create(cc);
-	String indexUrl = "http://localhost:9200/" + namespace + "/titel/"
-		+ pid;
-	try {
-
-	    WebResource index = c.resource(indexUrl);
-	    index.accept(MediaType.APPLICATION_JSON);
-
-	    index.delete();
-	} catch (Exception e) {
-	    throw new ArchiveException(pid + " can't delete from index: "
-		    + indexUrl, e);
-	}
-	return pid + " remove from index!";
-    }
-
-    /**
-     * @param p
-     *            The pid that must be indexed
-     * @param namespace
-     *            the namespace of the pid
-     * @return a short message.
-     */
-    public String index(String p, String namespace) {
-	String message = "";
-	String viewAsString = "";
-	String pid = namespace + ":" + p;
-	ClientConfig cc = new DefaultClientConfig();
-	cc.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-	cc.getFeatures().put(ClientConfig.FEATURE_DISABLE_XML_SECURITY, true);
-	Client c = Client.create(cc);
-	WebResource index = null;
-	try {
-	    // TODO configure port and host
-	    index = c.resource("http://localhost:9200/" + namespace + "/titel/"
-		    + pid);
-	    index.accept("application/json");
-	    URL url = new URL(this.uriPrefix + pid);
-	    URLConnection con = url.openConnection();
-	    con.setRequestProperty("Accept", "application/json");
-	    con.connect();
-	    InputStream in = con.getInputStream();
-	    StringWriter writer = new StringWriter();
-	    IOUtils.copy(in, writer, "UTF-8");
-	    viewAsString = writer.toString();
-	    in.close();
-
-	    viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
-		    (JSONArray) JSONValue.parse(viewAsString)));
-	} catch (Exception e) {
-	    throw new ArchiveException(e);
-	}
-
-	message = index.put(String.class, viewAsString);
-
-	return "Success! " + message + "\n" + viewAsString;
     }
 
     /**

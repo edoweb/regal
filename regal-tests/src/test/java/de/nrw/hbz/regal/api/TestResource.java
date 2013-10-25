@@ -129,7 +129,7 @@ public class TestResource {
     @Test
     public void listAll() throws IOException {
 	Resource resource = new Resource();
-	resource.getAll("monograph");
+	resource.getAll("monograph", "test", 0, 10, "repo");
 
     }
 

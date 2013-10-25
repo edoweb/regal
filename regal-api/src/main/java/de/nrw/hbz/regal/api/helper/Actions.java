@@ -35,9 +35,14 @@ import java.util.Vector;
 
 import javax.ws.rs.core.Response;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableMap;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
@@ -53,6 +58,7 @@ import de.nrw.hbz.regal.fedora.FedoraVocabulary;
 import de.nrw.hbz.regal.fedora.RdfException;
 import de.nrw.hbz.regal.fedora.RdfUtils;
 import de.nrw.hbz.regal.fedora.UrlConnectionException;
+import de.nrw.hbz.regal.search.Search;
 
 /**
  * Actions provide a single class to access the archive. All endpoints are using
@@ -83,12 +89,16 @@ public class Actions {
     }
 
     final static Logger logger = LoggerFactory.getLogger(Actions.class);
+    private static Actions actions = null;
+
     Services services = null;
     Representations representations = null;
     private FedoraInterface fedora = null;
     private String fedoraExtern = null;
     private String server = null;
     private String urnbase = null;
+    private Search search = null;
+    private String escluster = null;
 
     // String namespace = null;
 
@@ -96,12 +106,13 @@ public class Actions {
      * @throws IOException
      *             if properties can not be loaded.
      */
-    public Actions() throws IOException {
+    private Actions() throws IOException {
 	Properties properties = new Properties();
 	properties.load(getClass().getResourceAsStream("/api.properties"));
 	fedoraExtern = properties.getProperty("fedoraExtern");
 	server = properties.getProperty("serverName");
 	urnbase = properties.getProperty("urnbase");
+	escluster = properties.getProperty("escluster");
 	fedora = FedoraFactory.getFedoraImpl(
 		properties.getProperty("fedoraIntern"),
 		properties.getProperty("user"),
@@ -110,6 +121,18 @@ public class Actions {
 		"/externalLinks.properties"));
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
+	search = new Search(escluster);
+    }
+
+    /**
+     * @return an instance of this Actions.class
+     * @throws IOException
+     *             if properties can't be read
+     */
+    public static Actions getInstance() throws IOException {
+	if (actions == null)
+	    actions = new Actions();
+	return actions;
     }
 
     /**
@@ -149,15 +172,16 @@ public class Actions {
     public String delete(String pid) {
 
 	String msg = "";
+	Node node = readNode(pid);
 	fedora.deleteComplexObject(pid);
 
 	try {
-	    outdex(pid);
+	    removeFromIndex(node.getNamespace(), node.getContentType(), pid);
 	} catch (Exception e) {
 	    msg = e.getMessage();
 	}
 
-	return pid + " successfully deleted! " + msg;
+	return pid + " successfully deleted! \n" + msg + "\n";
     }
 
     /**
@@ -180,21 +204,6 @@ public class Actions {
 	return pid + ": data - datastream successfully deleted! ";
     }
 
-    // -------------------------------------------------------
-
-    /**
-     * @param type
-     *            The objectTyp
-     * @return A list of pids with type {@type}
-     */
-    public List<String> findByType(String type) {
-	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
-	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	return RdfUtils.getFedoraSubject(in);
-    }
-
-   
     /**
      * @param pid
      *            The pid to read the data from
@@ -585,12 +594,17 @@ public class Actions {
     }
 
     /**
+     * @param index
+     *            the elasticsearch index
+     * @param type
+     *            the type of the resource
      * @param pid
      *            The pid to remove from index
      * @return A short message
      */
-    public String outdex(String pid) {
-	return services.outdex(pid);
+    public String removeFromIndex(String index, String type, String pid) {
+	search.delete(index, type, pid);
+	return pid + " removed from index " + index + "!";
     }
 
     /**
@@ -598,10 +612,16 @@ public class Actions {
      *            The pid that must be indexed
      * @param namespace
      *            the namespace of the pid
+     * @param type
+     *            the type of the resource
      * @return a short message.
      */
-    public String index(String p, String namespace) {
-	return services.index(p, namespace);
+    public String index(String p, String namespace, String type) {
+	String viewAsString = getReM(namespace + ":" + p, "application/json");
+	viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
+		(JSONArray) JSONValue.parse(viewAsString)));
+	search.index(namespace, type, namespace + ":" + p, viewAsString);
+	return namespace + ":" + p + " indexed!";
     }
 
     /**
@@ -641,39 +661,126 @@ public class Actions {
     /**
      * @param type
      *            a contentType
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es"
      * @return all objects of contentType type
      */
-    public List<String> getAll(String type) {
+    public List<String> list(String type, String namespace, int from,
+	    int until, String getListingFrom) {
 
-	if (type == null || type.isEmpty())
-	    return getAll();
-	else
-	    return findByType(type);
+	List<String> list = null;
+	if (!getListingFrom.equals("es")) {
+	    if (type == null || type.isEmpty())
+		list = listAllFromRepo(namespace, from, until);
+	    else
+		list = listAllFromRepo(type, namespace, from, until);
+	} else {
+	    list = listAllFromSearch(type, namespace, from, until);
+	}
+
+	return list;
     }
 
     /**
-     * @return a list of all objects
+     * @param type
+     *            The objectTyp
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @return A list of pids with type {@type}
      */
-    public List<String> getAll() {
+    public List<String> listAllFromSearch(String type, String namespace,
+	    int from, int until) {
 
-	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
-	InputStream stream = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	return RdfUtils.getFedoraSubject(stream);
+	return search.listIds(namespace, type, from, until);
     }
 
     /**
      * @param type
      *            the type to be displaye
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es"
      * @return html listing of all objects
      */
-    public String getAllAsHtml(String type) {
-	List<String> list = null;
-	if (type == null || type.isEmpty())
-	    list = getAll();
-	else
-	    list = findByType(type);
-	return representations.getAllOfTypeAsHtml(list, type);
+    public String listAsHtml(String type, String namespace, int from,
+	    int until, String getListingFrom) {
+
+	List<String> list = list(type, namespace, from, until, getListingFrom);
+
+	return representations.getAllOfTypeAsHtml(list, type, namespace, from,
+		until, getListingFrom);
+    }
+
+    private List<String> listAllFromRepo(String type, String namespace,
+	    int from, int until) {
+	if (from >= until || from < 0 || until < 0)
+	    throw new HttpArchiveException(416, "Can not process. From: "
+		    + from + "Until: " + until + ".");
+
+	List<String> result = new Vector<String>();
+	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
+	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
+		FedoraVocabulary.N3);
+	List<String> list = RdfUtils.getFedoraSubject(in);
+	if (from >= list.size()) {
+	    return new Vector<String>();
+	}
+	if (until < list.size()) {
+	    list = list.subList(from, until);
+	} else {
+	    list = list.subList(from, list.size());
+	}
+	if (namespace == null || namespace.isEmpty())
+	    return list;
+	for (String item : list) {
+	    if (item.startsWith(namespace + ":"))
+		result.add(item);
+	}
+	return result;
+    }
+
+    private List<String> listAllFromRepo(String namespace, int from, int until) {
+	if (from >= until || from < 0 || until < 0)
+	    throw new HttpArchiveException(416, "Can not process. From: "
+		    + from + "Until: " + until + ".");
+
+	List<String> result = new Vector<String>();
+	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
+	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
+		FedoraVocabulary.N3);
+	List<String> list = RdfUtils.getFedoraSubject(in);
+	if (from >= list.size()) {
+	    return new Vector<String>();
+	}
+	if (until < list.size()) {
+	    list = list.subList(from, until);
+	} else {
+	    list = list.subList(from, list.size());
+	}
+	if (namespace == null || namespace.isEmpty())
+	    return list;
+	for (String item : list) {
+	    if (item.startsWith(namespace + ":"))
+		result.add(item);
+	}
+	return result;
     }
 
     /**

@@ -49,6 +49,10 @@ sed -e "s,\$ARCHIVE_HOME,$ARCHIVE_HOME,g" \
 -e "s,\$ARCHIVE_USER,$ARCHIVE_USER,g" \
 -e "s,\$ARCHIVE_PASSWORD,$ARCHIVE_PASSWORD,g" \
 -e "s,\$SERVER,$SERVER,g" \
+-e "s,\$BACKEND,$BACKEND,g" \
+-e "s,\$FRONTEND,$FRONTEND,g" \
+-e "s,\$URNBASE,$URNBASE,g" \
+-e "s,\$IP,$IP,g" \
 -e "s,\$TOMCAT_PORT,$TOMCAT_PORT,g" \
 -e "s,\$EMAIL,$EMAIL,g" \
 -e "s,\$ELASTICSEARCH_PORT,$ELASTICSEARCH_PORT,g" $file > $target
@@ -81,11 +85,11 @@ else
 	wget http://repo1.maven.org/maven2/org/fcrepo/fcrepo-installer/3.6.1/fcrepo-installer-3.6.1.jar
 fi
 
-if [ -f elasticsearch-0.19.11.tar.gz ]
+if [ -f elasticsearch-0.90.5.tar.gz]
 then
 	echo "elasticsearch is already here! Stop downloading!"
 else
-	wget http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.19.11.tar.gz
+	wget http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.5.tar.gz
 fi
 
 echo "install fedora"
@@ -94,8 +98,8 @@ export CATALINA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora/tomcat
 java -jar fcrepo-installer-3.6.1.jar  $ARCHIVE_HOME/conf/install.properties
 
 echo "install elasticsearch"
-tar -xzf elasticsearch-0.19.11.tar.gz
-mv elasticsearch-0.19.11 $ARCHIVE_HOME/elasticsearch
+tar -xzf elasticsearch-0.90.5.tar.gz
+mv elasticsearch-0.90.5 $ARCHIVE_HOME/elasticsearch
 $ARCHIVE_HOME/elasticsearch/bin/elasticsearch
 pwd
 cp variables.conf $ARCHIVE_HOME/bin/
@@ -154,7 +158,7 @@ cd -
 function correctSwagger()
 {
 var=$1
-cd $ARCHIVE_HOME/html/api/
+cd $ARCHIVE_HOME/html/doc
 number=`grep -n "models" ${var}.json |cut -f1 -d:`
 number=`expr $number - 1`
 if [ $? -eq 0 ]
@@ -168,17 +172,17 @@ cd -
 
 function copySwagger()
 {
-mkdir -p $ARCHIVE_HOME/html/api
-cp -r $ARCHIVE_HOME/src/regal-api/target/classes/apidocs/* $ARCHIVE_HOME/html/api
-if [ $? -ne 0 ]
+
+cp -r $ARCHIVE_HOME/src/regal-api/target/classes/apidocs/* $ARCHIVE_HOME/html/doc
+if [ $? -eq 0 ]
 then
-return;
-fi
-cd $ARCHIVE_HOME/html/api/
-sed "s/localhost/$SERVER/g" service.json > tmp && mv tmp service.json
-cd -
+cp $ARCHIVE_HOME/html/doc/service.json templates
+cp $ARCHIVE_HOME/html/index.html templates
+substituteVars service.json $ARCHIVE_HOME/html/doc/service.json
+substituteVars index.html $ARCHIVE_HOME/html/index.html
 correctSwagger utils;
 correctSwagger resource;
+fi
 }
 
 
@@ -223,8 +227,6 @@ function copyHtml
 echo "copy html"
 cp -r $ARCHIVE_HOME/src/regal-ui/htdocs/* $ARCHIVE_HOME/html/
 cp $ARCHIVE_HOME/conf/Identify.xml $ARCHIVE_HOME/html/
-echo "Edit $ARCHIVE_HOME/html/js/Search.js"
-sed "s/localhost/$SERVER/g" $ARCHIVE_HOME/html/js/Search.js > tmp && mv tmp "$ARCHIVE_HOME/html/js/Search.js"
 echo "Copy api Doku"
 copySwagger
 }

@@ -18,6 +18,7 @@ package de.nrw.hbz.regal.api.helper;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -42,7 +43,7 @@ public class TestActions {
 
     @Before
     public void setUp() throws IOException {
-	actions = new Actions();
+	actions = Actions.getInstance();
 	cleanUp();
     }
 
@@ -54,21 +55,12 @@ public class TestActions {
     @Test
     public void testFindByType() throws IOException {
 	createTestObject("123");
-	int count = 10;
-	for (String result : actions
-		.findByType(ObjectType.monograph.toString())) {
-	    if (count <= 0)
-		break;
-	    count--;
-	    Node node = actions.readNode(result);
-	    String type = node.getContentType();
-
-	    if (type == null || type.isEmpty())
-		Assert.fail();
-	    else if (ObjectType.monograph.toString().compareTo(type) != 0) {
-		Assert.fail();
-	    }
-	}
+	List<String> list = actions.list("monograph", "test", 0, 10, "repo");
+	Assert.assertTrue(list.size() == 0);
+	Assert.assertTrue(list.get(0).equals("test:123"));
+	Node node = actions.readNode(list.get(0));
+	String type = node.getContentType();
+	Assert.assertTrue(type.equals("monograph"));
     }
 
     public void createTestObject(String pid) throws IOException {

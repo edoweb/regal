@@ -72,7 +72,7 @@ public class Resource {
      *             if properties of the Actions class can't get loaded
      */
     public Resource() throws IOException {
-	actions = new Actions();
+	actions = Actions.getInstance();
     }
 
     /**
@@ -170,12 +170,27 @@ public class Resource {
      * 
      * @param type
      *            a contentType
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es"
      * @return a list of all archived objects
      */
     @GET
     @Produces({ "application/json", "application/xml" })
-    public Response getAll(@DefaultValue("") @QueryParam("type") String type) {
-	ObjectList rem = new ObjectList(actions.getAll(type));
+    public Response getAll(
+	    @DefaultValue("") @QueryParam("type") String type,
+	    @DefaultValue("") @QueryParam("namespace") String namespace,
+	    @DefaultValue("0") @QueryParam("from") int from,
+	    @DefaultValue("10") @QueryParam("until") int until,
+	    @DefaultValue("es") @QueryParam("getListingFrom") String getListingFrom) {
+	ObjectList rem = new ObjectList(actions.list(type, namespace, from,
+		until, getListingFrom));
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();
     }
@@ -185,13 +200,27 @@ public class Resource {
      * 
      * @param type
      *            a contentType
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es"
      * @return a list of resources as html
      */
     @GET
     @Produces({ "text/html" })
     public Response getAllAsHtml(
-	    @DefaultValue("") @QueryParam("type") String type) {
-	String rem = actions.getAllAsHtml(type);
+	    @DefaultValue("") @QueryParam("type") String type,
+	    @DefaultValue("") @QueryParam("namespace") String namespace,
+	    @DefaultValue("0") @QueryParam("from") int from,
+	    @DefaultValue("10") @QueryParam("until") int until,
+	    @DefaultValue("es") @QueryParam("getListingFrom") String getListingFrom) {
+	String rem = actions.listAsHtml(type, namespace, from, until,
+		getListingFrom);
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();
     }
@@ -201,13 +230,22 @@ public class Resource {
      * 
      * @param type
      *            the type of resources that will be deleted
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
      * @return A message and status code 200 if ok and 500 if not
      */
     @DELETE
     @Produces({ "application/json", "application/xml" })
-    public String deleteAllOfType(@QueryParam("type") String type) {
+    public String deleteAllOfType(@QueryParam("type") String type,
+	    @QueryParam("namespace") String namespace,
+	    @QueryParam("from") int from, @QueryParam("until") int until) {
 	try {
-	    return actions.deleteAll(actions.getAll(type));
+	    return actions.deleteAll(actions.list(type, namespace, from, until,
+		    "repo"));
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);

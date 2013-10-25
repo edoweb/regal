@@ -52,9 +52,19 @@ class Representations {
      *            a list with pids
      * @param type
      *            the type to be displaye
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @param getListingFrom
+     *            tells from which component the listing comes from
+     * 
      * @return html listing of all objects
      */
-    public String getAllOfTypeAsHtml(List<String> list, String type) {
+    public String getAllOfTypeAsHtml(List<String> list, String type,
+	    String namespace, int from, int until, String getListingFrom) {
 
 	String result = "";
 	try {
@@ -65,8 +75,18 @@ class Representations {
 	    IOUtils.copy(fileLocation.openStream(), writer);
 	    String data = writer.toString();
 
+	    if (type == null || type.isEmpty())
+		type = "resource";
+	    if (namespace == null || namespace.isEmpty())
+		namespace = "all namespaces";
+
 	    ST st = new ST(data, '$', '$');
 	    st.add("type", type);
+	    st.add("namespace", namespace);
+	    st.add("from", from);
+	    st.add("until", until);
+	    st.add("getListingFrom", getListingFrom);
+
 	    for (String item : list) {
 		st.add("items", "<li><a href=\"" + uriPrefix + item + "\">"
 			+ item + "</a></li>");
