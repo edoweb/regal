@@ -194,7 +194,6 @@ public class Actions {
 	return RdfUtils.getFedoraSubject(in);
     }
 
-   
     /**
      * @param pid
      *            The pid to read the data from
@@ -718,13 +717,38 @@ public class Actions {
      *            the urn subnamespace id
      * @return the urn
      */
-    public String addUrn(String pid, String namespace, String snid) {
+    public String replaceUrn(String pid, String namespace, String snid) {
 	String subject = namespace + ":" + pid;
 	String urn = services.generateUrn(subject, snid);
 	String hasUrn = "http://geni-orca.renci.org/owl/topology.owl#hasURN";
 	// String sameAs = "http://www.w3.org/2002/07/owl#sameAs";
 	String metadata = readMetadata(subject);
 	metadata = RdfUtils.replaceTriple(subject, hasUrn, urn, true, metadata);
+	updateMetadata(namespace + ":" + pid, metadata);
+	return "Update " + subject + " metadata " + metadata;
+    }
+
+    /**
+     * Generates a urn
+     * 
+     * @param pid
+     *            usually the pid of an object
+     * @param namespace
+     *            usually the namespace
+     * @param snid
+     *            the urn subnamespace id
+     * @return the urn
+     */
+    public String addUrn(String pid, String namespace, String snid) {
+	String subject = namespace + ":" + pid;
+	String urn = services.generateUrn(subject, snid);
+	String hasUrn = "http://geni-orca.renci.org/owl/topology.owl#hasURN";
+	// String sameAs = "http://www.w3.org/2002/07/owl#sameAs";
+	String metadata = readMetadata(subject);
+	if (RdfUtils.hasTriple(subject, hasUrn, urn, metadata))
+	    throw new ArchiveException(subject + "already has a urn: "
+		    + metadata);
+	metadata = RdfUtils.addTriple(subject, hasUrn, urn, true, metadata);
 	updateMetadata(namespace + ":" + pid, metadata);
 	return "Update " + subject + " metadata " + metadata;
     }

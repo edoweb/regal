@@ -468,4 +468,58 @@ public class RdfUtils {
 	}
 
     }
+
+    public static boolean hasTriple(String subject, String predicate,
+	    String urn, String metadata) {
+	try {
+	    InputStream is = new ByteArrayInputStream(
+		    metadata.getBytes("UTF-8"));
+	    RepositoryConnection con = readRdfInputStreamToRepository(is,
+		    RDFFormat.NTRIPLES);
+	    ValueFactory f = con.getValueFactory();
+	    URI s = f.createURI(subject);
+	    URI p = f.createURI(predicate);
+	    Value o = null;
+	    RepositoryResult<Statement> statements = con.getStatements(null,
+		    null, null, true);
+	    while (statements.hasNext()) {
+		Statement st = statements.next();
+		if (st.getSubject().stringValue().equals(subject)
+			&& st.getPredicate().stringValue().equals(predicate)) {
+		    return true;
+		}
+	    }
+
+	} catch (RepositoryException e) {
+	    throw new RdfException(e);
+	} catch (UnsupportedEncodingException e) {
+	    throw new RdfException(e);
+	}
+	return false;
+    }
+
+    public static String addTriple(String subject, String predicate,
+	    String object, boolean isLiteral, String metadata) {
+	try {
+	    InputStream is = new ByteArrayInputStream(
+		    metadata.getBytes("UTF-8"));
+	    RepositoryConnection con = readRdfInputStreamToRepository(is,
+		    RDFFormat.NTRIPLES);
+	    ValueFactory f = con.getValueFactory();
+	    URI s = f.createURI(subject);
+	    URI p = f.createURI(predicate);
+	    Value o = null;
+	    if (!isLiteral) {
+		o = f.createURI(object);
+	    } else {
+		o = f.createLiteral(object);
+	    }
+	    con.add(s, p, o);
+	    return writeStatements(con, RDFFormat.NTRIPLES);
+	} catch (RepositoryException e) {
+	    throw new RdfException(e);
+	} catch (UnsupportedEncodingException e) {
+	    throw new RdfException(e);
+	}
+    }
 }
