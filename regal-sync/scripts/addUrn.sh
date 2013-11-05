@@ -12,7 +12,7 @@ id=`echo $i|grep -o "[0-9]*$"`
 
 echo "Add URN for id=$id,namespace=$namespace,snid=$snid"
 echo
-curl -uadmin:$passwd -XPOST "api.edoweb-rlp.de/utils/addUrn?id=$id&namespace=$namespace&snid=$snid"
+curl -uadmin:$passwd -XPOST "$server/utils/addUrn?id=$id&namespace=$namespace&snid=$snid"
 echo
 echo
 done
