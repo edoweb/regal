@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.cli.HelpFormatter;
@@ -238,7 +239,7 @@ public class Syncer {
 	boolean harvestFromScratch = true;
 	boolean forceDownload = true;
 
-	Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
+	List<String> pids = harvester.harvest(sets, harvestFromScratch);
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
 	int size = pids.size();
@@ -278,7 +279,7 @@ public class Syncer {
 	boolean harvestFromScratch = false;
 	boolean forceDownload = true;
 
-	Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
+	List<String> pids = harvester.harvest(sets, harvestFromScratch);
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
 	int size = pids.size();
@@ -316,7 +317,7 @@ public class Syncer {
     void cont(String sets) {
 	boolean harvestFromScratch = true;
 	boolean forceDownload = false;
-	Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
+	List<String> pids = harvester.harvest(sets, harvestFromScratch);
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 	int size = pids.size();
 	for (int i = 0; i < size; i++) {
@@ -349,7 +350,7 @@ public class Syncer {
 	boolean harvestFromScratch = false;
 	boolean forceDownload = false;
 
-	Vector<String> pids = harvester.harvest(sets, harvestFromScratch);
+	List<String> pids = harvester.harvest(sets, harvestFromScratch);
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
 	int size = pids.size();

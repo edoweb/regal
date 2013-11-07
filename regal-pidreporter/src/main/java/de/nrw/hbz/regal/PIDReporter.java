@@ -19,8 +19,8 @@ package de.nrw.hbz.regal;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class PIDReporter {
      *            if true timestamp will be ignored.
      * @return a list of pids
      */
-    public Vector<String> harvest(String sets, boolean harvestFromScratch) {
+    public List<String> harvest(String sets, boolean harvestFromScratch) {
 	return mygrabber.harvest(sets, harvestFromScratch);
     }
 
@@ -87,7 +87,7 @@ public class PIDReporter {
      *            a properties file
      * @return a list of pids
      */
-    public Vector<String> getPids(String propFile) {
+    public List<String> getPids(String propFile) {
 	Properties properties = new Properties();
 	try {
 	    properties.load(new BufferedInputStream(new FileInputStream(

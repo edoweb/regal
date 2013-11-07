@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +50,7 @@ class OaiPidGrabber {
 	this.timestampfile = timestampFile;
     }
 
-    Vector<String> harvest(String set, boolean harvestFromScratch) {
+    List<String> harvest(String set, boolean harvestFromScratch) {
 	String[] sets = null;
 
 	if (set != null && !set.isEmpty()) {
@@ -66,7 +67,7 @@ class OaiPidGrabber {
      * 
      * @return
      */
-    Vector<String> harvest(String[] sets, boolean harvestFromScratch) {
+    List<String> harvest(String[] sets, boolean harvestFromScratch) {
 
 	logger.info("Start harvesting " + server + " !");
 
