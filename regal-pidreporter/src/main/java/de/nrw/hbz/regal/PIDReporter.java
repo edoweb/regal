@@ -76,7 +76,7 @@ public class PIDReporter {
      * @return a list of pids
      */
     public List<String> harvest(String sets, boolean harvestFromScratch) {
-	return mygrabber.harvest(sets, harvestFromScratch);
+	return mygrabber.listPids(sets, harvestFromScratch);
     }
 
     /**
@@ -115,7 +115,7 @@ public class PIDReporter {
 	pidFile = properties.getProperty("pidreporter.pidFile");
 
 	OaiPidGrabber grabber = new OaiPidGrabber(server, timestampFile);
-	return grabber.harvest(sets, harvestFromScratch);
+	return grabber.listPids(sets, harvestFromScratch);
     }
 
     private void run(String propFile) {
@@ -134,7 +134,7 @@ public class PIDReporter {
 	    System.out
 		    .println("Example: java -jar pidreporter.jar pidreporter.properties\n");
 	    System.out
-		    .println("Example Properties File:\n\tpidreporter.server=http://urania.hbz-nrw.de:1801/edowebOAI/\n\tpidreporter.set=null\n\tpidreporter.harvestFromScratch=true\n\tpidreporter.pidFile=pids.txt");
+		    .println("Example Properties File:\n\tpidreporter.server=http://localhost/edowebOAI/\n\tpidreporter.set=null\n\tpidreporter.harvestFromScratch=true\n\tpidreporter.pidFile=pids.txt");
 	    System.exit(1);
 	}
 	PIDReporter main = new PIDReporter();

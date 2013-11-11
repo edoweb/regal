@@ -50,7 +50,16 @@ class OaiPidGrabber {
 	this.timestampfile = timestampFile;
     }
 
-    List<String> harvest(String set, boolean harvestFromScratch) {
+    /**
+     * 
+     * @param set
+     *            a oai set
+     * @param harvestFromScratch
+     *            if true, all pids will be listed. If false, the timestampFile
+     *            will be analyses and only recent pids will be listed
+     * @return a list of pids
+     */
+    List<String> listPids(String set, boolean harvestFromScratch) {
 	String[] sets = null;
 
 	if (set != null && !set.isEmpty()) {
@@ -59,15 +68,19 @@ class OaiPidGrabber {
 		sets = set.split(",");
 	    }
 	}
-	return harvest(sets, harvestFromScratch);
+	return listPids(sets, harvestFromScratch);
     }
 
-    /*
-     * @param setSpec
+    /**
      * 
-     * @return
+     * @param sets
+     *            multiple oai sets
+     * @param harvestFromScratch
+     *            if true, all pids will be listed. If false, the timestampFile
+     *            will be analyses and only recent pids will be listed
+     * @return a list of pids
      */
-    List<String> harvest(String[] sets, boolean harvestFromScratch) {
+    public List<String> listPids(String[] sets, boolean harvestFromScratch) {
 
 	logger.info("Start harvesting " + server + " !");
 
@@ -200,6 +213,27 @@ class OaiPidGrabber {
 	// int i = 0;
 	Pattern pattern = Pattern
 		.compile("<identifier>oai:[^:]*:([^<]*)</identifier>");
+	Matcher matcher = pattern.matcher(stream);
+	while (matcher.find(start)) {
+	    String pid = stream.substring(matcher.start(1), matcher.end(1));
+
+	    result.add(pid);
+	    start = matcher.end();
+	}
+	return result;
+    }
+
+    /**
+     * @param reclist
+     * @return
+     */
+    private Vector<String> collectIdentifiers(IdentifiersList reclist) {
+	String stream = reclist.getResponse().asXML();
+
+	Vector<String> result = new Vector<String>();
+	int start = 0;
+	// int i = 0;
+	Pattern pattern = Pattern.compile("<identifier>([^<]*)</identifier>");
 	Matcher matcher = pattern.matcher(stream);
 	while (matcher.find(start)) {
 	    String pid = stream.substring(matcher.start(1), matcher.end(1));
