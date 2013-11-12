@@ -28,6 +28,7 @@ import org.junit.Test;
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.exceptions.ArchiveException;
 import de.nrw.hbz.regal.fedora.CopyUtils;
 
 /**
@@ -97,10 +98,10 @@ public class TestActions {
     }
 
     @Test
-    public void epicur() throws IOException, URISyntaxException {
+    public void epicurAddAndReplace() throws IOException, URISyntaxException {
 	createTestObject("123");
 
-	String assumed = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xmlns:xsi=\"http://www.w3.com/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
+	String assumed = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
 		+ "\t<administrative_data>\n"
 		+ "\t\t<delivery>\n"
 		+ "\t\t\t<update_status type=\""
@@ -120,7 +121,7 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
-	String assumed2 = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xmlns:xsi=\"http://www.w3.com/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
+	String assumed2 = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
 		+ "\t<administrative_data>\n"
 		+ "\t\t<delivery>\n"
 		+ "\t\t\t<update_status type=\""
@@ -146,11 +147,45 @@ public class TestActions {
 	actions.addUrn("123", "test", "test");
 	String response = actions.epicur("123", "test");
 	Assert.assertEquals(assumed, response);
-	actions.addUrn("123", "test", "quatsch");
-	actions.addUrn("123", "test", "hbz:929:01");
+	actions.replaceUrn("123", "test", "quatsch");
+	actions.replaceUrn("123", "test", "hbz:929:01");
 	response = actions.epicur("123", "test");
 	Assert.assertEquals(assumed2, response);
 	response = actions.readMetadata("test:123");
+    }
+
+    @Test(expected = ArchiveException.class)
+    public void epicurAddAndAdd() throws IOException, URISyntaxException {
+	createTestObject("123");
+
+	String assumed = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
+		+ "\t<administrative_data>\n"
+		+ "\t\t<delivery>\n"
+		+ "\t\t\t<update_status type=\""
+		+ "urn_new"
+		+ "\"></update_status>\n"
+		+ "\t\t\t<transfer type=\"oai\"></transfer>\n"
+		+ "\t\t</delivery>\n"
+		+ "\t</administrative_data>\n"
+		+ "<record>\n"
+		+ "\t<identifier scheme=\"urn:nbn:de\">"
+		+ "urn:nbn:de:test-test:1236"
+		+ "</identifier>\n"
+		+ "\t<resource>\n"
+		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
+		+ actions.getServer()
+		+ "/resource/test:123"
+		+ "</identifier>\n"
+		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
+		+ "\t</resource>" + "</record>\n" + "</epicur> ";
+
+	Services services = actions.getServices();
+	Assert.assertEquals("urn:nbn:de:test-1231",
+		services.generateUrn("123", "test"));
+	actions.addUrn("123", "test", "test");
+	String response = actions.epicur("123", "test");
+	Assert.assertEquals(assumed, response);
+	actions.addUrn("123", "test", "quatsch");
     }
 
     @Test
