@@ -75,8 +75,10 @@ public class PIDReporter {
      *            if true timestamp will be ignored.
      * @return a list of pids
      */
-    public List<String> harvest(String sets, boolean harvestFromScratch) {
-	return mygrabber.listPids(sets, harvestFromScratch);
+    public List<String> harvest(String sets, boolean harvestFromScratch,
+	    CollectPidStrategy collectPidStrategy, String format) {
+	return mygrabber.listPids(sets, harvestFromScratch, collectPidStrategy,
+		format);
     }
 
     /**
@@ -112,10 +114,21 @@ public class PIDReporter {
 	    harvestFromScratch = true;
 	}
 
+	CollectPidStrategy collectPidStrategy = new DefaultCollectPidStrategy();
+	String strategy = properties.getProperty("pidreporter.strategy");
+	if (strategy.equals("Digitool")) {
+	    collectPidStrategy = new DigitoolPidStrategy();
+	}
+	String format = properties.getProperty("pidreporter.format");
+	if (format == null || format.isEmpty()) {
+	    format = "oai_dc";
+	}
+
 	pidFile = properties.getProperty("pidreporter.pidFile");
 
 	OaiPidGrabber grabber = new OaiPidGrabber(server, timestampFile);
-	return grabber.listPids(sets, harvestFromScratch);
+	return grabber.listPids(sets, harvestFromScratch, collectPidStrategy,
+		format);
     }
 
     private void run(String propFile) {

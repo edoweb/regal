@@ -29,6 +29,7 @@ import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.nrw.hbz.regal.DigitoolPidStrategy;
 import de.nrw.hbz.regal.PIDReporter;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
@@ -239,7 +240,8 @@ public class Syncer {
 	boolean harvestFromScratch = true;
 	boolean forceDownload = true;
 
-	List<String> pids = harvester.harvest(sets, harvestFromScratch);
+	List<String> pids = harvester.harvest(sets, harvestFromScratch,
+		new DigitoolPidStrategy());
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
 	int size = pids.size();
@@ -279,7 +281,8 @@ public class Syncer {
 	boolean harvestFromScratch = false;
 	boolean forceDownload = true;
 
-	List<String> pids = harvester.harvest(sets, harvestFromScratch);
+	List<String> pids = harvester.harvest(sets, harvestFromScratch,
+		new DigitoolPidStrategy());
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
 	int size = pids.size();
@@ -317,7 +320,8 @@ public class Syncer {
     void cont(String sets) {
 	boolean harvestFromScratch = true;
 	boolean forceDownload = false;
-	List<String> pids = harvester.harvest(sets, harvestFromScratch);
+	List<String> pids = harvester.harvest(sets, harvestFromScratch,
+		new DigitoolPidStrategy());
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 	int size = pids.size();
 	for (int i = 0; i < size; i++) {
@@ -350,7 +354,8 @@ public class Syncer {
 	boolean harvestFromScratch = false;
 	boolean forceDownload = false;
 
-	List<String> pids = harvester.harvest(sets, harvestFromScratch);
+	List<String> pids = harvester.harvest(sets, harvestFromScratch,
+		new DigitoolPidStrategy());
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
 	int size = pids.size();
