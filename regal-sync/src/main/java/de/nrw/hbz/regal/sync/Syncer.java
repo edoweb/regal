@@ -241,7 +241,7 @@ public class Syncer {
 	boolean forceDownload = true;
 
 	List<String> pids = harvester.harvest(sets, harvestFromScratch,
-		new DigitoolPidStrategy());
+		new DigitoolPidStrategy(), "oai_dc");
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
 	int size = pids.size();
@@ -282,7 +282,7 @@ public class Syncer {
 	boolean forceDownload = true;
 
 	List<String> pids = harvester.harvest(sets, harvestFromScratch,
-		new DigitoolPidStrategy());
+		new DigitoolPidStrategy(), "oai_dc");
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
 	int size = pids.size();
@@ -321,7 +321,7 @@ public class Syncer {
 	boolean harvestFromScratch = true;
 	boolean forceDownload = false;
 	List<String> pids = harvester.harvest(sets, harvestFromScratch,
-		new DigitoolPidStrategy());
+		new DigitoolPidStrategy(), "oai_dc");
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 	int size = pids.size();
 	for (int i = 0; i < size; i++) {
@@ -355,7 +355,7 @@ public class Syncer {
 	boolean forceDownload = false;
 
 	List<String> pids = harvester.harvest(sets, harvestFromScratch,
-		new DigitoolPidStrategy());
+		new DigitoolPidStrategy(), "oai_dc");
 	logger.info("Verarbeite " + pids.size() + " Dateneinheiten.");
 
 	int size = pids.size();
