@@ -221,6 +221,16 @@ public class TestActions {
 	System.out.println(response);
     }
 
+    @Test(expected = HttpArchiveException.class)
+    public void invalidMetadata() throws IOException {
+	createTestObject("123");
+	actions.updateMetadata(
+		"test:123",
+		CopyUtils.copyToString(
+			Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("invalid.nt"), "utf-8"));
+    }
+
     @Test
     public void html() throws IOException {
 	createTestObject("123");

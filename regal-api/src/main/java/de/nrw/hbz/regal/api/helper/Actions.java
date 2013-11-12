@@ -322,6 +322,7 @@ public class Actions {
 			+ " This action is not supported."
 			+ " Use HTTP DELETE instead.");
 	    }
+	    RdfUtils.validate(content);
 	    File file = CopyUtils.copyStringToFile(content);
 	    Node node = fedora.readNode(pid);
 	    if (node != null) {
@@ -329,6 +330,8 @@ public class Actions {
 		fedora.updateNode(node);
 	    }
 	    return pid + " metadata successfully updated!";
+	} catch (RdfException e) {
+	    throw new HttpArchiveException(400);
 	} catch (IOException e) {
 	    throw new UpdateNodeException(e);
 	}

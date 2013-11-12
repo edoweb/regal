@@ -522,4 +522,19 @@ public class RdfUtils {
 	    throw new RdfException(e);
 	}
     }
+
+    /**
+     * @param metadata
+     *            n-triple
+     */
+    public static void validate(String metadata) {
+	try {
+	    InputStream is = new ByteArrayInputStream(
+		    metadata.getBytes("UTF-8"));
+	    RepositoryConnection con = readRdfInputStreamToRepository(is,
+		    RDFFormat.NTRIPLES);
+	} catch (UnsupportedEncodingException e) {
+	    throw new RdfException(e);
+	}
+    }
 }
