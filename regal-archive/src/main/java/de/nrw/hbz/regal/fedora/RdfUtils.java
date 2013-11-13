@@ -469,17 +469,25 @@ public class RdfUtils {
 
     }
 
+    /**
+     * @param subject
+     *            the triples subject
+     * @param predicate
+     *            the triples predicate
+     * @param object
+     *            the triples object
+     * @param metadata
+     *            ntriple string
+     * @return true if the metadata string contains the triple
+     */
     public static boolean hasTriple(String subject, String predicate,
-	    String urn, String metadata) {
+	    String object, String metadata) {
 	try {
 	    InputStream is = new ByteArrayInputStream(
 		    metadata.getBytes("UTF-8"));
 	    RepositoryConnection con = readRdfInputStreamToRepository(is,
 		    RDFFormat.NTRIPLES);
-	    ValueFactory f = con.getValueFactory();
-	    URI s = f.createURI(subject);
-	    URI p = f.createURI(predicate);
-	    Value o = null;
+
 	    RepositoryResult<Statement> statements = con.getStatements(null,
 		    null, null, true);
 	    while (statements.hasNext()) {
@@ -498,6 +506,19 @@ public class RdfUtils {
 	return false;
     }
 
+    /**
+     * @param subject
+     *            the triples subject
+     * @param predicate
+     *            the triples predicate
+     * @param object
+     *            the triples object
+     * @param isLiteral
+     *            true, if object is a literal
+     * @param metadata
+     *            ntriple rdf-string to add the triple
+     * @return the string together with the new triple
+     */
     public static String addTriple(String subject, String predicate,
 	    String object, boolean isLiteral, String metadata) {
 	try {
@@ -531,8 +552,7 @@ public class RdfUtils {
 	try {
 	    InputStream is = new ByteArrayInputStream(
 		    metadata.getBytes("UTF-8"));
-	    RepositoryConnection con = readRdfInputStreamToRepository(is,
-		    RDFFormat.NTRIPLES);
+	    readRdfInputStreamToRepository(is, RDFFormat.NTRIPLES);
 	} catch (UnsupportedEncodingException e) {
 	    throw new RdfException(e);
 	}

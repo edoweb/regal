@@ -629,6 +629,17 @@ public class Actions {
 		children);
     }
 
+    /**
+     * Looks for other objects those are connected to the pid by a certain
+     * relation
+     * 
+     * @param pid
+     *            the pid to find relatives of
+     * @param relation
+     *            a relation that describes what kind of relatives you are
+     *            looking for
+     * @return a list of related pids
+     */
     public List<String> getRelatives(String pid, String relation) {
 	List<String> result = new Vector<String>();
 	Node node = readNode(pid);

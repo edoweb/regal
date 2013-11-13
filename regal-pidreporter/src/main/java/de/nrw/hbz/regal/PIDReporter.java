@@ -73,6 +73,10 @@ public class PIDReporter {
      *            sets to harvest
      * @param harvestFromScratch
      *            if true timestamp will be ignored.
+     * @param collectPidStrategy
+     *            defines how to extract pids from oai-identifiers
+     * @param format
+     *            the provided format to look for
      * @return a list of pids
      */
     public List<String> harvest(String sets, boolean harvestFromScratch,

@@ -77,6 +77,10 @@ class OaiPidGrabber {
      * @param harvestFromScratch
      *            if true, all pids will be listed. If false, the timestampFile
      *            will be analyses and only recent pids will be listed
+     * @param collectPidStrategy
+     *            defines how to extract pids from the oai-identifier
+     * @param format
+     *            defines a format
      * @return a list of pids
      */
     public List<String> listPids(String[] sets, boolean harvestFromScratch,

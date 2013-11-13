@@ -406,18 +406,32 @@ public class Node {
 	return this;
     }
 
+    /**
+     * @return returns the fileSize
+     */
     public BigInteger getFileSize() {
 	return fileSize;
     }
 
+    /**
+     * @param sizeInByte
+     *            sets the filesize
+     */
     public void setFileSize(BigInteger sizeInByte) {
 	fileSize = sizeInByte;
     }
 
+    /**
+     * @return the checksum of the data
+     */
     public String getChecksum() {
 	return checksum;
     }
 
+    /**
+     * @param checksum
+     *            sets a checksum for the data
+     */
     public void setChecksum(String checksum) {
 	this.checksum = checksum;
     }
