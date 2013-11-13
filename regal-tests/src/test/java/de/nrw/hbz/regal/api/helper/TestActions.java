@@ -30,6 +30,7 @@ import de.nrw.hbz.regal.api.DCBeanAnnotated;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 import de.nrw.hbz.regal.fedora.CopyUtils;
+import de.nrw.hbz.regal.fedora.RdfUtils;
 
 /**
  * 
@@ -232,6 +233,13 @@ public class TestActions {
     }
 
     @Test
+    public void oaiOre() throws IOException {
+	createTestObject("123");
+	RdfUtils.validate(actions.getReM("test:123", "text/plain"));
+	System.out.println(actions.getReM("test:123", "text/plain"));
+    }
+
+    @Test
     public void html() throws IOException {
 	createTestObject("123");
 	actions.getReM("test:123", "text/html");
@@ -239,6 +247,6 @@ public class TestActions {
 
     @After
     public void tearDown() throws IOException {
-	cleanUp();
+	// cleanUp();
     }
 }
