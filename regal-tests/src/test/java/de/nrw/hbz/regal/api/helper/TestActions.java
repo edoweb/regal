@@ -16,8 +16,10 @@
  */
 package de.nrw.hbz.regal.api.helper;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import junit.framework.Assert;
 
@@ -240,6 +242,19 @@ public class TestActions {
     }
 
     @Test
+    public void oaidc() throws IOException {
+	createTestObject("123");
+	actions.addUrn("123", "test", "test");
+	String schemaDecl = ""; // "<!DOCTYPE oai_dc PUBLIC \"http://www.openarchives.org/OAI/2.0/oai_dc.xsd\" \"\">\n";
+	URL schema = new URL("http://www.openarchives.org/OAI/2.0/oai_dc.xsd");
+	String xmlString = schemaDecl + actions.oaidc("test:123");
+	XmlUtils.validate(
+		new ByteArrayInputStream(xmlString.getBytes("UTF-8")),
+		schema.openStream());
+	System.out.println(actions.oaidc("test:123"));
+    }
+
+    @Test
     public void html() throws IOException {
 	createTestObject("123");
 	actions.getReM("test:123", "text/html");
@@ -247,6 +262,6 @@ public class TestActions {
 
     @After
     public void tearDown() throws IOException {
-	// cleanUp();
+	cleanUp();
     }
 }
