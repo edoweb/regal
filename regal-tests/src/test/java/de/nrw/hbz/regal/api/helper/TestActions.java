@@ -57,10 +57,9 @@ public class TestActions {
     }
 
     @Test
-    public void testFindByType() throws IOException {
+    public void testFindByType() throws IOException, InterruptedException {
 	createTestObject("123");
 	List<String> list = actions.list("monograph", "test", 0, 10, "repo");
-	Assert.assertTrue(list.size() == 0);
 	Assert.assertTrue(list.get(0).equals("test:123"));
 	Node node = actions.readNode(list.get(0));
 	String type = node.getContentType();
@@ -111,8 +110,8 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ actions.getServer()
-		+ "/resource/test:123"
+		+ actions.getUrnbase()
+		+ "test:123"
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
@@ -131,8 +130,8 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ actions.getServer()
-		+ "/resource/test:123"
+		+ actions.getUrnbase()
+		+ "test:123"
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
@@ -168,8 +167,8 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ actions.getServer()
-		+ "/resource/test:123"
+		+ actions.getUrnbase()
+		+ "test:123"
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
@@ -189,7 +188,7 @@ public class TestActions {
 	createTestObject("123");
 	Node node = actions.readNode("test:123");
 	// The pdfA conversion needs a public address
-	if (actions.getServer().equals("http://localhost"))
+	if (actions.getServer().contains("localhost"))
 	    return;
 	String response = actions.pdfa(node);
 	Assert.assertNotNull(response);

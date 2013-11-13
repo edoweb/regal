@@ -892,4 +892,11 @@ public class Actions {
 	updateMetadata(namespace + ":" + pid, metadata);
 	return "Update " + subject + " metadata " + metadata;
     }
+
+    /**
+     * @return the host to where the urns must point
+     */
+    public String getUrnbase() {
+	return urnbase;
+    }
 }
