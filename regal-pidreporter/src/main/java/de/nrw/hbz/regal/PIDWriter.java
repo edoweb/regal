@@ -21,7 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Vector;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 class PIDWriter {
     final Logger logger = LoggerFactory.getLogger(PIDWriter.class);
 
-    void print(Vector<String> pids, String path) {
+    void print(List<String> pids, String path) {
 
 	logger.info("Print pids separated by newline to " + path + " !");
 	BufferedOutputStream out = null;

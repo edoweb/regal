@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.openrdf.model.BNode;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -50,6 +51,8 @@ public class OaiOreMaker {
     String rdfNamespace = " http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     String rdfsNamespace = "http://www.w3.org/2000/01/rdf-schema#";
     String regalNamespace = "http://hbz-nrw.de/regal#";
+    String fpNamespace = "http://downlode.org/Code/RDF/File_Properties/schema#";
+    String wnNamespace = "http://xmlns.com/wordnet/1.6/";
 
     RepositoryConnection con = null;
 
@@ -202,6 +205,8 @@ public class OaiOreMaker {
 	    Literal lastTimeModified = f.createLiteral(lastModified);
 	    String mime = node.getMimeType();
 	    String label = node.getFileLabel();
+	    String fileSize = node.getFileSize().toString();
+	    String fileChecksum = node.getChecksum();
 
 	    // Predicates
 	    // ore
@@ -219,9 +224,19 @@ public class OaiOreMaker {
 	    URI dcHasFormat = f.createURI(dctermsNamespace, "hasFormat");
 	    // rdfs
 	    URI rdfsLabel = f.createURI(rdfsNamespace, "label");
+	    URI rdfsType = f.createURI(rdfsNamespace, "type");
 	    // regal
 	    URI contentType = f.createURI(regalNamespace, "contentType");
 	    URI hasData = f.createURI(regalNamespace, "hasData");
+	    // FileProperties
+	    URI fpSize = f.createURI(fpNamespace, "size");
+	    BNode theChecksumBlankNode = f.createBNode();
+	    URI fpChecksum = f.createURI(fpNamespace, "checksum");
+	    URI fpChecksumType = f.createURI(fpNamespace, "Checksum");
+	    URI fpChecksumGenerator = f.createURI(fpNamespace, "generator");
+	    URI fpChecksumAlgo = f.createURI(wnNamespace, "Algorithm");
+	    URI md5Uri = f.createURI("http://en.wikipedia.org/wiki/MD5");
+	    URI fpChecksumValue = f.createURI(fpNamespace, "checksumValue");
 
 	    // Statements
 
@@ -234,7 +249,20 @@ public class OaiOreMaker {
 		    con.add(aggregation, aggregates, fulltext);
 		    con.add(data, dcHasFormat, fulltext);
 		}
+	    }
 
+	    if (fileSize != null && !fileSize.isEmpty()) {
+		Literal dataSize = f.createLiteral(fileSize);
+		con.add(data, fpSize, dataSize);
+	    }
+
+	    if (fileChecksum != null && !fileChecksum.isEmpty()) {
+		Literal dataChecksum = f.createLiteral(fileChecksum);
+		con.add(theChecksumBlankNode, rdfsType, fpChecksumType);
+		con.add(theChecksumBlankNode, fpChecksumGenerator, md5Uri);
+		con.add(md5Uri, rdfsType, fpChecksumAlgo);
+		con.add(theChecksumBlankNode, fpChecksumValue, dataChecksum);
+		con.add(data, fpChecksum, theChecksumBlankNode);
 	    }
 
 	    if (label != null && !label.isEmpty()) {

@@ -1,4 +1,8 @@
 #! /bin/bash
+<<<<<<< HEAD
+=======
+
+>>>>>>> bugfix_branch_0.1.3
 function pidlist()
 {
 type=$1

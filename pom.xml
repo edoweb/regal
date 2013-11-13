@@ -69,13 +69,13 @@
 
 	<distributionManagement>
 		<repository>
-			<id>repo</id>
-			<url>https://github.com/edoweb/maven-repo/raw/master/releases</url>
+			  <id>regal-releases</id>
+              <url>file://${localrepo}/releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>snapshot-repo</id>
-			<url>https://github.com/edoweb/maven-repo/raw/master/snapshots</url>
-		</snapshotRepository>
+                        <id>regal-snapshots</id>
+                        <url>file://${localrepo}/snapshots/</url>
+        </snapshotRepository>
 	</distributionManagement>
 
 	<repositories>

@@ -197,7 +197,8 @@ public class Utils {
     }
 
     /**
-     * Adds an Urn to the pid
+     * Adds an Urn to the pid. If the pid already has an urn a exception will be
+     * thrown.
      * 
      * @param id
      *            pid without namespace
@@ -214,6 +215,26 @@ public class Utils {
 	    @QueryParam("namespace") final String namespace,
 	    @QueryParam("snid") final String snid) {
 	return actions.addUrn(id, namespace, snid);
+    }
+
+    /**
+     * Replaces, or if not exists adds an URN
+     * 
+     * @param id
+     *            pid without namespace
+     * @param namespace
+     *            the namespace
+     * @param snid
+     *            a urn snid
+     * @return urn
+     */
+    @POST
+    @Path("/replaceUrn")
+    @Produces({ "application/json", "application/xml" })
+    public String replaceUrn(@QueryParam("id") final String id,
+	    @QueryParam("namespace") final String namespace,
+	    @QueryParam("snid") final String snid) {
+	return actions.replaceUrn(id, namespace, snid);
     }
 
     /**
