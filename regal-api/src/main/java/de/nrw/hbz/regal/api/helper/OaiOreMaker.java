@@ -95,7 +95,7 @@ public class OaiOreMaker {
 	    InputStream in = metadata.openStream();
 	    con.add(in, node.getPID(), RDFFormat.N3);
 	} catch (Exception e) {
-	    throw new AddDescriptiveDataException(e);
+	    logger.debug("", e);
 	}
     }
 
@@ -305,7 +305,7 @@ public class OaiOreMaker {
 
 	    }
 	} catch (Exception e) {
-	    throw new AddStructuralDataException(e);
+	    logger.debug("", e);
 	}
     }
 
