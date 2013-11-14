@@ -260,7 +260,7 @@ public class Node {
     }
 
     /**
-     * @return the node's pid
+     * @return the node's pid with namespace
      */
     public String getPID() {
 	return pid;
