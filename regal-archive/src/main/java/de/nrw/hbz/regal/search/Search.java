@@ -21,7 +21,13 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -42,12 +48,19 @@ public class Search {
     class InvalidRangeException extends RuntimeException {
     }
 
+    @SuppressWarnings("serial")
+    class SyncSearchCallException extends RuntimeException {
+	public SyncSearchCallException(Throwable e) {
+	    super(e);
+	}
+    }
+
     Client client = null;
 
     /**
      * Used for testing
      */
-    Search() {
+    public Search() {
 
 	Node node = nodeBuilder().local(true).node();
 	client = node.client();
@@ -81,10 +94,26 @@ public class Search {
      *            the id of the indexed item
      * @param data
      *            the actual item
+     * @return the Response
      */
-    public void index(String index, String type, String id, String data) {
-	client.prepareIndex(index, type, id).setSource(data).execute()
-		.actionGet();
+    public ActionResponse indexSync(String index, String type, String id,
+	    String data) {
+
+	try {
+	    return indexAsync(index, type, id, data).get();
+	} catch (InterruptedException e) {
+	    throw new SyncSearchCallException(e);
+	} catch (ExecutionException e) {
+	    throw new SyncSearchCallException(e);
+	}
+    }
+
+    private Future<ActionResponse> indexAsync(String index, String type,
+	    String id, String data) {
+	ElasticsearchFuture f = new ElasticsearchFuture();
+	f.exec(client.prepareIndex(index, type, id).setSource(data).execute()
+		.actionGet());
+	return f;
     }
 
     /**
@@ -154,9 +183,73 @@ public class Search {
      *            the type of the indexed item
      * @param id
      *            the item's id
+     * @return the response
      */
-    public void delete(String index, String type, String id) {
-	client.prepareDelete(index, type, id).setOperationThreaded(false)
-		.execute().actionGet();
+    public ActionResponse deleteSync(String index, String type, String id) {
+	try {
+	    return deleteAsync(index, type, id).get();
+	} catch (InterruptedException e) {
+	    throw new SyncSearchCallException(e);
+	} catch (ExecutionException e) {
+	    throw new SyncSearchCallException(e);
+	}
+    }
+
+    private ElasticsearchFuture deleteAsync(String index, String type, String id) {
+	ElasticsearchFuture f = new ElasticsearchFuture();
+	f.exec(client.prepareDelete(index, type, id)
+		.setOperationThreaded(false).execute().actionGet());
+	return f;
+    }
+
+    class ElasticsearchFuture implements Future<ActionResponse> {
+	private volatile ActionResponse result = null;
+	private volatile boolean cancelled = false;
+	private final CountDownLatch countDownLatch;
+
+	public ElasticsearchFuture() {
+	    countDownLatch = new CountDownLatch(1);
+	}
+
+	@Override
+	public boolean cancel(final boolean mayInterruptIfRunning) {
+	    if (isDone()) {
+		return false;
+	    } else {
+		countDownLatch.countDown();
+		cancelled = true;
+		return !isDone();
+	    }
+	}
+
+	@Override
+	public ActionResponse get() throws InterruptedException,
+		ExecutionException {
+	    countDownLatch.await();
+	    return result;
+	}
+
+	@Override
+	public ActionResponse get(long timeout, TimeUnit unit)
+		throws InterruptedException, ExecutionException,
+		TimeoutException {
+	    countDownLatch.await(timeout, unit);
+	    return result;
+	}
+
+	@Override
+	public boolean isCancelled() {
+	    return cancelled;
+	}
+
+	@Override
+	public boolean isDone() {
+	    return countDownLatch.getCount() == 0;
+	}
+
+	public void exec(final ActionResponse result) {
+	    this.result = result;
+	    countDownLatch.countDown();
+	}
     }
 }

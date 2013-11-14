@@ -616,7 +616,7 @@ public class Resource {
     public String deleteMetadata(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
 	try {
-	    return actions.deleteMetadata(namespace + ":" + pid);
+	    return actions.deleteMetadata(pid, namespace);
 
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(

@@ -189,8 +189,10 @@ public class Actions {
      *            the pid of the object
      * @return a message
      */
-    public String deleteMetadata(String pid) {
+    public String deleteMetadata(String p, String namespace) {
+	String pid = namespace + ":" + p;
 	fedora.deleteDatastream(pid, "metadata");
+	index(readNode(pid));
 	return pid + ": metadata - datastream successfully deleted! ";
     }
 
@@ -201,6 +203,7 @@ public class Actions {
      */
     public String deleteData(String pid) {
 	fedora.deleteDatastream(pid, "data");
+	index(readNode(pid));
 	return pid + ": data - datastream successfully deleted! ";
     }
 
@@ -295,6 +298,7 @@ public class Actions {
 	    node.setUploadData(tmp.getAbsolutePath(), mimeType);
 	    fedora.updateNode(node);
 	}
+	index(node);
 	return pid + " data successfully updated!";
     }
 
@@ -326,6 +330,7 @@ public class Actions {
 	dc.setType(content.getType());
 	node.setDcBean(dc);
 	fedora.updateNode(node);
+	index(node);
 	return pid + " dc successfully updated!";
     }
 
@@ -351,6 +356,7 @@ public class Actions {
 		node.setMetadataFile(file.getAbsolutePath());
 		fedora.updateNode(node);
 	    }
+	    index(node);
 	    return pid + " metadata successfully updated!";
 	} catch (RdfException e) {
 	    throw new HttpArchiveException(400);
@@ -367,6 +373,7 @@ public class Actions {
     public String updateMetadata(Node node) {
 	fedora.updateNode(node);
 	String pid = node.getPID();
+	index(node);
 	return pid + " metadata successfully updated!";
     }
 
@@ -383,6 +390,7 @@ public class Actions {
 	    node.addRelation(link);
 	}
 	fedora.updateNode(node);
+	index(node);
 	return pid + " " + links + " links successfully added.";
     }
 
@@ -506,6 +514,7 @@ public class Actions {
 		    node.addContentModel(model);
 		}
 	    fedora.createNode(node);
+	    index(node);
 	}
 	return node;
     }
@@ -513,6 +522,7 @@ public class Actions {
     private void setNodeType(CreateObjectBean input, Node node) {
 	node.setType(TYPE_OBJECT);
 	node.setContentType(input.getType());
+	index(node);
     }
 
     private void linkWithParent(CreateObjectBean input, Node node) {
@@ -521,6 +531,7 @@ public class Actions {
 	fedora.linkToParent(node, parentPid);
 	fedora.linkParentToNode(parentPid, node.getPID());
 	fedora.updateNode(node);
+	index(node);
     }
 
     /**
@@ -532,6 +543,7 @@ public class Actions {
     public String lobidify(String pid) {
 	Node node = fedora.readNode(pid);
 	node = services.lobidify(node);
+	index(node);
 	return updateMetadata(node);
     }
 
@@ -618,7 +630,7 @@ public class Actions {
      * @return A short message
      */
     public String removeFromIndex(String index, String type, String pid) {
-	search.delete(index, type, pid);
+	search.deleteSync(index, type, pid);
 	return pid + " removed from index " + index + "!";
     }
 
@@ -635,8 +647,15 @@ public class Actions {
 	String viewAsString = getReM(namespace + ":" + p, "application/json");
 	viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
 		(JSONArray) JSONValue.parse(viewAsString)));
-	search.index(namespace, type, namespace + ":" + p, viewAsString);
+	search.indexSync(namespace, type, namespace + ":" + p, viewAsString);
 	return namespace + ":" + p + " indexed!";
+    }
+
+    private String index(Node n) {
+	String namespace = n.getNamespace();
+	String pid = n.getPID();
+	String p = pid.substring(pid.indexOf(":") + 1);
+	return index(p, namespace, n.getContentType());
     }
 
     /**
@@ -663,21 +682,15 @@ public class Actions {
     }
 
     /**
-     * <<<<<<< HEAD Geturns a list of pids of related objects
-     * 
-     * @param pid
-     *            the pid for which to search for related objects
-     * @param relation
-     *            the relation you want to look for
-     * @return a list of pids of related objects ======= Looks for other objects
-     *         those are connected to the pid by a certain relation
+     * Returns a list of pids of related objects. Looks for other objects those
+     * are connected to the pid by a certain relation
      * 
      * @param pid
      *            the pid to find relatives of
      * @param relation
      *            a relation that describes what kind of relatives you are
      *            looking for
-     * @return a list of related pids >>>>>>> bugfix_branch_0.1.3
+     * @return list of pids of related objects
      */
     public List<String> getRelatives(String pid, String relation) {
 	List<String> result = new Vector<String>();

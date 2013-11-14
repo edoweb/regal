@@ -59,7 +59,7 @@ public class TestActions {
     @Test
     public void testFindByType() throws IOException, InterruptedException {
 	createTestObject("123");
-	List<String> list = actions.list("monograph", "test", 0, 10, "repo");
+	List<String> list = actions.list("monograph", "test", 0, 10, "es");
 	Assert.assertTrue(list.get(0).equals("test:123"));
 	Node node = actions.readNode(list.get(0));
 	String type = node.getContentType();
@@ -86,7 +86,7 @@ public class TestActions {
     public void deleteMetadata() throws IOException {
 	createTestObject("123");
 	actions.readMetadata("test:123");
-	actions.deleteMetadata("test:123");
+	actions.deleteMetadata("123", "test");
 	actions.deleteData("test:123");
 	actions.readMetadata("test:123");
     }

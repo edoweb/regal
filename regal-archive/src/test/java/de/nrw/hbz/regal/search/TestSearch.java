@@ -43,14 +43,14 @@ public class TestSearch {
 		.getContextClassLoader().getResourceAsStream("testData.json"),
 		"utf-8");
 	search = new Search();
-	search.index("test", "monograph", "edoweb:123", testData);
+	search.indexSync("test", "monograph", "edoweb:123", testData);
     }
 
     @After
     public void tearDown() {
-	search.delete("test", "type", "edoweb:123");
+	search.deleteSync("test", "type", "edoweb:123");
 	for (int i = 100; i > 0; i--) {
-	    search.delete("test", "monograph", "edoweb:" + i);
+	    search.deleteSync("test", "monograph", "edoweb:" + i);
 	}
     }
 
@@ -84,15 +84,14 @@ public class TestSearch {
 	Thread.sleep(1000);
 	SearchHits hits = search.listResources("test", "monograph", 0, 1);
 	Assert.assertEquals(1, hits.getTotalHits());
-	search.delete("test", "monograph", "edoweb:123");
-	Thread.sleep(1000);
+	search.deleteSync("test", "monograph", "edoweb:123");
 	hits = search.listResources("test", "monograph", 0, 1);
 	Assert.assertEquals(0, hits.getTotalHits());
     }
 
     @Test
     public void testListIds() throws InterruptedException {
-	search.index("test", "monograph", "edoweb:123", testData);
+	search.indexSync("test", "monograph", "edoweb:123", testData);
 	Thread.sleep(1000);
 	List<String> list = search.listIds("test", "monograph", 0, 1);
 	Assert.assertEquals(1, list.size());
@@ -102,7 +101,7 @@ public class TestSearch {
     @Test
     public void testFromUntil() throws InterruptedException {
 	for (int i = 100; i > 0; i--) {
-	    search.index("test", "monograph", "edoweb:" + i, testData);
+	    search.indexSync("test", "monograph", "edoweb:" + i, testData);
 	}
 	Thread.sleep(1000);
 	List<String> list = search.listIds("test", "monograph", 0, 10);
