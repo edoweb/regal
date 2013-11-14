@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -205,7 +206,10 @@ public class OaiOreMaker {
 	    Literal lastTimeModified = f.createLiteral(lastModified);
 	    String mime = node.getMimeType();
 	    String label = node.getFileLabel();
-	    String fileSize = node.getFileSize().toString();
+	    String fileSize = null;
+	    BigInteger fs = node.getFileSize();
+	    if (fs != null)
+		fileSize = fs.toString();
 	    String fileChecksum = node.getChecksum();
 
 	    // Predicates
