@@ -22,9 +22,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,17 @@ class OaiPidGrabber {
 	this.timestampfile = timestampFile;
     }
 
-    Vector<String> harvest(String set, boolean harvestFromScratch) {
+    /**
+     * 
+     * @param set
+     *            a oai set
+     * @param harvestFromScratch
+     *            if true, all pids will be listed. If false, the timestampFile
+     *            will be analyses and only recent pids will be listed
+     * @return a list of pids
+     */
+    List<String> listPids(String set, boolean harvestFromScratch,
+	    CollectPidStrategy collectPidStrategy, String format) {
 	String[] sets = null;
 
 	if (set != null && !set.isEmpty()) {
@@ -58,15 +67,24 @@ class OaiPidGrabber {
 		sets = set.split(",");
 	    }
 	}
-	return harvest(sets, harvestFromScratch);
+	return listPids(sets, harvestFromScratch, collectPidStrategy, format);
     }
 
-    /*
-     * @param setSpec
+    /**
      * 
-     * @return
+     * @param sets
+     *            multiple oai sets
+     * @param harvestFromScratch
+     *            if true, all pids will be listed. If false, the timestampFile
+     *            will be analyses and only recent pids will be listed
+     * @param collectPidStrategy
+     *            defines how to extract pids from the oai-identifier
+     * @param format
+     *            defines a format
+     * @return a list of pids
      */
-    Vector<String> harvest(String[] sets, boolean harvestFromScratch) {
+    public List<String> listPids(String[] sets, boolean harvestFromScratch,
+	    CollectPidStrategy collectPidStrategy, String format) {
 
 	logger.info("Start harvesting " + server + " !");
 
@@ -107,7 +125,7 @@ class OaiPidGrabber {
 	    String until = null;
 	    if (sets == null) {
 		logger.info("Set spec is null  !");
-		IdentifiersList reclist = oaiserver.listIdentifiers("oai_dc",
+		IdentifiersList reclist = oaiserver.listIdentifiers(format,
 			fromStr, until, null);
 		String dateString = reclist.getResponseDate();
 		logger.info("Harvest Date " + dateString + " !");
@@ -132,7 +150,7 @@ class OaiPidGrabber {
 		}
 
 		do {
-		    result.addAll(collectPids(reclist));
+		    result.addAll(collectPidStrategy.collectPids(reclist));
 		    ResumptionToken token = reclist.getResumptionToken();
 		    if (token == null) {
 			break;
@@ -143,8 +161,8 @@ class OaiPidGrabber {
 	    } else {
 		for (int i = 0; i < sets.length; i++) {
 		    logger.info("Set spec is " + sets[i].trim() + " !");
-		    IdentifiersList reclist = oaiserver.listIdentifiers(
-			    "oai_dc", fromStr, until, sets[i].trim());
+		    IdentifiersList reclist = oaiserver.listIdentifiers(format,
+			    fromStr, until, sets[i].trim());
 		    if (i == 0) {
 			String dateString = reclist.getResponseDate();
 			logger.info("Harvest Date " + dateString + " !");
@@ -169,7 +187,7 @@ class OaiPidGrabber {
 			}
 		    }
 		    do {
-			result.addAll(collectPids(reclist));
+			result.addAll(collectPidStrategy.collectPids(reclist));
 			ResumptionToken token = reclist.getResumptionToken();
 			if (token == null) {
 			    break;
@@ -184,28 +202,6 @@ class OaiPidGrabber {
 	    logger.warn("Harvesting ended in an empty response! Old timestape is still correct!");
 	}
 	logger.info("Found " + result.size() + " pids !");
-	return result;
-    }
-
-    /**
-     * @param reclist
-     * @return
-     */
-    private Vector<String> collectPids(IdentifiersList reclist) {
-	String stream = reclist.getResponse().asXML();
-
-	Vector<String> result = new Vector<String>();
-	int start = 0;
-	// int i = 0;
-	Pattern pattern = Pattern
-		.compile("<identifier>oai:[^:]*:([^<]*)</identifier>");
-	Matcher matcher = pattern.matcher(stream);
-	while (matcher.find(start)) {
-	    String pid = stream.substring(matcher.start(1), matcher.end(1));
-
-	    result.add(pid);
-	    start = matcher.end();
-	}
 	return result;
     }
 

@@ -96,5 +96,10 @@
 			name="dc:relation">
 			<regexp match="((.*))" format="${1}" />
 		</data>
+		<data source="*.http://geni-orca.renci.org/owl/topology.owl#hasURN"
+			name="dc:identifier">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		
 	</rules>
 </metamorph>

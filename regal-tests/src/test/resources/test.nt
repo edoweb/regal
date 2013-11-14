@@ -1,23 +1,34 @@
-<test:123> <http://iflastandards.info/ns/isbd/elements/P1004> "1. IFAG-Tagung Umweltschutz im Gesundheitswesen" .
-<test:123> <http://iflastandards.info/ns/isbd/elements/P1006> "22. September 2005, Kurf\u00FCrstliches Schloss, Mainz ; Tagungsband" .
-<test:123> <http://iflastandards.info/ns/isbd/elements/P1006> "Erste IFAG-Tagung Umweltschutz im Gesundheitswesen" .
-<test:123> <http://iflastandards.info/ns/isbd/elements/P1016> "Mainz" .
-<test:123> <http://iflastandards.info/ns/isbd/elements/P1053> "Getr. Z\u00E4hlung" .
-<test:123> <http://lobid.org/vocab/lobid#fulltextOnline> <http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=2609185&custom_att_2=simple_viewer> .
-<test:123> <http://purl.org/dc/terms/issued> "2005" .
-<test:123> <http://purl.org/dc/terms/language> <http://id.loc.gov/vocabulary/iso639-2/deu> .
-<test:123> <http://purl.org/dc/terms/publisher> _:node181he5okrx1 .
-<test:123> <http://purl.org/dc/terms/publisher> _:node181he5okrx2 .
-<test:123> <http://purl.org/dc/terms/publisher> _:node181he5okrx3 .
-<test:123> <http://purl.org/dc/terms/subject> <http://d-nb.info/gnd/4000107-6> .
-<test:123> <http://purl.org/dc/terms/subject> <http://d-nb.info/gnd/4020775-4> .
-<test:123> <http://purl.org/dc/terms/subject> <http://d-nb.info/gnd/4061644-7> .
-<test:123> <http://purl.org/dc/terms/subject> <http://dewey.info/class/610/> .
-<test:123> <http://purl.org/dc/terms/title> "1. IFAG-Tagung Umweltschutz im Gesundheitswesen : 22. September 2005, Kurf\u00FCrstliches Schloss, Mainz ; Tagungsband : Erste IFAG-Tagung Umweltschutz im Gesundheitswesen" .
-<test:123> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/dc/terms/BibliographicResource> .
-<test:123> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Book> .
-<test:123> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/vocab/frbr/core#Manifestation> .
+<http://d-nb.info/gnd/4000107-6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#SubjectHeading> .
 <test:123> <http://www.w3.org/2007/05/powder-s#describedby> <test:123/about> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "Mainz <2005>"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://iflastandards.info/ns/isbd/elements/P1016> "Mainz"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/vocab/frbr/core#Manifestation> .
+<test:123> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Book> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "Medizinalwesen"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/terms/title> "1. IFAG-Tagung Umweltschutz im Gesundheitswesen : 22. September 2005, Kurf\u00FCrstliches Schloss, Mainz ; Tagungsband : Erste IFAG-Tagung Umweltschutz im Gesundheitswesen"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "Gesundheitsdienst"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "Gesundheitssystem"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/terms/issued> "2005"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "\u00D6kologie"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/terms/subject> <http://dewey.info/class/610/> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "Kongress"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://lobid.org/vocab/lobid#fulltextOnline> <http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=2609185&custom_att_2=simple_viewer> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "Umweltschutz"^^<http://www.w3.org/2001/XMLSchema#string> .
 <test:123> <http://xmlns.com/foaf/0.1/isPrimaryTopicOf> <http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT015702837> .
-<test:123> <http://www.umbel.org/specifications/vocabulary#isLike> <http://lobid.org/resource/HT015702837> .
-<test:123> <http://purl.org/lobid/lv#hbzID> "HT015702837" .
+<test:123> <http://iflastandards.info/ns/isbd/elements/P1053> "Getr. Z\u00E4hlung"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/terms/subject> <http://d-nb.info/gnd/4061644-7> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "Umweltvorsorge"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://iflastandards.info/ns/isbd/elements/P1006> "22. September 2005, Kurf\u00FCrstliches Schloss, Mainz ; Tagungsband"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://iflastandards.info/ns/isbd/elements/P1004> "1. IFAG-Tagung Umweltschutz im Gesundheitswesen"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/terms/subject> <http://d-nb.info/gnd/4020775-4> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "Abfallwirtschaft"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/terms/subject> <http://d-nb.info/gnd/4000107-6> .
+<test:123> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/dc/terms/BibliographicResource> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "Gesundheitswirtschaft"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/elements/1.1/subject> "Medizinalsystem"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://iflastandards.info/ns/isbd/elements/P1006> "Erste IFAG-Tagung Umweltschutz im Gesundheitswesen"^^<http://www.w3.org/2001/XMLSchema#string> .
+<test:123> <http://purl.org/dc/terms/language> <http://id.loc.gov/vocabulary/iso639-2/deu> .
+<http://d-nb.info/gnd/4061644-7> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#SubjectHeadingSensoStricto> .
+<http://dewey.info/class/610/2009/08/about.en> <http://www.w3.org/2004/02/skos/core#prefLabel> "Medicine & health"@en .
+<http://dewey.info/class/610/2009/08/about.en> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<http://d-nb.info/gnd/4020775-4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#SubjectHeadingSensoStricto> .
