@@ -54,7 +54,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -94,9 +93,9 @@ import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
 import com.yourmediashelf.fedora.client.response.UploadResponse;
 import com.yourmediashelf.fedora.generated.access.DatastreamType;
 
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
 /**
@@ -551,7 +550,8 @@ public class Utils {
 		Result result = new StreamResult(stringWriter);
 
 		TransformerFactory fac = TransformerFactory.newInstance();
-		Transformer transformer = fac.newTransformer();
+		javax.xml.transform.Transformer transformer = fac
+			.newTransformer();
 		transformer.transform(source, result);
 
 		return stringWriter.toString();
@@ -623,15 +623,15 @@ public class Utils {
     }
 
     void createContentModels(Node node) {
-	List<ContentModel> models = node.getContentModels();
+	List<Transformer> models = node.getContentModels();
 	if (models == null)
 	    return;
-	for (ContentModel m : models) {
+	for (Transformer m : models) {
 	    createContentModel(m, node);
 	}
     }
 
-    void createContentModel(ContentModel hbzNodeContentModel, Node node) {
+    void createContentModel(Transformer hbzNodeContentModel, Node node) {
 
 	try {
 	    // If necessary create Model
@@ -648,7 +648,7 @@ public class Utils {
 
     }
 
-    void createContentModel(ContentModel cm) throws FedoraClientException,
+    void createContentModel(Transformer cm) throws FedoraClientException,
 	    UnsupportedEncodingException {
 	String foCMPid = cm.getContentModelPID();
 	String foSDefPid = cm.getServiceDefinitionPID();

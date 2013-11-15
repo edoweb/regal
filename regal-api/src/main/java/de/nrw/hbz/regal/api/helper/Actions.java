@@ -41,10 +41,10 @@ import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.DCBean;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 import de.nrw.hbz.regal.fedora.CopyUtils;
 import de.nrw.hbz.regal.fedora.FedoraFactory;
@@ -83,9 +83,13 @@ public class Actions {
     }
 
     final static Logger logger = LoggerFactory.getLogger(Actions.class);
-    Services services = null;
-    Representations representations = null;
+    private static Actions actions = null;
+
+    private Services services = null;
+    private Representations representations = null;
+    private Transformers transformers = null;
     private FedoraInterface fedora = null;
+
     private String fedoraExtern = null;
     private String server = null;
     private String urnbase = null;
@@ -96,7 +100,7 @@ public class Actions {
      * @throws IOException
      *             if properties can not be loaded.
      */
-    public Actions() throws IOException {
+    private Actions() throws IOException {
 	Properties properties = new Properties();
 	properties.load(getClass().getResourceAsStream("/api.properties"));
 	fedoraExtern = properties.getProperty("fedoraExtern");
@@ -110,6 +114,18 @@ public class Actions {
 		"/externalLinks.properties"));
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
+	transformers = new Transformers(fedora, server);
+    }
+
+    /**
+     * @return an instance of this Actions.class
+     * @throws IOException
+     *             if properties can't be read
+     */
+    public static Actions getInstance() throws IOException {
+	if (actions == null)
+	    actions = new Actions();
+	return actions;
     }
 
     /**
@@ -385,22 +401,9 @@ public class Actions {
      *            a namespace
      * @return a message
      */
-    public String contentModelsInit(String namespace) {
+    public String contentModelsInit(Transformer cm) {
 	try {
-	    fedora.updateContentModel(ContentModelFactory.createHeadModel(
-		    namespace, server));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createEJournalModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createMonographModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createWebpageModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createVersionModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createVolumeModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory.createPdfModel(
-		    namespace, server));
+	    fedora.updateContentModel(cm);
 	    return "Success!";
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(500, e);
@@ -461,16 +464,16 @@ public class Actions {
      * @return the Node representing the resource
      */
     public Node createResource(CreateObjectBean input, String rawPid,
-	    String namespace, List<ContentModel> models) {
-	logger.info("create " + input.getType());
-	Node node = createNodeIfNotExists(rawPid, namespace, input, models);
+	    String namespace) {
+	logger.debug("create " + input.getType());
+	Node node = createNodeIfNotExists(rawPid, namespace, input);
 	setNodeType(input, node);
 	linkWithParent(input, node);
 	return node;
     }
 
     private Node createNodeIfNotExists(String rawPid, String namespace,
-	    CreateObjectBean input, List<ContentModel> models) {
+	    CreateObjectBean input) {
 	String pid = namespace + ":" + rawPid;
 	Node node = null;
 	if (fedora.nodeExists(pid)) {
@@ -479,10 +482,6 @@ public class Actions {
 	    node = new Node();
 	    node.setNamespace(namespace).setPID(pid);
 	    node.setContentType(input.getType());
-	    if (models != null)
-		for (ContentModel model : models) {
-		    node.addContentModel(model);
-		}
 	    fedora.createNode(node);
 	}
 	return node;
@@ -766,4 +765,5 @@ public class Actions {
 	updateMetadata(namespace + ":" + pid, metadata);
 	return "Update " + subject + " metadata " + metadata;
     }
+
 }

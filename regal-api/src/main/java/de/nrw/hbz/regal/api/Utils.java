@@ -48,7 +48,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  */
 @Path("/utils")
 public class Utils {
-    Actions actions = new Actions();
+    Actions actions = null;
 
     /**
      * @throws IOException
@@ -56,8 +56,7 @@ public class Utils {
      * 
      */
     public Utils() throws IOException {
-
-	actions = new Actions();
+	actions = Actions.getInstance();
     }
 
     /**
@@ -314,15 +313,10 @@ public class Utils {
      * @return a message
      */
     @POST
-    @Path("/contentModels/{namespace}/init")
+    @Path("/contentModels")
     @Produces({ "text/plain" })
     public String contentModelsInit(@PathParam("namespace") String namespace) {
-	try {
-	    return actions.contentModelsInit(namespace);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+	return null;
     }
 
 }

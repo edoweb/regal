@@ -39,7 +39,7 @@ public class Node {
     private String uploadFile;
     private String fileLabel;
     private Vector<Link> relsExt = new Vector<Link>();
-    private Vector<ContentModel> cms = new Vector<ContentModel>();
+    private Vector<Transformer> cms = new Vector<Transformer>();
     private String label = null;
     private String type = null;
     private String pid = null;
@@ -92,8 +92,19 @@ public class Node {
      *            the ContentModel
      * @return this
      */
-    public Node addContentModel(ContentModel cm) {
+    public Node addTransformer(Transformer cm) {
 	cms.add(cm);
+	return this;
+    }
+
+    public Node removeTransformer(String id) {
+	for (int i = 0; i < cms.size(); i++) {
+	    Transformer t = cms.get(i);
+	    if (t.getId().equals(id)) {
+		cms.remove(i);
+	    }
+	    return this;
+	}
 	return this;
     }
 
@@ -247,7 +258,7 @@ public class Node {
     /**
      * @return all content Models
      */
-    public List<ContentModel> getContentModels() {
+    public List<Transformer> getContentModels() {
 
 	return cms;
     }
@@ -435,4 +446,5 @@ public class Node {
     public void setChecksum(String checksum) {
 	this.checksum = checksum;
     }
+
 }

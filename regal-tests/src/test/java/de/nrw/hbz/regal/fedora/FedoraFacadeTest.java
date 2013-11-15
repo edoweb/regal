@@ -27,7 +27,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.regal.api.helper.ContentModelFactory;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.datatypes.Vocabulary;
@@ -64,8 +63,8 @@ public class FedoraFacadeTest {
 
 	// object.addContentModel(ContentModelFactory.createMonographModel("test"));
 	// object.addContentModel(ContentModelFactory.createHeadModel("test"));
-	object.addContentModel(ContentModelFactory.createPdfModel("test",
-		"http://localhost"));
+	// object.addTransformer(new TTransformerFactory.createPdfModel("test",
+	// "http://localhost"));
 
 	URL url = this.getClass().getResource("/test.pdf");
 	object.setUploadData(url.getPath(), "application/pdf");
@@ -156,24 +155,24 @@ public class FedoraFacadeTest {
 
     @Test
     public void makeContentModel() {
-	facade.createNode(object);
-	String namespace = "test";
-	facade.updateContentModel(ContentModelFactory.createHeadModel(
-		namespace, "http://localhost"));
-	facade.updateContentModel(ContentModelFactory
-		.createEJournalModel(namespace));
-	facade.updateContentModel(ContentModelFactory
-		.createMonographModel(namespace));
-	facade.updateContentModel(ContentModelFactory
-		.createWebpageModel(namespace));
-	facade.updateContentModel(ContentModelFactory
-		.createVersionModel(namespace));
-	facade.updateContentModel(ContentModelFactory
-		.createVolumeModel(namespace));
-	facade.updateContentModel(ContentModelFactory.createPdfModel(namespace,
-		"http://localhost"));
-
-	// TODO Assertion
+	// facade.createNode(object);
+	// String namespace = "test";
+	// facade.updateContentModel(TransformerFactory.createHeadModel(namespace,
+	// "http://localhost"));
+	// facade.updateContentModel(TransformerFactory
+	// .createEJournalModel(namespace));
+	// facade.updateContentModel(TransformerFactory
+	// .createMonographModel(namespace));
+	// facade.updateContentModel(TransformerFactory
+	// .createWebpageModel(namespace));
+	// facade.updateContentModel(TransformerFactory
+	// .createVersionModel(namespace));
+	// facade.updateContentModel(TransformerFactory
+	// .createVolumeModel(namespace));
+	// facade.updateContentModel(TransformerFactory.createPdfModel(namespace,
+	// "http://localhost"));
+	//
+	// // TODO Assertion
 
     }
 
