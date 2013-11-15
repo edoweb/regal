@@ -17,6 +17,7 @@
 package de.nrw.hbz.regal.api.helper;
 
 import java.util.List;
+import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +89,9 @@ public class Transformers {
 	Transformer cm = new Transformer(transformerId);
 	cm.addMethod(transformerId, server + "/utils/" + transformerId
 		+ "/(pid)");
-	fedora.updateContentModel(cm);
+	List<Transformer> l = new Vector<Transformer>();
+	l.add(cm);
+	fedora.updateContentModels(l);
 	return cm;
     }
 }

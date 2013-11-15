@@ -43,7 +43,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -85,6 +84,7 @@ import com.yourmediashelf.fedora.client.request.GetDatastreamDissemination;
 import com.yourmediashelf.fedora.client.request.Ingest;
 import com.yourmediashelf.fedora.client.request.ListDatastreams;
 import com.yourmediashelf.fedora.client.request.ModifyDatastream;
+import com.yourmediashelf.fedora.client.request.PurgeObject;
 import com.yourmediashelf.fedora.client.request.PurgeRelationship;
 import com.yourmediashelf.fedora.client.request.Upload;
 import com.yourmediashelf.fedora.client.response.FedoraResponse;
@@ -106,6 +106,13 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  * 
  */
 public class Utils {
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class ContentModelException extends RuntimeException {
+	public ContentModelException(Throwable e) {
+	    super(e);
+	}
+    }
 
     @SuppressWarnings({ "javadoc", "serial" })
     public class NoPidFoundException extends RuntimeException {
@@ -398,6 +405,9 @@ public class Utils {
 			} else if (link.getPredicate().compareTo(
 				REL_CONTENT_TYPE) == 0) {
 			    node.setContentType(link.getObject());
+			} else if (link.getPredicate().compareTo(REL_HAS_MODEL) == 0) {
+			    addContentModel(link, node);
+			    continue;
 			}
 
 			String object = link.getObject();
@@ -622,43 +632,71 @@ public class Utils {
 	updateFedoraXmlForRelsExt(pid, node.getRelsExt());
     }
 
-    void createContentModels(Node node) {
-	List<Transformer> models = node.getContentModels();
-	if (models == null)
-	    return;
+    void createContentModels(List<Transformer> models) {
 	for (Transformer m : models) {
-	    createContentModel(m, node);
+	    try {
+		createContentModel(m);
+	    } catch (FedoraClientException e) {
+		throw new ContentModelException(e);
+	    }
 	}
     }
 
-    void createContentModel(Transformer hbzNodeContentModel, Node node) {
+    public void updateContentModels(List<Transformer> models) {
+	for (Transformer m : models) {
+	    updateContentModel(m);
+	}
+
+    }
+
+    private void updateContentModel(Transformer m) {
 
 	try {
-	    // If necessary create Model
-	    createContentModel(hbzNodeContentModel);
-	} catch (Exception e) {
-
+	    deleteContentModel(m);
+	    createContentModel(m);
+	} catch (FedoraClientException e) {
+	    throw new ContentModelException(e);
 	}
-	// Add Model to Object
-	Link link = new Link();
-	link.setPredicate(REL_HAS_MODEL);
-	link.setObject(addUriPrefix(hbzNodeContentModel.getContentModelPID()),
-		false);
-	node.addRelation(link);
 
     }
 
-    void createContentModel(Transformer cm) throws FedoraClientException,
-	    UnsupportedEncodingException {
+    private void deleteContentModel(Transformer m) throws FedoraClientException {
+	if (nodeExists(m.getContentModelPID()))
+	    new PurgeObject(m.getContentModelPID()).execute();
+	if (nodeExists(m.getServiceDefinitionPID()))
+	    new PurgeObject(m.getServiceDefinitionPID()).execute();
+	if (nodeExists(m.getServiceDeploymentPID()))
+	    new PurgeObject(m.getServiceDeploymentPID()).execute();
+    }
+
+    // void linkContentModel(Transformer hbzNodeContentModel, Node node) {
+    // Link link = new Link();
+    // link.setPredicate(REL_HAS_MODEL);
+    // link.setObject(addUriPrefix(hbzNodeContentModel.getContentModelPID()),
+    // false);
+    // node.addRelation(link);
+    // }
+
+    public void linkContentModels(List<Transformer> contentModels, Node node) {
+	for (Transformer t : contentModels) {
+	    Link link = new Link();
+	    link.setPredicate(REL_HAS_MODEL);
+	    link.setObject(addUriPrefix(t.getContentModelPID()), false);
+	    node.addRelation(link);
+	}
+    }
+
+    void createContentModel(Transformer cm) throws FedoraClientException {
 	String foCMPid = cm.getContentModelPID();
 	String foSDefPid = cm.getServiceDefinitionPID();
 	String foSDepPid = cm.getServiceDeploymentPID();
 
-	new Ingest(foCMPid).label("Content Model").execute();
-
-	new Ingest(foSDefPid).label("ServiceDefinition").execute();
-
-	new Ingest(foSDepPid).label("ServiceDeployment").execute();
+	if (!nodeExists(foCMPid))
+	    new Ingest(foCMPid).label("Content Model").execute();
+	if (!nodeExists(foSDefPid))
+	    new Ingest(foSDefPid).label("ServiceDefinition").execute();
+	if (!nodeExists(foSDepPid))
+	    new Ingest(foSDepPid).label("ServiceDeployment").execute();
 
 	// Add Relations
 	Vector<Link> cmHBZLinks = new Vector<Link>();
@@ -700,34 +738,50 @@ public class Utils {
 	sDepHBZLinks.add(sDepHBZLink3);
 
 	addRelationships(foSDepPid, sDepHBZLinks);
-
-	new AddDatastream(foCMPid, DS_COMPOSITE_MODEL)
-		.dsLabel("DS-Composite-Stream").versionable(true)
-		.formatURI(DS_COMPOSITE_MODEL_URI).dsState("A")
-		.controlGroup("X").mimeType("text/xml")
-		.content(cmBuilder.getDsCompositeModel(cm)).execute();
-
-	new AddDatastream(foSDefPid, DS_METHODMAP).dsLabel("Methodmap-Stream")
-		.versionable(true).formatURI(DS_METHODMAP_URI).dsState("A")
-		.controlGroup("X").mimeType("text/xml")
-		.content(cmBuilder.getMethodMap(cm)).execute();
-
-	new AddDatastream(foSDepPid, DS_METHODMAP_WSDL)
-		.dsLabel("Methodmap-Stream").versionable(true)
-		.formatURI(DS_METHODMAP_WSDL_URI).dsState("A")
-		.controlGroup("X").mimeType("text/xml")
-		.content(cmBuilder.getMethodMapToWsdl(cm)).execute();
-
-	new AddDatastream(foSDepPid, DS_INPUTSPEC)
-		.dsLabel("DSINPUTSPEC-Stream").versionable(true)
-		.formatURI(DS_INPUTSPEC_URI).dsState("A").controlGroup("X")
-		.mimeType("text/xml").content(cmBuilder.getDSInputSpec())
-		.execute();
-
-	new AddDatastream(foSDepPid, DS_WSDL).dsLabel("WSDL-Stream")
-		.versionable(true).formatURI(DS_WSDL_URI).dsState("A")
-		.controlGroup("X").mimeType("text/xml")
-		.content(cmBuilder.getWsdl(cm)).execute();
+	if (!dataStreamExists(foCMPid, DS_COMPOSITE_MODEL))
+	    new AddDatastream(foCMPid, DS_COMPOSITE_MODEL)
+		    .dsLabel("DS-Composite-Stream").versionable(true)
+		    .formatURI(DS_COMPOSITE_MODEL_URI).dsState("A")
+		    .controlGroup("X").mimeType("text/xml")
+		    .content(cmBuilder.getDsCompositeModel(cm)).execute();
+	if (!dataStreamExists(foSDefPid, DS_METHODMAP))
+	    new AddDatastream(foSDefPid, DS_METHODMAP)
+		    .dsLabel("Methodmap-Stream").versionable(true)
+		    .formatURI(DS_METHODMAP_URI).dsState("A").controlGroup("X")
+		    .mimeType("text/xml").content(cmBuilder.getMethodMap(cm))
+		    .execute();
+	if (!dataStreamExists(foSDepPid, DS_METHODMAP_WSDL))
+	    new AddDatastream(foSDepPid, DS_METHODMAP_WSDL)
+		    .dsLabel("Methodmap-Stream").versionable(true)
+		    .formatURI(DS_METHODMAP_WSDL_URI).dsState("A")
+		    .controlGroup("X").mimeType("text/xml")
+		    .content(cmBuilder.getMethodMapToWsdl(cm)).execute();
+	if (!dataStreamExists(foSDepPid, DS_INPUTSPEC))
+	    new AddDatastream(foSDepPid, DS_INPUTSPEC)
+		    .dsLabel("DSINPUTSPEC-Stream").versionable(true)
+		    .formatURI(DS_INPUTSPEC_URI).dsState("A").controlGroup("X")
+		    .mimeType("text/xml").content(cmBuilder.getDSInputSpec())
+		    .execute();
+	if (!dataStreamExists(foSDepPid, DS_WSDL))
+	    new AddDatastream(foSDepPid, DS_WSDL).dsLabel("WSDL-Stream")
+		    .versionable(true).formatURI(DS_WSDL_URI).dsState("A")
+		    .controlGroup("X").mimeType("text/xml")
+		    .content(cmBuilder.getWsdl(cm)).execute();
 
     }
+
+    public void addContentModel(Link link, Node node) {
+
+	Transformer t = createTransformer(link.getObject());
+	node.addTransformer(t);
+
+    }
+
+    private Transformer createTransformer(String prefixedPid) {
+	String pid = removeUriPrefix(prefixedPid);
+	String id = pid.substring(pid.indexOf(":") + 1);
+	Transformer t = new Transformer(id);
+	return t;
+    }
+
 }

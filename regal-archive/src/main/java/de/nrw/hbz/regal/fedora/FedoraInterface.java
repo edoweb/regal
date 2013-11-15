@@ -139,13 +139,13 @@ public interface FedoraInterface {
     public String removeUriPrefix(String pred);
 
     /**
-     * Updates the ContentModel object. If the ContentModel does't exist it will
-     * be created.
+     * Updates the list of ContentModel objects. If a ContentModel does't exist
+     * it will be created.
      * 
-     * @param cm
-     *            A ContentModel
+     * @param cms
+     *            list of ContentModels
      */
-    public void updateContentModel(Transformer cm);
+    public void updateContentModels(List<Transformer> cms);
 
     /**
      * @param node

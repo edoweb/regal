@@ -18,6 +18,7 @@ package de.nrw.hbz.regal.datatypes;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -98,12 +99,14 @@ public class Node {
     }
 
     public Node removeTransformer(String id) {
-	for (int i = 0; i < cms.size(); i++) {
-	    Transformer t = cms.get(i);
-	    if (t.getId().equals(id)) {
-		cms.remove(i);
+	Iterator<Transformer> it = cms.iterator();
+	while (it.hasNext()) {
+	    Transformer t = it.next();
+	    if (t.getId().compareTo(id) == 0) {
+		System.out.println("REMOVE: " + id);
+		it.remove();
 	    }
-	    return this;
+
 	}
 	return this;
     }

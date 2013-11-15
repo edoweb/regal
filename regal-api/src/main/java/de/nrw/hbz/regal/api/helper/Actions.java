@@ -412,15 +412,14 @@ public class Actions {
     }
 
     /**
-     * Initialises all content models for one namespace
      * 
      * @param namespace
      *            a namespace
      * @return a message
      */
-    public String contentModelsInit(Transformer cm) {
+    public String contentModelsInit(List<Transformer> cms) {
 	try {
-	    fedora.updateContentModel(cm);
+	    fedora.updateContentModels(cms);
 	    return "Success!";
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(500, e);

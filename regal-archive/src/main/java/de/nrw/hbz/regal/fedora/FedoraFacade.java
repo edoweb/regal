@@ -20,12 +20,12 @@ import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_CONTENT_TYPE;
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.HAS_PART;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_HAS_MODEL;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SIMPLE;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SPO;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -63,9 +63,9 @@ import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
 import com.yourmediashelf.fedora.generated.access.DatastreamType;
 import com.yourmediashelf.fedora.generated.management.PidList;
 
-import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
 /**
@@ -237,7 +237,10 @@ class FedoraFacade implements FedoraInterface {
 	    new Ingest(node.getPID()).label(node.getLabel()).execute();
 
 	    DublinCoreHandler.updateDc(node);
-	    utils.createContentModels(node);
+
+	    List<Transformer> cms = node.getContentModels();
+	    utils.createContentModels(cms);
+	    utils.linkContentModels(cms, node);
 
 	    if (node.getUploadFile() != null) {
 		utils.createManagedStream(node);
@@ -321,8 +324,7 @@ class FedoraFacade implements FedoraInterface {
 	try {
 	    DublinCoreHandler.readFedoraDcToNode(node);
 	    utils.readRelsExt(node);
-	    // TODO Fix me
-	    // readContentModels(node);
+	    // utils.readContentModels(node);
 	    GetObjectProfileResponse prof = new GetObjectProfile(pid).execute();
 	    node.setLabel(prof.getLabel());
 	    node.setLastModified(prof.getLastModifiedDate());
@@ -350,8 +352,10 @@ class FedoraFacade implements FedoraInterface {
     @Override
     public void updateNode(Node node) {
 	DublinCoreHandler.updateDc(node);
-	// updateContentModels(node);
 
+	List<Transformer> models = node.getContentModels();
+	utils.updateContentModels(models);
+	node.removeRelations(REL_HAS_MODEL);
 	if (node.getUploadFile() != null) {
 	    utils.updateManagedStream(node);
 	}
@@ -359,6 +363,7 @@ class FedoraFacade implements FedoraInterface {
 	if (node.getMetadataFile() != null) {
 	    utils.updateMetadataStream(node);
 	}
+	utils.linkContentModels(models, node);
 	utils.updateRelsExt(node);
 
     }
@@ -432,20 +437,8 @@ class FedoraFacade implements FedoraInterface {
     }
 
     @Override
-    public void updateContentModel(Transformer cm) {
-	if (nodeExists(cm.getContentModelPID()))
-	    deleteNode(cm.getContentModelPID());
-	if (nodeExists(cm.getServiceDefinitionPID()))
-	    deleteNode(cm.getServiceDefinitionPID());
-	if (nodeExists(cm.getServiceDeploymentPID()))
-	    deleteNode(cm.getServiceDeploymentPID());
-	try {
-	    utils.createContentModel(cm);
-	} catch (UnsupportedEncodingException e) {
-	    throw new UpdateContentModel(cm.toString(), e);
-	} catch (FedoraClientException e) {
-	    throw new UpdateContentModel(cm.toString(), e);
-	}
+    public void updateContentModels(List<Transformer> cms) {
+	utils.updateContentModels(cms);
     }
 
     @Override

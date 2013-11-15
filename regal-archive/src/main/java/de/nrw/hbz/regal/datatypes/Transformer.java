@@ -40,26 +40,12 @@ public class Transformer {
 	prescribedDSIds = new Vector<String>();
 	prescribedDSformatURIs = new Vector<String>();
 	prescribedDSMimeTypes = new Vector<String>();
-
 	methodNames = new Vector<String>();
 	methodLocations = new Vector<String>();
-
-	setContentModelPID("CM:" + id + "Transformer");
-	setServiceDefinitionPID("CM:" + id + "epicurServiceDefinition");
-	setServiceDeploymentPID("CM:" + id + "epicurServiceDeployment");
+	setContentModelPID("CM:" + id);
+	setServiceDefinitionPID("CM:" + id + "ServiceDefinition");
+	setServiceDeploymentPID("CM:" + id + "ServiceDeployment");
     }
-
-    // /**
-    // * Creates a new ContentModel.
-    // */
-    // public Transformer() {
-    // prescribedDSIds = new Vector<String>();
-    // prescribedDSformatURIs = new Vector<String>();
-    // prescribedDSMimeTypes = new Vector<String>();
-    //
-    // methodNames = new Vector<String>();
-    // methodLocations = new Vector<String>();
-    // }
 
     /**
      * @param methodName
