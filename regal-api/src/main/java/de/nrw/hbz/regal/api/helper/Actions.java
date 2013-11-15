@@ -46,10 +46,10 @@ import com.google.common.collect.ImmutableMap;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.DCBean;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 import de.nrw.hbz.regal.fedora.CopyUtils;
 import de.nrw.hbz.regal.fedora.FedoraFactory;
@@ -91,9 +91,11 @@ public class Actions {
     final static Logger logger = LoggerFactory.getLogger(Actions.class);
     private static Actions actions = null;
 
-    Services services = null;
-    Representations representations = null;
+    private Services services = null;
+    private Representations representations = null;
+    private Transformers transformers = null;
     private FedoraInterface fedora = null;
+
     private String fedoraExtern = null;
     private String server = null;
     private String urnbase = null;
@@ -122,6 +124,7 @@ public class Actions {
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
 	search = new Search(escluster);
+	transformers = new Transformers(fedora, server);
     }
 
     /**
@@ -415,22 +418,9 @@ public class Actions {
      *            a namespace
      * @return a message
      */
-    public String contentModelsInit(String namespace) {
+    public String contentModelsInit(Transformer cm) {
 	try {
-	    fedora.updateContentModel(ContentModelFactory.createHeadModel(
-		    namespace, server));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createEJournalModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createMonographModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createWebpageModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createVersionModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createVolumeModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory.createPdfModel(
-		    namespace, server));
+	    fedora.updateContentModel(cm);
 	    return "Success!";
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(500, e);
@@ -491,16 +481,16 @@ public class Actions {
      * @return the Node representing the resource
      */
     public Node createResource(CreateObjectBean input, String rawPid,
-	    String namespace, List<ContentModel> models) {
-	logger.info("create " + input.getType());
-	Node node = createNodeIfNotExists(rawPid, namespace, input, models);
+	    String namespace) {
+	logger.debug("create " + input.getType());
+	Node node = createNodeIfNotExists(rawPid, namespace, input);
 	setNodeType(input, node);
 	linkWithParent(input, node);
 	return node;
     }
 
     private Node createNodeIfNotExists(String rawPid, String namespace,
-	    CreateObjectBean input, List<ContentModel> models) {
+	    CreateObjectBean input) {
 	String pid = namespace + ":" + rawPid;
 	Node node = null;
 	if (fedora.nodeExists(pid)) {
@@ -509,10 +499,6 @@ public class Actions {
 	    node = new Node();
 	    node.setNamespace(namespace).setPID(pid);
 	    node.setContentType(input.getType());
-	    if (models != null)
-		for (ContentModel model : models) {
-		    node.addContentModel(model);
-		}
 	    fedora.createNode(node);
 	    index(node);
 	}
@@ -912,4 +898,5 @@ public class Actions {
     public String getUrnbase() {
 	return urnbase;
     }
+
 }

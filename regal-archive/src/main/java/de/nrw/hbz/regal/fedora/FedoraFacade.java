@@ -63,7 +63,7 @@ import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
 import com.yourmediashelf.fedora.generated.access.DatastreamType;
 import com.yourmediashelf.fedora.generated.management.PidList;
 
-import de.nrw.hbz.regal.datatypes.ContentModel;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
@@ -432,7 +432,7 @@ class FedoraFacade implements FedoraInterface {
     }
 
     @Override
-    public void updateContentModel(ContentModel cm) {
+    public void updateContentModel(Transformer cm) {
 	if (nodeExists(cm.getContentModelPID()))
 	    deleteNode(cm.getContentModelPID());
 	if (nodeExists(cm.getServiceDefinitionPID()))

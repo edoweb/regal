@@ -22,8 +22,6 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -45,10 +43,7 @@ import org.slf4j.LoggerFactory;
 import com.sun.jersey.multipart.MultiPart;
 
 import de.nrw.hbz.regal.api.helper.Actions;
-import de.nrw.hbz.regal.api.helper.ContentModelFactory;
 import de.nrw.hbz.regal.api.helper.HttpArchiveException;
-import de.nrw.hbz.regal.api.helper.ObjectType;
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
@@ -104,35 +99,7 @@ public class Resource {
 		    "The type you've provided is NULL or empty.");
 	}
 	try {
-	    List<ContentModel> models = new Vector<ContentModel>();
-	    if (input.type.compareTo(ObjectType.monograph.toString()) == 0) {
-		models.add(ContentModelFactory.createMonographModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.journal.toString()) == 0) {
-		models.add(ContentModelFactory.createEJournalModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.webpage.toString()) == 0) {
-		models.add(ContentModelFactory.createWebpageModel(namespace));
-	    } else if (input.type.compareTo(ObjectType.version.toString()) == 0) {
-		models.add(ContentModelFactory.createVersionModel(namespace));
-	    } else if (input.type.compareTo(ObjectType.volume.toString()) == 0) {
-		models.add(ContentModelFactory.createVolumeModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.file.toString()) == 0) {
-		models.add(ContentModelFactory.createFileModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.issue.toString()) == 0) {
-		models.add(ContentModelFactory.createIssueModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    }
-	    models.add(ContentModelFactory.createHeadModel(namespace,
-		    actions.getServer()));
-	    Node node = actions.createResource(input, pid, namespace, models);
+	    Node node = actions.createResource(input, pid, namespace);
 	    return node.getPID() + " created/updated!";
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(

@@ -67,10 +67,10 @@ public class TestActions {
     }
 
     public void createTestObject(String pid) throws IOException {
-	actions.contentModelsInit("test");
+	// actions.contentModelsInit("test");
 	CreateObjectBean input = new CreateObjectBean();
 	input.setType("monograph");
-	actions.createResource(input, pid, "test", null);
+	actions.createResource(input, pid, "test");
 	DCBeanAnnotated dc = new DCBeanAnnotated();
 	dc.addIdentifier("HT015702837");
 	actions.updateDC("test:" + pid, dc);

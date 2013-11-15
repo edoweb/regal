@@ -56,7 +56,7 @@ public class Utils {
      * 
      */
     public Utils() throws IOException {
-
+	actions = Actions.getInstance();
 	actions = Actions.getInstance();
     }
 
@@ -335,15 +335,10 @@ public class Utils {
      * @return a message
      */
     @POST
-    @Path("/contentModels/{namespace}/init")
+    @Path("/contentModels")
     @Produces({ "text/plain" })
     public String contentModelsInit(@PathParam("namespace") String namespace) {
-	try {
-	    return actions.contentModelsInit(namespace);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+	return null;
     }
 
 }
