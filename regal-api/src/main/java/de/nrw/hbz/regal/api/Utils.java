@@ -174,6 +174,70 @@ public class Utils {
     }
 
     /**
+     * Adds an Urn to the pid. If the pid already has an urn a exception will be
+     * thrown.
+     * 
+     * @param id
+     *            pid without namespace
+     * @param namespace
+     *            the namespace
+     * @param snid
+     *            a urn snid
+     * @return urn
+     */
+    @POST
+    @Path("/addUrn")
+    @Produces({ "application/json", "application/xml" })
+    public String addUrn(@QueryParam("id") final String id,
+	    @QueryParam("namespace") final String namespace,
+	    @QueryParam("snid") final String snid) {
+	return actions.addUrn(id, namespace, snid);
+    }
+
+    /**
+     * Replaces, or if not exists adds an URN
+     * 
+     * @param id
+     *            pid without namespace
+     * @param namespace
+     *            the namespace
+     * @param snid
+     *            a urn snid
+     * @return urn
+     */
+    @POST
+    @Path("/replaceUrn")
+    @Produces({ "application/json", "application/xml" })
+    public String replaceUrn(@QueryParam("id") final String id,
+	    @QueryParam("namespace") final String namespace,
+	    @QueryParam("snid") final String snid) {
+	return actions.replaceUrn(id, namespace, snid);
+    }
+
+    /**
+     * Reininit ContentModels for a certain namespace
+     * 
+     * @param namespace
+     *            namespace of the model
+     * @return a message
+     */
+    @POST
+    @Path("/initContentModels/{namespace}")
+    @Produces({ "text/plain" })
+    public String initContentModels(@PathParam("namespace") String namespace) {
+	List<Transformer> transformers = new Vector<Transformer>();
+	transformers.add(new Transformer(namespace + "epicur"));
+	transformers.add(new Transformer(namespace + "oaidc"));
+	transformers.add(new Transformer(namespace + "pdfa"));
+	transformers.add(new Transformer(namespace + "pdfbox"));
+	transformers.add(new Transformer(namespace + "aleph"));
+	actions.contentModelsInit(transformers);
+	return "Reinit contentModels " + namespace + "epicur, " + namespace
+		+ "oaidc, " + namespace + "pdfa, " + namespace + "pdfbox, "
+		+ namespace + "aleph";
+    }
+
+    /**
      * Returns a oai-dc conversion of pid's metadata
      * 
      * @param pid
@@ -213,47 +277,6 @@ public class Utils {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
-    }
-
-    /**
-     * Adds an Urn to the pid. If the pid already has an urn a exception will be
-     * thrown.
-     * 
-     * @param id
-     *            pid without namespace
-     * @param namespace
-     *            the namespace
-     * @param snid
-     *            a urn snid
-     * @return urn
-     */
-    @POST
-    @Path("/addUrn")
-    @Produces({ "application/json", "application/xml" })
-    public String addUrn(@QueryParam("id") final String id,
-	    @QueryParam("namespace") final String namespace,
-	    @QueryParam("snid") final String snid) {
-	return actions.addUrn(id, namespace, snid);
-    }
-
-    /**
-     * Replaces, or if not exists adds an URN
-     * 
-     * @param id
-     *            pid without namespace
-     * @param namespace
-     *            the namespace
-     * @param snid
-     *            a urn snid
-     * @return urn
-     */
-    @POST
-    @Path("/replaceUrn")
-    @Produces({ "application/json", "application/xml" })
-    public String replaceUrn(@QueryParam("id") final String id,
-	    @QueryParam("namespace") final String namespace,
-	    @QueryParam("snid") final String snid) {
-	return actions.replaceUrn(id, namespace, snid);
     }
 
     /**
@@ -344,28 +367,5 @@ public class Utils {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
-    }
-
-    /**
-     * Reininit ContentModels for a certain namespace
-     * 
-     * @param namespace
-     *            namespace of the model
-     * @return a message
-     */
-    @POST
-    @Path("/initContentModels/{namespace}")
-    @Produces({ "text/plain" })
-    public String init(@PathParam("namespace") String namespace) {
-	List<Transformer> transformers = new Vector<Transformer>();
-	transformers.add(new Transformer(namespace + "epicur"));
-	transformers.add(new Transformer(namespace + "oaidc"));
-	transformers.add(new Transformer(namespace + "pdfa"));
-	transformers.add(new Transformer(namespace + "pdfbox"));
-	transformers.add(new Transformer(namespace + "aleph"));
-	actions.contentModelsInit(transformers);
-	return "Reinit contentModels " + namespace + "epicur, " + namespace
-		+ "oaidc, " + namespace + "pdfa, " + namespace + "pdfbox, "
-		+ namespace + "aleph";
     }
 }
