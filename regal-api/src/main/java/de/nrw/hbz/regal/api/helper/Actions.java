@@ -93,7 +93,6 @@ public class Actions {
 
     private Services services = null;
     private Representations representations = null;
-    private Transformers transformers = null;
     private FedoraInterface fedora = null;
 
     private String fedoraExtern = null;
@@ -124,7 +123,6 @@ public class Actions {
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
 	search = new Search(escluster);
-	transformers = new Transformers(fedora, server);
     }
 
     /**
@@ -188,8 +186,10 @@ public class Actions {
     }
 
     /**
-     * @param pid
-     *            the pid of the object
+     * @param p
+     *            the id part of a pid
+     * @param namespace
+     *            the namespace part of a pid
      * @return a message
      */
     public String deleteMetadata(String p, String namespace) {
@@ -413,8 +413,8 @@ public class Actions {
 
     /**
      * 
-     * @param namespace
-     *            a namespace
+     * @param cms
+     *            a List of Transformers
      * @return a message
      */
     public String contentModelsInit(List<Transformer> cms) {
@@ -427,14 +427,14 @@ public class Actions {
     }
 
     /**
-     * @param namespace
-     *            the namespace will be deleted
+     * @param query
+     *            a query to define objects that must be deleted
      * @return a message
      */
-    public String deleteNamespace(String namespace) {
+    public String deleteByQuery(String query) {
 	List<String> objects = null;
 	try {
-	    objects = fedora.findNodes(namespace + ":*");
+	    objects = fedora.findNodes(query);
 	} catch (Exception e) {
 
 	}
@@ -475,8 +475,6 @@ public class Actions {
      *            the pid without namespace
      * @param namespace
      *            the namespace
-     * @param models
-     *            content models for the resource
      * @return the Node representing the resource
      */
     public Node createResource(CreateObjectBean input, String rawPid,
@@ -485,6 +483,8 @@ public class Actions {
 	Node node = createNodeIfNotExists(rawPid, namespace, input);
 	setNodeType(input, node);
 	linkWithParent(input, node);
+	updateTransformer(input, node);
+	fedora.updateNode(node);
 	return node;
     }
 
@@ -515,8 +515,15 @@ public class Actions {
 	fedora.unlinkParent(node);
 	fedora.linkToParent(node, parentPid);
 	fedora.linkParentToNode(parentPid, node.getPID());
-	fedora.updateNode(node);
 	index(node);
+    }
+
+    private void updateTransformer(CreateObjectBean input, Node node) {
+	String[] transformers = input.getTransformer();
+	if (transformers != null && transformers.length != 0)
+	    for (String t : transformers) {
+		node.addTransformer(new Transformer(t));
+	    }
     }
 
     /**
@@ -896,6 +903,21 @@ public class Actions {
      */
     public String getUrnbase() {
 	return urnbase;
+    }
+
+    /**
+     * @param p
+     *            the id part of a pid
+     * @param namespace
+     *            the namespace part of a pid
+     * @param transformerId
+     *            the id of the transformer
+     */
+    public void addTransformer(String p, String namespace, String transformerId) {
+	String pid = namespace + ":" + p;
+	Node node = readNode(pid);
+	node.addTransformer(new Transformer(transformerId));
+	fedora.updateNode(node);
     }
 
 }

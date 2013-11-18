@@ -35,6 +35,15 @@ public class Transformer {
     private Vector<String> methodNames = null;
     private Vector<String> methodLocations = null;
 
+    /**
+     * Creates a new Transformer. The passed Id will be used to create Objects
+     * according to a standard naming schema: setContentModelPID("CM:" + id);
+     * setServiceDefinitionPID("CM:" + id + "ServiceDefinition");
+     * setServiceDeploymentPID("CM:" + id + "ServiceDeployment");
+     * 
+     * @param id
+     *            an Transformer-Id
+     */
     public Transformer(String id) {
 	this.id = id;
 	prescribedDSIds = new Vector<String>();
@@ -152,6 +161,9 @@ public class Transformer {
 	return methodLocations;
     }
 
+    /**
+     * @return the plain id of the transformer
+     */
     public String getId() {
 	return id;
     }

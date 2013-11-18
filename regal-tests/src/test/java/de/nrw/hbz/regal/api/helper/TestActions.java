@@ -52,8 +52,8 @@ public class TestActions {
     }
 
     private void cleanUp() {
-	actions.deleteNamespace("test");
-	actions.deleteNamespace("testCM");
+	actions.deleteByQuery("test:*");
+	actions.deleteByQuery("CM:test*");
     }
 
     @Test
@@ -80,6 +80,18 @@ public class TestActions {
 	actions.updateMetadata("test:" + pid, CopyUtils.copyToString(
 		Thread.currentThread().getContextClassLoader()
 			.getResourceAsStream("test.nt"), "utf-8"));
+    }
+
+    @Test
+    public void create() throws IOException, InterruptedException {
+	createTestObject("123");
+	actions.addTransformer("123", "test", "testepicur");
+	Thread.sleep(10000);
+	List<String> pids = actions.list("monograph", "test", 0, 10, "repo");
+	Assert.assertEquals(1, pids.size());
+	pids = actions.list("transformer", "CM", 0, 10, "repo");
+	Assert.assertEquals(1, pids.size());
+	System.out.println(pids);
     }
 
     @Test(expected = HttpArchiveException.class)

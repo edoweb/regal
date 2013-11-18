@@ -18,6 +18,8 @@ package de.nrw.hbz.regal.api;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Vector;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -37,6 +39,7 @@ import javax.ws.rs.core.Response.Status;
 import de.nrw.hbz.regal.api.helper.Actions;
 import de.nrw.hbz.regal.api.helper.HttpArchiveException;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
 /**
@@ -72,7 +75,23 @@ public class Utils {
     @Produces({ "application/json", "application/xml" })
     public String deleteNamespace(@PathParam("namespace") String namespace) {
 
-	return actions.deleteNamespace(namespace);
+	return actions.deleteByQuery(namespace + ":*");
+
+    }
+
+    /**
+     * Deletes all objects in a certain namespace.
+     * 
+     * @param query
+     *            all objects matched by this query will be deleted
+     * @return A message or an ArchiveException
+     */
+    @DELETE
+    @Path("/deleteByQuery/{query}")
+    @Produces({ "application/json", "application/xml" })
+    public String deleteByQuery(@PathParam("query") String query) {
+
+	return actions.deleteByQuery(query);
 
     }
 
@@ -335,10 +354,18 @@ public class Utils {
      * @return a message
      */
     @POST
-    @Path("/contentModels")
+    @Path("/initContentModels/{namespace}")
     @Produces({ "text/plain" })
-    public String contentModelsInit(@PathParam("namespace") String namespace) {
-	return null;
+    public String init(@PathParam("namespace") String namespace) {
+	List<Transformer> transformers = new Vector<Transformer>();
+	transformers.add(new Transformer(namespace + "epicur"));
+	transformers.add(new Transformer(namespace + "oaidc"));
+	transformers.add(new Transformer(namespace + "pdfa"));
+	transformers.add(new Transformer(namespace + "pdfbox"));
+	transformers.add(new Transformer(namespace + "aleph"));
+	actions.contentModelsInit(transformers);
+	return "Reinit contentModels " + namespace + "epicur, " + namespace
+		+ "oaidc, " + namespace + "pdfa, " + namespace + "pdfbox, "
+		+ namespace + "aleph";
     }
-
 }

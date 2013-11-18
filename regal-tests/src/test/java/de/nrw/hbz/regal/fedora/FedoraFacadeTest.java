@@ -49,9 +49,6 @@ public class FedoraFacadeTest {
 	Properties properties = new Properties();
 	properties.load(getClass().getResourceAsStream("/test.properties"));
 
-	// System.out.println(XmlSchemaCollection.class
-	// .getResource("XmlSchemaCollection.class"));
-
 	facade = FedoraFactory.getFedoraImpl(
 		properties.getProperty("fedoraUrl"),
 		properties.getProperty("user"),
@@ -69,14 +66,7 @@ public class FedoraFacadeTest {
 
 	URL url = this.getClass().getResource("/test.pdf");
 	object.setUploadData(url.getPath(), "application/pdf");
-
-	List<String> result = facade
-		.findPids("test:*", FedoraVocabulary.SIMPLE);
-	for (String pid : result)
-	    facade.deleteNode(pid);
-	result = facade.findPids("testCM:*", FedoraVocabulary.SIMPLE);
-	for (String pid : result)
-	    facade.deleteNode(pid);
+	cleanUp();
     }
 
     @Test
@@ -237,6 +227,10 @@ public class FedoraFacadeTest {
 
     @After
     public void tearDown() {
+	cleanUp();
+    }
+
+    private void cleanUp() {
 	List<String> result = facade
 		.findPids("test:*", FedoraVocabulary.SIMPLE);
 	for (String pid : result)

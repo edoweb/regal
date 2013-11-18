@@ -744,7 +744,7 @@ public class Resource {
     }
 
     /**
-     * Returns a OAI-ORE representation as json.
+     * Returns a object representation as CreateObjectBean in json.
      * 
      * @param pid
      *            the pid of the resource

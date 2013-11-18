@@ -508,12 +508,18 @@ public class Utils {
 
     List<String> findPidsSimple(String rdfQuery) {
 
+	FindObjectsResponse response = null;
+	List<String> result = null;
 	try {
-	    FindObjectsResponse response = new FindObjects().maxResults(50)
-		    .resultFormat("xml").pid().terms(rdfQuery).execute();
+	    response = new FindObjects().maxResults(50).resultFormat("xml")
+		    .pid().terms(rdfQuery).execute();
+	} catch (FedoraClientException e) {
+	    return new Vector<String>();
+	}
+	try {
 	    if (!response.hasNext())
 		return response.getPids();
-	    List<String> result = response.getPids();
+	    result = response.getPids();
 	    while (response.hasNext()) {
 
 		response = new FindObjects().pid()
@@ -522,11 +528,11 @@ public class Utils {
 		result.addAll(response.getPids());
 
 	    }
-
-	    return result;
 	} catch (FedoraClientException e) {
 	    throw new NoPidFoundException(rdfQuery, e);
 	}
+
+	return result;
 
     }
 
@@ -642,6 +648,10 @@ public class Utils {
 	}
     }
 
+    /**
+     * @param models
+     *            a list of Transformers/ContentModels
+     */
     public void updateContentModels(List<Transformer> models) {
 	for (Transformer m : models) {
 	    updateContentModel(m);
@@ -677,6 +687,14 @@ public class Utils {
     // node.addRelation(link);
     // }
 
+    /**
+     * Links a list of contentModels to a node
+     * 
+     * @param contentModels
+     *            the ContentModels
+     * @param node
+     *            the node
+     */
     public void linkContentModels(List<Transformer> contentModels, Node node) {
 	for (Transformer t : contentModels) {
 	    Link link = new Link();
@@ -710,6 +728,11 @@ public class Utils {
 	cmHBZLink2.setPredicate(REL_HAS_MODEL);
 	cmHBZLink2.setObject(addUriPrefix(CM_CONTENTMODEL), false);
 	cmHBZLinks.add(cmHBZLink2);
+
+	Link typeLink = new Link();
+	typeLink.setPredicate(REL_CONTENT_TYPE);
+	typeLink.setObject("transformer", true);
+	cmHBZLinks.add(typeLink);
 
 	addRelationships(foCMPid, cmHBZLinks);
 
@@ -770,7 +793,7 @@ public class Utils {
 
     }
 
-    public void addContentModel(Link link, Node node) {
+    private void addContentModel(Link link, Node node) {
 
 	Transformer t = createTransformer(link.getObject());
 	node.addTransformer(t);

@@ -12,6 +12,7 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
 public class CreateObjectBean {
     String type = null;
     String parentPid = null;
+    String[] transformer = null;
 
     /**
      * Default constructor
@@ -19,6 +20,21 @@ public class CreateObjectBean {
      */
     public CreateObjectBean() {
 
+    }
+
+    /**
+     * @return all Transformer-Ids
+     */
+    public String[] getTransformer() {
+	return transformer;
+    }
+
+    /**
+     * @param transformer
+     *            list of Transformer-Ids
+     */
+    public void setTransformer(String[] transformer) {
+	this.transformer = transformer;
     }
 
     /**

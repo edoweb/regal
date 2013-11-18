@@ -98,6 +98,11 @@ public class Node {
 	return this;
     }
 
+    /**
+     * @param id
+     *            the Transformer-Id
+     * @return this
+     */
     public Node removeTransformer(String id) {
 	Iterator<Transformer> it = cms.iterator();
 	while (it.hasNext()) {

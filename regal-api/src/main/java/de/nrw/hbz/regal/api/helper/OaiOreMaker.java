@@ -491,18 +491,6 @@ public class OaiOreMaker {
 	}
     }
 
-    private class AddDescriptiveDataException extends RuntimeException {
-	public AddDescriptiveDataException(Throwable e) {
-	    super(e);
-	}
-    }
-
-    private class AddStructuralDataException extends RuntimeException {
-	public AddStructuralDataException(Throwable e) {
-	    super(e);
-	}
-    }
-
     private class WriteRdfException extends RuntimeException {
 	public WriteRdfException(Throwable e) {
 	    super(e);
