@@ -18,6 +18,7 @@ package de.nrw.hbz.regal.fedora;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -27,9 +28,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.nrw.hbz.regal.api.helper.ContentModelFactory;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.datatypes.Vocabulary;
 
 /**
@@ -48,9 +49,6 @@ public class FedoraFacadeTest {
 	Properties properties = new Properties();
 	properties.load(getClass().getResourceAsStream("/test.properties"));
 
-	// System.out.println(XmlSchemaCollection.class
-	// .getResource("XmlSchemaCollection.class"));
-
 	facade = FedoraFactory.getFedoraImpl(
 		properties.getProperty("fedoraUrl"),
 		properties.getProperty("user"),
@@ -62,21 +60,13 @@ public class FedoraFacadeTest {
 	object.dublinCoreData.addTitle("Ein Testtitel");
 	object.dublinCoreData.addCreator("Jan Schnasse");
 
-	// object.addContentModel(ContentModelFactory.createMonographModel("test"));
-	// object.addContentModel(ContentModelFactory.createHeadModel("test"));
-	object.addContentModel(ContentModelFactory.createPdfModel("test",
-		"http://localhost"));
+	object.addTransformer(new Transformer("testepicur"));
+	object.addTransformer(new Transformer("testoaidc"));
+	object.addTransformer(new Transformer("testpdfa"));
 
 	URL url = this.getClass().getResource("/test.pdf");
 	object.setUploadData(url.getPath(), "application/pdf");
-
-	List<String> result = facade
-		.findPids("test:*", FedoraVocabulary.SIMPLE);
-	for (String pid : result)
-	    facade.deleteNode(pid);
-	result = facade.findPids("testCM:*", FedoraVocabulary.SIMPLE);
-	for (String pid : result)
-	    facade.deleteNode(pid);
+	cleanUp();
     }
 
     @Test
@@ -155,26 +145,55 @@ public class FedoraFacadeTest {
     }
 
     @Test
-    public void makeContentModel() {
+    public void createTransformer() {
 	facade.createNode(object);
-	String namespace = "test";
-	facade.updateContentModel(ContentModelFactory.createHeadModel(
-		namespace, "http://localhost"));
-	facade.updateContentModel(ContentModelFactory
-		.createEJournalModel(namespace));
-	facade.updateContentModel(ContentModelFactory
-		.createMonographModel(namespace));
-	facade.updateContentModel(ContentModelFactory
-		.createWebpageModel(namespace));
-	facade.updateContentModel(ContentModelFactory
-		.createVersionModel(namespace));
-	facade.updateContentModel(ContentModelFactory
-		.createVolumeModel(namespace));
-	facade.updateContentModel(ContentModelFactory.createPdfModel(namespace,
-		"http://localhost"));
+	List<Transformer> transformers = new Vector<Transformer>();
+	transformers.add(new Transformer("testepicur"));
+	transformers.add(new Transformer("testoaidc"));
+	transformers.add(new Transformer("testpdfa"));
+	facade.updateContentModels(transformers);
+    }
 
-	// TODO Assertion
+    @Test
+    public void removeNodesTransformer() throws InterruptedException {
+	facade.createNode(object);
+	object.removeTransformer("testepicur");
 
+	List<Transformer> ts = object.getContentModels();
+	Assert.assertEquals(2, ts.size());
+	for (Transformer t : ts) {
+	    Assert.assertFalse(t.getId().equals("testepicur"));
+	}
+	facade.updateNode(object);
+	object = facade.readNode(object.getPID());
+
+	HashMap<String, String> map = new HashMap<String, String>();
+	map.put("testoaidc", "testoaidc");
+	map.put("testpdfa", "testpdfa");
+	ts = object.getContentModels();
+	Assert.assertEquals(2, ts.size());
+	for (Transformer t : ts) {
+	    Assert.assertTrue(map.containsKey(t.getId()));
+	}
+	for (Transformer t : ts) {
+	    Assert.assertFalse(t.getId().equals("testepicur"));
+	}
+    }
+
+    @Test
+    public void readNodesTransformer() {
+	facade.createNode(object);
+	object = facade.readNode(object.getPID());
+	List<Transformer> ts = object.getContentModels();
+	HashMap<String, String> map = new HashMap<String, String>();
+	map.put("testepicur", "testepicur");
+	map.put("testoaidc", "testoaidc");
+	map.put("testpdfa", "testpdfa");
+	Assert.assertEquals(3, ts.size());
+	for (Transformer t : ts) {
+	    System.out.println(t.getId());
+	    Assert.assertTrue(map.containsKey(t.getId()));
+	}
     }
 
     @Test
@@ -208,11 +227,15 @@ public class FedoraFacadeTest {
 
     @After
     public void tearDown() {
+	cleanUp();
+    }
+
+    private void cleanUp() {
 	List<String> result = facade
 		.findPids("test:*", FedoraVocabulary.SIMPLE);
 	for (String pid : result)
 	    facade.deleteNode(pid);
-	result = facade.findPids("testCM:*", FedoraVocabulary.SIMPLE);
+	result = facade.findPids("CM:test*", FedoraVocabulary.SIMPLE);
 	for (String pid : result)
 	    facade.deleteNode(pid);
     }

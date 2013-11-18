@@ -22,7 +22,7 @@ import java.util.Vector;
 import com.yourmediashelf.fedora.client.FedoraClientException;
 import com.yourmediashelf.fedora.client.request.AddDatastream;
 
-import de.nrw.hbz.regal.datatypes.ContentModel;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
@@ -34,10 +34,10 @@ public class ContentModelBuilder {
 
     void createFedoraXMLForContentModels(Node node) {
 	StringBuffer infoStream = new StringBuffer();
-	List<ContentModel> models = node.getContentModels();
+	List<Transformer> models = node.getContentModels();
 
 	infoStream.append("<ContentModelInfoStream>");
-	for (ContentModel model : models) {
+	for (Transformer model : models) {
 	    infoStream.append("<ContentModel>");
 	    infoStream.append("<ContentModelPid>" + model.getContentModelPID()
 		    + "</ContentModelPid>");
@@ -96,7 +96,7 @@ public class ContentModelBuilder {
      *            A fedora-like content model
      * @return The fedora-ready content model as String.
      */
-    String getDsCompositeModel(ContentModel cm) {
+    String getDsCompositeModel(Transformer cm) {
 	String start = " <dsCompositeModel xmlns=\"info:fedora/fedora-system:def/dsCompositeModel#\">";
 
 	StringBuffer middle = new StringBuffer();
@@ -122,7 +122,7 @@ public class ContentModelBuilder {
      *            A fedora-like content model
      * @return A fedora-like methodmap as string
      */
-    String getMethodMap(ContentModel cm) {
+    String getMethodMap(Transformer cm) {
 	String start = "<fmm:MethodMap name=\"MethodMap\" xmlns:fmm=\"http://fedora.comm.nsdlib.org/service/methodmap\">";
 
 	StringBuffer middle = new StringBuffer();
@@ -142,7 +142,7 @@ public class ContentModelBuilder {
      *            a fedora-like content model
      * @return the fedora-like method map to wsdl mapping as string
      */
-    String getMethodMapToWsdl(ContentModel cm) {
+    String getMethodMapToWsdl(Transformer cm) {
 
 	String start = "<fmm:MethodMap name=\"MethodMap\" xmlns:fmm=\"http://fedora.comm.nsdlib.org/service/methodmap\">";
 
@@ -187,7 +187,7 @@ public class ContentModelBuilder {
      *            a fedora-like content model
      * @return the fedora-like wsdl as string
      */
-    String getWsdl(ContentModel cm) {
+    String getWsdl(Transformer cm) {
 	String start = "<wsdl:definitions name=\"Undefined\" targetNamespace=\"bmech\""
 		+ "	    xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\""
 		+ "	    xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap\" xmlns:soapenc=\"http://schemas.xmlsoap.org/wsdl/soap/encoding\""

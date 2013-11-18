@@ -22,8 +22,6 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -45,10 +43,7 @@ import org.slf4j.LoggerFactory;
 import com.sun.jersey.multipart.MultiPart;
 
 import de.nrw.hbz.regal.api.helper.Actions;
-import de.nrw.hbz.regal.api.helper.ContentModelFactory;
 import de.nrw.hbz.regal.api.helper.HttpArchiveException;
-import de.nrw.hbz.regal.api.helper.ObjectType;
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
@@ -72,7 +67,7 @@ public class Resource {
      *             if properties of the Actions class can't get loaded
      */
     public Resource() throws IOException {
-	actions = new Actions();
+	actions = Actions.getInstance();
     }
 
     /**
@@ -104,35 +99,7 @@ public class Resource {
 		    "The type you've provided is NULL or empty.");
 	}
 	try {
-	    List<ContentModel> models = new Vector<ContentModel>();
-	    if (input.type.compareTo(ObjectType.monograph.toString()) == 0) {
-		models.add(ContentModelFactory.createMonographModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.journal.toString()) == 0) {
-		models.add(ContentModelFactory.createEJournalModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.webpage.toString()) == 0) {
-		models.add(ContentModelFactory.createWebpageModel(namespace));
-	    } else if (input.type.compareTo(ObjectType.version.toString()) == 0) {
-		models.add(ContentModelFactory.createVersionModel(namespace));
-	    } else if (input.type.compareTo(ObjectType.volume.toString()) == 0) {
-		models.add(ContentModelFactory.createVolumeModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.file.toString()) == 0) {
-		models.add(ContentModelFactory.createFileModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.issue.toString()) == 0) {
-		models.add(ContentModelFactory.createIssueModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    }
-	    models.add(ContentModelFactory.createHeadModel(namespace,
-		    actions.getServer()));
-	    Node node = actions.createResource(input, pid, namespace, models);
+	    Node node = actions.createResource(input, pid, namespace);
 	    return node.getPID() + " created/updated!";
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
@@ -169,29 +136,66 @@ public class Resource {
      * Returns all resources of a certain type (optional).
      * 
      * @param type
-     *            a contentType
+     *            a contentType. Is optional. If no type is set. All resources
+     *            will be returned.
+     * @param namespace
+     *            list only objects in this namespace. Is optional. If no
+     *            namespace is defined. All resources will be returned.
+     * @param from
+     *            show only hits starting at this index. Is optional. Defaults
+     *            to 0.
+     * @param until
+     *            show only hits ending at this index. Is optional. Defaults to
+     *            10.
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es". Defaults to "es".
      * @return a list of all archived objects
      */
     @GET
     @Produces({ "application/json", "application/xml" })
-    public Response getAll(@DefaultValue("") @QueryParam("type") String type) {
-	ObjectList rem = new ObjectList(actions.getAll(type));
+    public Response getAll(
+	    @DefaultValue("") @QueryParam("type") String type,
+	    @DefaultValue("") @QueryParam("namespace") String namespace,
+	    @DefaultValue("0") @QueryParam("from") int from,
+	    @DefaultValue("10") @QueryParam("until") int until,
+	    @DefaultValue("es") @QueryParam("getListingFrom") String getListingFrom) {
+	ObjectList rem = new ObjectList(actions.list(type, namespace, from,
+		until, getListingFrom));
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();
     }
 
     /**
-     * Returns all resources of a certain type (optional) in HTML.
+     * Returns all resources of a certain type (optional).
      * 
      * @param type
-     *            a contentType
-     * @return a list of resources as html
+     *            a contentType. Is optional. If no type is set. All resources
+     *            will be returned.
+     * @param namespace
+     *            list only objects in this namespace. Is optional. If no
+     *            namespace is defined. All resources will be returned.
+     * @param from
+     *            show only hits starting at this index. Is optional. Defaults
+     *            to 0.
+     * @param until
+     *            show only hits ending at this index. Is optional. Defaults to
+     *            10.
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es". Defaults to "es".
+     * @return a list of all archived objects
      */
     @GET
     @Produces({ "text/html" })
     public Response getAllAsHtml(
-	    @DefaultValue("") @QueryParam("type") String type) {
-	String rem = actions.getAllAsHtml(type);
+	    @DefaultValue("") @QueryParam("type") String type,
+	    @DefaultValue("") @QueryParam("namespace") String namespace,
+	    @DefaultValue("0") @QueryParam("from") int from,
+	    @DefaultValue("10") @QueryParam("until") int until,
+	    @DefaultValue("es") @QueryParam("getListingFrom") String getListingFrom) {
+	String rem = actions.listAsHtml(type, namespace, from, until,
+		getListingFrom);
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();
     }
@@ -201,13 +205,22 @@ public class Resource {
      * 
      * @param type
      *            the type of resources that will be deleted
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
      * @return A message and status code 200 if ok and 500 if not
      */
     @DELETE
     @Produces({ "application/json", "application/xml" })
-    public String deleteAllOfType(@QueryParam("type") String type) {
+    public String deleteAllOfType(@QueryParam("type") String type,
+	    @QueryParam("namespace") String namespace,
+	    @QueryParam("from") int from, @QueryParam("until") int until) {
 	try {
-	    return actions.deleteAll(actions.getAll(type));
+	    return actions.deleteAll(actions.list(type, namespace, from, until,
+		    "repo"));
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
@@ -333,7 +346,7 @@ public class Resource {
 		.status(303).build();
     }
 
-      /**
+    /**
      * Lists all children of the resource
      * 
      * @param pid
@@ -570,7 +583,7 @@ public class Resource {
     public String deleteMetadata(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
 	try {
-	    return actions.deleteMetadata(namespace + ":" + pid);
+	    return actions.deleteMetadata(pid, namespace);
 
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
@@ -731,7 +744,7 @@ public class Resource {
     }
 
     /**
-     * Returns a OAI-ORE representation as json.
+     * Returns a object representation as CreateObjectBean in json.
      * 
      * @param pid
      *            the pid of the resource

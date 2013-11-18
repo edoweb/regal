@@ -18,6 +18,8 @@ package de.nrw.hbz.regal.api;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Vector;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -37,6 +39,7 @@ import javax.ws.rs.core.Response.Status;
 import de.nrw.hbz.regal.api.helper.Actions;
 import de.nrw.hbz.regal.api.helper.HttpArchiveException;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
 /**
@@ -48,7 +51,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  */
 @Path("/utils")
 public class Utils {
-    Actions actions = new Actions();
+    Actions actions = null;
 
     /**
      * @throws IOException
@@ -56,8 +59,8 @@ public class Utils {
      * 
      */
     public Utils() throws IOException {
-
-	actions = new Actions();
+	actions = Actions.getInstance();
+	actions = Actions.getInstance();
     }
 
     /**
@@ -72,12 +75,28 @@ public class Utils {
     @Produces({ "application/json", "application/xml" })
     public String deleteNamespace(@PathParam("namespace") String namespace) {
 
-	return actions.deleteNamespace(namespace);
+	return actions.deleteByQuery(namespace + ":*");
 
     }
 
     /**
-     * Aims to generate OAI-Sets from the metadata of the pid
+     * Deletes all objects in a certain namespace.
+     * 
+     * @param query
+     *            all objects matched by this query will be deleted
+     * @return A message or an ArchiveException
+     */
+    @DELETE
+    @Path("/deleteByQuery/{query}")
+    @Produces({ "application/json", "application/xml" })
+    public String deleteByQuery(@PathParam("query") String query) {
+
+	return actions.deleteByQuery(query);
+
+    }
+
+    /**
+     * Generates OAI-Sets for the object
      * 
      * @param pid
      *            the pid of the object, that must be published in a oai set.
@@ -96,26 +115,47 @@ public class Utils {
     }
 
     /**
-     * Aims to pass the object to the elastic search index
+     * Add an object to the elasticsearch index
      * 
      * @param pid
      *            the pid to be indexed
      * @param namespace
      *            the namespace of the resource
+     * @param type
+     *            the type of the resource
      * @return a message
      */
     @POST
     @Path("/index/{namespace}:{pid}")
     @Produces({ "application/json", "application/xml" })
     public String index(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
-	try {
-	    return actions.index(pid, namespace);
-	} catch (Exception e) {
+	    @PathParam("namespace") String namespace,
+	    @QueryParam("type") final String type) {
 
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+	return actions.index(pid, namespace, type);
+
+    }
+
+    /**
+     * Removes an object from the elasticsearch index
+     * 
+     * @param pid
+     *            the pid of the object
+     * @param namespace
+     *            the namespace of the object
+     * @param type
+     *            the type of the object
+     * @return a message
+     */
+    @DELETE
+    @Path("/index/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String removeFromindex(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace,
+	    @QueryParam("type") final String type) {
+
+	return actions.removeFromIndex(namespace, type, pid);
+
     }
 
     /**
@@ -131,6 +171,70 @@ public class Utils {
     @Produces({ "application/json", "application/xml" })
     public String lobidify(@PathParam("pid") String pid) {
 	return actions.lobidify(pid);
+    }
+
+    /**
+     * Adds an Urn to the pid. If the pid already has an urn a exception will be
+     * thrown.
+     * 
+     * @param id
+     *            pid without namespace
+     * @param namespace
+     *            the namespace
+     * @param snid
+     *            a urn snid
+     * @return urn
+     */
+    @POST
+    @Path("/addUrn")
+    @Produces({ "application/json", "application/xml" })
+    public String addUrn(@QueryParam("id") final String id,
+	    @QueryParam("namespace") final String namespace,
+	    @QueryParam("snid") final String snid) {
+	return actions.addUrn(id, namespace, snid);
+    }
+
+    /**
+     * Replaces, or if not exists adds an URN
+     * 
+     * @param id
+     *            pid without namespace
+     * @param namespace
+     *            the namespace
+     * @param snid
+     *            a urn snid
+     * @return urn
+     */
+    @POST
+    @Path("/replaceUrn")
+    @Produces({ "application/json", "application/xml" })
+    public String replaceUrn(@QueryParam("id") final String id,
+	    @QueryParam("namespace") final String namespace,
+	    @QueryParam("snid") final String snid) {
+	return actions.replaceUrn(id, namespace, snid);
+    }
+
+    /**
+     * Reininit ContentModels for a certain namespace
+     * 
+     * @param namespace
+     *            namespace of the model
+     * @return a message
+     */
+    @POST
+    @Path("/initContentModels/{namespace}")
+    @Produces({ "text/plain" })
+    public String initContentModels(@PathParam("namespace") String namespace) {
+	List<Transformer> transformers = new Vector<Transformer>();
+	transformers.add(new Transformer(namespace + "epicur"));
+	transformers.add(new Transformer(namespace + "oaidc"));
+	transformers.add(new Transformer(namespace + "pdfa"));
+	transformers.add(new Transformer(namespace + "pdfbox"));
+	transformers.add(new Transformer(namespace + "aleph"));
+	actions.contentModelsInit(transformers);
+	return "Reinit contentModels " + namespace + "epicur, " + namespace
+		+ "oaidc, " + namespace + "pdfa, " + namespace + "pdfbox, "
+		+ namespace + "aleph";
     }
 
     /**
@@ -173,47 +277,6 @@ public class Utils {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
-    }
-
-    /**
-     * Adds an Urn to the pid. If the pid already has an urn a exception will be
-     * thrown.
-     * 
-     * @param id
-     *            pid without namespace
-     * @param namespace
-     *            the namespace
-     * @param snid
-     *            a urn snid
-     * @return urn
-     */
-    @POST
-    @Path("/addUrn")
-    @Produces({ "application/json", "application/xml" })
-    public String addUrn(@QueryParam("id") final String id,
-	    @QueryParam("namespace") final String namespace,
-	    @QueryParam("snid") final String snid) {
-	return actions.addUrn(id, namespace, snid);
-    }
-
-    /**
-     * Replaces, or if not exists adds an URN
-     * 
-     * @param id
-     *            pid without namespace
-     * @param namespace
-     *            the namespace
-     * @param snid
-     *            a urn snid
-     * @return urn
-     */
-    @POST
-    @Path("/replaceUrn")
-    @Produces({ "application/json", "application/xml" })
-    public String replaceUrn(@QueryParam("id") final String id,
-	    @QueryParam("namespace") final String namespace,
-	    @QueryParam("snid") final String snid) {
-	return actions.replaceUrn(id, namespace, snid);
     }
 
     /**
@@ -305,24 +368,4 @@ public class Utils {
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
-
-    /**
-     * Reininit ContentModels for a certain namespace
-     * 
-     * @param namespace
-     *            namespace of the model
-     * @return a message
-     */
-    @POST
-    @Path("/contentModels/{namespace}/init")
-    @Produces({ "text/plain" })
-    public String contentModelsInit(@PathParam("namespace") String namespace) {
-	try {
-	    return actions.contentModelsInit(namespace);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
-    }
-
 }

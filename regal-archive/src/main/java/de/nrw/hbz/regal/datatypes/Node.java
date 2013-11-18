@@ -18,6 +18,7 @@ package de.nrw.hbz.regal.datatypes;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -39,7 +40,7 @@ public class Node {
     private String uploadFile;
     private String fileLabel;
     private Vector<Link> relsExt = new Vector<Link>();
-    private Vector<ContentModel> cms = new Vector<ContentModel>();
+    private Vector<Transformer> cms = new Vector<Transformer>();
     private String label = null;
     private String type = null;
     private String pid = null;
@@ -92,8 +93,26 @@ public class Node {
      *            the ContentModel
      * @return this
      */
-    public Node addContentModel(ContentModel cm) {
+    public Node addTransformer(Transformer cm) {
 	cms.add(cm);
+	return this;
+    }
+
+    /**
+     * @param id
+     *            the Transformer-Id
+     * @return this
+     */
+    public Node removeTransformer(String id) {
+	Iterator<Transformer> it = cms.iterator();
+	while (it.hasNext()) {
+	    Transformer t = it.next();
+	    if (t.getId().compareTo(id) == 0) {
+		System.out.println("REMOVE: " + id);
+		it.remove();
+	    }
+
+	}
 	return this;
     }
 
@@ -247,7 +266,7 @@ public class Node {
     /**
      * @return all content Models
      */
-    public List<ContentModel> getContentModels() {
+    public List<Transformer> getContentModels() {
 
 	return cms;
     }
@@ -260,7 +279,7 @@ public class Node {
     }
 
     /**
-     * @return the node's pid
+     * @return the node's pid with namespace
      */
     public String getPID() {
 	return pid;
@@ -435,4 +454,5 @@ public class Node {
     public void setChecksum(String checksum) {
 	this.checksum = checksum;
     }
+
 }

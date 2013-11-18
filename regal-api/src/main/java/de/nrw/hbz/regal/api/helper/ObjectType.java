@@ -67,6 +67,12 @@ public enum ObjectType {
      * A supplement resource can be attached to each of the above resource
      * types.
      */
-    supplement
+    supplement,
+    /**
+     * A transformer object exists only once in repository. Other objects can be
+     * linked to transformer objects in order to provide conversion services on
+     * fedora level.
+     */
+    transformer
 
 }

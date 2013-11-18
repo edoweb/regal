@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -46,40 +47,30 @@ public class TestActions {
 
     @Before
     public void setUp() throws IOException {
-	actions = new Actions();
+	actions = Actions.getInstance();
 	cleanUp();
     }
 
     private void cleanUp() {
-	actions.deleteNamespace("test");
-	actions.deleteNamespace("testCM");
+	actions.deleteByQuery("test:*");
+	actions.deleteByQuery("CM:test*");
     }
 
     @Test
-    public void testFindByType() throws IOException {
+    public void testFindByType() throws IOException, InterruptedException {
 	createTestObject("123");
-	int count = 10;
-	for (String result : actions
-		.findByType(ObjectType.monograph.toString())) {
-	    if (count <= 0)
-		break;
-	    count--;
-	    Node node = actions.readNode(result);
-	    String type = node.getContentType();
-
-	    if (type == null || type.isEmpty())
-		Assert.fail();
-	    else if (ObjectType.monograph.toString().compareTo(type) != 0) {
-		Assert.fail();
-	    }
-	}
+	List<String> list = actions.list("monograph", "test", 0, 10, "es");
+	Assert.assertTrue(list.get(0).equals("test:123"));
+	Node node = actions.readNode(list.get(0));
+	String type = node.getContentType();
+	Assert.assertTrue(type.equals("monograph"));
     }
 
     public void createTestObject(String pid) throws IOException {
-	actions.contentModelsInit("test");
+	// actions.contentModelsInit("test");
 	CreateObjectBean input = new CreateObjectBean();
 	input.setType("monograph");
-	actions.createResource(input, pid, "test", null);
+	actions.createResource(input, pid, "test");
 	DCBeanAnnotated dc = new DCBeanAnnotated();
 	dc.addIdentifier("HT015702837");
 	actions.updateDC("test:" + pid, dc);
@@ -91,11 +82,23 @@ public class TestActions {
 			.getResourceAsStream("test.nt"), "utf-8"));
     }
 
+    @Test
+    public void create() throws IOException, InterruptedException {
+	createTestObject("123");
+	actions.addTransformer("123", "test", "testepicur");
+	Thread.sleep(10000);
+	List<String> pids = actions.list("monograph", "test", 0, 10, "repo");
+	Assert.assertEquals(1, pids.size());
+	pids = actions.list("transformer", "CM", 0, 10, "repo");
+	Assert.assertEquals(1, pids.size());
+	System.out.println(pids);
+    }
+
     @Test(expected = HttpArchiveException.class)
     public void deleteMetadata() throws IOException {
 	createTestObject("123");
 	actions.readMetadata("test:123");
-	actions.deleteMetadata("test:123");
+	actions.deleteMetadata("123", "test");
 	actions.deleteData("test:123");
 	actions.readMetadata("test:123");
     }
@@ -119,8 +122,8 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ actions.getServer()
-		+ "/resource/test:123"
+		+ actions.getUrnbase()
+		+ "test:123"
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
@@ -139,8 +142,8 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ actions.getServer()
-		+ "/resource/test:123"
+		+ actions.getUrnbase()
+		+ "test:123"
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
@@ -176,8 +179,8 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ actions.getServer()
-		+ "/resource/test:123"
+		+ actions.getUrnbase()
+		+ "test:123"
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
@@ -197,7 +200,7 @@ public class TestActions {
 	createTestObject("123");
 	Node node = actions.readNode("test:123");
 	// The pdfA conversion needs a public address
-	if (actions.getServer().equals("http://localhost"))
+	if (actions.getServer().contains("localhost"))
 	    return;
 	String response = actions.pdfa(node);
 	Assert.assertNotNull(response);

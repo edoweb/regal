@@ -35,16 +35,21 @@ import java.util.Vector;
 
 import javax.ws.rs.core.Response;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableMap;
+
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.DCBean;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 import de.nrw.hbz.regal.fedora.CopyUtils;
 import de.nrw.hbz.regal.fedora.FedoraFactory;
@@ -53,6 +58,7 @@ import de.nrw.hbz.regal.fedora.FedoraVocabulary;
 import de.nrw.hbz.regal.fedora.RdfException;
 import de.nrw.hbz.regal.fedora.RdfUtils;
 import de.nrw.hbz.regal.fedora.UrlConnectionException;
+import de.nrw.hbz.regal.search.Search;
 
 /**
  * Actions provide a single class to access the archive. All endpoints are using
@@ -83,12 +89,17 @@ public class Actions {
     }
 
     final static Logger logger = LoggerFactory.getLogger(Actions.class);
-    Services services = null;
-    Representations representations = null;
+    private static Actions actions = null;
+
+    private Services services = null;
+    private Representations representations = null;
     private FedoraInterface fedora = null;
+
     private String fedoraExtern = null;
     private String server = null;
     private String urnbase = null;
+    private Search search = null;
+    private String escluster = null;
 
     // String namespace = null;
 
@@ -96,12 +107,13 @@ public class Actions {
      * @throws IOException
      *             if properties can not be loaded.
      */
-    public Actions() throws IOException {
+    private Actions() throws IOException {
 	Properties properties = new Properties();
 	properties.load(getClass().getResourceAsStream("/api.properties"));
 	fedoraExtern = properties.getProperty("fedoraExtern");
 	server = properties.getProperty("serverName");
 	urnbase = properties.getProperty("urnbase");
+	escluster = properties.getProperty("escluster");
 	fedora = FedoraFactory.getFedoraImpl(
 		properties.getProperty("fedoraIntern"),
 		properties.getProperty("user"),
@@ -110,6 +122,18 @@ public class Actions {
 		"/externalLinks.properties"));
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
+	search = new Search(escluster);
+    }
+
+    /**
+     * @return an instance of this Actions.class
+     * @throws IOException
+     *             if properties can't be read
+     */
+    public static Actions getInstance() throws IOException {
+	if (actions == null)
+	    actions = new Actions();
+	return actions;
     }
 
     /**
@@ -149,24 +173,29 @@ public class Actions {
     public String delete(String pid) {
 
 	String msg = "";
+	Node node = readNode(pid);
 	fedora.deleteComplexObject(pid);
 
 	try {
-	    outdex(pid);
+	    removeFromIndex(node.getNamespace(), node.getContentType(), pid);
 	} catch (Exception e) {
 	    msg = e.getMessage();
 	}
 
-	return pid + " successfully deleted! " + msg;
+	return pid + " successfully deleted! \n" + msg + "\n";
     }
 
     /**
-     * @param pid
-     *            the pid of the object
+     * @param p
+     *            the id part of a pid
+     * @param namespace
+     *            the namespace part of a pid
      * @return a message
      */
-    public String deleteMetadata(String pid) {
+    public String deleteMetadata(String p, String namespace) {
+	String pid = namespace + ":" + p;
 	fedora.deleteDatastream(pid, "metadata");
+	index(readNode(pid));
 	return pid + ": metadata - datastream successfully deleted! ";
     }
 
@@ -177,10 +206,9 @@ public class Actions {
      */
     public String deleteData(String pid) {
 	fedora.deleteDatastream(pid, "data");
+	index(readNode(pid));
 	return pid + ": data - datastream successfully deleted! ";
     }
-
-    // -------------------------------------------------------
 
     /**
      * @param type
@@ -273,6 +301,7 @@ public class Actions {
 	    node.setUploadData(tmp.getAbsolutePath(), mimeType);
 	    fedora.updateNode(node);
 	}
+	index(node);
 	return pid + " data successfully updated!";
     }
 
@@ -304,6 +333,7 @@ public class Actions {
 	dc.setType(content.getType());
 	node.setDcBean(dc);
 	fedora.updateNode(node);
+	index(node);
 	return pid + " dc successfully updated!";
     }
 
@@ -329,6 +359,7 @@ public class Actions {
 		node.setMetadataFile(file.getAbsolutePath());
 		fedora.updateNode(node);
 	    }
+	    index(node);
 	    return pid + " metadata successfully updated!";
 	} catch (RdfException e) {
 	    throw new HttpArchiveException(400);
@@ -345,6 +376,7 @@ public class Actions {
     public String updateMetadata(Node node) {
 	fedora.updateNode(node);
 	String pid = node.getPID();
+	index(node);
 	return pid + " metadata successfully updated!";
     }
 
@@ -361,6 +393,7 @@ public class Actions {
 	    node.addRelation(link);
 	}
 	fedora.updateNode(node);
+	index(node);
 	return pid + " " + links + " links successfully added.";
     }
 
@@ -379,28 +412,14 @@ public class Actions {
     }
 
     /**
-     * Initialises all content models for one namespace
      * 
-     * @param namespace
-     *            a namespace
+     * @param cms
+     *            a List of Transformers
      * @return a message
      */
-    public String contentModelsInit(String namespace) {
+    public String contentModelsInit(List<Transformer> cms) {
 	try {
-	    fedora.updateContentModel(ContentModelFactory.createHeadModel(
-		    namespace, server));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createEJournalModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createMonographModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createWebpageModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createVersionModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory
-		    .createVolumeModel(namespace));
-	    fedora.updateContentModel(ContentModelFactory.createPdfModel(
-		    namespace, server));
+	    fedora.updateContentModels(cms);
 	    return "Success!";
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(500, e);
@@ -408,14 +427,14 @@ public class Actions {
     }
 
     /**
-     * @param namespace
-     *            the namespace will be deleted
+     * @param query
+     *            a query to define objects that must be deleted
      * @return a message
      */
-    public String deleteNamespace(String namespace) {
+    public String deleteByQuery(String query) {
 	List<String> objects = null;
 	try {
-	    objects = fedora.findNodes(namespace + ":*");
+	    objects = fedora.findNodes(query);
 	} catch (Exception e) {
 
 	}
@@ -456,21 +475,21 @@ public class Actions {
      *            the pid without namespace
      * @param namespace
      *            the namespace
-     * @param models
-     *            content models for the resource
      * @return the Node representing the resource
      */
     public Node createResource(CreateObjectBean input, String rawPid,
-	    String namespace, List<ContentModel> models) {
-	logger.info("create " + input.getType());
-	Node node = createNodeIfNotExists(rawPid, namespace, input, models);
+	    String namespace) {
+	logger.debug("create " + input.getType());
+	Node node = createNodeIfNotExists(rawPid, namespace, input);
 	setNodeType(input, node);
 	linkWithParent(input, node);
+	updateTransformer(input, node);
+	fedora.updateNode(node);
 	return node;
     }
 
     private Node createNodeIfNotExists(String rawPid, String namespace,
-	    CreateObjectBean input, List<ContentModel> models) {
+	    CreateObjectBean input) {
 	String pid = namespace + ":" + rawPid;
 	Node node = null;
 	if (fedora.nodeExists(pid)) {
@@ -479,11 +498,8 @@ public class Actions {
 	    node = new Node();
 	    node.setNamespace(namespace).setPID(pid);
 	    node.setContentType(input.getType());
-	    if (models != null)
-		for (ContentModel model : models) {
-		    node.addContentModel(model);
-		}
 	    fedora.createNode(node);
+	    index(node);
 	}
 	return node;
     }
@@ -491,6 +507,7 @@ public class Actions {
     private void setNodeType(CreateObjectBean input, Node node) {
 	node.setType(TYPE_OBJECT);
 	node.setContentType(input.getType());
+	index(node);
     }
 
     private void linkWithParent(CreateObjectBean input, Node node) {
@@ -498,7 +515,15 @@ public class Actions {
 	fedora.unlinkParent(node);
 	fedora.linkToParent(node, parentPid);
 	fedora.linkParentToNode(parentPid, node.getPID());
-	fedora.updateNode(node);
+	index(node);
+    }
+
+    private void updateTransformer(CreateObjectBean input, Node node) {
+	String[] transformers = input.getTransformer();
+	if (transformers != null && transformers.length != 0)
+	    for (String t : transformers) {
+		node.addTransformer(new Transformer(t));
+	    }
     }
 
     /**
@@ -510,6 +535,7 @@ public class Actions {
     public String lobidify(String pid) {
 	Node node = fedora.readNode(pid);
 	node = services.lobidify(node);
+	index(node);
 	return updateMetadata(node);
     }
 
@@ -587,12 +613,17 @@ public class Actions {
     }
 
     /**
+     * @param index
+     *            the elasticsearch index
+     * @param type
+     *            the type of the resource
      * @param pid
      *            The pid to remove from index
      * @return A short message
      */
-    public String outdex(String pid) {
-	return services.outdex(pid);
+    public String removeFromIndex(String index, String type, String pid) {
+	search.deleteSync(index, type, pid);
+	return pid + " removed from index " + index + "!";
     }
 
     /**
@@ -600,10 +631,23 @@ public class Actions {
      *            The pid that must be indexed
      * @param namespace
      *            the namespace of the pid
+     * @param type
+     *            the type of the resource
      * @return a short message.
      */
-    public String index(String p, String namespace) {
-	return services.index(p, namespace);
+    public String index(String p, String namespace, String type) {
+	String viewAsString = getReM(namespace + ":" + p, "application/json");
+	viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
+		(JSONArray) JSONValue.parse(viewAsString)));
+	search.indexSync(namespace, type, namespace + ":" + p, viewAsString);
+	return namespace + ":" + p + " indexed!";
+    }
+
+    private String index(Node n) {
+	String namespace = n.getNamespace();
+	String pid = n.getPID();
+	String p = pid.substring(pid.indexOf(":") + 1);
+	return index(p, namespace, n.getContentType());
     }
 
     /**
@@ -630,15 +674,15 @@ public class Actions {
     }
 
     /**
-     * Looks for other objects those are connected to the pid by a certain
-     * relation
+     * Returns a list of pids of related objects. Looks for other objects those
+     * are connected to the pid by a certain relation
      * 
      * @param pid
      *            the pid to find relatives of
      * @param relation
      *            a relation that describes what kind of relatives you are
      *            looking for
-     * @return a list of related pids
+     * @return list of pids of related objects
      */
     public List<String> getRelatives(String pid, String relation) {
 	List<String> result = new Vector<String>();
@@ -654,39 +698,126 @@ public class Actions {
     /**
      * @param type
      *            a contentType
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es"
      * @return all objects of contentType type
      */
-    public List<String> getAll(String type) {
+    public List<String> list(String type, String namespace, int from,
+	    int until, String getListingFrom) {
 
-	if (type == null || type.isEmpty())
-	    return getAll();
-	else
-	    return findByType(type);
+	List<String> list = null;
+	if (!getListingFrom.equals("es")) {
+	    if (type == null || type.isEmpty())
+		list = listAllFromRepo(namespace, from, until);
+	    else
+		list = listAllFromRepo(type, namespace, from, until);
+	} else {
+	    list = listAllFromSearch(type, namespace, from, until);
+	}
+
+	return list;
     }
 
     /**
-     * @return a list of all objects
+     * @param type
+     *            The objectTyp
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @return A list of pids with type {@type}
      */
-    public List<String> getAll() {
+    public List<String> listAllFromSearch(String type, String namespace,
+	    int from, int until) {
 
-	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
-	InputStream stream = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	return RdfUtils.getFedoraSubject(stream);
+	return search.listIds(namespace, type, from, until);
     }
 
     /**
      * @param type
      *            the type to be displaye
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es"
      * @return html listing of all objects
      */
-    public String getAllAsHtml(String type) {
-	List<String> list = null;
-	if (type == null || type.isEmpty())
-	    list = getAll();
-	else
-	    list = findByType(type);
-	return representations.getAllOfTypeAsHtml(list, type);
+    public String listAsHtml(String type, String namespace, int from,
+	    int until, String getListingFrom) {
+
+	List<String> list = list(type, namespace, from, until, getListingFrom);
+
+	return representations.getAllOfTypeAsHtml(list, type, namespace, from,
+		until, getListingFrom);
+    }
+
+    private List<String> listAllFromRepo(String type, String namespace,
+	    int from, int until) {
+	if (from >= until || from < 0 || until < 0)
+	    throw new HttpArchiveException(416, "Can not process. From: "
+		    + from + "Until: " + until + ".");
+
+	List<String> result = new Vector<String>();
+	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
+	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
+		FedoraVocabulary.N3);
+	List<String> list = RdfUtils.getFedoraSubject(in);
+	if (from >= list.size()) {
+	    return new Vector<String>();
+	}
+	if (until < list.size()) {
+	    list = list.subList(from, until);
+	} else {
+	    list = list.subList(from, list.size());
+	}
+	if (namespace == null || namespace.isEmpty())
+	    return list;
+	for (String item : list) {
+	    if (item.startsWith(namespace + ":"))
+		result.add(item);
+	}
+	return result;
+    }
+
+    private List<String> listAllFromRepo(String namespace, int from, int until) {
+	if (from >= until || from < 0 || until < 0)
+	    throw new HttpArchiveException(416, "Can not process. From: "
+		    + from + "Until: " + until + ".");
+
+	List<String> result = new Vector<String>();
+	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
+	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
+		FedoraVocabulary.N3);
+	List<String> list = RdfUtils.getFedoraSubject(in);
+	if (from >= list.size()) {
+	    return new Vector<String>();
+	}
+	if (until < list.size()) {
+	    list = list.subList(from, until);
+	} else {
+	    list = list.subList(from, list.size());
+	}
+	if (namespace == null || namespace.isEmpty())
+	    return list;
+	for (String item : list) {
+	    if (item.startsWith(namespace + ":"))
+		result.add(item);
+	}
+	return result;
     }
 
     /**
@@ -766,4 +897,27 @@ public class Actions {
 	updateMetadata(namespace + ":" + pid, metadata);
 	return "Update " + subject + " metadata " + metadata;
     }
+
+    /**
+     * @return the host to where the urns must point
+     */
+    public String getUrnbase() {
+	return urnbase;
+    }
+
+    /**
+     * @param p
+     *            the id part of a pid
+     * @param namespace
+     *            the namespace part of a pid
+     * @param transformerId
+     *            the id of the transformer
+     */
+    public void addTransformer(String p, String namespace, String transformerId) {
+	String pid = namespace + ":" + p;
+	Node node = readNode(pid);
+	node.addTransformer(new Transformer(transformerId));
+	fedora.updateNode(node);
+    }
+
 }

@@ -19,6 +19,7 @@ package de.nrw.hbz.regal.api;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -129,7 +130,7 @@ public class TestResource {
     @Test
     public void listAll() throws IOException {
 	Resource resource = new Resource();
-	resource.getAll("monograph");
+	resource.getAll("monograph", "test", 0, 10, "repo");
 
     }
 
@@ -153,6 +154,37 @@ public class TestResource {
 	uploadMetadata(pid, namespace);
 	uploadDublinCore(pid, namespace);
 	testDublinCore(pid, namespace);
+    }
+
+    @Test
+    public void create() throws IOException, InterruptedException {
+	create("123", "test", ObjectType.monograph);
+	addTransformer("123", "test", "testepicur");
+	Thread.sleep(10000);
+	List<String> pids = list("monograph", "test", 0, 10, "repo");
+	Assert.assertEquals(1, pids.size());
+	pids = list("transformer", "CM", 0, 10, "repo");
+	Assert.assertEquals(1, pids.size());
+	System.out.println(pids);
+    }
+
+    private List<String> list(String type, String namespace, int from,
+	    int until, String source) throws IOException {
+	Resource resource = new Resource();
+	ObjectList list = (ObjectList) resource.getAll(type, namespace, from,
+		until, source).getEntity();
+	return list.list;
+    }
+
+    private void addTransformer(String p, String namespace, String transformerId)
+	    throws IOException {
+	Resource resource = new Resource();
+	CreateObjectBean input = (CreateObjectBean) resource.getObjectAsJson(p,
+		namespace).getEntity();
+	String[] transformerIds = new String[] { "testepicur" };
+	input.setTransformer(transformerIds);
+	resource.create(p, namespace, input);
+
     }
 
     private void testDublinCore(String pid, String namespace)
@@ -293,7 +325,7 @@ public class TestResource {
 	    deleteNs.delete();
 
 	    WebResource deleteTestCM = c.resource(properties
-		    .getProperty("apiUrl") + "/utils/deleteNamespace/testCM");
+		    .getProperty("apiUrl") + "/utils/deleteByQuery/CM:test*");
 	    deleteTestCM.delete();
 	} catch (Exception e) {
 
