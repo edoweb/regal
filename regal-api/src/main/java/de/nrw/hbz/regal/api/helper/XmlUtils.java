@@ -27,10 +27,14 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Vector;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -41,7 +45,9 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -221,6 +227,59 @@ public class XmlUtils {
 	    Element root = doc.getDocumentElement();
 	    root.normalize();
 	    return root;
+	} catch (FileNotFoundException e) {
+	    throw new XmlException(e);
+	} catch (SAXException e) {
+	    throw new XmlException(e);
+	} catch (IOException e) {
+	    throw new XmlException(e);
+	} catch (ParserConfigurationException e) {
+	    throw new XmlException(e);
+	}
+
+    }
+
+    /**
+     * Validates an xml String
+     * 
+     * @param oaidc
+     *            xml String
+     * @param schema
+     *            a schema to validate against
+     */
+    public static void validate(InputStream oaidc, InputStream schema) {
+	try {
+	    DocumentBuilderFactory factory = DocumentBuilderFactory
+		    .newInstance();
+	    factory.setNamespaceAware(true);
+	    // "Valid" means valid to a DTD. We want to valid against a schema,
+	    // so we turn of dtd validation here
+	    factory.setValidating(false);
+
+	    SchemaFactory schemaFactory = SchemaFactory
+		    .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+	    Schema s = schemaFactory.newSchema(new StreamSource(schema));
+
+	    factory.setSchema(s);
+	    DocumentBuilder docBuilder = factory.newDocumentBuilder();
+	    docBuilder.setErrorHandler(new ErrorHandler() {
+		public void fatalError(SAXParseException exception)
+			throws SAXException {
+		    throw new XmlException(exception);
+		}
+
+		public void error(SAXParseException exception)
+			throws SAXException {
+		    throw new XmlException(exception);
+		}
+
+		public void warning(SAXParseException exception)
+			throws SAXException {
+		    throw new XmlException(exception);
+		}
+	    });
+	    docBuilder.parse(oaidc);
+
 	} catch (FileNotFoundException e) {
 	    throw new XmlException(e);
 	} catch (SAXException e) {

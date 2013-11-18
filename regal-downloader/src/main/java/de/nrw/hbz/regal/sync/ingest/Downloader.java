@@ -34,8 +34,8 @@ import java.net.URLEncoder;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -370,10 +370,10 @@ public abstract class Downloader implements DownloaderInterface {
 		.getProperty("piddownloader.downloadLocation");
 
 	PIDReporter pidreporter = new PIDReporter();
-	Vector<String> pids = pidreporter.getPids(propFile);
+	List<String> pids = pidreporter.getPids(propFile);
 
 	for (int i = 0; i < pids.size(); i++) {
-	    String pid = pids.elementAt(i);
+	    String pid = pids.get(i);
 	    logger.info((i + 1) + "/" + pids.size() + " Download " + pid + " !");
 	    download(pid);
 	}

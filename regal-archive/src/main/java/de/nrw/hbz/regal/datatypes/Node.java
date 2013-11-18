@@ -16,6 +16,7 @@
  */
 package de.nrw.hbz.regal.datatypes;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -47,6 +48,10 @@ public class Node {
     private String namespace = null;
     private String contentType = null;
     private Date lastModified = null;
+
+    private BigInteger fileSize;
+
+    private String checksum;
 
     /**
      * Creates a new Node.
@@ -399,5 +404,35 @@ public class Node {
     public Node setDcBean(DCBean dc) {
 	this.dublinCoreData = dc;
 	return this;
+    }
+
+    /**
+     * @return returns the fileSize
+     */
+    public BigInteger getFileSize() {
+	return fileSize;
+    }
+
+    /**
+     * @param sizeInByte
+     *            sets the filesize
+     */
+    public void setFileSize(BigInteger sizeInByte) {
+	fileSize = sizeInByte;
+    }
+
+    /**
+     * @return the checksum of the data
+     */
+    public String getChecksum() {
+	return checksum;
+    }
+
+    /**
+     * @param checksum
+     *            sets a checksum for the data
+     */
+    public void setChecksum(String checksum) {
+	this.checksum = checksum;
     }
 }

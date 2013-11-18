@@ -1,0 +1,17 @@
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/dc/terms/BibliographicResource> .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/vocab/frbr/core#Manifestation> .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://iflastandards.info/ns/isbd/elements/P1004> "Ein Koffer aus \u00DCbersee" .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://iflastandards.info/ns/isbd/elements/P1006> "Merkw\u00FCrdige Geschichten eines Briefmarkensammlers" .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://iflastandards.info/ns/isbd/elements/P1006> "Ich bin der zweite Zusatz zum Sachtitel" .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://iflastandards.info/ns/isbd/elements/P1006> "Ich bin der dritte Zusatz zum Sachtitel" .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://purl.org/dc/elements/1.1/creator> <http://d-nb.info/gnd/118778684> .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://purl.org/dc/elements/1.1/creator> <http://d-nb.info/gnd/127469087> .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://purl.org/dc/elements/1.1/creator> <http://d-nb.info/gnd/118540238> .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://purl.org/dc/elements/1.1/creator> <http://d-nb.info/gnd/119294370> .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://purl.org/dc/elements/1.1/creator> <boppart> .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://purl.org/dc/elements/1.1/contributor> <http://d-nb.info/gnd/157890961> .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://purl.org/dc/terms/issued> "1966" .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://umbel.org/umbel#isLike> "http://www.lbz-rlp.de" .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://purl.org/dc/terms/language> <http://id.loc.gov/vocabulary/iso639-2/deu> .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://iflastandards.info/ns/isbd/elements/P1016> "M\u00FCnchen-Schwabing" .
+<edoweb:99bff2d0-dc9c-41ae-bb26-c1c239a60a68> <http://iflastandards.info/ns/isbd/elements/P1017> "Nymphenburger Verl. Handl." .

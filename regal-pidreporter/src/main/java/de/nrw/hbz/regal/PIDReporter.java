@@ -19,8 +19,8 @@ package de.nrw.hbz.regal;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,10 +73,16 @@ public class PIDReporter {
      *            sets to harvest
      * @param harvestFromScratch
      *            if true timestamp will be ignored.
+     * @param collectPidStrategy
+     *            defines how to extract pids from oai-identifiers
+     * @param format
+     *            the provided format to look for
      * @return a list of pids
      */
-    public Vector<String> harvest(String sets, boolean harvestFromScratch) {
-	return mygrabber.harvest(sets, harvestFromScratch);
+    public List<String> harvest(String sets, boolean harvestFromScratch,
+	    CollectPidStrategy collectPidStrategy, String format) {
+	return mygrabber.listPids(sets, harvestFromScratch, collectPidStrategy,
+		format);
     }
 
     /**
@@ -87,7 +93,7 @@ public class PIDReporter {
      *            a properties file
      * @return a list of pids
      */
-    public Vector<String> getPids(String propFile) {
+    public List<String> getPids(String propFile) {
 	Properties properties = new Properties();
 	try {
 	    properties.load(new BufferedInputStream(new FileInputStream(
@@ -112,10 +118,21 @@ public class PIDReporter {
 	    harvestFromScratch = true;
 	}
 
+	CollectPidStrategy collectPidStrategy = new DefaultCollectPidStrategy();
+	String strategy = properties.getProperty("pidreporter.strategy");
+	if (strategy.equals("Digitool")) {
+	    collectPidStrategy = new DigitoolPidStrategy();
+	}
+	String format = properties.getProperty("pidreporter.format");
+	if (format == null || format.isEmpty()) {
+	    format = "oai_dc";
+	}
+
 	pidFile = properties.getProperty("pidreporter.pidFile");
 
 	OaiPidGrabber grabber = new OaiPidGrabber(server, timestampFile);
-	return grabber.harvest(sets, harvestFromScratch);
+	return grabber.listPids(sets, harvestFromScratch, collectPidStrategy,
+		format);
     }
 
     private void run(String propFile) {
@@ -134,7 +151,7 @@ public class PIDReporter {
 	    System.out
 		    .println("Example: java -jar pidreporter.jar pidreporter.properties\n");
 	    System.out
-		    .println("Example Properties File:\n\tpidreporter.server=http://urania.hbz-nrw.de:1801/edowebOAI/\n\tpidreporter.set=null\n\tpidreporter.harvestFromScratch=true\n\tpidreporter.pidFile=pids.txt");
+		    .println("Example Properties File:\n\tpidreporter.server=http://localhost/edowebOAI/\n\tpidreporter.set=null\n\tpidreporter.harvestFromScratch=true\n\tpidreporter.pidFile=pids.txt");
 	    System.exit(1);
 	}
 	PIDReporter main = new PIDReporter();

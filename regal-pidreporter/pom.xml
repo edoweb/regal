@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>regal</artifactId>
 		<groupId>de.nrw.hbz.regal</groupId>
-		<version>0.1.2</version>
+		<version>0.1.3</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -52,6 +52,8 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<finalName>pidreporter</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 
 			</plugin>
