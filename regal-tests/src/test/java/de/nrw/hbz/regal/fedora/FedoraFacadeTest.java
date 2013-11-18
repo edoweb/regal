@@ -183,7 +183,6 @@ public class FedoraFacadeTest {
 	ts = object.getContentModels();
 	Assert.assertEquals(2, ts.size());
 	for (Transformer t : ts) {
-	    System.out.println(t.getId());
 	    Assert.assertTrue(map.containsKey(t.getId()));
 	}
 	for (Transformer t : ts) {
