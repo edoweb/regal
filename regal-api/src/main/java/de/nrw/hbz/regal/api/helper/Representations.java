@@ -113,6 +113,7 @@ class Representations {
 	parentPid = fedora.getNodeParent(node);
 	result.setParentPid(parentPid);
 	result.setType(type);
+	result.setTransformer((String[]) node.getContentModels().toArray());
 	return result;
     }
 
