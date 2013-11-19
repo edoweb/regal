@@ -27,6 +27,7 @@ import org.stringtemplate.v4.ST;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.fedora.FedoraInterface;
 
 /**
@@ -113,8 +114,19 @@ class Representations {
 	parentPid = fedora.getNodeParent(node);
 	result.setParentPid(parentPid);
 	result.setType(type);
-	result.setTransformer((String[]) node.getContentModels().toArray());
+	String[] transformerIds = getTransformerIds(node);
+	result.setTransformer(transformerIds);
 	return result;
+    }
+
+    private String[] getTransformerIds(Node node) {
+	List<Transformer> transformers = node.getContentModels();
+	String[] transformerIds = new String[transformers.size()];
+	int i = 0;
+	for (Transformer t : transformers) {
+	    transformerIds[i++] = t.getId();
+	}
+	return transformerIds;
     }
 
     public String getReM(String pid, String format, String fedoraExtern,

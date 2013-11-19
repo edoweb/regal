@@ -164,8 +164,17 @@ public class TestResource {
 	List<String> pids = list("monograph", "test", 0, 10, "repo");
 	Assert.assertEquals(1, pids.size());
 	pids = list("transformer", "CM", 0, 10, "repo");
-	Assert.assertEquals(1, pids.size());
-	System.out.println(pids);
+	String[] cms = getTransformers("123", "test");
+	Assert.assertEquals(1, cms.length);
+	Assert.assertEquals("testepicur", cms[0]);
+    }
+
+    private String[] getTransformers(String pid, String namespace)
+	    throws IOException {
+	Resource resource = new Resource();
+	CreateObjectBean b = (CreateObjectBean) resource.getObjectAsJson(pid,
+		namespace).getEntity();
+	return b.getTransformer();
     }
 
     private List<String> list(String type, String namespace, int from,
@@ -315,7 +324,7 @@ public class TestResource {
 
     @After
     public void tearDown() {
-	cleanUp();
+	// cleanUp();
     }
 
     public void cleanUp() {
