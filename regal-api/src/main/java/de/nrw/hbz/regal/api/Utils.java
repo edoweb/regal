@@ -17,30 +17,19 @@
 package de.nrw.hbz.regal.api;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Vector;
 
 import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 
 import de.nrw.hbz.regal.api.helper.Actions;
 import de.nrw.hbz.regal.api.helper.HttpArchiveException;
-import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.datatypes.Transformer;
-import de.nrw.hbz.regal.exceptions.ArchiveException;
 
 /**
  * This class defines some RPC-Like experimental endpoints under /utils. Most of
@@ -226,146 +215,28 @@ public class Utils {
     @Produces({ "text/plain" })
     public String initContentModels(@PathParam("namespace") String namespace) {
 	List<Transformer> transformers = new Vector<Transformer>();
-	transformers.add(new Transformer(namespace + "epicur"));
-	transformers.add(new Transformer(namespace + "oaidc"));
-	transformers.add(new Transformer(namespace + "pdfa"));
-	transformers.add(new Transformer(namespace + "pdfbox"));
-	transformers.add(new Transformer(namespace + "aleph"));
+	transformers
+		.add(new Transformer(namespace + "epicur", "epicur", actions
+			.getServer()
+			+ "/resource/(pid)."
+			+ namespace
+			+ "epicur"));
+	transformers.add(new Transformer(namespace + "oaidc", "oaidc", actions
+		.getServer() + "/resource/(pid)." + namespace + "oaidc"));
+	transformers.add(new Transformer(namespace + "pdfa", "pdfa", actions
+		.getServer() + "/resource/(pid)." + namespace + "pdfa"));
+	transformers
+		.add(new Transformer(namespace + "pdfbox", "pdfbox", actions
+			.getServer()
+			+ "/resource/(pid)."
+			+ namespace
+			+ "pdfbox"));
+	transformers.add(new Transformer(namespace + "aleph", "aleph", actions
+		.getServer() + "/resource/(pid)." + namespace + "aleph"));
 	actions.contentModelsInit(transformers);
 	return "Reinit contentModels " + namespace + "epicur, " + namespace
 		+ "oaidc, " + namespace + "pdfa, " + namespace + "pdfbox, "
 		+ namespace + "aleph";
     }
 
-    /**
-     * Returns a oai-dc conversion of pid's metadata
-     * 
-     * @param pid
-     *            the metadata of the identified resource will be transformed to
-     *            oaidc
-     * @return the oai_dc xml
-     */
-    @GET
-    @Path("/oaidc/{pid}")
-    @Produces({ "application/xml" })
-    public String oaidc(@PathParam("pid") String pid) {
-	try {
-	    return actions.oaidc(pid);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
-    }
-
-    /**
-     * Returns epicur for the pid, if urn is available
-     * 
-     * @param pid
-     *            epicur transformation for this pid
-     * @param namespace
-     *            the namespace
-     * @return epicur xml
-     */
-    @GET
-    @Path("/epicur/{namespace}:{pid}")
-    @Produces({ "application/json", "application/xml" })
-    public String epicur(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
-	try {
-	    return actions.epicur(pid, namespace);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
-    }
-
-    /**
-     * Extractes text from pid/data if data exists and is a pdf
-     * 
-     * @param pid
-     *            the pid must contain a data stream with mime type
-     *            application/pdf
-     * @param request
-     *            lastModified is checked.
-     * @return a text/plain message containing the extracted text
-     */
-    @GET
-    @Path("/pdfbox/{pid}")
-    @Produces({ "text/plain; charset=UTF-8" })
-    public Response pdfbox(@PathParam("pid") String pid,
-	    @Context Request request) {
-	try {
-	    Node node = actions.readNode(pid);
-
-	    final EntityTag eTag = new EntityTag(node.getPID() + "_"
-		    + node.getLastModified().getTime());
-
-	    final CacheControl cacheControl = new CacheControl();
-	    cacheControl.setMaxAge(-1);
-
-	    ResponseBuilder builder = request.evaluatePreconditions(
-		    node.getLastModified(), eTag);
-
-	    // the user's information was modified, return it
-	    if (builder == null) {
-		builder = Response.ok(actions.pdfbox(node));
-	    }
-
-	    // the user's information was not modified, return a 304
-	    return builder.cacheControl(cacheControl)
-		    .lastModified(node.getLastModified()).tag(eTag).build();
-
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
-    }
-
-    /**
-     * Convertes pid/data to pdfA if data exists and is a pdf
-     * 
-     * @param pid
-     *            the pid must contain a data stream with mime type
-     *            application/pdf
-     * @param request
-     *            lastModified is checked.
-     * @return a text/plain message containing the extracted text
-     */
-    @GET
-    @Path("/pdfa/{pid}")
-    @Produces({ "text/plain; charset=UTF-8" })
-    public Response pdfa(@PathParam("pid") String pid, @Context Request request) {
-	try {
-	    Node node = actions.readNode(pid);
-
-	    final EntityTag eTag = new EntityTag(node.getPID() + "_"
-		    + node.getLastModified().getTime());
-
-	    final CacheControl cacheControl = new CacheControl();
-	    cacheControl.setMaxAge(-1);
-
-	    ResponseBuilder builder = request.evaluatePreconditions(
-		    node.getLastModified(), eTag);
-
-	    // the user's information was modified, return it
-	    if (builder == null) {
-		String redirectUrl = actions.pdfa(node);
-		try {
-		    builder = Response.temporaryRedirect(
-			    new java.net.URI(redirectUrl)).status(303);
-		} catch (URISyntaxException e) {
-		    throw new HttpArchiveException(
-			    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-		}
-	    }
-
-	    // the user's information was not modified, return a 304
-	    return builder.cacheControl(cacheControl)
-		    .lastModified(node.getLastModified()).tag(eTag).build();
-
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
-    }
 }
