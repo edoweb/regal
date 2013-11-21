@@ -17,13 +17,12 @@
 package de.nrw.hbz.regal.fedora;
 
 import java.util.List;
-import java.util.Vector;
 
 import com.yourmediashelf.fedora.client.FedoraClientException;
 import com.yourmediashelf.fedora.client.request.AddDatastream;
 
-import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
 /**
@@ -47,9 +46,9 @@ public class ContentModelBuilder {
 		    + model.getServiceDeploymentPID() + "</ServiceDepPid>");
 	    infoStream.append("<PrescribedDSs>");
 
-	    Vector<String> psids = model.getPrescribedDSIds();
-	    Vector<String> uris = model.getPrescribedDSformatURIs();
-	    Vector<String> mimes = model.getPrescribedDSMimeTypes();
+	    List<String> psids = model.getPrescribedDSIds();
+	    List<String> uris = model.getPrescribedDSformatURIs();
+	    List<String> mimes = model.getPrescribedDSMimeTypes();
 	    for (int i = 0; i < psids.size(); i++) {
 		infoStream.append("<PrescribedDS>");
 		infoStream.append("<dsid>" + psids.get(i) + "</dsid>");
@@ -59,8 +58,8 @@ public class ContentModelBuilder {
 	    }
 	    infoStream.append("</PrescribedDSs>");
 
-	    Vector<String> names = model.getMethodNames();
-	    Vector<String> locs = model.getMethodLocations();
+	    List<String> names = model.getMethodNames();
+	    List<String> locs = model.getMethodLocations();
 	    infoStream.append("<Methods>");
 	    for (int i = 0; i < names.size(); i++) {
 		infoStream.append("<Method>");
@@ -100,7 +99,7 @@ public class ContentModelBuilder {
 	String start = " <dsCompositeModel xmlns=\"info:fedora/fedora-system:def/dsCompositeModel#\">";
 
 	StringBuffer middle = new StringBuffer();
-	Vector<String> prescribedDSIds = cm.getPrescribedDSIds();
+	List<String> prescribedDSIds = cm.getPrescribedDSIds();
 
 	for (int i = 0; i < prescribedDSIds.size(); i++) {
 	    String dsid = prescribedDSIds.get(i);
@@ -192,52 +191,43 @@ public class ContentModelBuilder {
 		+ "	    xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\""
 		+ "	    xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap\" xmlns:soapenc=\"http://schemas.xmlsoap.org/wsdl/soap/encoding\""
 		+ "	    xmlns:this=\"bmech\" xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">";
-
 	StringBuffer middle = new StringBuffer();
 	for (int i = 0; i < cm.getMethodNames().size(); i++) {
 	    String methodName = cm.getMethodNames().get(i);
 	    middle.append("<wsdl:message name=\"" + methodName + "Request\">"
-		    + "	    </wsdl:message>");
+		    + "</wsdl:message>");
 	}
-
-	middle.append("	    <wsdl:message name=\"dissemResponse\">"
-		+ "	      <wsdl:part name=\"dissem\" type=\"xsd:base64Binary\"/>"
-		+ "	    </wsdl:message>");
-
+	middle.append("<wsdl:message name=\"dissemResponse\">"
+		+ "<wsdl:part name=\"dissem\" type=\"xsd:base64Binary\"/>"
+		+ "</wsdl:message>");
 	middle.append("<wsdl:portType name=\"HBZContentModelPortType\">");
 	for (int i = 0; i < cm.getMethodNames().size(); i++) {
 	    String methodName = cm.getMethodNames().get(i);
 	    middle.append("<wsdl:operation name=\"" + methodName + "\">"
-		    + "	        <wsdl:input message=\"this:" + methodName
+		    + "<wsdl:input message=\"this:" + methodName
 		    + "Request\"/>"
-		    + "	        <wsdl:output message=\"this:dissemResponse\"/>"
-		    + "	      </wsdl:operation>");
+		    + "<wsdl:output message=\"this:dissemResponse\"/>"
+		    + "</wsdl:operation>");
 	}
 	middle.append("</wsdl:portType>");
 	middle.append("<wsdl:service name=\"HBZContentModelImpl\">");
-	for (int i = 0; i < cm.getMethodNames().size(); i++) {
-	    // String methodName =
-	    cm.getMethodNames().get(i);
-	    middle.append("<wsdl:port binding=\"this:HBZContentModelImpl_http\" name=\"HBZContentModelImpl_port\">"
-		    + "	        <http:address location=\"LOCAL\"/>"
-		    + "	      </wsdl:port>");
-	}
+	middle.append("<wsdl:port binding=\"this:HBZContentModelImpl_http\" name=\"HBZContentModelImpl_port\">"
+		+ "<http:address location=\"LOCAL\"/>" + "</wsdl:port>");
 	middle.append("</wsdl:service>");
-	middle.append(" <wsdl:binding name=\"HBZContentModelImpl_http\" type=\"this:HBZContentModelPortType\">"
-		+ "	      <http:binding verb=\"GET\"/>");
-
+	middle.append("<wsdl:binding name=\"HBZContentModelImpl_http\" type=\"this:HBZContentModelPortType\">"
+		+ "<http:binding verb=\"GET\"/>");
 	for (int i = 0; i < cm.getMethodNames().size(); i++) {
 	    String methodName = cm.getMethodNames().get(i);
 	    String methodLocation = cm.getMethodLocations().get(i);
 	    middle.append("<wsdl:operation name=\"" + methodName + "\">"
-		    + "	        <http:operation location=\"" + methodLocation
-		    + "\"/>" + "	        <wsdl:input>"
-		    + "	          <http:urlReplacement/>"
-		    + "	        </wsdl:input>" + "	        <wsdl:output>"
-		    + "	          <mime:content type=\"text/xml\"/>"
-		    + "	        </wsdl:output>" + "	      </wsdl:operation>");
+		    + "<http:operation location=\"" + methodLocation + "\"/>"
+		    + "<wsdl:input>" + "<http:urlReplacement/>"
+		    + "</wsdl:input>" + "<wsdl:output>"
+		    + "<mime:content type=\"text/xml\"/>" + "</wsdl:output>"
+		    + "</wsdl:operation>");
 	}
-	String end = " </wsdl:binding>" + "	  </wsdl:definitions>";
+	String end = " </wsdl:binding>" + "</wsdl:definitions>";
+
 	return start + middle.toString() + end;
     }
 

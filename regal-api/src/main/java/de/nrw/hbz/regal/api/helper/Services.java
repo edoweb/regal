@@ -30,6 +30,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
 import de.nrw.hbz.regal.fedora.CopyUtils;
 import de.nrw.hbz.regal.fedora.FedoraInterface;
 import de.nrw.hbz.regal.fedora.RdfUtils;
+import de.nrw.hbz.regal.fedora.XmlUtils;
 
 class Services {
 

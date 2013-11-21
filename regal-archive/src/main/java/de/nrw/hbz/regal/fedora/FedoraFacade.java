@@ -110,7 +110,7 @@ class FedoraFacade implements FedoraInterface {
 
     }
 
-    public class XmlException extends ArchiveException {
+    private class XmlException extends ArchiveException {
 
 	private static final long serialVersionUID = -4955991522087336862L;
 
@@ -119,7 +119,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class UpdateContentModel extends ArchiveException {
+    class UpdateContentModel extends ArchiveException {
 
 	private static final long serialVersionUID = 1794883693210840141L;
 
@@ -128,7 +128,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class DeleteDatastreamException extends ArchiveException {
+    class DeleteDatastreamException extends ArchiveException {
 
 	private static final long serialVersionUID = 128120359698836741L;
 
@@ -138,7 +138,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class GetPidException extends ArchiveException {
+    class GetPidException extends ArchiveException {
 
 	private static final long serialVersionUID = 5316657644921457520L;
 
@@ -147,7 +147,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class CreateNodeException extends ArchiveException {
+    class CreateNodeException extends ArchiveException {
 
 	private static final long serialVersionUID = 8569995140758544941L;
 
@@ -161,7 +161,7 @@ class FedoraFacade implements FedoraInterface {
 
     }
 
-    public class SearchException extends ArchiveException {
+    class SearchException extends ArchiveException {
 
 	private static final long serialVersionUID = -276889477323963368L;
 
@@ -170,7 +170,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class NodeNotFoundException extends ArchiveException {
+    class NodeNotFoundException extends ArchiveException {
 
 	private static final long serialVersionUID = 8851350561350951329L;
 
@@ -412,6 +412,7 @@ class FedoraFacade implements FedoraInterface {
     @Override
     public void deleteNode(String rootPID) {
 	try {
+	    logger.debug("deletNode " + rootPID);
 	    unlinkParent(rootPID);
 	    new PurgeObject(rootPID).execute();
 	} catch (FedoraClientException e) {

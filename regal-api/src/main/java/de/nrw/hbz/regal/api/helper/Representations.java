@@ -19,6 +19,7 @@ package de.nrw.hbz.regal.api.helper;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -114,17 +115,17 @@ class Representations {
 	parentPid = fedora.getNodeParent(node);
 	result.setParentPid(parentPid);
 	result.setType(type);
-	String[] transformerIds = getTransformerIds(node);
-	result.setTransformer(transformerIds);
+
+	result.setTransformer(getTransformerIds(node));
 	return result;
     }
 
-    private String[] getTransformerIds(Node node) {
+    private List<String> getTransformerIds(Node node) {
 	List<Transformer> transformers = node.getContentModels();
-	String[] transformerIds = new String[transformers.size()];
-	int i = 0;
+	List<String> transformerIds = new Vector<String>();
+
 	for (Transformer t : transformers) {
-	    transformerIds[i++] = t.getId();
+	    transformerIds.add(t.getId());
 	}
 	return transformerIds;
     }
@@ -133,7 +134,7 @@ class Representations {
 	    List<String> parents, List<String> children) {
 	Node node = fedora.readNode(pid);
 	OaiOreMaker ore = new OaiOreMaker(node, server, uriPrefix);
-	return ore.getReM(format, parents, children);
+	return ore.getReM(format, parents, children, node.getContentModels());
     }
 
 }

@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.stringtemplate.v4.ST;
 
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -54,6 +55,7 @@ public class OaiOreMaker {
     String regalNamespace = "http://hbz-nrw.de/regal#";
     String fpNamespace = "http://downlode.org/Code/RDF/File_Properties/schema#";
     String wnNamespace = "http://xmlns.com/wordnet/1.6/";
+    String hydraNamespace = "http://purl.org/hydra/core#";
 
     RepositoryConnection con = null;
 
@@ -79,10 +81,10 @@ public class OaiOreMaker {
      * @return a oai_ore resource map
      */
     public String getReM(String format, List<String> parents,
-	    List<String> children) {
+	    List<String> children, List<Transformer> transformers) {
 	String result = null;
 	addDescriptiveData();
-	addStructuralData(parents, children);
+	addStructuralData(parents, children, transformers);
 	result = write(format);
 	closeRdfRepository();
 	return result;
@@ -189,7 +191,8 @@ public class OaiOreMaker {
 	}
     }
 
-    private void addStructuralData(List<String> parents, List<String> children) {
+    private void addStructuralData(List<String> parents, List<String> children,
+	    List<Transformer> transformers) {
 	try {
 	    String pid = node.getPID();
 	    Date lastModified = node.getLastModified();
@@ -241,9 +244,17 @@ public class OaiOreMaker {
 	    URI fpChecksumAlgo = f.createURI(wnNamespace, "Algorithm");
 	    URI md5Uri = f.createURI("http://en.wikipedia.org/wiki/MD5");
 	    URI fpChecksumValue = f.createURI(fpNamespace, "checksumValue");
+	    // Hydra
+	    URI hydraSupportedOperations = f.createURI(hydraNamespace,
+		    "supportedOperations");
+	    URI hydraOperation = f.createURI(hydraNamespace, "Operation");
+	    BNode hydraOperationBlankNode = f.createBNode();
+	    URI hydraTitle = f.createURI(hydraNamespace, "title");
+	    URI hydraMethod = f.createURI(hydraNamespace, "method");
+	    URI hydraExpects = f.createURI(hydraNamespace, "expects");
+	    URI hydraReturns = f.createURI(hydraNamespace, "returns");
 
 	    // Statements
-
 	    if (mime != null && !mime.isEmpty()) {
 		Literal dataMime = f.createLiteral(mime);
 		con.add(data, dcFormat, dataMime);
@@ -279,6 +290,26 @@ public class OaiOreMaker {
 		URI originalObject = f.createURI(str);
 		con.add(aggregation, similarTo, originalObject);
 
+	    }
+
+	    if (transformers != null && transformers.size() > 0) {
+		for (Transformer t : transformers) {
+		    String id = t.getId();
+		    List<String> methods = t.getMethodLocations();
+		    for (String m : methods) {
+			URI methodUri = f.createURI(m);
+			con.add(aggregation, hydraMethod, methodUri);
+			con.add(methodUri, hydraSupportedOperations,
+				hydraOperationBlankNode);
+			con.add(hydraOperationBlankNode, rdfsType,
+				hydraOperation);
+			con.add(hydraOperationBlankNode, hydraTitle,
+				f.createLiteral("Converts to " + id));
+			con.add(hydraOperationBlankNode, hydraMethod,
+				f.createLiteral("GET"));
+		    }
+
+		}
 	    }
 
 	    URI fedoraObject = f.createURI(server + "/fedora/objects/" + pid);

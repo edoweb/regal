@@ -519,8 +519,9 @@ public class Actions {
     }
 
     private void updateTransformer(CreateObjectBean input, Node node) {
-	String[] transformers = input.getTransformer();
-	if (transformers != null && transformers.length != 0)
+	node.removeAllContentModels();
+	List<String> transformers = input.getTransformer();
+	if (transformers != null && transformers.size() != 0)
 	    for (String t : transformers) {
 		node.addTransformer(new Transformer(t));
 	    }
@@ -549,13 +550,13 @@ public class Actions {
      *            the namespace
      * @return the urn
      */
-    public String getUrn(String pid, String namespace) {
+    public String getUrn(String pid) {
 	try {
 
-	    String metadataAdress = fedoraExtern + "/objects/" + namespace
-		    + ":" + pid + "/datastreams/metadata/content";
+	    String metadataAdress = fedoraExtern + "/objects/" + pid
+		    + "/datastreams/metadata/content";
 	    URL url = new URL(metadataAdress);
-	    List<String> urns = RdfUtils.findRdfObjects(namespace + ":" + pid,
+	    List<String> urns = RdfUtils.findRdfObjects(pid,
 		    "http://geni-orca.renci.org/owl/topology.owl#hasURN", url,
 		    RDFFormat.NTRIPLES, "text/plain");
 	    if (urns == null || urns.isEmpty()) {
@@ -580,9 +581,9 @@ public class Actions {
      *            the namespace
      * @return a epicur display for the pid
      */
-    public String epicur(String pid, String namespace) {
-	String url = urnbase + namespace + ":" + pid;
-	return services.epicur(url, getUrn(pid, namespace));
+    public String epicur(String pid) {
+	String url = urnbase + pid;
+	return services.epicur(url, getUrn(pid));
     }
 
     /**
@@ -920,4 +921,22 @@ public class Actions {
 	fedora.updateNode(node);
     }
 
+    /**
+     * @param pid
+     *            pid with namespace:pid
+     * @return a aleph mab xml representation
+     */
+    public String aleph(String pid) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    /**
+     * @param pid
+     *            pid with namespace:pid
+     * @return a URL to a pdfa conversion
+     */
+    public String pdfa(String pid) {
+	return pdfa(readNode(pid));
+    }
 }

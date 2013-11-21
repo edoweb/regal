@@ -27,6 +27,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
@@ -40,9 +42,11 @@ import de.nrw.hbz.regal.datatypes.Vocabulary;
  */
 @SuppressWarnings("javadoc")
 public class FedoraFacadeTest {
-
+    final static Logger logger = LoggerFactory
+	    .getLogger(FedoraFacadeTest.class);
     FedoraInterface facade = null;
     Node object = null;
+    String server = null;
 
     @Before
     public void setUp() throws IOException {
@@ -53,16 +57,23 @@ public class FedoraFacadeTest {
 		properties.getProperty("fedoraUrl"),
 		properties.getProperty("user"),
 		properties.getProperty("password"));
+	server = properties.getProperty("apiUrl");
 
 	object = new Node().setNamespace("test").setPID("test:234")
 		.setLabel("Ein Testobjekt").setFileLabel("test")
 		.setType(Vocabulary.TYPE_OBJECT);
+	object.setContentType("monograph");
 	object.dublinCoreData.addTitle("Ein Testtitel");
 	object.dublinCoreData.addCreator("Jan Schnasse");
+	object.setMetadataFile(Thread.currentThread().getContextClassLoader()
+		.getResource("test.nt").getFile());
 
-	object.addTransformer(new Transformer("testepicur"));
-	object.addTransformer(new Transformer("testoaidc"));
-	object.addTransformer(new Transformer("testpdfa"));
+	object.addTransformer(new Transformer("testepicur", "epicur", server
+		+ "/resource/(pid).epicur"));
+	object.addTransformer(new Transformer("testoaidc", "oaidc", server
+		+ "/resource/(pid).oaidc"));
+	object.addTransformer(new Transformer("testpdfa", "pdfa", server
+		+ "/resource/(pid).pdfa"));
 
 	URL url = this.getClass().getResource("/test.pdf");
 	object.setUploadData(url.getPath(), "application/pdf");
@@ -148,9 +159,12 @@ public class FedoraFacadeTest {
     public void createTransformer() {
 	facade.createNode(object);
 	List<Transformer> transformers = new Vector<Transformer>();
-	transformers.add(new Transformer("testepicur"));
-	transformers.add(new Transformer("testoaidc"));
-	transformers.add(new Transformer("testpdfa"));
+	transformers.add(new Transformer("testepicur", "epicur", server
+		+ "/resource/(pid).epicur"));
+	transformers.add(new Transformer("testoaidc", "oaidc", server
+		+ "/resource/(pid).oaidc"));
+	transformers.add(new Transformer("testpdfa", "pdfa", server
+		+ "/resource/(pid).pdfa"));
 	facade.updateContentModels(transformers);
     }
 
@@ -227,17 +241,20 @@ public class FedoraFacadeTest {
 
     @After
     public void tearDown() {
-	cleanUp();
+	// cleanUp();
     }
 
     private void cleanUp() {
-	List<String> result = facade
-		.findPids("test:*", FedoraVocabulary.SIMPLE);
-	for (String pid : result)
+
+	List<String> result = facade.findPids("CM:test*",
+		FedoraVocabulary.SIMPLE);
+	for (String pid : result) {
 	    facade.deleteNode(pid);
-	result = facade.findPids("CM:test*", FedoraVocabulary.SIMPLE);
-	for (String pid : result)
+	}
+	result = facade.findPids("test:*", FedoraVocabulary.SIMPLE);
+	for (String pid : result) {
 	    facade.deleteNode(pid);
+	}
     }
 
 }

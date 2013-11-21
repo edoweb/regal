@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -211,9 +212,10 @@ public class Utils {
      * @return a message
      */
     @POST
-    @Path("/initContentModels/{namespace}")
+    @Path("/initContentModels/")
     @Produces({ "text/plain" })
-    public String initContentModels(@PathParam("namespace") String namespace) {
+    public String initContentModels(
+	    @DefaultValue("") @QueryParam("namespace") String namespace) {
 	List<Transformer> transformers = new Vector<Transformer>();
 	transformers
 		.add(new Transformer(namespace + "epicur", "epicur", actions
