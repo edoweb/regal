@@ -28,7 +28,7 @@ import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.nrw.hbz.regal.api.helper.XmlUtils;
+import de.nrw.hbz.regal.fedora.XmlUtils;
 
 /**
  * 

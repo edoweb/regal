@@ -42,7 +42,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.nrw.hbz.regal.api.helper.ObjectType;
-import de.nrw.hbz.regal.api.helper.XmlUtils;
+import de.nrw.hbz.regal.fedora.XmlUtils;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityRelation;

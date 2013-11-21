@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-import de.nrw.hbz.regal.api.helper.XmlUtils;
+import de.nrw.hbz.regal.fedora.XmlUtils;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
