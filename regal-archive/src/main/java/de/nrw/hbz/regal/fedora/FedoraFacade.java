@@ -239,6 +239,7 @@ class FedoraFacade implements FedoraInterface {
 	    DublinCoreHandler.updateDc(node);
 
 	    List<Transformer> cms = node.getContentModels();
+	    // utils.createContentModels(cms);
 	    utils.linkContentModels(cms, node);
 
 	    if (node.getUploadFile() != null) {
@@ -323,6 +324,7 @@ class FedoraFacade implements FedoraInterface {
 	try {
 	    DublinCoreHandler.readFedoraDcToNode(node);
 	    utils.readRelsExt(node);
+	    // utils.readContentModels(node);
 	    GetObjectProfileResponse prof = new GetObjectProfile(pid).execute();
 	    node.setLabel(prof.getLabel());
 	    node.setLastModified(prof.getLastModifiedDate());
@@ -352,6 +354,7 @@ class FedoraFacade implements FedoraInterface {
 	DublinCoreHandler.updateDc(node);
 
 	List<Transformer> models = node.getContentModels();
+	// utils.updateContentModels(models);
 	node.removeRelations(REL_HAS_MODEL);
 	if (node.getUploadFile() != null) {
 	    utils.updateManagedStream(node);
@@ -565,8 +568,14 @@ class FedoraFacade implements FedoraInterface {
 		    .execute();
 
 	    for (DatastreamType ds : response.getDatastreams()) {
-		if (ds.getDsid().compareTo(datastreamId) == 0)
-		    return true;
+		if (ds.getDsid().compareTo(datastreamId) == 0) {
+		    GetDatastreamResponse r = new GetDatastream(pid,
+			    datastreamId).execute();
+		    if (r.getDatastreamProfile().getDsState().equals("D"))
+			return false;
+		    else
+			return true;
+		}
 	    }
 
 	} catch (FedoraClientException e) {

@@ -340,6 +340,15 @@ public class TestActions {
 	}
     }
 
+    @Test
+    public void addUrnIfNoMetadataExists() throws IOException,
+	    InterruptedException {
+	createTestObject("123");
+	actions.deleteMetadata("123", "test");
+	Thread.sleep(10000);
+	actions.addUrn("123", "test", "hbz:test:902");
+    }
+
     @After
     public void tearDown() throws IOException {
 	// cleanUp();

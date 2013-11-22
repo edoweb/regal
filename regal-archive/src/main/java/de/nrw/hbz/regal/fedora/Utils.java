@@ -810,8 +810,7 @@ public class Utils {
 	String pid = removeUriPrefix(prefixedPid);
 	String id = pid.substring(pid.indexOf(":") + 1);
 	Transformer t = new Transformer(id);
-	addMethods(t);
-
+	// addMethods(t);
 	return t;
     }
 
