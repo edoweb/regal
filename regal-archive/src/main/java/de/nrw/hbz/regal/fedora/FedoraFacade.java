@@ -239,7 +239,6 @@ class FedoraFacade implements FedoraInterface {
 	    DublinCoreHandler.updateDc(node);
 
 	    List<Transformer> cms = node.getContentModels();
-	    utils.createContentModels(cms);
 	    utils.linkContentModels(cms, node);
 
 	    if (node.getUploadFile() != null) {
@@ -324,7 +323,6 @@ class FedoraFacade implements FedoraInterface {
 	try {
 	    DublinCoreHandler.readFedoraDcToNode(node);
 	    utils.readRelsExt(node);
-	    // utils.readContentModels(node);
 	    GetObjectProfileResponse prof = new GetObjectProfile(pid).execute();
 	    node.setLabel(prof.getLabel());
 	    node.setLastModified(prof.getLastModifiedDate());
@@ -354,7 +352,6 @@ class FedoraFacade implements FedoraInterface {
 	DublinCoreHandler.updateDc(node);
 
 	List<Transformer> models = node.getContentModels();
-	utils.updateContentModels(models);
 	node.removeRelations(REL_HAS_MODEL);
 	if (node.getUploadFile() != null) {
 	    utils.updateManagedStream(node);
