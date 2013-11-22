@@ -455,6 +455,10 @@ public class Node {
 	this.checksum = checksum;
     }
 
+    /**
+     * Reinitialise the transformer list with an empty list
+     * 
+     */
     public void removeAllContentModels() {
 	cms = new Vector<Transformer>();
     }

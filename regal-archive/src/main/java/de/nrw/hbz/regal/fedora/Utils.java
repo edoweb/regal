@@ -810,32 +810,6 @@ public class Utils {
 	String pid = removeUriPrefix(prefixedPid);
 	String id = pid.substring(pid.indexOf(":") + 1);
 	Transformer t = new Transformer(id);
-	// addMethods(t);
 	return t;
     }
-
-    private void addMethods(Transformer t) {
-	String id = t.getId();
-	try {
-
-	    String deploymentPid = "CM:" + id + "ServiceDeployment";
-	    String wsdlId = "WSDL";
-	    FedoraResponse response = new GetDatastreamDissemination(
-		    deploymentPid, wsdlId).download(true).execute();
-	    InputStream ds = response.getEntityInputStream();
-	    Element doc = XmlUtils.getDocument(ds);
-	    NodeList list = doc.getElementsByTagName("http:operation");
-	    for (int i = 0; i < list.getLength(); i++) {
-		org.w3c.dom.Element el = (Element) list.item(i);
-		String m = el.getAttribute("location");
-		if (m != null && !m.isEmpty()) {
-		    t.addMethod(m.substring(m.indexOf(".") + 1), m);
-		}
-	    }
-
-	} catch (FedoraClientException e) {
-	    throw new ContentModelException(e);
-	}
-    }
-
 }

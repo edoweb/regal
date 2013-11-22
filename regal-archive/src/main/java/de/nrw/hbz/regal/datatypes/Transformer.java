@@ -62,6 +62,12 @@ public class Transformer {
 	addMethod(methodname, methodLocation);
     }
 
+    /**
+     * Create a Transformer without methods
+     * 
+     * @param id
+     *            an id for the transformer
+     */
     public Transformer(String id) {
 	this.id = id;
 	prescribedDSIds = new Vector<String>();

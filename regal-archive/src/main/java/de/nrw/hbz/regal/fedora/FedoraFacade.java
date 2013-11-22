@@ -110,15 +110,6 @@ class FedoraFacade implements FedoraInterface {
 
     }
 
-    private class XmlException extends ArchiveException {
-
-	private static final long serialVersionUID = -4955991522087336862L;
-
-	public XmlException(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-    }
-
     class UpdateContentModel extends ArchiveException {
 
 	private static final long serialVersionUID = 1794883693210840141L;

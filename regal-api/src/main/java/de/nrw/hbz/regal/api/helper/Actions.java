@@ -546,8 +546,6 @@ public class Actions {
      * 
      * @param pid
      *            the pid of an object
-     * @param namespace
-     *            the namespace
      * @return the urn
      */
     public String getUrn(String pid) {
@@ -577,8 +575,6 @@ public class Actions {
     /**
      * @param pid
      *            the pid of the object
-     * @param namespace
-     *            the namespace
      * @return a epicur display for the pid
      */
     public String epicur(String pid) {

@@ -343,7 +343,6 @@ public class TestResource {
     public void removeNodesTransformer() throws InterruptedException,
 	    IOException {
 	createTransformer();
-	Resource resource = new Resource();
 	create("123", "test", ObjectType.monograph);
 	addTransformer("123", "test", "testepicur");
 	addTransformer("123", "test", "testoaidc");

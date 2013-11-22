@@ -78,6 +78,8 @@ public class OaiOreMaker {
      *            all parents of the pid
      * @param children
      *            all children of the pid
+     * @param transformers
+     *            transformers of the object
      * @return a oai_ore resource map
      */
     public String getReM(String format, List<String> parents,
@@ -235,6 +237,7 @@ public class OaiOreMaker {
 	    // regal
 	    URI contentType = f.createURI(regalNamespace, "contentType");
 	    URI hasData = f.createURI(regalNamespace, "hasData");
+	    URI hasTransformer = f.createURI(regalNamespace, "hasTransformer");
 	    // FileProperties
 	    URI fpSize = f.createURI(fpNamespace, "size");
 	    BNode theChecksumBlankNode = f.createBNode();
@@ -244,15 +247,6 @@ public class OaiOreMaker {
 	    URI fpChecksumAlgo = f.createURI(wnNamespace, "Algorithm");
 	    URI md5Uri = f.createURI("http://en.wikipedia.org/wiki/MD5");
 	    URI fpChecksumValue = f.createURI(fpNamespace, "checksumValue");
-	    // Hydra
-	    URI hydraSupportedOperations = f.createURI(hydraNamespace,
-		    "supportedOperations");
-	    URI hydraOperation = f.createURI(hydraNamespace, "Operation");
-	    BNode hydraOperationBlankNode = f.createBNode();
-	    URI hydraTitle = f.createURI(hydraNamespace, "title");
-	    URI hydraMethod = f.createURI(hydraNamespace, "method");
-	    URI hydraExpects = f.createURI(hydraNamespace, "expects");
-	    URI hydraReturns = f.createURI(hydraNamespace, "returns");
 
 	    // Statements
 	    if (mime != null && !mime.isEmpty()) {
@@ -294,21 +288,8 @@ public class OaiOreMaker {
 
 	    if (transformers != null && transformers.size() > 0) {
 		for (Transformer t : transformers) {
-		    String id = t.getId();
-		    List<String> methods = t.getMethodLocations();
-		    for (String m : methods) {
-			URI methodUri = f.createURI(m);
-			con.add(aggregation, hydraMethod, methodUri);
-			con.add(methodUri, hydraSupportedOperations,
-				hydraOperationBlankNode);
-			con.add(hydraOperationBlankNode, rdfsType,
-				hydraOperation);
-			con.add(hydraOperationBlankNode, hydraTitle,
-				f.createLiteral("Converts to " + id));
-			con.add(hydraOperationBlankNode, hydraMethod,
-				f.createLiteral("GET"));
-		    }
-
+		    Literal transformerId = f.createLiteral(t.getId());
+		    con.add(aggregation, hasTransformer, transformerId);
 		}
 	    }
 
