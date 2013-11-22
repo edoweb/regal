@@ -522,10 +522,16 @@ public class RdfUtils {
     public static String addTriple(String subject, String predicate,
 	    String object, boolean isLiteral, String metadata) {
 	try {
-	    InputStream is = new ByteArrayInputStream(
-		    metadata.getBytes("UTF-8"));
-	    RepositoryConnection con = readRdfInputStreamToRepository(is,
-		    RDFFormat.NTRIPLES);
+	    RepositoryConnection con = null;
+	    if (metadata != null) {
+		InputStream is = new ByteArrayInputStream(
+			metadata.getBytes("UTF-8"));
+		con = readRdfInputStreamToRepository(is, RDFFormat.NTRIPLES);
+	    } else {
+		Repository myRepository = new SailRepository(new MemoryStore());
+		myRepository.initialize();
+		con = myRepository.getConnection();
+	    }
 	    ValueFactory f = con.getValueFactory();
 	    URI s = f.createURI(subject);
 	    URI p = f.createURI(predicate);

@@ -889,11 +889,16 @@ public class Actions {
 	String subject = namespace + ":" + pid;
 	String urn = services.generateUrn(subject, snid);
 	String hasUrn = "http://geni-orca.renci.org/owl/topology.owl#hasURN";
-	// String sameAs = "http://www.w3.org/2002/07/owl#sameAs";
-	String metadata = readMetadata(subject);
-	if (RdfUtils.hasTriple(subject, hasUrn, urn, metadata))
-	    throw new ArchiveException(subject + "already has a urn: "
-		    + metadata);
+
+	String metadata = null;
+	if (fedora.dataStreamExists(subject, "metadata")) {
+	    metadata = readMetadata(subject);
+	    if (RdfUtils.hasTriple(subject, hasUrn, urn, metadata))
+		throw new ArchiveException(subject + "already has a urn: "
+			+ metadata);
+	} else {
+
+	}
 	metadata = RdfUtils.addTriple(subject, hasUrn, urn, true, metadata);
 	updateMetadata(namespace + ":" + pid, metadata);
 	return "Update " + subject + " metadata " + metadata;
