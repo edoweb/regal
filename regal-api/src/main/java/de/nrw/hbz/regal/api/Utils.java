@@ -212,7 +212,7 @@ public class Utils {
      * @return a message
      */
     @POST
-    @Path("/initContentModels/")
+    @Path("/initContentModels")
     @Produces({ "text/plain" })
     public String initContentModels(
 	    @DefaultValue("") @QueryParam("namespace") String namespace) {
