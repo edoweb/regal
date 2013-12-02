@@ -184,6 +184,8 @@ public class EdowebIngester implements IngestInterface {
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
 	    ObjectType t = ObjectType.version;
+	    dtlBean.addTransformer("oaidc");
+	    dtlBean.addTransformer("epicur");
 	    webclient.createObject(dtlBean, t);
 	    logger.info(pid + " " + "Found webpage version.");
 
@@ -205,6 +207,8 @@ public class EdowebIngester implements IngestInterface {
     private void updateVolume(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
 	logger.info(pid + " " + "Found eJournal volume.");
+	dtlBean.addTransformer("oaidc");
+	dtlBean.addTransformer("epicur");
 	ObjectType t = ObjectType.volume;
 	webclient.createResource(t, dtlBean);
 	String metadata = "<" + pid
@@ -227,30 +231,12 @@ public class EdowebIngester implements IngestInterface {
 	logger.info(pid + " " + "updated.\n");
     }
 
-    // private void updateIssues(DigitalEntity dtlBean) {
-    // String pid = namespace + ":" + dtlBean.getPid();
-    // try {
-    // ObjectType t = ObjectType.issue;
-    // webclient.createObject(dtlBean, t);
-    // logger.info(pid + " " + "Found eJournal issue.");
-    //
-    // String metadata = "<" + pid
-    // + "> <http://purl.org/ontology/bibo/issue> \""
-    // + dtlBean.getLabel() + "\" .\n" + "<" + pid
-    // + "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
-    // + dtlBean.getLabel() + "\" .\n";
-    // webclient.setMetadata(dtlBean, metadata);
-    // logger.info(pid + " " + "updated.\n");
-    // } catch (IllegalArgumentException e) {
-    // logger.debug(e.getMessage());
-    // }
-    //
-    // }
-
     private void updateFile(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
 
 	try {
+	    dtlBean.addTransformer("oaidc");
+	    dtlBean.addTransformer("epicur");
 	    ObjectType t = ObjectType.file;
 	    webclient.createObject(dtlBean, t);
 	    logger.info(pid + " " + "Found file part.");
@@ -271,6 +257,8 @@ public class EdowebIngester implements IngestInterface {
     private void updateWebpage(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
+	    dtlBean.addTransformer("oaidc");
+	    dtlBean.addTransformer("epicur");
 	    webclient.createResource(ObjectType.webpage, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
 	    webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
@@ -364,6 +352,8 @@ public class EdowebIngester implements IngestInterface {
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
 	    logger.info(pid + " Found webpage.");
+	    dtlBean.addTransformer("oaidc");
+	    dtlBean.addTransformer("epicur");
 	    webclient.createResource(ObjectType.webpage, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
 	    webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
