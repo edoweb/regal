@@ -217,11 +217,7 @@ public class Webclient {
 	} catch (UniformInterfaceException e) {
 	    logger.info(pid + " " + e.getMessage(), e);
 	}
-	try {
-	    index(dtlBean);
-	} catch (Exception e) {
-	    logger.error(dtlBean.getPid() + " " + e.getMessage(), e);
-	}
+
     }
 
     private String readMetadata(String url, DigitalEntity dtlBean) {
@@ -303,23 +299,6 @@ public class Webclient {
 	    lobid.type("text/plain").post();
 	} catch (UniformInterfaceException e) {
 	    logger.warn(pid + " fetching lobid-data failed", e);
-	}
-    }
-
-    private void index(DigitalEntity dtlBean) {
-	String pid = namespace + ":" + dtlBean.getPid();
-	String type = dtlBean.getType();
-	try {
-
-	    WebResource index = webclient.resource(endpoint + "/utils/index/"
-		    + pid + "?type=" + type);
-	    index.post();
-	    logger.info(pid + ": got indexed!");
-	} catch (UniformInterfaceException e) {
-	    logger.warn(pid + " " + "Not indexed! "
-		    + e.getResponse().getEntity(String.class), e);
-	} catch (Exception e) {
-	    logger.warn(pid + " " + "Not indexed! " + e.getMessage(), e);
 	}
     }
 
