@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Vector;
 
 import javax.ws.rs.core.MediaType;
 
@@ -199,10 +198,8 @@ public class Webclient {
 	String resourceUrl = endpoint + "/resource/" + pid;
 	WebResource resource = webclient.resource(resourceUrl);
 	CreateObjectBean input = new CreateObjectBean();
-	List<String> ts = new Vector<String>();
-	ts.add("oaidc");
-
-	if (ts != null)
+	List<String> ts = dtlBean.getTransformer();
+	if (ts != null && !ts.isEmpty())
 	    input.setTransformer(ts);
 	input.setType(type.toString());
 	logger.debug(pid + " type: " + input.getType());
@@ -335,4 +332,27 @@ public class Webclient {
 
     }
 
+    /**
+     * init all known contentModels/Transformers
+     */
+    public void initContentModels() {
+	WebResource resource = webclient.resource(endpoint
+		+ "/utils/initContentModels");
+	resource.post();
+    }
+
+    /**
+     * @param id
+     *            pid without namespace
+     * @param namespace
+     *            namespace of the pid
+     * @param snid
+     *            urn subnamespace id
+     */
+    public void addUrn(String id, String namespace, String snid) {
+	WebResource resource = webclient.resource(endpoint
+		+ "/utils/addUrn?id=" + id + "&namespace=" + namespace
+		+ "&snid=" + snid);
+	resource.post();
+    }
 }
