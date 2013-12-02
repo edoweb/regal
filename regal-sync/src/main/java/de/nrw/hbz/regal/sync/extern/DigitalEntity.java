@@ -46,6 +46,7 @@ public class DigitalEntity {
     private String usageType = null;
     private String location = null;
     private List<String> identifier = null;
+    private List<String> transformer = null;
 
     private HashMap<StreamType, Stream> streams = null;
     private List<RelatedDigitalEntity> related = null;
@@ -66,6 +67,7 @@ public class DigitalEntity {
 	related = new Vector<RelatedDigitalEntity>();
 	streams = new HashMap<StreamType, Stream>();
 	identifier = new Vector<String>();
+	setTransformer(new Vector<String>());
     }
 
     /**
@@ -80,6 +82,7 @@ public class DigitalEntity {
 	related = new Vector<RelatedDigitalEntity>();
 	streams = new HashMap<StreamType, Stream>();
 	identifier = new Vector<String>();
+	setTransformer(new Vector<String>());
     }
 
     /**
@@ -364,6 +367,29 @@ public class DigitalEntity {
      */
     public void addIdentifier(String id) {
 	identifier.add(id);
+    }
+
+    /**
+     * @return a list of transformers
+     */
+    public List<String> getTransformer() {
+	return transformer;
+    }
+
+    /**
+     * @param transformer
+     *            a list of transformers
+     */
+    public void setTransformer(List<String> transformers) {
+	this.transformer = transformers;
+    }
+
+    /**
+     * @param transformer
+     *            a single transformer
+     */
+    public void addTransformer(String transformer) {
+	this.transformer.add(transformer);
     }
 
 }
