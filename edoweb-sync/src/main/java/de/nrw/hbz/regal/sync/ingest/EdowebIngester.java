@@ -267,7 +267,7 @@ public class EdowebIngester implements IngestInterface {
 	try {
 	    webclient.createResource(ObjectType.webpage, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
-	    webclient.publish(dtlBean);
+	    webclient.makeOaiSet(dtlBean);
 	    if (dtlBean.getStream(StreamType.DATA).getMimeType()
 		    .compareTo("application/zip") == 0)
 
@@ -301,7 +301,7 @@ public class EdowebIngester implements IngestInterface {
 	    logger.info(dtlBean.toString());
 	    webclient.createResource(ObjectType.journal, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
-	    webclient.publish(dtlBean);
+	    webclient.makeOaiSet(dtlBean);
 	    Vector<DigitalEntity> list = getParts(dtlBean);
 	    int numOfVols = list.size();
 	    int count = 1;
@@ -322,7 +322,7 @@ public class EdowebIngester implements IngestInterface {
 	try {
 	    webclient.createResource(ObjectType.monograph, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
-	    webclient.publish(dtlBean);
+	    webclient.makeOaiSet(dtlBean);
 	    if (dtlBean.getStream(StreamType.DATA).getMimeType()
 		    .compareTo("application/pdf") == 0)
 
@@ -356,7 +356,7 @@ public class EdowebIngester implements IngestInterface {
 	    logger.info(pid + " Found ejournal.");
 	    webclient.createResource(ObjectType.journal, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
-	    webclient.publish(dtlBean);
+	    webclient.makeOaiSet(dtlBean);
 	    Vector<DigitalEntity> viewMainLinks = getParts(dtlBean);
 	    int numOfVols = viewMainLinks.size();
 	    logger.info(pid + " " + "Found " + numOfVols + " parts.");
@@ -374,7 +374,7 @@ public class EdowebIngester implements IngestInterface {
 	    logger.info(pid + " Found webpage.");
 	    webclient.createResource(ObjectType.webpage, dtlBean);
 	    webclient.autoGenerateMetdata(dtlBean);
-	    webclient.publish(dtlBean);
+	    webclient.makeOaiSet(dtlBean);
 	    Vector<DigitalEntity> viewLinks = getParts(dtlBean);
 	    int numOfVersions = viewLinks.size();
 	    logger.info(pid + " " + "Found " + numOfVersions + " versions.");

@@ -19,6 +19,8 @@ package de.nrw.hbz.regal.sync.ingest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Vector;
 
 import javax.ws.rs.core.MediaType;
 
@@ -113,20 +115,6 @@ public class Webclient {
     }
 
     /**
-     * @param dtlBean
-     *            provides the entity to the searchengine and to the oai
-     *            provider
-     */
-    public void publish(DigitalEntity dtlBean) {
-
-	try {
-	    oaiProvide(dtlBean);
-	} catch (Exception e) {
-	    logger.error(dtlBean.getPid() + " " + e.getMessage(), e);
-	}
-    }
-
-    /**
      * Metadata performs typical metadata related api-actions like update the dc
      * stream enrich with catalogdata. Add the object to the searchindex and
      * provide it on the oai interface.
@@ -191,13 +179,8 @@ public class Webclient {
 	String pid = namespace + ":" + dtlBean.getPid();
 	String resource = endpoint + "/resource/" + pid;
 	String data = resource + "/data";
-	createDataResource(dtlBean, type, resource, data, dtlBean);
-    }
-
-    private void createDataResource(DigitalEntity dtlBean, ObjectType type,
-	    String resource, String data, DigitalEntity fulltextObject) {
 	createResource(type, dtlBean);
-	updateData(data, fulltextObject);
+	updateData(data, dtlBean);
 	updateLabel(resource, dtlBean);
     }
 
@@ -216,6 +199,11 @@ public class Webclient {
 	String resourceUrl = endpoint + "/resource/" + pid;
 	WebResource resource = webclient.resource(resourceUrl);
 	CreateObjectBean input = new CreateObjectBean();
+	List<String> ts = new Vector<String>();
+	ts.add("oaidc");
+
+	if (ts != null)
+	    input.setTransformer(ts);
 	input.setType(type.toString());
 	logger.debug(pid + " type: " + input.getType());
 	if (ppid != null && !ppid.isEmpty()) {
@@ -236,33 +224,6 @@ public class Webclient {
 	}
     }
 
-    // private void updateDC(String url, DigitalEntity dtlBean) {
-    // String pid = namespace + ":" + dtlBean.getPid();
-    // WebResource webpageDC = webclient.resource(url);
-    //
-    // DCBeanAnnotated dc = new DCBeanAnnotated();
-    //
-    // try {
-    //
-    // if (dtlBean.getStream(StreamType.MARC).getFile() != null)
-    // dc.add(marc2dc(dtlBean));
-    // else if (dtlBean.getDc() != null) {
-    // dc.add(new DCBeanAnnotated(dtlBean.getDc()));
-    // } else {
-    // logger.warn(pid
-    // + " not able to create dublin core data. No Marc or DC metadata found.");
-    // }
-    //
-    // dc.addDescription(dtlBean.getLabel());
-    // webpageDC.put(dc);
-    //
-    // } catch (UniformInterfaceException e) {
-    // logger.info(pid + " " + e.getMessage());
-    // } catch (Exception e) {
-    // logger.debug(pid + " " + e.getMessage());
-    // }
-    // }
-
     private String readMetadata(String url, DigitalEntity dtlBean) {
 	WebResource metadataRes = webclient.resource(url);
 	return metadataRes.get(String.class);
@@ -280,11 +241,12 @@ public class Webclient {
 
     private void updateLabel(String url, DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
-	WebResource webpageDC = webclient.resource(url + "/dc");
-
-	DCBeanAnnotated dc = new DCBeanAnnotated();
-
 	try {
+
+	    WebResource webpageDC = webclient.resource(url + "/dc");
+
+	    DCBeanAnnotated dc = new DCBeanAnnotated();
+
 	    dc.addTitle("Version of: " + pid);
 	    dc.addDescription(dtlBean.getLabel());
 	    webpageDC.put(dc);
@@ -361,38 +323,6 @@ public class Webclient {
 	}
     }
 
-    private void oaiProvide(DigitalEntity dtlBean) {
-	String pid = namespace + ":" + dtlBean.getPid();
-	WebResource oaiSet = webclient.resource(endpoint + "/utils/makeOaiSet/"
-		+ namespace + ":" + dtlBean.getPid());
-	try {
-	    oaiSet.post();
-	} catch (UniformInterfaceException e) {
-	    logger.warn(pid + " " + "Not oai provided! " + e.getMessage(), e);
-	}
-    }
-
-    // private DCBeanAnnotated marc2dc(DigitalEntity dtlBean) {
-    // String pid = namespace + ":" + dtlBean.getPid();
-    // try {
-    // StringWriter str = new StringWriter();
-    // TransformerFactory tFactory = TransformerFactory.newInstance();
-    // Transformer transformer = tFactory
-    // .newTransformer(new StreamSource(ClassLoader
-    // .getSystemResourceAsStream("MARC21slim2OAIDC.xsl")));
-    // transformer.transform(
-    // new StreamSource(dtlBean.getStream(StreamType.MARC)
-    // .getFile()), new StreamResult(str));
-    // String xmlStr = str.getBuffer().toString();
-    // DCBeanAnnotated dc = new DCBeanAnnotated(xmlStr);
-    // return dc;
-    //
-    // } catch (Throwable t) {
-    // logger.warn(pid + " " + t.getCause().getMessage());
-    // }
-    // return null;
-    // }
-
     /**
      * 
      * @param p
@@ -407,6 +337,23 @@ public class Webclient {
 	} catch (UniformInterfaceException e) {
 	    logger.info(pid + " Can't delete!" + e.getMessage(), e);
 	}
+    }
+
+    /**
+     * @param dtlBean
+     *            a dtlBean with metadata
+     */
+    public void makeOaiSet(DigitalEntity dtlBean) {
+
+	String pid = namespace + ":" + dtlBean.getPid();
+	WebResource oaiSet = webclient.resource(endpoint + "/utils/makeOaiSet/"
+		+ namespace + ":" + dtlBean.getPid());
+	try {
+	    oaiSet.post();
+	} catch (UniformInterfaceException e) {
+	    logger.warn(pid + " " + "Not oai provided! " + e.getMessage(), e);
+	}
+
     }
 
 }

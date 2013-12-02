@@ -82,7 +82,7 @@ public class OpusIngester implements IngestInterface {
 		    namespace + ":" + dtlBean.getPid());
 
 	    webclient.autoGenerateMetadataMerge(dtlBean, metadata);
-	    webclient.publish(dtlBean);
+	    webclient.makeOaiSet(dtlBean);
 	} catch (IllegalArgumentException e) {
 	    logger.debug(e.getMessage());
 	}
