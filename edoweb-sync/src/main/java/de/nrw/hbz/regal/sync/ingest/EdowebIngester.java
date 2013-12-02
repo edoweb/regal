@@ -120,7 +120,7 @@ public class EdowebIngester implements IngestInterface {
 	    if (partitionC.compareTo("EJO01") == 0) {
 		if (dtlBean.isParent()) {
 		    logger.info(pid + ": start updating eJournal");
-		    updateJournal(dtlBean);
+		    updateJournalParent(dtlBean);
 		    logger.info(pid + ": end updating eJournal");
 		} else {
 		    logger.info(pid + ": start updating eJournal issue");
@@ -346,6 +346,27 @@ public class EdowebIngester implements IngestInterface {
 	} catch (Exception e) {
 	    logger.error(pid + " " + e.getMessage());
 	}
+    }
+
+    private void updateJournalParent(DigitalEntity dtlBean) {
+	String pid = namespace + ":" + dtlBean.getPid();
+	try {
+	    logger.info(pid + " Found ejournal.");
+	    dtlBean.addTransformer("oaidc");
+	    dtlBean.addTransformer("epicur");
+	    webclient.createResource(ObjectType.journal, dtlBean);
+	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
+	    webclient.makeOaiSet(dtlBean);
+	    Vector<DigitalEntity> viewMainLinks = getParts(dtlBean);
+	    int numOfVols = viewMainLinks.size();
+	    logger.info(pid + " " + "Found " + numOfVols + " parts.");
+	    logger.info(pid + " " + "Will not update volumes.");
+	    logger.info(pid + " " + "updated.\n");
+	} catch (Exception e) {
+	    logger.error(pid + " " + e.getMessage());
+	}
+
     }
 
     private void updateWebpageParent(DigitalEntity dtlBean) {
