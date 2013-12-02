@@ -6,7 +6,6 @@
 
 source variables.conf
 
-
 function makeDir()
 {
 echo "Create ARCHIVE_HOME $ARCHIVE_HOME"

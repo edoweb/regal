@@ -8,13 +8,13 @@ source variables.conf
 
 function changeToInstallDir()
 {
-cp update.sh $ARCHIVE_HOME/bin
+cp $ARCHIVE_HOME/src/regal-installer/update.sh $ARCHIVE_HOME/bin
 cd $ARCHIVE_HOME/bin
 }
 
 function shutdownElasticsearch()
 {
-ps -ef | grep "elasticsearch" | awk '{print $2}' | xargs kill
+`ps -ef | grep "elasticsearch" | awk '{print $2}' | xargs kill `
 }
 
 function removeElasticsearch()
