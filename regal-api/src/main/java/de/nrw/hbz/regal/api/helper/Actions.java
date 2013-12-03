@@ -519,8 +519,9 @@ public class Actions {
     }
 
     private void updateTransformer(CreateObjectBean input, Node node) {
-	String[] transformers = input.getTransformer();
-	if (transformers != null && transformers.length != 0)
+	node.removeAllContentModels();
+	List<String> transformers = input.getTransformer();
+	if (transformers != null && transformers.size() != 0)
 	    for (String t : transformers) {
 		node.addTransformer(new Transformer(t));
 	    }
@@ -545,17 +546,15 @@ public class Actions {
      * 
      * @param pid
      *            the pid of an object
-     * @param namespace
-     *            the namespace
      * @return the urn
      */
-    public String getUrn(String pid, String namespace) {
+    public String getUrn(String pid) {
 	try {
 
-	    String metadataAdress = fedoraExtern + "/objects/" + namespace
-		    + ":" + pid + "/datastreams/metadata/content";
+	    String metadataAdress = fedoraExtern + "/objects/" + pid
+		    + "/datastreams/metadata/content";
 	    URL url = new URL(metadataAdress);
-	    List<String> urns = RdfUtils.findRdfObjects(namespace + ":" + pid,
+	    List<String> urns = RdfUtils.findRdfObjects(pid,
 		    "http://geni-orca.renci.org/owl/topology.owl#hasURN", url,
 		    RDFFormat.NTRIPLES, "text/plain");
 	    if (urns == null || urns.isEmpty()) {
@@ -576,13 +575,11 @@ public class Actions {
     /**
      * @param pid
      *            the pid of the object
-     * @param namespace
-     *            the namespace
      * @return a epicur display for the pid
      */
-    public String epicur(String pid, String namespace) {
-	String url = urnbase + namespace + ":" + pid;
-	return services.epicur(url, getUrn(pid, namespace));
+    public String epicur(String pid) {
+	String url = urnbase + pid;
+	return services.epicur(url, getUrn(pid));
     }
 
     /**
@@ -888,11 +885,16 @@ public class Actions {
 	String subject = namespace + ":" + pid;
 	String urn = services.generateUrn(subject, snid);
 	String hasUrn = "http://geni-orca.renci.org/owl/topology.owl#hasURN";
-	// String sameAs = "http://www.w3.org/2002/07/owl#sameAs";
-	String metadata = readMetadata(subject);
-	if (RdfUtils.hasTriple(subject, hasUrn, urn, metadata))
-	    throw new ArchiveException(subject + "already has a urn: "
-		    + metadata);
+
+	String metadata = null;
+	if (fedora.dataStreamExists(subject, "metadata")) {
+	    metadata = readMetadata(subject);
+	    if (RdfUtils.hasTriple(subject, hasUrn, urn, metadata))
+		throw new ArchiveException(subject + "already has a urn: "
+			+ metadata);
+	} else {
+
+	}
 	metadata = RdfUtils.addTriple(subject, hasUrn, urn, true, metadata);
 	updateMetadata(namespace + ":" + pid, metadata);
 	return "Update " + subject + " metadata " + metadata;
@@ -920,4 +922,22 @@ public class Actions {
 	fedora.updateNode(node);
     }
 
+    /**
+     * @param pid
+     *            pid with namespace:pid
+     * @return a aleph mab xml representation
+     */
+    public String aleph(String pid) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    /**
+     * @param pid
+     *            pid with namespace:pid
+     * @return a URL to a pdfa conversion
+     */
+    public String pdfa(String pid) {
+	return pdfa(readNode(pid));
+    }
 }

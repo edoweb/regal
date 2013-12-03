@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal.api.helper;
+package de.nrw.hbz.regal.fedora;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de

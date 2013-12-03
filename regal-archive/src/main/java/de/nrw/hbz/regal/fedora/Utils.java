@@ -71,6 +71,8 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -134,6 +136,7 @@ public class Utils {
 
     }
 
+    final static Logger logger = LoggerFactory.getLogger(Utils.class);
     ContentModelBuilder cmBuilder = new ContentModelBuilder();
     private String user = null;
 
@@ -311,7 +314,7 @@ public class Utils {
 
 	    new AddDatastream(node.getPID(), "metadata").versionable(true)
 		    .dsState("A").dsLabel("n-triple rdf metadata")
-		    .controlGroup("M").mimeType(node.getMimeType())
+		    .controlGroup("M").mimeType("text/plain")
 		    .dsLocation(location).execute();
 	} catch (Exception e) {
 	    throw new ArchiveException(node.getPID()
@@ -790,21 +793,23 @@ public class Utils {
 		    .versionable(true).formatURI(DS_WSDL_URI).dsState("A")
 		    .controlGroup("X").mimeType("text/xml")
 		    .content(cmBuilder.getWsdl(cm)).execute();
-
     }
 
     private void addContentModel(Link link, Node node) {
 
-	Transformer t = createTransformer(link.getObject());
-	node.addTransformer(t);
+	try {
+	    Transformer t = readTransformer(link.getObject());
+	    node.addTransformer(t);
+	} catch (ContentModelException e) {
+	    logger.debug("", e);
+	}
 
     }
 
-    private Transformer createTransformer(String prefixedPid) {
+    private Transformer readTransformer(String prefixedPid) {
 	String pid = removeUriPrefix(prefixedPid);
 	String id = pid.substring(pid.indexOf(":") + 1);
 	Transformer t = new Transformer(id);
 	return t;
     }
-
 }

@@ -39,8 +39,8 @@ public class Node {
     private String metadataFile;
     private String uploadFile;
     private String fileLabel;
-    private Vector<Link> relsExt = new Vector<Link>();
-    private Vector<Transformer> cms = new Vector<Transformer>();
+    private List<Link> relsExt = new Vector<Link>();
+    private List<Transformer> cms = new Vector<Transformer>();
     private String label = null;
     private String type = null;
     private String pid = null;
@@ -453,6 +453,14 @@ public class Node {
      */
     public void setChecksum(String checksum) {
 	this.checksum = checksum;
+    }
+
+    /**
+     * Reinitialise the transformer list with an empty list
+     * 
+     */
+    public void removeAllContentModels() {
+	cms = new Vector<Transformer>();
     }
 
 }

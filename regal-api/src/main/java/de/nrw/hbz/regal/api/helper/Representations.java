@@ -19,6 +19,7 @@ package de.nrw.hbz.regal.api.helper;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import org.stringtemplate.v4.ST;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.fedora.FedoraInterface;
 
 /**
@@ -113,15 +115,26 @@ class Representations {
 	parentPid = fedora.getNodeParent(node);
 	result.setParentPid(parentPid);
 	result.setType(type);
-	result.setTransformer((String[]) node.getContentModels().toArray());
+
+	result.setTransformer(getTransformerIds(node));
 	return result;
+    }
+
+    private List<String> getTransformerIds(Node node) {
+	List<Transformer> transformers = node.getContentModels();
+	List<String> transformerIds = new Vector<String>();
+
+	for (Transformer t : transformers) {
+	    transformerIds.add(t.getId());
+	}
+	return transformerIds;
     }
 
     public String getReM(String pid, String format, String fedoraExtern,
 	    List<String> parents, List<String> children) {
 	Node node = fedora.readNode(pid);
 	OaiOreMaker ore = new OaiOreMaker(node, server, uriPrefix);
-	return ore.getReM(format, parents, children);
+	return ore.getReM(format, parents, children, node.getContentModels());
     }
 
 }

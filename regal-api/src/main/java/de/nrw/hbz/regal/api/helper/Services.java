@@ -30,6 +30,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
 import de.nrw.hbz.regal.fedora.CopyUtils;
 import de.nrw.hbz.regal.fedora.FedoraInterface;
 import de.nrw.hbz.regal.fedora.RdfUtils;
+import de.nrw.hbz.regal.fedora.XmlUtils;
 
 class Services {
 
@@ -326,10 +327,8 @@ class Services {
     }
 
     private void linkObjectToOaiSet(Node node, String spec, String pid) {
-
-	node.removeRelations(IS_MEMBER_OF);
 	node.removeRelations(ITEM_ID);
-
+	node.removeRelation(IS_MEMBER_OF, "info:fedora/" + pid);
 	Link link = new Link();
 	link.setPredicate(IS_MEMBER_OF);
 	link.setObject("info:fedora/" + pid, false);
@@ -369,9 +368,7 @@ class Services {
 	    dc.addTitle(name);
 
 	    oaiset.setDcBean(dc);
-
 	    fedora.createNode(oaiset);
-
 	}
     }
 

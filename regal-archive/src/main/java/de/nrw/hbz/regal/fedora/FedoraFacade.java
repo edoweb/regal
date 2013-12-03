@@ -110,16 +110,7 @@ class FedoraFacade implements FedoraInterface {
 
     }
 
-    public class XmlException extends ArchiveException {
-
-	private static final long serialVersionUID = -4955991522087336862L;
-
-	public XmlException(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-    }
-
-    public class UpdateContentModel extends ArchiveException {
+    class UpdateContentModel extends ArchiveException {
 
 	private static final long serialVersionUID = 1794883693210840141L;
 
@@ -128,7 +119,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class DeleteDatastreamException extends ArchiveException {
+    class DeleteDatastreamException extends ArchiveException {
 
 	private static final long serialVersionUID = 128120359698836741L;
 
@@ -138,7 +129,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class GetPidException extends ArchiveException {
+    class GetPidException extends ArchiveException {
 
 	private static final long serialVersionUID = 5316657644921457520L;
 
@@ -147,7 +138,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class CreateNodeException extends ArchiveException {
+    class CreateNodeException extends ArchiveException {
 
 	private static final long serialVersionUID = 8569995140758544941L;
 
@@ -161,7 +152,7 @@ class FedoraFacade implements FedoraInterface {
 
     }
 
-    public class SearchException extends ArchiveException {
+    class SearchException extends ArchiveException {
 
 	private static final long serialVersionUID = -276889477323963368L;
 
@@ -170,7 +161,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class NodeNotFoundException extends ArchiveException {
+    class NodeNotFoundException extends ArchiveException {
 
 	private static final long serialVersionUID = 8851350561350951329L;
 
@@ -239,7 +230,7 @@ class FedoraFacade implements FedoraInterface {
 	    DublinCoreHandler.updateDc(node);
 
 	    List<Transformer> cms = node.getContentModels();
-	    utils.createContentModels(cms);
+	    // utils.createContentModels(cms);
 	    utils.linkContentModels(cms, node);
 
 	    if (node.getUploadFile() != null) {
@@ -354,7 +345,7 @@ class FedoraFacade implements FedoraInterface {
 	DublinCoreHandler.updateDc(node);
 
 	List<Transformer> models = node.getContentModels();
-	utils.updateContentModels(models);
+	// utils.updateContentModels(models);
 	node.removeRelations(REL_HAS_MODEL);
 	if (node.getUploadFile() != null) {
 	    utils.updateManagedStream(node);
@@ -412,6 +403,7 @@ class FedoraFacade implements FedoraInterface {
     @Override
     public void deleteNode(String rootPID) {
 	try {
+	    logger.debug("deletNode " + rootPID);
 	    unlinkParent(rootPID);
 	    new PurgeObject(rootPID).execute();
 	} catch (FedoraClientException e) {
@@ -567,8 +559,14 @@ class FedoraFacade implements FedoraInterface {
 		    .execute();
 
 	    for (DatastreamType ds : response.getDatastreams()) {
-		if (ds.getDsid().compareTo(datastreamId) == 0)
-		    return true;
+		if (ds.getDsid().compareTo(datastreamId) == 0) {
+		    GetDatastreamResponse r = new GetDatastream(pid,
+			    datastreamId).execute();
+		    if (r.getDatastreamProfile().getDsState().equals("D"))
+			return false;
+		    else
+			return true;
+		}
 	    }
 
 	} catch (FedoraClientException e) {

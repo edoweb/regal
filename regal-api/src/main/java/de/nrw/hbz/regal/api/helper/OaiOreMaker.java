@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.stringtemplate.v4.ST;
 
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -54,6 +55,7 @@ public class OaiOreMaker {
     String regalNamespace = "http://hbz-nrw.de/regal#";
     String fpNamespace = "http://downlode.org/Code/RDF/File_Properties/schema#";
     String wnNamespace = "http://xmlns.com/wordnet/1.6/";
+    String hydraNamespace = "http://purl.org/hydra/core#";
 
     RepositoryConnection con = null;
 
@@ -76,13 +78,15 @@ public class OaiOreMaker {
      *            all parents of the pid
      * @param children
      *            all children of the pid
+     * @param transformers
+     *            transformers of the object
      * @return a oai_ore resource map
      */
     public String getReM(String format, List<String> parents,
-	    List<String> children) {
+	    List<String> children, List<Transformer> transformers) {
 	String result = null;
 	addDescriptiveData();
-	addStructuralData(parents, children);
+	addStructuralData(parents, children, transformers);
 	result = write(format);
 	closeRdfRepository();
 	return result;
@@ -189,7 +193,8 @@ public class OaiOreMaker {
 	}
     }
 
-    private void addStructuralData(List<String> parents, List<String> children) {
+    private void addStructuralData(List<String> parents, List<String> children,
+	    List<Transformer> transformers) {
 	try {
 	    String pid = node.getPID();
 	    Date lastModified = node.getLastModified();
@@ -232,6 +237,7 @@ public class OaiOreMaker {
 	    // regal
 	    URI contentType = f.createURI(regalNamespace, "contentType");
 	    URI hasData = f.createURI(regalNamespace, "hasData");
+	    URI hasTransformer = f.createURI(regalNamespace, "hasTransformer");
 	    // FileProperties
 	    URI fpSize = f.createURI(fpNamespace, "size");
 	    BNode theChecksumBlankNode = f.createBNode();
@@ -243,7 +249,6 @@ public class OaiOreMaker {
 	    URI fpChecksumValue = f.createURI(fpNamespace, "checksumValue");
 
 	    // Statements
-
 	    if (mime != null && !mime.isEmpty()) {
 		Literal dataMime = f.createLiteral(mime);
 		con.add(data, dcFormat, dataMime);
@@ -279,6 +284,13 @@ public class OaiOreMaker {
 		URI originalObject = f.createURI(str);
 		con.add(aggregation, similarTo, originalObject);
 
+	    }
+
+	    if (transformers != null && transformers.size() > 0) {
+		for (Transformer t : transformers) {
+		    Literal transformerId = f.createLiteral(t.getId());
+		    con.add(aggregation, hasTransformer, transformerId);
+		}
 	    }
 
 	    URI fedoraObject = f.createURI(server + "/fedora/objects/" + pid);

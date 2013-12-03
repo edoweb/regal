@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package de.nrw.hbz.regal.api.helper;
+package de.nrw.hbz.regal.fedora;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -219,9 +219,7 @@ public class XmlUtils {
 	try {
 	    DocumentBuilderFactory factory = DocumentBuilderFactory
 		    .newInstance();
-	    factory.setNamespaceAware(true);
 	    DocumentBuilder docBuilder = factory.newDocumentBuilder();
-
 	    Document doc = docBuilder
 		    .parse(new BufferedInputStream(inputStream));
 	    Element root = doc.getDocumentElement();
