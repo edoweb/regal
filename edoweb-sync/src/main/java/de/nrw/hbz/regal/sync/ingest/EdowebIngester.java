@@ -225,7 +225,11 @@ public class EdowebIngester implements IngestInterface {
 	logger.info(pid + " Found " + num + " issues.");
 	for (DigitalEntity issue : issues) {
 	    logger.info("Part: " + (count++) + "/" + num);
+	    issue.addTransformer("oaidc");
+	    issue.addTransformer("epicur");
 	    updateFile(issue);
+	    webclient.addUrn(issue.getPid(), namespace, "hbz:929:02");
+	    webclient.makeOaiSet(issue);
 	}
 
 	logger.info(pid + " " + "updated.\n");
@@ -235,18 +239,13 @@ public class EdowebIngester implements IngestInterface {
 	String pid = namespace + ":" + dtlBean.getPid();
 
 	try {
-	    dtlBean.addTransformer("oaidc");
-	    dtlBean.addTransformer("epicur");
 	    ObjectType t = ObjectType.file;
 	    webclient.createObject(dtlBean, t);
 	    logger.info(pid + " " + "Found file part.");
-
 	    String metadata = "<" + pid
 		    + "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
 		    + dtlBean.getLabel() + "\" .\n";
 	    webclient.setMetadata(dtlBean, metadata);
-	    webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
-	    webclient.makeOaiSet(dtlBean);
 	    logger.info(pid + " " + "updated.\n");
 	} catch (IllegalArgumentException e) {
 	    logger.debug(e.getMessage());
