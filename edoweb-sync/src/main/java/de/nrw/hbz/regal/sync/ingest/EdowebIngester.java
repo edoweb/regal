@@ -302,6 +302,8 @@ public class EdowebIngester implements IngestInterface {
 		    .compareTo("application/pdf") == 0) {
 		dtlBean.setParentPid(dtlBean.getPid());
 		dtlBean.setPid(dtlBean.getPid() + "-1");
+		dtlBean.removeTransformer("oaidc");
+		dtlBean.removeTransformer("epicur");
 		updateFile(dtlBean);
 	    }
 	} catch (IllegalArgumentException e) {
