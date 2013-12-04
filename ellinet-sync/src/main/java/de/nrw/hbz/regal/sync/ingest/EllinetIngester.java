@@ -77,7 +77,7 @@ public class EllinetIngester implements IngestInterface {
 	    webclient.createObject(dtlBean, ObjectType.monograph);
 	    logger.info(pid + " Found monograph.");
 	    webclient.autoGenerateMetdata(dtlBean);
-	    webclient.publish(dtlBean);
+	    webclient.makeOaiSet(dtlBean);
 	    logger.info(pid + " " + "updated.\n");
 	} catch (IllegalArgumentException e) {
 	    logger.debug(e.getMessage());

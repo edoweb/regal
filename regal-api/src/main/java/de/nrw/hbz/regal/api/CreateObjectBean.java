@@ -1,5 +1,8 @@
 package de.nrw.hbz.regal.api;
 
+import java.util.List;
+import java.util.Vector;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import de.nrw.hbz.regal.api.helper.ObjectType;
@@ -12,13 +15,29 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
 public class CreateObjectBean {
     String type = null;
     String parentPid = null;
+    List<String> transformer = null;
 
     /**
      * Default constructor
      * 
      */
     public CreateObjectBean() {
+	transformer = new Vector<String>();
+    }
 
+    /**
+     * @return all Transformer-Ids
+     */
+    public List<String> getTransformer() {
+	return transformer;
+    }
+
+    /**
+     * @param t
+     *            list of Transformer-Ids
+     */
+    public void setTransformer(List<String> t) {
+	transformer = t;
     }
 
     /**

@@ -20,12 +20,12 @@ import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_CONTENT_TYPE;
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.HAS_PART;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
+import static de.nrw.hbz.regal.fedora.FedoraVocabulary.REL_HAS_MODEL;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SIMPLE;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SPO;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -63,9 +63,9 @@ import com.yourmediashelf.fedora.client.response.ListDatastreamsResponse;
 import com.yourmediashelf.fedora.generated.access.DatastreamType;
 import com.yourmediashelf.fedora.generated.management.PidList;
 
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Link;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
 /**
@@ -110,16 +110,7 @@ class FedoraFacade implements FedoraInterface {
 
     }
 
-    public class XmlException extends ArchiveException {
-
-	private static final long serialVersionUID = -4955991522087336862L;
-
-	public XmlException(final String message, final Throwable cause) {
-	    super(message, cause);
-	}
-    }
-
-    public class UpdateContentModel extends ArchiveException {
+    class UpdateContentModel extends ArchiveException {
 
 	private static final long serialVersionUID = 1794883693210840141L;
 
@@ -128,7 +119,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class DeleteDatastreamException extends ArchiveException {
+    class DeleteDatastreamException extends ArchiveException {
 
 	private static final long serialVersionUID = 128120359698836741L;
 
@@ -138,7 +129,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class GetPidException extends ArchiveException {
+    class GetPidException extends ArchiveException {
 
 	private static final long serialVersionUID = 5316657644921457520L;
 
@@ -147,7 +138,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class CreateNodeException extends ArchiveException {
+    class CreateNodeException extends ArchiveException {
 
 	private static final long serialVersionUID = 8569995140758544941L;
 
@@ -161,7 +152,7 @@ class FedoraFacade implements FedoraInterface {
 
     }
 
-    public class SearchException extends ArchiveException {
+    class SearchException extends ArchiveException {
 
 	private static final long serialVersionUID = -276889477323963368L;
 
@@ -170,7 +161,7 @@ class FedoraFacade implements FedoraInterface {
 	}
     }
 
-    public class NodeNotFoundException extends ArchiveException {
+    class NodeNotFoundException extends ArchiveException {
 
 	private static final long serialVersionUID = 8851350561350951329L;
 
@@ -237,7 +228,10 @@ class FedoraFacade implements FedoraInterface {
 	    new Ingest(node.getPID()).label(node.getLabel()).execute();
 
 	    DublinCoreHandler.updateDc(node);
-	    utils.createContentModels(node);
+
+	    List<Transformer> cms = node.getContentModels();
+	    // utils.createContentModels(cms);
+	    utils.linkContentModels(cms, node);
 
 	    if (node.getUploadFile() != null) {
 		utils.createManagedStream(node);
@@ -321,8 +315,7 @@ class FedoraFacade implements FedoraInterface {
 	try {
 	    DublinCoreHandler.readFedoraDcToNode(node);
 	    utils.readRelsExt(node);
-	    // TODO Fix me
-	    // readContentModels(node);
+	    // utils.readContentModels(node);
 	    GetObjectProfileResponse prof = new GetObjectProfile(pid).execute();
 	    node.setLabel(prof.getLabel());
 	    node.setLastModified(prof.getLastModifiedDate());
@@ -350,8 +343,10 @@ class FedoraFacade implements FedoraInterface {
     @Override
     public void updateNode(Node node) {
 	DublinCoreHandler.updateDc(node);
-	// updateContentModels(node);
 
+	List<Transformer> models = node.getContentModels();
+	// utils.updateContentModels(models);
+	node.removeRelations(REL_HAS_MODEL);
 	if (node.getUploadFile() != null) {
 	    utils.updateManagedStream(node);
 	}
@@ -359,6 +354,7 @@ class FedoraFacade implements FedoraInterface {
 	if (node.getMetadataFile() != null) {
 	    utils.updateMetadataStream(node);
 	}
+	utils.linkContentModels(models, node);
 	utils.updateRelsExt(node);
 
     }
@@ -407,6 +403,7 @@ class FedoraFacade implements FedoraInterface {
     @Override
     public void deleteNode(String rootPID) {
 	try {
+	    logger.debug("deletNode " + rootPID);
 	    unlinkParent(rootPID);
 	    new PurgeObject(rootPID).execute();
 	} catch (FedoraClientException e) {
@@ -432,20 +429,8 @@ class FedoraFacade implements FedoraInterface {
     }
 
     @Override
-    public void updateContentModel(ContentModel cm) {
-	if (nodeExists(cm.getContentModelPID()))
-	    deleteNode(cm.getContentModelPID());
-	if (nodeExists(cm.getServiceDefinitionPID()))
-	    deleteNode(cm.getServiceDefinitionPID());
-	if (nodeExists(cm.getServiceDeploymentPID()))
-	    deleteNode(cm.getServiceDeploymentPID());
-	try {
-	    utils.createContentModel(cm);
-	} catch (UnsupportedEncodingException e) {
-	    throw new UpdateContentModel(cm.toString(), e);
-	} catch (FedoraClientException e) {
-	    throw new UpdateContentModel(cm.toString(), e);
-	}
+    public void updateContentModels(List<Transformer> cms) {
+	utils.updateContentModels(cms);
     }
 
     @Override
@@ -574,8 +559,14 @@ class FedoraFacade implements FedoraInterface {
 		    .execute();
 
 	    for (DatastreamType ds : response.getDatastreams()) {
-		if (ds.getDsid().compareTo(datastreamId) == 0)
-		    return true;
+		if (ds.getDsid().compareTo(datastreamId) == 0) {
+		    GetDatastreamResponse r = new GetDatastream(pid,
+			    datastreamId).execute();
+		    if (r.getDatastreamProfile().getDsState().equals("D"))
+			return false;
+		    else
+			return true;
+		}
 	    }
 
 	} catch (FedoraClientException e) {

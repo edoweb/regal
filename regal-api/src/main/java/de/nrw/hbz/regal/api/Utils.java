@@ -17,27 +17,20 @@
 package de.nrw.hbz.regal.api;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Vector;
 
 import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 
 import de.nrw.hbz.regal.api.helper.Actions;
 import de.nrw.hbz.regal.api.helper.HttpArchiveException;
-import de.nrw.hbz.regal.datatypes.Node;
-import de.nrw.hbz.regal.exceptions.ArchiveException;
+import de.nrw.hbz.regal.datatypes.Transformer;
 
 /**
  * This class defines some RPC-Like experimental endpoints under /utils. Most of
@@ -48,7 +41,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  */
 @Path("/utils")
 public class Utils {
-    Actions actions = new Actions();
+    Actions actions = null;
 
     /**
      * @throws IOException
@@ -56,8 +49,8 @@ public class Utils {
      * 
      */
     public Utils() throws IOException {
-
-	actions = new Actions();
+	actions = Actions.getInstance();
+	actions = Actions.getInstance();
     }
 
     /**
@@ -72,12 +65,28 @@ public class Utils {
     @Produces({ "application/json", "application/xml" })
     public String deleteNamespace(@PathParam("namespace") String namespace) {
 
-	return actions.deleteNamespace(namespace);
+	return actions.deleteByQuery(namespace + ":*");
 
     }
 
     /**
-     * Aims to generate OAI-Sets from the metadata of the pid
+     * Deletes all objects in a certain namespace.
+     * 
+     * @param query
+     *            all objects matched by this query will be deleted
+     * @return A message or an ArchiveException
+     */
+    @DELETE
+    @Path("/deleteByQuery/{query}")
+    @Produces({ "application/json", "application/xml" })
+    public String deleteByQuery(@PathParam("query") String query) {
+
+	return actions.deleteByQuery(query);
+
+    }
+
+    /**
+     * Generates OAI-Sets for the object
      * 
      * @param pid
      *            the pid of the object, that must be published in a oai set.
@@ -96,26 +105,47 @@ public class Utils {
     }
 
     /**
-     * Aims to pass the object to the elastic search index
+     * Add an object to the elasticsearch index
      * 
      * @param pid
      *            the pid to be indexed
      * @param namespace
      *            the namespace of the resource
+     * @param type
+     *            the type of the resource
      * @return a message
      */
     @POST
     @Path("/index/{namespace}:{pid}")
     @Produces({ "application/json", "application/xml" })
     public String index(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
-	try {
-	    return actions.index(pid, namespace);
-	} catch (Exception e) {
+	    @PathParam("namespace") String namespace,
+	    @QueryParam("type") final String type) {
 
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+	return actions.index(pid, namespace, type);
+
+    }
+
+    /**
+     * Removes an object from the elasticsearch index
+     * 
+     * @param pid
+     *            the pid of the object
+     * @param namespace
+     *            the namespace of the object
+     * @param type
+     *            the type of the object
+     * @return a message
+     */
+    @DELETE
+    @Path("/index/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String removeFromindex(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace,
+	    @QueryParam("type") final String type) {
+
+	return actions.removeFromIndex(namespace, type, pid);
+
     }
 
     /**
@@ -131,48 +161,6 @@ public class Utils {
     @Produces({ "application/json", "application/xml" })
     public String lobidify(@PathParam("pid") String pid) {
 	return actions.lobidify(pid);
-    }
-
-    /**
-     * Returns a oai-dc conversion of pid's metadata
-     * 
-     * @param pid
-     *            the metadata of the identified resource will be transformed to
-     *            oaidc
-     * @return the oai_dc xml
-     */
-    @GET
-    @Path("/oaidc/{pid}")
-    @Produces({ "application/xml" })
-    public String oaidc(@PathParam("pid") String pid) {
-	try {
-	    return actions.oaidc(pid);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
-    }
-
-    /**
-     * Returns epicur for the pid, if urn is available
-     * 
-     * @param pid
-     *            epicur transformation for this pid
-     * @param namespace
-     *            the namespace
-     * @return epicur xml
-     */
-    @GET
-    @Path("/epicur/{namespace}:{pid}")
-    @Produces({ "application/json", "application/xml" })
-    public String epicur(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
-	try {
-	    return actions.epicur(pid, namespace);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
     }
 
     /**
@@ -217,96 +205,6 @@ public class Utils {
     }
 
     /**
-     * Extractes text from pid/data if data exists and is a pdf
-     * 
-     * @param pid
-     *            the pid must contain a data stream with mime type
-     *            application/pdf
-     * @param request
-     *            lastModified is checked.
-     * @return a text/plain message containing the extracted text
-     */
-    @GET
-    @Path("/pdfbox/{pid}")
-    @Produces({ "text/plain; charset=UTF-8" })
-    public Response pdfbox(@PathParam("pid") String pid,
-	    @Context Request request) {
-	try {
-	    Node node = actions.readNode(pid);
-
-	    final EntityTag eTag = new EntityTag(node.getPID() + "_"
-		    + node.getLastModified().getTime());
-
-	    final CacheControl cacheControl = new CacheControl();
-	    cacheControl.setMaxAge(-1);
-
-	    ResponseBuilder builder = request.evaluatePreconditions(
-		    node.getLastModified(), eTag);
-
-	    // the user's information was modified, return it
-	    if (builder == null) {
-		builder = Response.ok(actions.pdfbox(node));
-	    }
-
-	    // the user's information was not modified, return a 304
-	    return builder.cacheControl(cacheControl)
-		    .lastModified(node.getLastModified()).tag(eTag).build();
-
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
-    }
-
-    /**
-     * Convertes pid/data to pdfA if data exists and is a pdf
-     * 
-     * @param pid
-     *            the pid must contain a data stream with mime type
-     *            application/pdf
-     * @param request
-     *            lastModified is checked.
-     * @return a text/plain message containing the extracted text
-     */
-    @GET
-    @Path("/pdfa/{pid}")
-    @Produces({ "text/plain; charset=UTF-8" })
-    public Response pdfa(@PathParam("pid") String pid, @Context Request request) {
-	try {
-	    Node node = actions.readNode(pid);
-
-	    final EntityTag eTag = new EntityTag(node.getPID() + "_"
-		    + node.getLastModified().getTime());
-
-	    final CacheControl cacheControl = new CacheControl();
-	    cacheControl.setMaxAge(-1);
-
-	    ResponseBuilder builder = request.evaluatePreconditions(
-		    node.getLastModified(), eTag);
-
-	    // the user's information was modified, return it
-	    if (builder == null) {
-		String redirectUrl = actions.pdfa(node);
-		try {
-		    builder = Response.temporaryRedirect(
-			    new java.net.URI(redirectUrl)).status(303);
-		} catch (URISyntaxException e) {
-		    throw new HttpArchiveException(
-			    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-		}
-	    }
-
-	    // the user's information was not modified, return a 304
-	    return builder.cacheControl(cacheControl)
-		    .lastModified(node.getLastModified()).tag(eTag).build();
-
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
-    }
-
-    /**
      * Reininit ContentModels for a certain namespace
      * 
      * @param namespace
@@ -314,15 +212,33 @@ public class Utils {
      * @return a message
      */
     @POST
-    @Path("/contentModels/{namespace}/init")
+    @Path("/initContentModels")
     @Produces({ "text/plain" })
-    public String contentModelsInit(@PathParam("namespace") String namespace) {
-	try {
-	    return actions.contentModelsInit(namespace);
-	} catch (ArchiveException e) {
-	    throw new HttpArchiveException(
-		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-	}
+    public String initContentModels(
+	    @DefaultValue("") @QueryParam("namespace") String namespace) {
+	List<Transformer> transformers = new Vector<Transformer>();
+	transformers
+		.add(new Transformer(namespace + "epicur", "epicur", actions
+			.getServer()
+			+ "/resource/(pid)."
+			+ namespace
+			+ "epicur"));
+	transformers.add(new Transformer(namespace + "oaidc", "oaidc", actions
+		.getServer() + "/resource/(pid)." + namespace + "oaidc"));
+	transformers.add(new Transformer(namespace + "pdfa", "pdfa", actions
+		.getServer() + "/resource/(pid)." + namespace + "pdfa"));
+	transformers
+		.add(new Transformer(namespace + "pdfbox", "pdfbox", actions
+			.getServer()
+			+ "/resource/(pid)."
+			+ namespace
+			+ "pdfbox"));
+	transformers.add(new Transformer(namespace + "aleph", "aleph", actions
+		.getServer() + "/resource/(pid)." + namespace + "aleph"));
+	actions.contentModelsInit(transformers);
+	return "Reinit contentModels " + namespace + "epicur, " + namespace
+		+ "oaidc, " + namespace + "pdfa, " + namespace + "pdfbox, "
+		+ namespace + "aleph";
     }
 
 }

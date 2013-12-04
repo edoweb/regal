@@ -19,8 +19,8 @@ package de.nrw.hbz.regal.fedora;
 import java.io.InputStream;
 import java.util.List;
 
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -139,12 +139,13 @@ public interface FedoraInterface {
     public String removeUriPrefix(String pred);
 
     /**
-     * Updates the ContentModel object
+     * Updates the list of ContentModel objects. If a ContentModel does't exist
+     * it will be created.
      * 
-     * @param cm
-     *            A ContentModel
+     * @param cms
+     *            list of ContentModels
      */
-    public void updateContentModel(ContentModel cm);
+    public void updateContentModels(List<Transformer> cms);
 
     /**
      * @param node

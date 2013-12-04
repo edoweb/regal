@@ -145,7 +145,7 @@ public class DippIngester implements IngestInterface {
 	    webclient.createObject(dtlBean, ObjectType.article);
 	    logger.info(pid + " " + "updated.\n");
 	    webclient.autoGenerateMetadataMerge(dtlBean, metadata);
-	    webclient.publish(dtlBean);
+	    webclient.makeOaiSet(dtlBean);
 	    logger.info(pid + " " + "and all related updated.\n");
 	} catch (IllegalArgumentException e) {
 	    logger.debug(e.getMessage());

@@ -19,6 +19,7 @@ package de.nrw.hbz.regal.api.helper;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import org.stringtemplate.v4.ST;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.fedora.FedoraInterface;
 
 /**
@@ -52,9 +54,19 @@ class Representations {
      *            a list with pids
      * @param type
      *            the type to be displaye
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
+     * @param getListingFrom
+     *            tells from which component the listing comes from
+     * 
      * @return html listing of all objects
      */
-    public String getAllOfTypeAsHtml(List<String> list, String type) {
+    public String getAllOfTypeAsHtml(List<String> list, String type,
+	    String namespace, int from, int until, String getListingFrom) {
 
 	String result = "";
 	try {
@@ -65,8 +77,18 @@ class Representations {
 	    IOUtils.copy(fileLocation.openStream(), writer);
 	    String data = writer.toString();
 
+	    if (type == null || type.isEmpty())
+		type = "resource";
+	    if (namespace == null || namespace.isEmpty())
+		namespace = "all namespaces";
+
 	    ST st = new ST(data, '$', '$');
 	    st.add("type", type);
+	    st.add("namespace", namespace);
+	    st.add("from", from);
+	    st.add("until", until);
+	    st.add("getListingFrom", getListingFrom);
+
 	    for (String item : list) {
 		st.add("items", "<li><a href=\"" + uriPrefix + item + "\">"
 			+ item + "</a></li>");
@@ -93,14 +115,26 @@ class Representations {
 	parentPid = fedora.getNodeParent(node);
 	result.setParentPid(parentPid);
 	result.setType(type);
+
+	result.setTransformer(getTransformerIds(node));
 	return result;
+    }
+
+    private List<String> getTransformerIds(Node node) {
+	List<Transformer> transformers = node.getContentModels();
+	List<String> transformerIds = new Vector<String>();
+
+	for (Transformer t : transformers) {
+	    transformerIds.add(t.getId());
+	}
+	return transformerIds;
     }
 
     public String getReM(String pid, String format, String fedoraExtern,
 	    List<String> parents, List<String> children) {
 	Node node = fedora.readNode(pid);
 	OaiOreMaker ore = new OaiOreMaker(node, server, uriPrefix);
-	return ore.getReM(format, parents, children);
+	return ore.getReM(format, parents, children, node.getContentModels());
     }
 
 }

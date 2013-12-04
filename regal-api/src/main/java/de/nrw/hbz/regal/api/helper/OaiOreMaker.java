@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.stringtemplate.v4.ST;
 
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -54,6 +55,7 @@ public class OaiOreMaker {
     String regalNamespace = "http://hbz-nrw.de/regal#";
     String fpNamespace = "http://downlode.org/Code/RDF/File_Properties/schema#";
     String wnNamespace = "http://xmlns.com/wordnet/1.6/";
+    String hydraNamespace = "http://purl.org/hydra/core#";
 
     RepositoryConnection con = null;
 
@@ -76,13 +78,15 @@ public class OaiOreMaker {
      *            all parents of the pid
      * @param children
      *            all children of the pid
+     * @param transformers
+     *            transformers of the object
      * @return a oai_ore resource map
      */
     public String getReM(String format, List<String> parents,
-	    List<String> children) {
+	    List<String> children, List<Transformer> transformers) {
 	String result = null;
 	addDescriptiveData();
-	addStructuralData(parents, children);
+	addStructuralData(parents, children, transformers);
 	result = write(format);
 	closeRdfRepository();
 	return result;
@@ -95,7 +99,7 @@ public class OaiOreMaker {
 	    InputStream in = metadata.openStream();
 	    con.add(in, node.getPID(), RDFFormat.N3);
 	} catch (Exception e) {
-	    throw new AddDescriptiveDataException(e);
+	    logger.debug("", e);
 	}
     }
 
@@ -189,7 +193,8 @@ public class OaiOreMaker {
 	}
     }
 
-    private void addStructuralData(List<String> parents, List<String> children) {
+    private void addStructuralData(List<String> parents, List<String> children,
+	    List<Transformer> transformers) {
 	try {
 	    String pid = node.getPID();
 	    Date lastModified = node.getLastModified();
@@ -232,6 +237,7 @@ public class OaiOreMaker {
 	    // regal
 	    URI contentType = f.createURI(regalNamespace, "contentType");
 	    URI hasData = f.createURI(regalNamespace, "hasData");
+	    URI hasTransformer = f.createURI(regalNamespace, "hasTransformer");
 	    // FileProperties
 	    URI fpSize = f.createURI(fpNamespace, "size");
 	    BNode theChecksumBlankNode = f.createBNode();
@@ -243,7 +249,6 @@ public class OaiOreMaker {
 	    URI fpChecksumValue = f.createURI(fpNamespace, "checksumValue");
 
 	    // Statements
-
 	    if (mime != null && !mime.isEmpty()) {
 		Literal dataMime = f.createLiteral(mime);
 		con.add(data, dcFormat, dataMime);
@@ -281,6 +286,13 @@ public class OaiOreMaker {
 
 	    }
 
+	    if (transformers != null && transformers.size() > 0) {
+		for (Transformer t : transformers) {
+		    Literal transformerId = f.createLiteral(t.getId());
+		    con.add(aggregation, hasTransformer, transformerId);
+		}
+	    }
+
 	    URI fedoraObject = f.createURI(server + "/fedora/objects/" + pid);
 
 	    con.add(rem, describes, aggregation);
@@ -305,7 +317,7 @@ public class OaiOreMaker {
 
 	    }
 	} catch (Exception e) {
-	    throw new AddStructuralDataException(e);
+	    logger.debug("", e);
 	}
     }
 
@@ -361,14 +373,14 @@ public class OaiOreMaker {
 		String dataLink = uriPrefix + pid + "/data";
 		String logoLink = "";
 		if (mime.compareTo("application/pdf") == 0) {
-		    logoLink = "/pdflogo.svg";
+		    logoLink = "pdflogo.svg";
 		} else if (mime.compareTo("application/zip") == 0) {
-		    logoLink = "/zip.png";
+		    logoLink = "zip.png";
 		} else {
-		    logoLink = "/data.png";
+		    logoLink = "data.png";
 		}
 		st.add("data", "<tr><td class=\"textlink\"><a	href=\""
-			+ dataLink + "\"><img src=\"" + logoLink
+			+ dataLink + "\"><img src=\"/img/" + logoLink
 			+ "\" width=\"100\" /></a></td></tr>");
 	    } else {
 		st.add("data", "");
@@ -468,7 +480,7 @@ public class OaiOreMaker {
 		objectLink = object;
 	    }
 	    if (predicate.compareTo("http://hbz-nrw.de/regal#contentType") == 0) {
-		objectLink = "/" + object + "/";
+		objectLink = "/resource?type=" + object;
 	    }
 	    if (objectLink != null) {
 		return "<tr><td><a href=\"" + subjectLink + "\">" + subject
@@ -487,18 +499,6 @@ public class OaiOreMaker {
 
     private class CreateRepositoryException extends RuntimeException {
 	public CreateRepositoryException(Throwable e) {
-	    super(e);
-	}
-    }
-
-    private class AddDescriptiveDataException extends RuntimeException {
-	public AddDescriptiveDataException(Throwable e) {
-	    super(e);
-	}
-    }
-
-    private class AddStructuralDataException extends RuntimeException {
-	public AddStructuralDataException(Throwable e) {
 	    super(e);
 	}
     }

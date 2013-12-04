@@ -1,0 +1,213 @@
+{
+  "apiVersion" : "1",
+  "basePath" : "/",
+  "apis" : [ {
+    "path" : "/utils/addUrn",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "GET",
+      "nickname" : "addUrn",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "query",
+        "name" : "id",
+        "description" : "pid without namespace",
+        "dataType" : "string",
+        "required" : false,
+        "allowableValues" : null
+      }, {
+        "paramType" : "query",
+        "name" : "namespace",
+        "description" : "the namespace",
+        "dataType" : "string",
+        "required" : false,
+        "allowableValues" : null
+      }, {
+        "paramType" : "query",
+        "name" : "snid",
+        "description" : "a urn snid",
+        "dataType" : "string",
+        "required" : false,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/utils/contentModels/{namespace}/init",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "POST",
+      "nickname" : "contentModelsInit",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "namespace of the model",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/utils/deleteNamespace/{namespace}",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "DELETE",
+      "nickname" : "deleteNamespace",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "the namespace to delete.",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/utils/epicur/{namespace}:{pid}",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "GET",
+      "nickname" : "epicur",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "epicur transformation for this pid",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "the namespace",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/utils/index/{namespace}:{pid}",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "POST",
+      "nickname" : "index",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid to be indexed",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      }, {
+        "paramType" : "path",
+        "name" : "namespace",
+        "description" : "the namespace of the resource",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/utils/lobidify/{pid}",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "POST",
+      "nickname" : "lobidify",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid that must be enriched with lobid data",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/utils/makeOaiSet/{pid}",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "POST",
+      "nickname" : "makeOaiSet",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid of the object, that must be published in a oai set.",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/utils/oaidc/{pid}",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "GET",
+      "nickname" : "oaidc",
+      "responseClass" : "string",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the metadata of the identified resource will be transformed to\n            oaidc",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/utils/pdfa/{pid}",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "GET",
+      "nickname" : "pdfa",
+      "responseClass" : "Response",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid must contain a data stream with mime type\n            application/pdf",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  }, {
+    "path" : "/utils/pdfbox/{pid}",
+    "description" : "",
+    "operations" : [ {
+      "httpMethod" : "GET",
+      "nickname" : "pdfbox",
+      "responseClass" : "Response",
+      "parameters" : [ {
+        "paramType" : "path",
+        "name" : "pid",
+        "description" : "the pid must contain a data stream with mime type\n            application/pdf",
+        "dataType" : "string",
+        "required" : true,
+        "allowableValues" : null
+      } ],
+      "summary" : "",
+      "notes" : ""
+    } ]
+  } ],
+"swaggerVersion" : "1.1","resourcePath" : "/${var}"}

@@ -18,10 +18,11 @@ package de.nrw.hbz.regal.sync.extern;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import de.nrw.hbz.regal.api.helper.XmlUtils;
+import de.nrw.hbz.regal.fedora.XmlUtils;
 
 /**
  * @author Jan Schnasse, schnasse@hbz-nrw.de
@@ -46,6 +47,7 @@ public class DigitalEntity {
     private String usageType = null;
     private String location = null;
     private List<String> identifier = null;
+    private List<String> transformer = null;
 
     private HashMap<StreamType, Stream> streams = null;
     private List<RelatedDigitalEntity> related = null;
@@ -66,6 +68,7 @@ public class DigitalEntity {
 	related = new Vector<RelatedDigitalEntity>();
 	streams = new HashMap<StreamType, Stream>();
 	identifier = new Vector<String>();
+	setTransformer(new Vector<String>());
     }
 
     /**
@@ -80,6 +83,7 @@ public class DigitalEntity {
 	related = new Vector<RelatedDigitalEntity>();
 	streams = new HashMap<StreamType, Stream>();
 	identifier = new Vector<String>();
+	setTransformer(new Vector<String>());
     }
 
     /**
@@ -364,6 +368,44 @@ public class DigitalEntity {
      */
     public void addIdentifier(String id) {
 	identifier.add(id);
+    }
+
+    /**
+     * @return a list of transformers
+     */
+    public List<String> getTransformer() {
+	return transformer;
+    }
+
+    /**
+     * @param transformers
+     *            a list of transformers
+     */
+    public void setTransformer(List<String> transformers) {
+	this.transformer = transformers;
+    }
+
+    /**
+     * @param transformer
+     *            a single transformer
+     */
+    public void addTransformer(String transformer) {
+	this.transformer.add(transformer);
+    }
+
+    /**
+     * Removes a transformer from the collection
+     * 
+     * @param id
+     *            id of a transformer
+     */
+    public void removeTransformer(String id) {
+	Iterator<String> it = transformer.iterator();
+	while (it.hasNext()) {
+	    String curId = it.next();
+	    if (id.equals(curId))
+		it.remove();
+	}
     }
 
 }

@@ -42,7 +42,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.nrw.hbz.regal.api.helper.ObjectType;
-import de.nrw.hbz.regal.api.helper.XmlUtils;
+import de.nrw.hbz.regal.fedora.XmlUtils;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityRelation;
@@ -164,8 +164,7 @@ public class EdowebDigitalEntityBuilder implements
 	    XPath xpath = factory.newXPath();
 	    xpath.setNamespaceContext(new MarcNamespaceContext());
 
-	    XPathExpression expr = xpath
-		    .compile("//marc:controlfield[@tag='001']");
+	    XPathExpression expr = xpath.compile("//controlfield[@tag='001']");
 	    Object result = expr.evaluate(root, XPathConstants.NODESET);
 	    NodeList nodes = (NodeList) result;
 	    if (nodes.getLength() != 1) {
@@ -174,7 +173,7 @@ public class EdowebDigitalEntityBuilder implements
 	    }
 	    String id = nodes.item(0).getTextContent();
 	    dtlDe.addIdentifier(id);
-	    logger.debug(dtlDe.getPid() + " add id " + id);
+	    logger.info(dtlDe.getPid() + " add id " + id);
 	} catch (Exception e) {
 	    throw new CatalogIdNotFoundException(e);
 	}

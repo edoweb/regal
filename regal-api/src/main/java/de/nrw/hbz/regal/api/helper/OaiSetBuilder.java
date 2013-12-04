@@ -76,8 +76,29 @@ class OaiSetBuilder {
 	    String docType = object;
 	    name = docmap(docType);
 	    spec = "contentType:" + docType;
+	    pid = "oai:" + docType;
 
-	} else {
+	} else if (predicate
+		.compareTo("http://geni-orca.renci.org/owl/topology.owl#hasURN") == 0) {
+	    if (object.contains("urn:nbn:de:hbz:929:02")) {
+		String snid = "hbz-929-02";
+		name = snid;
+		spec = "urn-set:" + snid;
+		pid = "oai:" + snid;
+	    } else if (object.contains("urn:nbn:de:hbz:929:01")) {
+		String snid = "hbz-929-01";
+		name = snid;
+		spec = "urn-set:" + snid;
+		pid = "oai:" + snid;
+	    } else {
+		String snid = "externUrn";
+		name = snid;
+		spec = "urn-set:" + snid;
+		pid = "oai:" + snid;
+	    }
+	}
+
+	else {
 	    return null;
 	}
 

@@ -20,6 +20,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 import junit.framework.Assert;
 
@@ -30,9 +33,11 @@ import org.junit.Test;
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
 import de.nrw.hbz.regal.datatypes.Node;
+import de.nrw.hbz.regal.datatypes.Transformer;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 import de.nrw.hbz.regal.fedora.CopyUtils;
 import de.nrw.hbz.regal.fedora.RdfUtils;
+import de.nrw.hbz.regal.fedora.XmlUtils;
 
 /**
  * 
@@ -46,40 +51,30 @@ public class TestActions {
 
     @Before
     public void setUp() throws IOException {
-	actions = new Actions();
+	actions = Actions.getInstance();
 	cleanUp();
     }
 
     private void cleanUp() {
-	actions.deleteNamespace("test");
-	actions.deleteNamespace("testCM");
+	actions.deleteByQuery("test:*");
+	actions.deleteByQuery("CM:test*");
     }
 
     @Test
-    public void testFindByType() throws IOException {
+    public void testFindByType() throws IOException, InterruptedException {
 	createTestObject("123");
-	int count = 10;
-	for (String result : actions
-		.findByType(ObjectType.monograph.toString())) {
-	    if (count <= 0)
-		break;
-	    count--;
-	    Node node = actions.readNode(result);
-	    String type = node.getContentType();
-
-	    if (type == null || type.isEmpty())
-		Assert.fail();
-	    else if (ObjectType.monograph.toString().compareTo(type) != 0) {
-		Assert.fail();
-	    }
-	}
+	List<String> list = actions.list("monograph", "test", 0, 10, "es");
+	Assert.assertTrue(list.get(0).equals("test:123"));
+	Node node = actions.readNode(list.get(0));
+	String type = node.getContentType();
+	Assert.assertTrue(type.equals("monograph"));
     }
 
     public void createTestObject(String pid) throws IOException {
-	actions.contentModelsInit("test");
+	// actions.contentModelsInit("test");
 	CreateObjectBean input = new CreateObjectBean();
 	input.setType("monograph");
-	actions.createResource(input, pid, "test", null);
+	actions.createResource(input, pid, "test");
 	DCBeanAnnotated dc = new DCBeanAnnotated();
 	dc.addIdentifier("HT015702837");
 	actions.updateDC("test:" + pid, dc);
@@ -91,11 +86,23 @@ public class TestActions {
 			.getResourceAsStream("test.nt"), "utf-8"));
     }
 
+    @Test
+    public void create() throws IOException, InterruptedException {
+	createTestObject("123");
+	actions.addTransformer("123", "test", "testepicur");
+	Thread.sleep(10000);
+	List<String> pids = actions.list("monograph", "test", 0, 10, "repo");
+	Assert.assertEquals(1, pids.size());
+	pids = actions.list("transformer", "CM", 0, 10, "repo");
+	Assert.assertEquals(1, pids.size());
+	System.out.println(pids);
+    }
+
     @Test(expected = HttpArchiveException.class)
     public void deleteMetadata() throws IOException {
 	createTestObject("123");
 	actions.readMetadata("test:123");
-	actions.deleteMetadata("test:123");
+	actions.deleteMetadata("123", "test");
 	actions.deleteData("test:123");
 	actions.readMetadata("test:123");
     }
@@ -119,8 +126,8 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ actions.getServer()
-		+ "/resource/test:123"
+		+ actions.getUrnbase()
+		+ "test:123"
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
@@ -139,8 +146,8 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ actions.getServer()
-		+ "/resource/test:123"
+		+ actions.getUrnbase()
+		+ "test:123"
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
@@ -148,11 +155,11 @@ public class TestActions {
 	Assert.assertEquals("urn:nbn:de:test-1231",
 		services.generateUrn("123", "test"));
 	actions.addUrn("123", "test", "test");
-	String response = actions.epicur("123", "test");
+	String response = actions.epicur("test:123");
 	Assert.assertEquals(assumed, response);
 	actions.replaceUrn("123", "test", "quatsch");
 	actions.replaceUrn("123", "test", "hbz:929:01");
-	response = actions.epicur("123", "test");
+	response = actions.epicur("test:123");
 	Assert.assertEquals(assumed2, response);
 	response = actions.readMetadata("test:123");
     }
@@ -176,8 +183,8 @@ public class TestActions {
 		+ "</identifier>\n"
 		+ "\t<resource>\n"
 		+ "\t\t<identifier origin=\"original\" role=\"primary\" scheme=\"url\" type=\"frontpage\">"
-		+ actions.getServer()
-		+ "/resource/test:123"
+		+ actions.getUrnbase()
+		+ "test:123"
 		+ "</identifier>\n"
 		+ "\t\t<format scheme=\"imt\">text/html</format>\n"
 		+ "\t</resource>" + "</record>\n" + "</epicur> ";
@@ -186,7 +193,7 @@ public class TestActions {
 	Assert.assertEquals("urn:nbn:de:test-1231",
 		services.generateUrn("123", "test"));
 	actions.addUrn("123", "test", "test");
-	String response = actions.epicur("123", "test");
+	String response = actions.epicur("test:123");
 	Assert.assertEquals(assumed, response);
 	actions.addUrn("123", "test", "quatsch");
     }
@@ -197,7 +204,7 @@ public class TestActions {
 	createTestObject("123");
 	Node node = actions.readNode("test:123");
 	// The pdfA conversion needs a public address
-	if (actions.getServer().equals("http://localhost"))
+	if (actions.getServer().contains("localhost"))
 	    return;
 	String response = actions.pdfa(node);
 	Assert.assertNotNull(response);
@@ -260,8 +267,90 @@ public class TestActions {
 	actions.getReM("test:123", "text/html");
     }
 
+    @Test
+    public void createTransformer() throws IOException {
+	createTestObject("123");
+	List<Transformer> transformers = new Vector<Transformer>();
+	transformers.add(new Transformer("testepicur", "epicur", actions
+		.getServer() + "/resource/(pid).epicur"));
+	transformers.add(new Transformer("testoaidc", "oaidc", actions
+		.getServer() + "/resource/(pid).oaidc"));
+	transformers.add(new Transformer("testpdfa", "pdfa", actions
+		.getServer() + "/resource/(pid).pdfa"));
+	actions.contentModelsInit(transformers);
+    }
+
+    @Test
+    public void removeNodesTransformer() throws InterruptedException,
+	    IOException {
+	createTestObject("123");
+	actions.addTransformer("123", "test", "testepicur");
+	actions.addTransformer("123", "test", "testoaidc");
+	actions.addTransformer("123", "test", "testpdfa");
+	Node node = actions.readNode("test:123");
+	node.removeTransformer("testepicur");
+
+	List<Transformer> ts = node.getContentModels();
+	Assert.assertEquals(2, ts.size());
+	for (Transformer t : ts) {
+	    Assert.assertFalse(t.getId().equals("testepicur"));
+	}
+
+	List<String> transformer = new Vector<String>();
+	for (int i = 0; i < ts.size(); i++) {
+	    transformer.add(ts.get(i).getId());
+	}
+	CreateObjectBean input = new CreateObjectBean();
+	input.setTransformer(transformer);
+	input.setType(node.getContentType());
+	input.setParentPid(null);
+	actions.createResource(input, "123", "test");
+	node = actions.readNode(node.getPID());
+
+	HashMap<String, String> map = new HashMap<String, String>();
+	map.put("testoaidc", "testoaidc");
+	map.put("testpdfa", "testpdfa");
+	ts = node.getContentModels();
+	Assert.assertEquals(2, ts.size());
+	for (Transformer t : ts) {
+	    Assert.assertTrue(map.containsKey(t.getId()));
+	}
+	for (Transformer t : ts) {
+	    Assert.assertFalse(t.getId().equals("testepicur"));
+	}
+    }
+
+    @Test
+    public void readNodesTransformer() throws IOException {
+	createTestObject("123");
+	actions.addTransformer("123", "test", "testepicur");
+	actions.addTransformer("123", "test", "testoaidc");
+	actions.addTransformer("123", "test", "testpdfa");
+
+	Node node = actions.readNode("test:123");
+	List<Transformer> ts = node.getContentModels();
+	HashMap<String, String> map = new HashMap<String, String>();
+	map.put("testepicur", "testepicur");
+	map.put("testoaidc", "testoaidc");
+	map.put("testpdfa", "testpdfa");
+	Assert.assertEquals(3, ts.size());
+	for (Transformer t : ts) {
+	    System.out.println(t.getId());
+	    Assert.assertTrue(map.containsKey(t.getId()));
+	}
+    }
+
+    @Test
+    public void addUrnIfNoMetadataExists() throws IOException,
+	    InterruptedException {
+	createTestObject("123");
+	actions.deleteMetadata("123", "test");
+	Thread.sleep(10000);
+	actions.addUrn("123", "test", "hbz:test:902");
+    }
+
     @After
     public void tearDown() throws IOException {
-	cleanUp();
+	// cleanUp();
     }
 }

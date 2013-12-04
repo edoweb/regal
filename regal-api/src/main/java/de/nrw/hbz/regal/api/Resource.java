@@ -22,8 +22,6 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -35,6 +33,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
@@ -45,10 +47,7 @@ import org.slf4j.LoggerFactory;
 import com.sun.jersey.multipart.MultiPart;
 
 import de.nrw.hbz.regal.api.helper.Actions;
-import de.nrw.hbz.regal.api.helper.ContentModelFactory;
 import de.nrw.hbz.regal.api.helper.HttpArchiveException;
-import de.nrw.hbz.regal.api.helper.ObjectType;
-import de.nrw.hbz.regal.datatypes.ContentModel;
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.exceptions.ArchiveException;
 
@@ -72,7 +71,7 @@ public class Resource {
      *             if properties of the Actions class can't get loaded
      */
     public Resource() throws IOException {
-	actions = new Actions();
+	actions = Actions.getInstance();
     }
 
     /**
@@ -104,35 +103,7 @@ public class Resource {
 		    "The type you've provided is NULL or empty.");
 	}
 	try {
-	    List<ContentModel> models = new Vector<ContentModel>();
-	    if (input.type.compareTo(ObjectType.monograph.toString()) == 0) {
-		models.add(ContentModelFactory.createMonographModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.journal.toString()) == 0) {
-		models.add(ContentModelFactory.createEJournalModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.webpage.toString()) == 0) {
-		models.add(ContentModelFactory.createWebpageModel(namespace));
-	    } else if (input.type.compareTo(ObjectType.version.toString()) == 0) {
-		models.add(ContentModelFactory.createVersionModel(namespace));
-	    } else if (input.type.compareTo(ObjectType.volume.toString()) == 0) {
-		models.add(ContentModelFactory.createVolumeModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.file.toString()) == 0) {
-		models.add(ContentModelFactory.createFileModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    } else if (input.type.compareTo(ObjectType.issue.toString()) == 0) {
-		models.add(ContentModelFactory.createIssueModel(namespace));
-		models.add(ContentModelFactory.createPdfModel(namespace,
-			actions.getServer()));
-	    }
-	    models.add(ContentModelFactory.createHeadModel(namespace,
-		    actions.getServer()));
-	    Node node = actions.createResource(input, pid, namespace, models);
+	    Node node = actions.createResource(input, pid, namespace);
 	    return node.getPID() + " created/updated!";
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
@@ -169,29 +140,66 @@ public class Resource {
      * Returns all resources of a certain type (optional).
      * 
      * @param type
-     *            a contentType
+     *            a contentType. Is optional. If no type is set. All resources
+     *            will be returned.
+     * @param namespace
+     *            list only objects in this namespace. Is optional. If no
+     *            namespace is defined. All resources will be returned.
+     * @param from
+     *            show only hits starting at this index. Is optional. Defaults
+     *            to 0.
+     * @param until
+     *            show only hits ending at this index. Is optional. Defaults to
+     *            10.
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es". Defaults to "es".
      * @return a list of all archived objects
      */
     @GET
     @Produces({ "application/json", "application/xml" })
-    public Response getAll(@DefaultValue("") @QueryParam("type") String type) {
-	ObjectList rem = new ObjectList(actions.getAll(type));
+    public Response getAll(
+	    @DefaultValue("") @QueryParam("type") String type,
+	    @DefaultValue("") @QueryParam("namespace") String namespace,
+	    @DefaultValue("0") @QueryParam("from") int from,
+	    @DefaultValue("10") @QueryParam("until") int until,
+	    @DefaultValue("es") @QueryParam("getListingFrom") String getListingFrom) {
+	ObjectList rem = new ObjectList(actions.list(type, namespace, from,
+		until, getListingFrom));
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();
     }
 
     /**
-     * Returns all resources of a certain type (optional) in HTML.
+     * Returns all resources of a certain type (optional).
      * 
      * @param type
-     *            a contentType
-     * @return a list of resources as html
+     *            a contentType. Is optional. If no type is set. All resources
+     *            will be returned.
+     * @param namespace
+     *            list only objects in this namespace. Is optional. If no
+     *            namespace is defined. All resources will be returned.
+     * @param from
+     *            show only hits starting at this index. Is optional. Defaults
+     *            to 0.
+     * @param until
+     *            show only hits ending at this index. Is optional. Defaults to
+     *            10.
+     * @param getListingFrom
+     *            List Resources from elasticsearch or from fedora. Allowed
+     *            values: "repo" and "es". Defaults to "es".
+     * @return a list of all archived objects
      */
     @GET
     @Produces({ "text/html" })
     public Response getAllAsHtml(
-	    @DefaultValue("") @QueryParam("type") String type) {
-	String rem = actions.getAllAsHtml(type);
+	    @DefaultValue("") @QueryParam("type") String type,
+	    @DefaultValue("") @QueryParam("namespace") String namespace,
+	    @DefaultValue("0") @QueryParam("from") int from,
+	    @DefaultValue("10") @QueryParam("until") int until,
+	    @DefaultValue("es") @QueryParam("getListingFrom") String getListingFrom) {
+	String rem = actions.listAsHtml(type, namespace, from, until,
+		getListingFrom);
 	ResponseBuilder res = Response.ok().entity(rem);
 	return res.build();
     }
@@ -201,13 +209,22 @@ public class Resource {
      * 
      * @param type
      *            the type of resources that will be deleted
+     * @param namespace
+     *            list only objects in this namespace
+     * @param from
+     *            show only hits starting at this index
+     * @param until
+     *            show only hits ending at this index
      * @return A message and status code 200 if ok and 500 if not
      */
     @DELETE
     @Produces({ "application/json", "application/xml" })
-    public String deleteAllOfType(@QueryParam("type") String type) {
+    public String deleteAllOfType(@QueryParam("type") String type,
+	    @QueryParam("namespace") String namespace,
+	    @QueryParam("from") int from, @QueryParam("until") int until) {
 	try {
-	    return actions.deleteAll(actions.getAll(type));
+	    return actions.deleteAll(actions.list(type, namespace, from, until,
+		    "repo"));
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
@@ -333,7 +350,7 @@ public class Resource {
 		.status(303).build();
     }
 
-      /**
+    /**
      * Lists all children of the resource
      * 
      * @param pid
@@ -570,7 +587,7 @@ public class Resource {
     public String deleteMetadata(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
 	try {
-	    return actions.deleteMetadata(namespace + ":" + pid);
+	    return actions.deleteMetadata(pid, namespace);
 
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
@@ -731,7 +748,7 @@ public class Resource {
     }
 
     /**
-     * Returns a OAI-ORE representation as json.
+     * Returns a object representation as CreateObjectBean in json.
      * 
      * @param pid
      *            the pid of the resource
@@ -754,63 +771,131 @@ public class Resource {
     }
 
     /**
-     * Returns a text extraction, if the data is of mimetype application/pdf
+     * Returns a oai-dc conversion of pid's metadata
      * 
      * @param pid
-     *            the pid of the resource
-     * @param namespace
-     *            the namespace of the resource
-     * @return a text/plain representation of the pdf contente, if any.
+     *            the metadata of the identified resource will be transformed to
+     *            oaidc
+     * @return the oai_dc xml
      */
     @GET
-    @Path("/{namespace}:{pid}/fulltext")
-    @Produces({ "application/xml", "application/json" })
-    public Response getFulltext(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
+    @Path("/{pid}.oaidc")
+    @Produces({ "application/xml" })
+    public String oaidc(@PathParam("pid") String pid) {
 	try {
-	    return actions.getFulltext(pid, namespace);
-	} catch (URISyntaxException e) {
+	    return actions.oaidc(pid);
+	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
-
     }
 
     /**
-     * Returns a xepicur stream for the resource
+     * Returns epicur for the pid, if urn is available
      * 
      * @param pid
-     *            the pid of the resource
-     * @param namespace
-     *            the namespace of the resource
-     * @return an epicur entry for the resource
+     *            pid with namespace
+     * @return epicur xml
      */
     @GET
-    @Path("/{namespace}:{pid}.epicur")
-    @Produces({ "application/xml" })
-    public String getEpicur(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
-
-	return actions.epicur(pid, namespace);
-
+    @Path("/{pid}.epicur")
+    @Produces({ "application/json", "application/xml" })
+    public String epicur(@PathParam("pid") String pid) {
+	try {
+	    return actions.epicur(pid);
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
+	}
     }
 
     /**
-     * Returns a oai-dc representation converted from the metadata
+     * Extractes text from pid/data if data exists and is a pdf
      * 
      * @param pid
-     *            the pid of the resource the pid of the resource
-     * @param namespace
-     *            the namespace of the resource
-     * @return an aggregated representation of the resource
+     *            the pid must contain a data stream with mime type
+     *            application/pdf
+     * @param request
+     *            lastModified is checked.
+     * @return a text/plain message containing the extracted text
      */
     @GET
-    @Path("/{namespace}:{pid}.oaidc")
-    @Produces({ "application/xml" })
-    public String getDC(@PathParam("pid") String pid,
-	    @PathParam("namespace") String namespace) {
+    @Path("/{pid}.pdfbox")
+    @Produces({ "text/plain; charset=UTF-8" })
+    public Response pdfbox(@PathParam("pid") String pid,
+	    @Context Request request) {
+	try {
+	    Node node = actions.readNode(pid);
 
-	return actions.oaidc(namespace + ":" + pid);
+	    final EntityTag eTag = new EntityTag(node.getPID() + "_"
+		    + node.getLastModified().getTime());
 
+	    final CacheControl cacheControl = new CacheControl();
+	    cacheControl.setMaxAge(-1);
+
+	    ResponseBuilder builder = request.evaluatePreconditions(
+		    node.getLastModified(), eTag);
+
+	    // the user's information was modified, return it
+	    if (builder == null) {
+		builder = Response.ok(actions.pdfbox(node));
+	    }
+
+	    // the user's information was not modified, return a 304
+	    return builder.cacheControl(cacheControl)
+		    .lastModified(node.getLastModified()).tag(eTag).build();
+
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
+	}
+    }
+
+    /**
+     * Convertes pid/data to pdfA if data exists and is a pdf
+     * 
+     * @param pid
+     *            the pid must contain a data stream with mime type
+     *            application/pdf
+     * @param request
+     *            lastModified is checked.
+     * @return a text/plain message containing the extracted text
+     */
+    @GET
+    @Path("/{pid}.pdfa")
+    @Produces({ "text/plain; charset=UTF-8" })
+    public Response pdfa(@PathParam("pid") String pid, @Context Request request) {
+	try {
+	    Node node = actions.readNode(pid);
+
+	    final EntityTag eTag = new EntityTag(node.getPID() + "_"
+		    + node.getLastModified().getTime());
+
+	    final CacheControl cacheControl = new CacheControl();
+	    cacheControl.setMaxAge(-1);
+
+	    ResponseBuilder builder = request.evaluatePreconditions(
+		    node.getLastModified(), eTag);
+
+	    // the user's information was modified, return it
+	    if (builder == null) {
+		String redirectUrl = actions.pdfa(node);
+		try {
+		    builder = Response.temporaryRedirect(
+			    new java.net.URI(redirectUrl)).status(303);
+		} catch (URISyntaxException e) {
+		    throw new HttpArchiveException(
+			    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
+		}
+	    }
+
+	    // the user's information was not modified, return a 304
+	    return builder.cacheControl(cacheControl)
+		    .lastModified(node.getLastModified()).tag(eTag).build();
+
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
+	}
     }
 }
