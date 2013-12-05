@@ -319,6 +319,7 @@ class FedoraFacade implements FedoraInterface {
 	    GetObjectProfileResponse prof = new GetObjectProfile(pid).execute();
 	    node.setLabel(prof.getLabel());
 	    node.setLastModified(prof.getLastModifiedDate());
+	    node.setCreationDate(prof.getCreateDate());
 
 	} catch (FedoraClientException e) {
 	    throw new ReadNodeException(pid, e);

@@ -244,8 +244,8 @@ public class TestActions {
     @Test
     public void oaiOre() throws IOException {
 	createTestObject("123");
-	RdfUtils.validate(actions.getReM("test:123", "text/plain"));
-	System.out.println(actions.getReM("test:123", "text/plain"));
+	RdfUtils.validate(actions.oaiore("test:123", "text/plain"));
+	System.out.println(actions.oaiore("test:123", "text/plain"));
     }
 
     @Test
@@ -264,7 +264,7 @@ public class TestActions {
     @Test
     public void html() throws IOException {
 	createTestObject("123");
-	actions.getReM("test:123", "text/html");
+	actions.oaiore("test:123", "text/html");
     }
 
     @Test

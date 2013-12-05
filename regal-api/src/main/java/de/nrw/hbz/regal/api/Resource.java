@@ -671,7 +671,7 @@ public class Resource {
     @Produces({ "application/rdf+xml" })
     public Response getReMAsRdfXml(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	String rem = actions.getReM(namespace + ":" + pid,
+	String rem = actions.oaiore(namespace + ":" + pid,
 		"application/rdf+xml");
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
@@ -694,7 +694,7 @@ public class Resource {
     @Produces({ "text/plain" })
     public Response getReMAsNTriple(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	String rem = actions.getReM(namespace + ":" + pid, "text/plain");
+	String rem = actions.oaiore(namespace + ":" + pid, "text/plain");
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
 		.entity(rem);
@@ -716,7 +716,7 @@ public class Resource {
     @Produces({ "application/json" })
     public Response getReMAsJson(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	String rem = actions.getReM(namespace + ":" + pid, "application/json");
+	String rem = actions.oaiore(namespace + ":" + pid, "application/json");
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
 		.entity(rem);
@@ -738,7 +738,7 @@ public class Resource {
     @Produces({ "text/html" })
     public Response getReMAsHtml(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	String rem = actions.getReM(namespace + ":" + pid, "text/html");
+	String rem = actions.oaiore(namespace + ":" + pid, "text/html");
 	// return rem;
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
@@ -898,4 +898,43 @@ public class Resource {
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
+
+    @GET
+    @Path("/{pid}.aleph")
+    @Produces({ "application/xml; charset=UTF-8" })
+    public Response aleph(@PathParam("pid") String pid, @Context Request request) {
+	try {
+	    Node node = actions.readNode(pid);
+
+	    final EntityTag eTag = new EntityTag(node.getPID() + "_"
+		    + node.getLastModified().getTime());
+
+	    final CacheControl cacheControl = new CacheControl();
+	    cacheControl.setMaxAge(-1);
+
+	    ResponseBuilder builder = request.evaluatePreconditions(
+		    node.getLastModified(), eTag);
+
+	    // the user's information was modified, return it
+	    if (builder == null) {
+		String redirectUrl = actions.aleph(node);
+		try {
+		    builder = Response.temporaryRedirect(
+			    new java.net.URI(redirectUrl)).status(303);
+		} catch (URISyntaxException e) {
+		    throw new HttpArchiveException(
+			    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
+		}
+	    }
+
+	    // the user's information was not modified, return a 304
+	    return builder.cacheControl(cacheControl)
+		    .lastModified(node.getLastModified()).tag(eTag).build();
+
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
+	}
+    }
+
 }

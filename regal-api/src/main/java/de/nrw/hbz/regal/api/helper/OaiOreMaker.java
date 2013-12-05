@@ -198,6 +198,7 @@ public class OaiOreMaker {
 	try {
 	    String pid = node.getPID();
 	    Date lastModified = node.getLastModified();
+	    Date creationDate = node.getCreationDate();
 	    // Graph remGraph = new org.openrdf.model.impl.GraphImpl();
 	    ValueFactory f = con.getValueFactory();
 
@@ -209,6 +210,7 @@ public class OaiOreMaker {
 	    URI fulltext = f.createURI(aggregation.stringValue() + "/fulltext");
 	    Literal cType = f.createLiteral(node.getContentType());
 	    Literal lastTimeModified = f.createLiteral(lastModified);
+	    Literal firstTimeCreated = f.createLiteral(creationDate);
 	    String mime = node.getMimeType();
 	    String label = node.getFileLabel();
 	    String fileSize = null;
@@ -228,6 +230,7 @@ public class OaiOreMaker {
 	    URI isPartOf = f.createURI(dctermsNamespace, "isPartOf");
 	    URI hasPart = f.createURI(dctermsNamespace, "hasPart");
 	    URI modified = f.createURI(dctermsNamespace, "modified");
+	    URI created = f.createURI(dctermsNamespace, "created");
 	    URI creator = f.createURI(dctermsNamespace, "creator");
 	    URI dcFormat = f.createURI(dctermsNamespace, "format");
 	    URI dcHasFormat = f.createURI(dctermsNamespace, "hasFormat");
@@ -297,6 +300,7 @@ public class OaiOreMaker {
 
 	    con.add(rem, describes, aggregation);
 	    con.add(rem, modified, lastTimeModified);
+	    con.add(rem, created, firstTimeCreated);
 	    con.add(rem, creator, regal);
 
 	    con.add(aggregation, isDescribedBy, rem);
