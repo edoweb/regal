@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metamorph xmlns="http://www.culturegraph.org/metamorph"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1">
+	<rules>
+
+		<!-- DC to Mab-Variables -->
+		<data source="*.http://purl.org/dc/elements/1.1/contributor"
+			name="contributer">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+
+		<data source="*.http://purl.org/dc/elements/1.1/creator" name="creator">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		
+		<data source="*.http://purl.org/dc/elements/1.1/subject" name="tag">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		
+		<data source="*.http://purl.org/dc/elements/1.1/type" name="type">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+
+		<!-- dcterms to Mab-Variables -->
+		<data source="*.http://purl.org/dc/terms/issued" name="issued">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+
+		<data source="*.http://purl.org/dc/terms/language" name="languageIso639-2">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		<data source="*.http://purl.org/dc/terms/isPartOf" name="parent">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		<data source="*.http://purl.org/dc/terms/subject" name="subject">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		<!-- ifla to Mab-Variables -->
+		<data source="*.http://iflastandards.info/ns/isbd/elements/P1004"
+			name="title">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		<data source="*.http://iflastandards.info/ns/isbd/elements/P1016"
+			name="placeOfPublication">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		<data source="*.http://iflastandards.info/ns/isbd/elements/P1006"
+			name="edition">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		<!-- foaf to Mab-Variables -->
+		<data source="*.http://xmlns.com/foaf/0.1/isPrimaryTopicOf" name="alephUrl">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+
+		<!-- rdf to Mab-Variables -->
+		<data source="*.http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+			name="type">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+
+		<!-- lobid to Mab-Variables -->
+		<data source="*.http://geni-orca.renci.org/owl/topology.owl#hasURN"
+			name="urn">
+			<regexp match="((.*))" format="${1}" />
+		</data>
+		<!-- regal to Mab-Variables -->
+		
+	</rules>
+</metamorph>
