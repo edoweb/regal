@@ -126,5 +126,11 @@ public class LobidVocabular {
     public final static String primaryTopic = "http://xmlns.com/foaf/0.1/primaryTopic";
     public final static String gndPreferredName = "http://d-nb.info/standards/elementset/gnd#preferredNameForThePerson";
     public final static String gndDateOfBirth = "http://d-nb.info/standards/elementset/gnd#dateOfBirth";
-
+    public final static String gndSubjectHeading = "http://d-nb.info/standards/elementset/gnd#SubjectHeading";
+    public final static String gndMemberState = "http://d-nb.info/standards/elementset/gnd#MemberState";
+    public final static String gndDifferentiatedPerson = "http://d-nb.info/standards/elementset/gnd#DifferentiatedPerson";
+    public final static String gndUndifferentiatedPerson = "http://d-nb.info/standards/elementset/gnd#UndifferentiatedPerson";
+    public final static Object gndCorporateBody = "http://d-nb.info/standards/elementset/gnd#CorporateBody";
+    public final static Object gndPreferredNameForTheCorporateBody = "http://d-nb.info/standards/elementset/gnd#preferredNameForTheCorporateBody";
+    public final static Object gndOrganOfCorporateBody = "http://d-nb.info/standards/elementset/gnd#OrganOfCorporateBody";
 }

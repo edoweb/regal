@@ -48,31 +48,32 @@ $if(FMT)$<controlfield tag="FMT">$FMT$</controlfield>$endif$
 
 	$if(100)$<datafield tag="100" ind1="-" ind2="1">
 	<subfield code="p">$100$</subfield>
-	<subfield code="9">$DNBID$$1009$</subfield>
+	<subfield code="9">$1009$</subfield>
 	</datafield>$endif$
 
 
 	$if(104)$<datafield tag="104" ind1="-" ind2="1">
 	<subfield code="p">$104$</subfield>
-	<subfield code="9">$DNBID$$1049$</subfield>
+	<subfield code="9">$1049$</subfield>
 	</datafield>$endif$
 
 	$if(108)$<datafield tag="108" ind1="-" ind2="1">
 	<subfield code="p">$108$</subfield>
-	<subfield code="9">$DNBID$$1089$</subfield>
+	<subfield code="9">$1089$</subfield>
 	</datafield>$endif$
 
 	$if(200)$<datafield tag="200" ind1="b" ind2="1">
 	<subfield code="k">$200k$</subfield>
 	<subfield code="h">$200h$</subfield>
-	<subfield code="9">$DNBID$$2009$</subfield>
+	<subfield code="9">$2009$</subfield>
 </datafield>$endif$
 
 	$if(201)$<datafield tag="201" ind1="-" ind2="1">
 	<subfield code="k">$201k$</subfield>
 	<subfield code="h">$201h$</subfield>
-	<subfield code="9">$DNBID$$2019$</subfield>
+	<subfield code="9">$2019$</subfield>
 </datafield>$endif$
+
 	$if(331a)$<datafield tag="331" ind1="-" ind2="1">
 	<subfield code="a">$331a$</subfield>
 </datafield>$endif$

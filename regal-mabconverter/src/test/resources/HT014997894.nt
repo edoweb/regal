@@ -24,6 +24,8 @@
 <edoweb:1750745> <http://purl.org/dc/terms/creator> <http://d-nb.info/gnd/2062455-4> .
 <http://dewey.info/class/320/2009/08/about.en> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <http://dewey.info/class/320/2009/08/about.en> <http://www.w3.org/2004/02/skos/core#prefLabel> "Political science"@en .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#preferredNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und für Sport"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://d-nb.info/gnd/2062455-4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#OrganOfCorporateBody> .
 <edoweb:1750745.rdf> <http://www.openarchives.org/ore/terms/describes> <edoweb:1750745> .
 <edoweb:1750745.rdf> <http://purl.org/dc/terms/modified> "2013-12-04T14:43:13.568+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 <edoweb:1750745.rdf> <http://purl.org/dc/terms/creator> <https://github.com/edoweb/regal/> .

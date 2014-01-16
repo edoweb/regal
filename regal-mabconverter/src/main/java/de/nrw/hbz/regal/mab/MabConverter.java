@@ -17,6 +17,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import de.nrw.hbz.regal.fedora.RdfUtils;
+import de.nrw.hbz.regal.mab.Person.PersonType;
 
 public class MabConverter {
 
@@ -41,12 +42,20 @@ public class MabConverter {
 	return me;
     }
 
-    public ByteArrayOutputStream convert(InputStream in) throws IOException {
+    private void init() throws IOException {
 	InputStream template = Thread.currentThread().getContextClassLoader()
 		.getResourceAsStream("mabxml-string-template.xml");
+	map = new HashMap<String, String>();
+	constants = new HashMap<String, String>();
+	persons = new HashMap<String, Person>();
 	encoder = new Mabencoder(template);
 	loadMap("map.txt", map);
 	loadMap("constants.txt", constants);
+    }
+
+    public ByteArrayOutputStream convert(InputStream in) throws IOException {
+	init();
+
 	emitConstants();
 	return convert(in, RDFFormat.NTRIPLES, Format.mabxml);
     }
@@ -79,19 +88,31 @@ public class MabConverter {
     }
 
     private void addCollectedStatements() {
-	int count = 1;
+	int countPersons = 1;
+	int countCorporateBodies = 1;
 	for (Person p : persons.values()) {
-	    if (count == 1) {
-		encoder.collectField("100", p.name);
-		encoder.collectField("1009", p.id);
-	    } else if (count == 2) {
-		encoder.collectField("104", p.name);
-		encoder.collectField("1049", p.id);
-	    } else if (count == 3) {
-		encoder.collectField("108", p.name);
-		encoder.collectField("1089", p.id);
+	    if (p.type == PersonType.creator) {
+		if (countPersons == 1) {
+		    encoder.collectField("100", p.name);
+		    encoder.collectField("1009", p.id);
+		} else if (countPersons == 2) {
+		    encoder.collectField("104", p.name);
+		    encoder.collectField("1049", p.id);
+		} else if (countPersons == 3) {
+		    encoder.collectField("108", p.name);
+		    encoder.collectField("1089", p.id);
+		}
+		countPersons++;
+	    } else if (p.type == PersonType.corporateBody) {
+		if (countPersons == 1) {
+		    encoder.collectField("200", p.name);
+		    encoder.collectField("2009", p.id);
+		} else if (countPersons == 2) {
+		    encoder.collectField("201", p.name);
+		    encoder.collectField("2019", p.id);
+		}
+		countCorporateBodies++;
 	    }
-	    count++;
 	}
     }
 
@@ -108,15 +129,51 @@ public class MabConverter {
 	} else if (pred.equals(LobidVocabular.gndPreferredName)) {
 	    if (!persons.containsKey(subj)) {
 		Person person = new Person(subj);
-		person.name = obj;
 		persons.put(subj, person);
 	    }
+	    Person person = persons.get(subj);
+	    person.name = obj;
+	    persons.put(subj, person);
 	} else if (pred.equals(LobidVocabular.gndDateOfBirth)) {
 	    if (!persons.containsKey(subj)) {
 		Person person = new Person(subj);
-		person.dateOfBirth = obj;
 		persons.put(subj, person);
 	    }
+	    Person person = persons.get(subj);
+	    person.name = obj;
+	    persons.put(subj, person);
+	} else if (obj.equals(LobidVocabular.gndDifferentiatedPerson)) {
+	    if (!persons.containsKey(subj)) {
+		Person person = new Person(subj);
+		persons.put(subj, person);
+	    }
+	    Person person = persons.get(subj);
+	    person.type = PersonType.creator;
+	    persons.put(subj, person);
+	} else if (obj.equals(LobidVocabular.gndUndifferentiatedPerson)) {
+	    if (!persons.containsKey(subj)) {
+		Person person = new Person(subj);
+		persons.put(subj, person);
+	    }
+	    Person person = persons.get(subj);
+	    person.type = PersonType.creator;
+	    persons.put(subj, person);
+	} else if (obj.equals(LobidVocabular.gndCorporateBody)) {
+	    if (!persons.containsKey(subj)) {
+		Person person = new Person(subj);
+		persons.put(subj, person);
+	    }
+	    Person person = persons.get(subj);
+	    person.type = PersonType.corporateBody;
+	    persons.put(subj, person);
+	} else if (obj.equals(LobidVocabular.gndOrganOfCorporateBody)) {
+	    if (!persons.containsKey(subj)) {
+		Person person = new Person(subj);
+		persons.put(subj, person);
+	    }
+	    Person person = persons.get(subj);
+	    person.type = PersonType.corporateBody;
+	    persons.put(subj, person);
 	}
 
     }
