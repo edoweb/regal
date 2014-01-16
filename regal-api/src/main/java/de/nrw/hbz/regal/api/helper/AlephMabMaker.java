@@ -1,50 +1,55 @@
+/*
+ * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package de.nrw.hbz.regal.api.helper;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import org.antlr.runtime.RecognitionException;
-import org.apache.commons.io.FileUtils;
-import org.culturegraph.mf.Flux;
+import java.io.InputStream;
+import java.net.URL;
 
 import de.nrw.hbz.regal.datatypes.Node;
-import de.nrw.hbz.regal.exceptions.ArchiveException;
+import de.nrw.hbz.regal.mab.MabConverter;
 
 /**
- * 517 Diplomarbeit
- * http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DTT002234244
- * Selbstständiges Werk
- * http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT015763211 Band
- * http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT015771469
- * 
- * @author jan
+ * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
 public class AlephMabMaker {
 
+    public class AlephException extends RuntimeException {
+
+	public AlephException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+
+	public AlephException(String message) {
+	    super(message);
+	}
+
+    }
+
     public String aleph(Node node, String uriPrefix) {
-
-	String pid = node.getPID();
-	if (node == null)
-	    return "No node with pid " + pid + " found";
-
-	String metadata = uriPrefix + pid + "/metadata";
 	try {
-	    File outfile = File.createTempFile("mabxml", "xml");
-	    outfile.deleteOnExit();
-	    File fluxFile = new File(Thread.currentThread()
-		    .getContextClassLoader()
-		    .getResource("morph-lobid-to-mabxml.flux").toURI());
-	    Flux.main(new String[] { fluxFile.getAbsolutePath(),
-		    "url=" + metadata, "out=" + outfile.getAbsolutePath() });
-	    return FileUtils.readFileToString(outfile);
-	} catch (IOException e) {
-	    throw new ArchiveException(pid + " " + e.getMessage(), e);
-	} catch (URISyntaxException e) {
-	    throw new ArchiveException(pid + " " + e.getMessage(), e);
-	} catch (RecognitionException e) {
-	    throw new ArchiveException(pid + " " + e.getMessage(), e);
+	    String pid = node.getPID();
+	    String metadata = uriPrefix + pid + "/metadata";
+	    InputStream input;
+	    input = new URL(metadata).openConnection().getInputStream();
+	    MabConverter converter = MabConverter.getInstance();
+	    return new String(converter.convert(input).toByteArray(), "utf-8");
+	} catch (Exception e) {
+	    throw new AlephException("Conversion Problem!", e);
 	}
     }
 
