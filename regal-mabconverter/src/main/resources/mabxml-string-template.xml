@@ -1,0 +1,108 @@
+<record xmlns="http://www.ddb.de/professionell/mabxml/mabxml-1.xsd">
+
+
+$if(leader)$<leader>$leader$</leader>$endif$
+$if(LDR)$<controlfield tag="LDR">$LDR$</controlfield>$endif$
+$if(FMT)$<controlfield tag="FMT">$FMT$</controlfield>$endif$
+		
+
+	$if(001)$<datafield tag="001" ind1="-" ind2="1">
+	<subfield code="a">$001$</subfield>
+</datafield>$endif$
+
+	$if(002)$<datafield tag="002" ind1="a" ind2="1">
+	<subfield code="a">$002$</subfield>
+</datafield>$endif$
+
+	$if(003)$<datafield tag="003" ind1="-" ind2="1">
+	<subfield code="a">$003$</subfield>
+</datafield>$endif$
+
+	$if(026)$<datafield tag="026" ind1="-" ind2="1">
+	<subfield code="a">$026$</subfield>
+</datafield>$endif$
+
+
+	$if(030)$<controlfield tag="030">$030$</controlfield>$endif$
+	
+	$if(languagDinEn23166)$<datafield tag="036" ind1="a" ind2="1">
+	<subfield code="a">$languagDinEn23166$</subfield>
+</datafield>$endif$
+
+	$if(languageIso639)$<datafield tag="037" ind1="b" ind2="1">
+	<subfield code="a">$languageIso639$</subfield>
+</datafield>$endif$
+
+
+	$if(050)$<controlfield tag="050">$050$</controlfield>$endif$
+	
+	$if(type)$<controlfield tag="051">$051$</controlfield>$endif$
+	
+	$if(070)$<datafield tag="070" ind1="-" ind2="1">
+	<subfield code="a">$070$</subfield>
+	</datafield>$endif$
+
+	$if(078)$<datafield tag="078" ind1="r" ind2="1">
+	<subfield code="a">$078$</subfield>$endif$
+	</datafield>
+
+	$if(100)$<datafield tag="100" ind1="-" ind2="1">
+	<subfield code="p">$100$</subfield>
+	<subfield code="9">$DNBID$$1009$</subfield>
+	</datafield>$endif$
+
+
+	$if(104)$<datafield tag="104" ind1="-" ind2="1">
+	<subfield code="p">$104$</subfield>
+	<subfield code="9">$DNBID$$1049$</subfield>
+	</datafield>$endif$
+
+	$if(108)$<datafield tag="108" ind1="-" ind2="1">
+	<subfield code="p">$108$</subfield>
+	<subfield code="9">$DNBID$$1089$</subfield>
+	</datafield>$endif$
+
+	$if(200)$<datafield tag="200" ind1="b" ind2="1">
+	<subfield code="k">$200k$</subfield>
+	<subfield code="h">$200h$</subfield>
+	<subfield code="9">$DNBID$$2009$</subfield>
+</datafield>$endif$
+
+	$if(201)$<datafield tag="201" ind1="-" ind2="1">
+	<subfield code="k">$201k$</subfield>
+	<subfield code="h">$201h$</subfield>
+	<subfield code="9">$DNBID$$2019$</subfield>
+</datafield>$endif$
+	$if(331a)$<datafield tag="331" ind1="-" ind2="1">
+	<subfield code="a">$331a$</subfield>
+</datafield>$endif$
+ $if(334)$<datafield tag="334" ind1="-" ind2="1">
+	<subfield code="a">$334$</subfield>
+	</datafield>$endif$
+	$if(410a)$<datafield tag="410" ind1="-" ind2="1">
+	<subfield code="a">$410a$</subfield>
+</datafield>$endif$
+
+	$if(412a)$<datafield tag="412" ind1="-" ind2="1">
+	<subfield code="a">$412a$</subfield>
+</datafield>$endif$
+
+	$if(issued)$<datafield tag="425" ind1="a" ind2="1">
+	<subfield code="a">$issued$</subfield>
+</datafield>$endif$
+
+	$if(edition)$<datafield tag="455" ind1="-" ind2="1">
+	<subfield code="a">$edition$</subfield>
+</datafield>$endif$
+
+	$if(parallelEdition)$<datafield tag="527" ind1="z" ind2="1">
+	<subfield code="9">$parallelEdition$</subfield>
+</datafield>$endif$
+
+	$if(665u)$<datafield tag="655" ind1="e" ind2=" ">
+	<subfield code="u">$665u$</subfield>
+	<subfield code="y">$title$</subfield>
+	<subfield code="x">$665x$</subfield>
+</datafield>$endif$
+
+</record>

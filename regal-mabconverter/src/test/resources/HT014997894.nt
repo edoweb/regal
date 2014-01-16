@@ -1,0 +1,29 @@
+<edoweb:1750745> <http://rdvocab.info/Elements/publicationStatement> "Mainz; 2004" .
+<edoweb:1750745> <http://purl.org/dc/terms/isPartOf> <http://lobid.org/resource/RPB> .
+<edoweb:1750745> <http://lobid.org/vocab/lobid#fulltextOnline> <http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=1750746&custom_att_2=simple_viewer> .
+<edoweb:1750745> <http://purl.org/dc/terms/title> "Skinheads" .
+<edoweb:1750745> <http://purl.org/dc/terms/subject> <http://dewey.info/class/320/> .
+<edoweb:1750745> <http://purl.org/dc/terms/hasVersion> <http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=1750746&custom_att_2=simple_viewer> .
+<edoweb:1750745> <http://umbel.org/umbel#isLike> <http://nbn-resolving.de/urn:nbn:de:hbz:929:> .
+<edoweb:1750745> <http://purl.org/dc/terms/language> <http://id.loc.gov/vocabulary/iso639-2/deu> .
+<edoweb:1750745> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://iflastandards.info/ns/isbd/terms/mediatype/T1002> .
+<edoweb:1750745> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/vocab/frbr/core#Manifestation> .
+<edoweb:1750745> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.archiveshub.ac.uk/def/ArchivalResource> .
+<edoweb:1750745> <http://purl.org/dc/terms/issued> "2004" .
+<edoweb:1750745> <http://lobid.org/vocab/lobid#hbzID> "HT014997894" .
+<edoweb:1750745> <http://www.w3.org/2002/07/owl#sameAs> <http://hub.culturegraph.org/resource/HBZ-HT014997894> .
+<edoweb:1750745> <http://lobid.org/vocab/lobid#urn> "urn:nbn:de:hbz:929:" .
+<edoweb:1750745> <http://xmlns.com/foaf/0.1/isPrimaryTopicOf> <http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT014997894> .
+<edoweb:1750745> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/dc/terms/BibliographicResource> .
+<edoweb:1750745> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<edoweb:1750745> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Book> .
+<edoweb:1750745> <http://iflastandards.info/ns/isbd/elements/P1053> "52 S. : Ill., graph. Darst." .
+<edoweb:1750745> <http://rdvocab.info/Elements/statementOfResponsibility> "Rheinland-Pfalz, Ministerium des Innern\n\t\t\t\t\t\t\tund f\u00FCr Sport" .
+<edoweb:1750745> <http://purl.org/ontology/bibo/edition> "Stand: April 2004" .
+<edoweb:1750745> <http://rdvocab.info/Elements/placeOfPublication> "Mainz" .
+<edoweb:1750745> <http://purl.org/dc/terms/creator> <http://d-nb.info/gnd/2062455-4> .
+<http://dewey.info/class/320/2009/08/about.en> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<http://dewey.info/class/320/2009/08/about.en> <http://www.w3.org/2004/02/skos/core#prefLabel> "Political science"@en .
+<edoweb:1750745.rdf> <http://www.openarchives.org/ore/terms/describes> <edoweb:1750745> .
+<edoweb:1750745.rdf> <http://purl.org/dc/terms/modified> "2013-12-04T14:43:13.568+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<edoweb:1750745.rdf> <http://purl.org/dc/terms/creator> <https://github.com/edoweb/regal/> .

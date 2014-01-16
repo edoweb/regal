@@ -1,0 +1,42 @@
+<http://lobid.org/item/HT017297166:DE-107> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/vocab/frbr/core#Item> .
+<http://lobid.org/item/HT017297166:DE-107> <http://www.w3.org/2007/05/powder-s#describedby> <http://lobid.org/item/HT017297166:DE-107/about> .
+<http://lobid.org/item/HT017297166:DE-107> <http://purl.org/vocab/frbr/core#exemplarOf> <edoweb:4575674> .
+<http://lobid.org/item/HT017297166:DE-107> <http://purl.org/vocab/frbr/core#owner> <http://lobid.org/organisation/DE-107> .
+<http://lobid.org/item/HT017297166:DE-107/about> <http://vocab.deri.ie/void#inDataset> <http://lobid.org/dataset/resource> .
+<http://lobid.org/item/HT017297166:DE-107/about> <http://xmlns.com/foaf/0.1/primaryTopic> <http://lobid.org/item/HT017297166:DE-107> .
+<edoweb:4575674> <http://purl.org/vocab/frbr/core#exemplar> <http://lobid.org/item/HT017297166:DE-107> .
+<edoweb:4575674> <http://xmlns.com/foaf/0.1/isPrimaryTopicOf> <http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT017297166> .
+<edoweb:4575674> <http://rdvocab.info/Elements/publicationStatement> "Mainz; Landesamt f\u00FCr Umwelt, Wasserwirtschaft und\n\t\t\t\t\t\t\tGewerbeaufsicht; 2012" .
+<edoweb:4575674> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/vocab/frbr/core#Manifestation> .
+<edoweb:4575674> <http://purl.org/dc/elements/1.1/subject> "Naturschutzgebiet Scharren am Altenhof" .
+<edoweb:4575674> <http://rdvocab.info/Elements/statementOfResponsibility> "[Landesamt f\u00FCr Umwelt, Wasserwirtschaft\n\t\t\t\t\t\t\tund Gewerbeaufsicht Rheinland-Pfalz. ... Text: Elke Rosleff\n\t\t\t\t\t\t\tS\u00F6rensen]" .
+<edoweb:4575674> <http://purl.org/dc/terms/isPartOf> <http://lobid.org/resource/RPB> .
+<edoweb:4575674> <http://purl.org/dc/terms/creator> <http://d-nb.info/gnd/3061200-7> .
+<edoweb:4575674> <http://purl.org/dc/terms/contributor> <http://d-nb.info/gnd/1023744457> .
+<edoweb:4575674> <http://rdvocab.info/Elements/placeOfPublication> "Mainz" .
+<edoweb:4575674> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Book> .
+<edoweb:4575674> <http://purl.org/dc/terms/hasVersion> <http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=4575675&custom_att_2=simple_viewer> .
+<edoweb:4575674> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://iflastandards.info/ns/isbd/terms/mediatype/T1002> .
+<edoweb:4575674> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.archiveshub.ac.uk/def/ArchivalResource> .
+<edoweb:4575674> <http://purl.org/dc/elements/1.1/publisher> "Landesamt f\u00FCr Umwelt, Wasserwirtschaft und\n\t\t\t\t\t\t\tGewerbeaufsicht" .
+<edoweb:4575674> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/dc/terms/BibliographicResource> .
+<edoweb:4575674> <http://www.w3.org/2007/05/powder-s#describedby> <edoweb:4575674/about> .
+<edoweb:4575674> <http://purl.org/dc/terms/subject> <http://d-nb.info/gnd/10010556-7> .
+<edoweb:4575674> <http://purl.org/dc/elements/1.1/subject> "Bettingen" .
+<edoweb:4575674> <http://lobid.org/vocab/lobid#fulltextOnline> <http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=4575675&custom_att_2=simple_viewer> .
+<edoweb:4575674> <http://iflastandards.info/ns/isbd/elements/P1053> "5 S. : \u00FCberw. Ill., Kt." .
+<edoweb:4575674> <http://purl.org/dc/terms/language> <http://id.loc.gov/vocabulary/iso639-2/deu> .
+<edoweb:4575674> <http://purl.org/dc/terms/title> "NSG-Album Scharren am Altenhof" .
+<edoweb:4575674> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<edoweb:4575674> <http://rdvocab.info/Elements/otherTitleInformation> "NSG 232-098" .
+<edoweb:4575674> <http://lobid.org/vocab/lobid#hbzID> "HT017297166" .
+<edoweb:4575674> <http://purl.org/dc/terms/issued> "2012" .
+<edoweb:4575674> <http://www.w3.org/2002/07/owl#sameAs> <http://hub.culturegraph.org/resource/HBZ-HT017297166> .
+<edoweb:4575674/about> <http://vocab.deri.ie/void#inDataset> <http://lobid.org/dataset/resource> .
+<edoweb:4575674/about> <http://xmlns.com/foaf/0.1/primaryTopic> <edoweb:4575674> .
+<http://d-nb.info/gnd/10010556-7> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#TerritorialCorporateBodyOrAdministrativeUnit> .
+<http://d-nb.info/gnd/1023744457> <http://d-nb.info/standards/elementset/gnd#preferredNameForThePerson> "Rosleff S\u00F6rensen, Elke"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://d-nb.info/gnd/1023744457> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#UndifferentiatedPerson> .
+<edoweb:4575674.rdf> <http://www.openarchives.org/ore/terms/describes> <edoweb:4575674> .
+<edoweb:4575674.rdf> <http://purl.org/dc/terms/modified> "2013-12-04T17:30:52.955+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<edoweb:4575674.rdf> <http://purl.org/dc/terms/creator> <https://github.com/edoweb/regal/> .

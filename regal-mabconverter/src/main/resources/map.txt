@@ -1,0 +1,5 @@
+http://lobid.org/vocab/lobid#hbzID,001
+http://purl.org/dc/terms/created,002
+http://purl.org/dc/terms/title,331a
+http://purl.org/dc/elements/1.1/publisher,412a
+http://rdvocab.info/Elements/placeOfPublication,410a
