@@ -301,7 +301,6 @@ public class OaiOreMaker {
 	    con.add(rem, describes, aggregation);
 	    con.add(rem, modified, lastTimeModified);
 	    con.add(rem, created, firstTimeCreated);
-	    con.add(rem, creator, regal);
 
 	    con.add(aggregation, isDescribedBy, rem);
 
