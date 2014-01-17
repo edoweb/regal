@@ -34,7 +34,6 @@ public class LobidVocabular {
     public final static String lobidItemUrl = "http://lobid.org/item/";
     public final static String lobidDatasetUrl = "http://lobid.org/dataset";
     public final static String zdbUrl = "http://ld.zdb-services.de/resource/";
-
     public final static String archiveshubArchivalResource = "http://data.archiveshub.ac.uk/def/ArchivalResource";
     public final static String locIso639_2 = "http://id.loc.gov/vocabulary/iso639-2/";
     public final static String locAct = "http://id.loc.gov/vocabulary/relators/act";
@@ -66,11 +65,9 @@ public class LobidVocabular {
     public final static String iflaT1003 = "http://iflastandards.info/ns/isbd/terms/mediatype/T1003";
     public final static String iflaT1007 = "http://iflastandards.info/ns/isbd/terms/mediatype/T1007";
     public final static String iflaT1008 = "http://iflastandards.info/ns/isbd/terms/mediatype/T1008";
-
     public final static String lobidFulltextOnline = "http://lobid.org/vocab/lobid#fulltextOnline";
     public final static String lobidHbzId = "http://lobid.org/vocab/lobid#hbzID";
     public final static String lobidUrn = "http://lobid.org/vocab/lobid#urn";
-
     public final static String dceCreator = "http://purl.org/dc/elements/1.1/creator";
     public final static String dceIsPartOf = "http://purl.org/dc/elements/1.1/isPartOf";
     public final static String dcePublisher = "http://purl.org/dc/elements/1.1/publisher";

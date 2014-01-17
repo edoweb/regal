@@ -868,8 +868,8 @@ public class Actions {
      * @return a aleph mab xml representation
      */
     public String aleph(Node node) {
-	// TODO Auto-generated method stub
-	return null;
+	AlephMabMaker am = new AlephMabMaker();
+	return am.aleph(node, server);
     }
 
     /**

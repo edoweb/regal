@@ -43,7 +43,7 @@ public class AlephMabMaker {
     public String aleph(Node node, String uriPrefix) {
 	try {
 	    String pid = node.getPID();
-	    String metadata = uriPrefix + pid + "/metadata";
+	    String metadata = uriPrefix + "/resource/" + pid + "/metadata";
 	    InputStream input;
 	    input = new URL(metadata).openConnection().getInputStream();
 	    MabConverter converter = MabConverter.getInstance();

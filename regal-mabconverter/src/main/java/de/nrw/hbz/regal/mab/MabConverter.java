@@ -205,7 +205,11 @@ public class MabConverter {
 	CsvMapper mapper = new CsvMapper();
 	CsvSchema schema = mapper.schemaFor(KeyValue.class);
 	com.fasterxml.jackson.databind.MappingIterator<KeyValue> it = mapper
-		.reader(KeyValue.class).with(schema).readValues(mapfile);
+		.reader(KeyValue.class)
+		.with(schema)
+		.readValues(
+			Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream(filename));
 
 	while (it.hasNextValue()) {
 	    KeyValue pair = it.nextValue();

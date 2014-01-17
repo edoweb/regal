@@ -1,4 +1,5 @@
-<record xmlns="http://www.ddb.de/professionell/mabxml/mabxml-1.xsd">
+<?xml version = "1.0" encoding = "UTF-8"?>
+<record xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.ddb.de/professionell/mabxml/mabxml-1.xsd">
 
 
 $if(leader)$<leader>$leader$</leader>$endif$

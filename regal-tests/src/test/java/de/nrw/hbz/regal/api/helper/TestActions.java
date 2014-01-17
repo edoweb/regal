@@ -349,6 +349,13 @@ public class TestActions {
 	actions.addUrn("123", "test", "hbz:test:902");
     }
 
+    @Test
+    public void alephConversion() throws IOException, InterruptedException {
+	createTestObject("123");
+	Node node = actions.readNode("test:123");
+	System.out.println("Start-\"" + actions.aleph(node) + "\"-End");
+    }
+
     @After
     public void tearDown() throws IOException {
 	// cleanUp();

@@ -902,35 +902,9 @@ public class Resource {
     @GET
     @Path("/{pid}.aleph")
     @Produces({ "application/xml; charset=UTF-8" })
-    public Response aleph(@PathParam("pid") String pid, @Context Request request) {
+    public String aleph(@PathParam("pid") String pid, @Context Request request) {
 	try {
-	    Node node = actions.readNode(pid);
-
-	    final EntityTag eTag = new EntityTag(node.getPID() + "_"
-		    + node.getLastModified().getTime());
-
-	    final CacheControl cacheControl = new CacheControl();
-	    cacheControl.setMaxAge(-1);
-
-	    ResponseBuilder builder = request.evaluatePreconditions(
-		    node.getLastModified(), eTag);
-
-	    // the user's information was modified, return it
-	    if (builder == null) {
-		String redirectUrl = actions.aleph(node);
-		try {
-		    builder = Response.temporaryRedirect(
-			    new java.net.URI(redirectUrl)).status(303);
-		} catch (URISyntaxException e) {
-		    throw new HttpArchiveException(
-			    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
-		}
-	    }
-
-	    // the user's information was not modified, return a 304
-	    return builder.cacheControl(cacheControl)
-		    .lastModified(node.getLastModified()).tag(eTag).build();
-
+	    return actions.aleph(pid);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
