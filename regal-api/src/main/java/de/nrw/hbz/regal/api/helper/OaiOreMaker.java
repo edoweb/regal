@@ -283,7 +283,8 @@ public class OaiOreMaker {
 	    }
 
 	    String str = getOriginalUri(pid);
-	    if (str != null && !str.isEmpty()) {
+	    if (str != null && !str.isEmpty()
+		    && !cType.stringValue().equals(ObjectType.file.toString())) {
 		URI originalObject = f.createURI(str);
 		con.add(aggregation, similarTo, originalObject);
 
