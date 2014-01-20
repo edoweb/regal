@@ -43,13 +43,19 @@ public class MabConverterTest {
     public void transformTestfilesAndCompareXmlToExample() throws IOException,
 	    URISyntaxException, RecognitionException, SAXException {
 
-	transformTestfileAndCompareXmlToExample("HT015954381", "edoweb:3025500");
-	transformTestfileAndCompareXmlToExample("HT014997894", "edoweb:1750745");
+	// transformTestfileAndCompareXmlToExample("HT015954381",
+	// "edoweb:3025500");
+	// transformTestfileAndCompareXmlToExample("HT014997894",
+	// "edoweb:1750745");
 	transformTestfileAndCompareXmlToExample("HT015381429", "edoweb:2238512");
-	transformTestfileAndCompareXmlToExample("HT015780155", "edoweb:2708089");
-	transformTestfileAndCompareXmlToExample("HT017091204", "edoweb:4390058");
-	transformTestfileAndCompareXmlToExample("HT017297166", "edoweb:4575674");
-	transformTestfileAndCompareXmlToExample("HT015004325", "edoweb:1750774");
+	// transformTestfileAndCompareXmlToExample("HT015780155",
+	// "edoweb:2708089");
+	// transformTestfileAndCompareXmlToExample("HT017091204",
+	// "edoweb:4390058");
+	// transformTestfileAndCompareXmlToExample("HT017297166",
+	// "edoweb:4575674");
+	// transformTestfileAndCompareXmlToExample("HT015004325",
+	// "edoweb:1750774");
     }
 
     public void transformTestfileAndCompareXmlToExample(String id,
@@ -57,7 +63,7 @@ public class MabConverterTest {
 	    RecognitionException, SAXException {
 	InputStream in = getResourceAsStream(id + ".nt");
 
-	ByteArrayOutputStream os = transformTestFile(in);
+	ByteArrayOutputStream os = transformTestFile(in, recordId);
 	System.out.println(os.toString());
 	// xmlCompare(output, expected);
     }
@@ -93,9 +99,10 @@ public class MabConverterTest {
 	return file;
     }
 
-    private ByteArrayOutputStream transformTestFile(InputStream input)
-	    throws IOException, URISyntaxException, RecognitionException {
+    private ByteArrayOutputStream transformTestFile(InputStream input,
+	    String topic) throws IOException, URISyntaxException,
+	    RecognitionException {
 	MabConverter converter = MabConverter.getInstance();
-	return converter.convert(input);
+	return converter.convert(input, topic);
     }
 }

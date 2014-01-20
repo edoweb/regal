@@ -3,3 +3,11 @@ http://purl.org/dc/terms/created,002
 http://purl.org/dc/terms/title,331a
 http://purl.org/dc/elements/1.1/publisher,412a
 http://rdvocab.info/Elements/placeOfPublication,410a
+http://purl.org/dc/elements/1.1/publisher,412a
+http://purl.org/dc/terms/issued,425a
+http://rdvocab.info/Elements/placeOfPublication,410a
+not defined,455a
+not defined,456a
+http://purl.org/dc/elements/1.1/isPartOf,451a
+http://purl.org/dc/terms/isPartOf,453a
+http://iflastandards.info/ns/isbd/elements/P1053,433a

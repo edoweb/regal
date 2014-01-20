@@ -37,31 +37,32 @@ $if(FMT)$<controlfield tag="FMT">$FMT$</controlfield>$endif$
 
 	$if(050)$<controlfield tag="050">$050$</controlfield>$endif$
 	
-	$if(type)$<controlfield tag="051">$051$</controlfield>$endif$
+	$if(051)$<controlfield tag="051">$051$</controlfield>$endif$
 	
 	$if(070)$<datafield tag="070" ind1="-" ind2="1">
 	<subfield code="a">$070$</subfield>
-	</datafield>$endif$
+</datafield>$endif$
 
 	$if(078)$<datafield tag="078" ind1="r" ind2="1">
 	<subfield code="a">$078$</subfield>$endif$
-	</datafield>
+</datafield>
 
 	$if(100)$<datafield tag="100" ind1="-" ind2="1">
 	<subfield code="p">$100$</subfield>
 	<subfield code="9">$1009$</subfield>
-	</datafield>$endif$
+</datafield>$endif$
 
 
 	$if(104)$<datafield tag="104" ind1="-" ind2="1">
 	<subfield code="p">$104$</subfield>
 	<subfield code="9">$1049$</subfield>
-	</datafield>$endif$
+</datafield>$endif$
+
 
 	$if(108)$<datafield tag="108" ind1="-" ind2="1">
 	<subfield code="p">$108$</subfield>
 	<subfield code="9">$1089$</subfield>
-	</datafield>$endif$
+</datafield>$endif$
 
 	$if(200)$<datafield tag="200" ind1="b" ind2="1">
 	<subfield code="k">$200k$</subfield>
@@ -78,9 +79,11 @@ $if(FMT)$<controlfield tag="FMT">$FMT$</controlfield>$endif$
 	$if(331a)$<datafield tag="331" ind1="-" ind2="1">
 	<subfield code="a">$331a$</subfield>
 </datafield>$endif$
- $if(334)$<datafield tag="334" ind1="-" ind2="1">
+
+	$if(334)$<datafield tag="334" ind1="-" ind2="1">
 	<subfield code="a">$334$</subfield>
-	</datafield>$endif$
+</datafield>$endif$
+	
 	$if(410a)$<datafield tag="410" ind1="-" ind2="1">
 	<subfield code="a">$410a$</subfield>
 </datafield>$endif$
@@ -89,22 +92,38 @@ $if(FMT)$<controlfield tag="FMT">$FMT$</controlfield>$endif$
 	<subfield code="a">$412a$</subfield>
 </datafield>$endif$
 
-	$if(issued)$<datafield tag="425" ind1="a" ind2="1">
-	<subfield code="a">$issued$</subfield>
+	$if(425a)$<datafield tag="425" ind1="a" ind2="1">
+	<subfield code="a">$425a$</subfield>
 </datafield>$endif$
 
-	$if(edition)$<datafield tag="455" ind1="-" ind2="1">
-	<subfield code="a">$edition$</subfield>
+	$if(433a)$<datafield tag="433" ind1="-" ind2="1">
+	<subfield code="a">$433a$</subfield>
 </datafield>$endif$
 
-	$if(parallelEdition)$<datafield tag="527" ind1="z" ind2="1">
-	<subfield code="9">$parallelEdition$</subfield>
+	$if(451a)$<datafield tag="451" ind1="-" ind2="1">
+	<subfield code="a">$451a$</subfield>
+</datafield>$endif$
+
+	$if(453a)$<datafield tag="453" ind1="-" ind2="1">
+	<subfield code="a">$453a$</subfield>
+</datafield>$endif$
+					
+	$if(455a)$<datafield tag="455" ind1="-" ind2="1">
+	<subfield code="a">$455a$</subfield>
+</datafield>$endif$
+
+	$if(5279)$<datafield tag="527" ind1="z" ind2="1">
+	<subfield code="9">$5279$</subfield>
 </datafield>$endif$
 
 	$if(665u)$<datafield tag="655" ind1="e" ind2=" ">
 	<subfield code="u">$665u$</subfield>
 	<subfield code="y">$title$</subfield>
 	<subfield code="x">$665x$</subfield>
+</datafield>$endif$
+
+	$if(700a)$<datafield tag="700" ind1="b" ind2="1">
+	<subfield code="a">$700a$</subfield>
 </datafield>$endif$
 
 </record>

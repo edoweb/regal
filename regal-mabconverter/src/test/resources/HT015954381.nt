@@ -7,7 +7,7 @@
 <edoweb:3025500> <http://www.w3.org/2007/05/powder-s#describedby> <edoweb:3025500/about> .
 <edoweb:3025500> <http://purl.org/dc/terms/language> <http://id.loc.gov/vocabulary/iso639-2/deu> .
 <edoweb:3025500> <http://purl.org/dc/terms/creator> <http://d-nb.info/gnd/136283675> .
-<edoweb:3025500> <http://purl.org/dc/elements/1.1/isPartOf> "Arbeitsberichte aus dem Fachbereich\n\t\t\t\t\t\t\tInformatik / Universit\u00E4t Koblenz, Landau ; Nr. 16/2007" .
+<edoweb:3025500> <http://purl.org/dc/elements/1.1/isPartOf> "Arbeitsberichte aus dem Fachbereich Informatik / Universit\u00E4t Koblenz, Landau ; Nr. 16/2007" .
 <edoweb:3025500> <http://rdvocab.info/Elements/placeOfPublication> "Koblenz" .
 <edoweb:3025500> <http://purl.org/dc/terms/isPartOf> <http://lobid.org/resource/RPB> .
 <edoweb:3025500> <http://xmlns.com/foaf/0.1/isPrimaryTopicOf> <http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT015954381> .
@@ -23,9 +23,9 @@
 <edoweb:3025500> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/MultiVolumeBook> .
 <edoweb:3025500> <http://rdvocab.info/Elements/publicationStatement> "Koblenz; Inst. f\u00FCr Informatik; 2007" .
 <edoweb:3025500> <http://purl.org/dc/terms/creator> <http://d-nb.info/gnd/115749519> .
-<edoweb:3025500> <http://purl.org/dc/terms/title> "\t\t\t\t\t\t\tontologies" .
+<edoweb:3025500> <http://purl.org/dc/terms/title> "TwoUse: Integrating UML models and OWL ontologies" .
 <edoweb:3025500> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/dc/terms/BibliographicResource> .
-<edoweb:3025500> <http://rdvocab.info/Elements/statementOfResponsibility> "Fernando Silva Parreiras ; Steffen Staatb\n\t\t\t\t\t\t\t; Andreas Winter. Universit\u00E4t Koblenz, Landau, Institut f\u00FCr\n\t\t\t\t\t\t\tInformatik, FB 4, Informatik" .
+<edoweb:3025500> <http://rdvocab.info/Elements/statementOfResponsibility> "Fernando Silva Parreiras ; Steffen Staatb; Andreas Winter. Universit\u00E4t Koblenz, Landau, Institut f\u00FCr Informatik, FB 4, Informatik" .
 <edoweb:3025500> <http://purl.org/dc/terms/creator> <http://d-nb.info/gnd/1032936525> .
 <edoweb:3025500> <http://purl.org/vocab/frbr/core#exemplar> <http://lobid.org/item/HT015954381:DE-929> .
 <edoweb:3025500> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/vocab/frbr/core#Manifestation> .

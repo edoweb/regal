@@ -20,8 +20,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -47,6 +49,9 @@ public class MabConverter {
     private HashMap<String, String> map = new HashMap<String, String>();
     private HashMap<String, String> constants = new HashMap<String, String>();
     private HashMap<String, Person> persons = new HashMap<String, Person>();
+    private HashMap<String, Subject> subjects;
+    private HashMap<String, List<String>> types;
+    private String topic;
 
     public enum Format {
 	mabxml
@@ -62,19 +67,24 @@ public class MabConverter {
 	return me;
     }
 
-    private void init() throws IOException {
+    private void init(String topic) throws IOException {
+	this.topic = topic;
 	InputStream template = Thread.currentThread().getContextClassLoader()
 		.getResourceAsStream("mabxml-string-template.xml");
 	map = new HashMap<String, String>();
 	constants = new HashMap<String, String>();
 	persons = new HashMap<String, Person>();
+	subjects = new HashMap<String, Subject>();
+	types = new HashMap<String, List<String>>();
 	encoder = new Mabencoder(template);
+
 	loadMap("map.txt", map);
 	loadMap("constants.txt", constants);
     }
 
-    public ByteArrayOutputStream convert(InputStream in) throws IOException {
-	init();
+    public ByteArrayOutputStream convert(InputStream in, String topic)
+	    throws IOException {
+	init(topic);
 
 	emitConstants();
 	return convert(in, RDFFormat.NTRIPLES, Format.mabxml);
@@ -134,6 +144,24 @@ public class MabConverter {
 		countCorporateBodies++;
 	    }
 	}
+
+	for (Subject s : subjects.values()) {
+	    encoder.collectField("700a", s.id);
+	}
+	for (List<String> t : types.values()) {
+	    String mabString = analyseTypes(t);
+	    encoder.collectField("051", mabString);
+	}
+    }
+
+    private String analyseTypes(List<String> types) {
+	String mabstring = "";
+	if (types.contains(LobidVocabular.biboCollection)
+		&& types.contains(LobidVocabular.biboMultiVolumeBook))
+	    mabstring = "s|||w|||";
+	else
+	    mabstring = "my|||||||||||||";
+	return mabstring;
     }
 
     private void collect(Statement st) {
@@ -194,6 +222,29 @@ public class MabConverter {
 	    Person person = persons.get(subj);
 	    person.type = PersonType.corporateBody;
 	    persons.put(subj, person);
+	} else if (pred.equals(LobidVocabular.dceSubject)) {
+	    if (!subjects.containsKey(obj))
+		subjects.put(obj, new Subject(obj));
+	    else {
+		// do nothing!
+	    }
+	} else if (subj.contains("http://dewey.info/class/")) {
+	    String mySubject = subj.replace("/2009/08/about.en", "");
+	    if (!subjects.containsKey(mySubject)) {
+		Subject subject = new Subject(mySubject);
+		subjects.put(mySubject, subject);
+	    }
+	    Subject subject = subjects.get(mySubject);
+	    subject.label = obj;
+	    subjects.put(mySubject, subject);
+	} else if (pred.equals(LobidVocabular.rdfType) && subj.equals(topic)) {
+	    if (types.containsKey(subj)) {
+		types.get(subj).add(obj);
+	    } else {
+		List<String> list = new ArrayList<String>();
+		list.add(obj);
+		types.put(subj, list);
+	    }
 	}
 
     }
