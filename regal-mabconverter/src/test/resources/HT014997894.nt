@@ -24,7 +24,38 @@
 <edoweb:1750745> <http://purl.org/dc/terms/creator> <http://d-nb.info/gnd/2062455-4> .
 <http://dewey.info/class/320/2009/08/about.en> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <http://dewey.info/class/320/2009/08/about.en> <http://www.w3.org/2004/02/skos/core#prefLabel> "Political science"@en .
-<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#preferredNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und für Sport"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#gndIdentifier> "2062455-4" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#oldAuthorityNumber> "(DE-588b)5569040-3" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#oldAuthorityNumber> "(DE-588b)2062455-4" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Abteilung f\u00FCr Vermessungs- und Katasterwesen" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Abteilung f\u00FCr Vermessungs- und Katasterverwaltung" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Vermessungs- und Katasterverwaltung" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Abteilung <7>" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Verfassungsschutz" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Minister des Innern und f\u00FCr Sport" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Ministerium des Innern und f\u00FCr Sport <Rheinland-Pfalz>" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Minister des Innern und f\u00FCr Sport <Rheinland-Pfalz>" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pf\u00E4lzischer Verfassungsschutz" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Oberste Landesplanungsbeh\u00F6rde" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Oberste Landesplanungsbeh\u00F6rde <Rheinland-Pfalz, Ministerium des Innern und f\u00FCr Sport>" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Referat Entwicklungszusammenarbeit" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Referat <314>" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Abteilung Raumordnung und Landesplanung" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Referat Kommunale Entwicklungspolitik" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Arbeitsgruppe Polizei im NS-Staat" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport / Referat Personalentwicklung" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "MdI" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#preferredNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium des Innern und f\u00FCr Sport" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#temporaryNameOfTheCorporateBody> <http://d-nb.info/gnd/2029821-3> .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#precedingCorporateBody> <http://d-nb.info/gnd/2029821-3> .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#succeedingCorporateBody> <http://d-nb.info/gnd/16167183-4> .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#geographicAreaCode> <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE> .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#definition> "off. Name bis Anfang 1979 und zwischen Mitte 1990 bis Mitte 1991: Ministerium des Innern"@de .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#dateOfEstablishment> "1979" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#dateOfTermination> "Anfang 1990" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#dateOfEstablishment> "Ende 1991" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#dateOfTermination> "17.5.2011" .
+<http://d-nb.info/gnd/2062455-4> <http://d-nb.info/standards/elementset/gnd#hierarchicalSuperiorOfTheCorporateBody> <http://d-nb.info/gnd/4049795-1> .
 <http://d-nb.info/gnd/2062455-4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#OrganOfCorporateBody> .
 <edoweb:1750745.rdf> <http://www.openarchives.org/ore/terms/describes> <edoweb:1750745> .
 <edoweb:1750745.rdf> <http://purl.org/dc/terms/modified> "2013-12-04T14:43:13.568+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .

@@ -17,25 +17,10 @@
 package de.nrw.hbz.regal.mab;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import org.openrdf.model.Graph;
-import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFFormat;
-
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-
-import de.nrw.hbz.regal.fedora.RdfUtils;
-import de.nrw.hbz.regal.mab.Person.PersonType;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -44,228 +29,48 @@ import de.nrw.hbz.regal.mab.Person.PersonType;
 public class MabConverter {
 
     static MabConverter me = null;
-    MabRecord record = null;
     Mabencoder encoder = null;
-    private HashMap<String, String> map = new HashMap<String, String>();
-    private HashMap<String, String> constants = new HashMap<String, String>();
-    private HashMap<String, Person> persons = new HashMap<String, Person>();
-    private HashMap<String, Subject> subjects;
-    private HashMap<String, List<String>> types;
     private String topic;
 
+    /**
+     * @author jan
+     * 
+     */
     public enum Format {
+	/**
+	 * mabxml for hbz-"Schnittstelle Metadaten"
+	 */
 	mabxml
     }
 
-    private MabConverter() {
-	record = new MabRecord();
-    }
-
-    public static MabConverter getInstance() {
-	if (me == null)
-	    me = new MabConverter();
-	return me;
-    }
-
-    private void init(String topic) throws IOException {
+    /**
+     * @param topic
+     *            the id of a resource we are talking about.
+     * @throws IOException
+     *             if template file for encoder is not avail.
+     */
+    public MabConverter(String topic) throws IOException {
 	this.topic = topic;
 	InputStream template = Thread.currentThread().getContextClassLoader()
-		.getResourceAsStream("mabxml-string-template.xml");
-	map = new HashMap<String, String>();
-	constants = new HashMap<String, String>();
-	persons = new HashMap<String, Person>();
-	subjects = new HashMap<String, Subject>();
-	types = new HashMap<String, List<String>>();
+		.getResourceAsStream("mabxml-string-template-on-record.xml");
 	encoder = new Mabencoder(template);
-
-	loadMap("map.txt", map);
-	loadMap("constants.txt", constants);
     }
 
-    public ByteArrayOutputStream convert(InputStream in, String topic)
-	    throws IOException {
-	init(topic);
+    /**
+     * @param in
+     *            An n-triple rdf Inputstream
+     * @return the n-triples converted to mabxml
+     */
+    public ByteArrayOutputStream convert(InputStream in) {
 
-	emitConstants();
 	return convert(in, RDFFormat.NTRIPLES, Format.mabxml);
-    }
-
-    private void emitConstants() {
-	Set<Entry<String, String>> entries = constants.entrySet();
-	for (Entry<String, String> e : entries) {
-	    encoder.collectField(e.getKey(), e.getValue());
-	}
     }
 
     private ByteArrayOutputStream convert(InputStream in,
 	    RDFFormat inputFormat, Format output) {
-	Graph graph = RdfUtils.readRdfToGraph(in, inputFormat, "");
-	Iterator<Statement> it = graph.iterator();
-	while (it.hasNext()) {
-	    Statement st = it.next();
-	    String pred = st.getPredicate().stringValue();
-	    String obj = st.getObject().stringValue();
-
-	    if (map.containsKey(pred)) {
-		encoder.collectField(map.get(pred), obj);
-	    } else {
-		collect(st);
-	    }
-
-	}
-	addCollectedStatements();
-	return encoder.render();
-    }
-
-    private void addCollectedStatements() {
-	int countPersons = 1;
-	int countCorporateBodies = 1;
-	for (Person p : persons.values()) {
-	    if (p.type == PersonType.creator) {
-		if (countPersons == 1) {
-		    encoder.collectField("100", p.name);
-		    encoder.collectField("1009", p.id);
-		} else if (countPersons == 2) {
-		    encoder.collectField("104", p.name);
-		    encoder.collectField("1049", p.id);
-		} else if (countPersons == 3) {
-		    encoder.collectField("108", p.name);
-		    encoder.collectField("1089", p.id);
-		}
-		countPersons++;
-	    } else if (p.type == PersonType.corporateBody) {
-		if (countPersons == 1) {
-		    encoder.collectField("200", p.name);
-		    encoder.collectField("2009", p.id);
-		} else if (countPersons == 2) {
-		    encoder.collectField("201", p.name);
-		    encoder.collectField("2019", p.id);
-		}
-		countCorporateBodies++;
-	    }
-	}
-
-	for (Subject s : subjects.values()) {
-	    encoder.collectField("700a", s.id);
-	}
-	for (List<String> t : types.values()) {
-	    String mabString = analyseTypes(t);
-	    encoder.collectField("051", mabString);
-	}
-    }
-
-    private String analyseTypes(List<String> types) {
-	String mabstring = "";
-	if (types.contains(LobidVocabular.biboCollection)
-		&& types.contains(LobidVocabular.biboMultiVolumeBook))
-	    mabstring = "s|||w|||";
-	else
-	    mabstring = "my|||||||||||||";
-	return mabstring;
-    }
-
-    private void collect(Statement st) {
-	String pred = st.getPredicate().stringValue();
-	String obj = st.getObject().stringValue();
-	String subj = st.getSubject().stringValue();
-	if (pred.equals(LobidVocabular.dceCreator)) {
-	    if (!persons.containsKey(obj))
-		persons.put(obj, new Person(obj));
-	    else {
-		// do nothing!
-	    }
-	} else if (pred.equals(LobidVocabular.gndPreferredName)) {
-	    if (!persons.containsKey(subj)) {
-		Person person = new Person(subj);
-		persons.put(subj, person);
-	    }
-	    Person person = persons.get(subj);
-	    person.name = obj;
-	    persons.put(subj, person);
-	} else if (pred.equals(LobidVocabular.gndDateOfBirth)) {
-	    if (!persons.containsKey(subj)) {
-		Person person = new Person(subj);
-		persons.put(subj, person);
-	    }
-	    Person person = persons.get(subj);
-	    person.name = obj;
-	    persons.put(subj, person);
-	} else if (obj.equals(LobidVocabular.gndDifferentiatedPerson)) {
-	    if (!persons.containsKey(subj)) {
-		Person person = new Person(subj);
-		persons.put(subj, person);
-	    }
-	    Person person = persons.get(subj);
-	    person.type = PersonType.creator;
-	    persons.put(subj, person);
-	} else if (obj.equals(LobidVocabular.gndUndifferentiatedPerson)) {
-	    if (!persons.containsKey(subj)) {
-		Person person = new Person(subj);
-		persons.put(subj, person);
-	    }
-	    Person person = persons.get(subj);
-	    person.type = PersonType.creator;
-	    persons.put(subj, person);
-	} else if (obj.equals(LobidVocabular.gndCorporateBody)) {
-	    if (!persons.containsKey(subj)) {
-		Person person = new Person(subj);
-		persons.put(subj, person);
-	    }
-	    Person person = persons.get(subj);
-	    person.type = PersonType.corporateBody;
-	    persons.put(subj, person);
-	} else if (obj.equals(LobidVocabular.gndOrganOfCorporateBody)) {
-	    if (!persons.containsKey(subj)) {
-		Person person = new Person(subj);
-		persons.put(subj, person);
-	    }
-	    Person person = persons.get(subj);
-	    person.type = PersonType.corporateBody;
-	    persons.put(subj, person);
-	} else if (pred.equals(LobidVocabular.dceSubject)) {
-	    if (!subjects.containsKey(obj))
-		subjects.put(obj, new Subject(obj));
-	    else {
-		// do nothing!
-	    }
-	} else if (subj.contains("http://dewey.info/class/")) {
-	    String mySubject = subj.replace("/2009/08/about.en", "");
-	    if (!subjects.containsKey(mySubject)) {
-		Subject subject = new Subject(mySubject);
-		subjects.put(mySubject, subject);
-	    }
-	    Subject subject = subjects.get(mySubject);
-	    subject.label = obj;
-	    subjects.put(mySubject, subject);
-	} else if (pred.equals(LobidVocabular.rdfType) && subj.equals(topic)) {
-	    if (types.containsKey(subj)) {
-		types.get(subj).add(obj);
-	    } else {
-		List<String> list = new ArrayList<String>();
-		list.add(obj);
-		types.put(subj, list);
-	    }
-	}
-
-    }
-
-    private void loadMap(String filename, HashMap<String, String> fillMe)
-	    throws IOException {
-	File mapfile = new File(Thread.currentThread().getContextClassLoader()
-		.getResource(filename).getPath());
-	CsvMapper mapper = new CsvMapper();
-	CsvSchema schema = mapper.schemaFor(KeyValue.class);
-	com.fasterxml.jackson.databind.MappingIterator<KeyValue> it = mapper
-		.reader(KeyValue.class)
-		.with(schema)
-		.readValues(
-			Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(filename));
-
-	while (it.hasNextValue()) {
-	    KeyValue pair = it.nextValue();
-	    fillMe.put(pair.key, pair.value);
-	}
+	RegalToMabMapper mapper = new RegalToMabMapper();
+	MabRecord record = mapper.map(in, topic);
+	return encoder.render(record);
     }
 
 }

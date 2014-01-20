@@ -46,7 +46,7 @@ public class AlephMabMaker {
 	    String metadata = uriPrefix + "/resource/" + pid + "/metadata";
 	    InputStream input;
 	    input = new URL(metadata).openConnection().getInputStream();
-	    MabConverter converter = MabConverter.getInstance();
+	    MabConverter converter = new MabConverter(node.getPID());
 	    return new String(converter.convert(input).toByteArray(), "utf-8");
 	} catch (Exception e) {
 	    throw new AlephException("Conversion Problem!", e);

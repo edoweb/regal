@@ -20,7 +20,9 @@ package de.nrw.hbz.regal.mab;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
+@SuppressWarnings("javadoc")
 public class LobidVocabular {
+
     public final static String hbz01Url = "http://193.30.112.134/F/?func=find-c&amp;ccl_term=IDN%3D";
     public final static String ddcUrl = "http://dewey.info/class/";
     public final static String gndUrl = "http://d-nb.info/gnd/";

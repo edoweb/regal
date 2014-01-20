@@ -38,16 +38,17 @@ import de.nrw.hbz.regal.mab.MabConverter;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
+@SuppressWarnings("javadoc")
 public class MabConverterTest {
+
     @Test
     public void transformTestfilesAndCompareXmlToExample() throws IOException,
 	    URISyntaxException, RecognitionException, SAXException {
 
-	// transformTestfileAndCompareXmlToExample("HT015954381",
-	// "edoweb:3025500");
-	// transformTestfileAndCompareXmlToExample("HT014997894",
-	// "edoweb:1750745");
-	transformTestfileAndCompareXmlToExample("HT015381429", "edoweb:2238512");
+	transformTestfileAndCompareXmlToExample("HT015954381", "edoweb:3025500");
+	transformTestfileAndCompareXmlToExample("HT014997894", "edoweb:1750745");
+	// transformTestfileAndCompareXmlToExample("HT015381429",
+	// "edoweb:2238512");
 	// transformTestfileAndCompareXmlToExample("HT015780155",
 	// "edoweb:2708089");
 	// transformTestfileAndCompareXmlToExample("HT017091204",
@@ -102,7 +103,7 @@ public class MabConverterTest {
     private ByteArrayOutputStream transformTestFile(InputStream input,
 	    String topic) throws IOException, URISyntaxException,
 	    RecognitionException {
-	MabConverter converter = MabConverter.getInstance();
-	return converter.convert(input, topic);
+	MabConverter converter = new MabConverter(topic);
+	return converter.convert(input);
     }
 }

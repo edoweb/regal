@@ -1,9 +1,0 @@
-leader,------M2.01200024------h
-LDR,------M2.01200024------h
-FMT,MH
-050,|||||||g|||||
-030,a|1uc||||||||
-070,927
-078,hbz-edoweb
-334,Elektronische Ressource
-665x,Archivierte Online-Ressource

@@ -45,6 +45,26 @@
 <http://d-nb.info/gnd/136283675> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#DifferentiatedPerson> .
 <http://dewey.info/class/004/2009/08/about.en> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <http://dewey.info/class/004/2009/08/about.en> <http://www.w3.org/2004/02/skos/core#prefLabel> "Data processing & computer science"@en .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#gndIdentifier> "5030229-2" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#oldAuthorityNumber> "(DE-588b)5030229-2" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Institute for Computer Science <Koblenz>" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Abteilung Koblenz / Institut f\u00FCr Informatik" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Abteilung Koblenz / Informatik" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Koblenzer Informatikinstitut" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Abteilung Koblenz / Koblenzer Informatikinstitut" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Informatikinstitut <Universit\u00E4t Koblenz-Landau, Abteilung Koblenz>" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Abteilung Koblenz / Informatikinstitut" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Fachbereich Informatik / Institut f\u00FCr Informatik" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Fachbereich Informatik / Institute for Computer Science" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#preferredNameForTheCorporateBody> "Institut f\u00FCr Informatik <Koblenz>" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#precedingCorporateBody> <http://d-nb.info/gnd/2058779-X> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#hierarchicalSuperiorOfTheCorporateBody> <http://d-nb.info/gnd/5025634-8> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#hierarchicalSuperiorOfTheCorporateBody> <http://d-nb.info/gnd/5293803-7> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#geographicAreaCode> <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE-RP> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#homepage> <http://www.uni-koblenz-landau.de/koblenz/fb4/institute/IFI> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#dateOfEstablishment> "01.10.1990" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#placeOfBusiness> <http://d-nb.info/gnd/4031410-8> .
+<http://d-nb.info/gnd/5030229-2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#CorporateBody> .
 <edoweb:3025500.rdf> <http://www.openarchives.org/ore/terms/describes> <edoweb:3025500> .
 <edoweb:3025500.rdf> <http://purl.org/dc/terms/modified> "2013-12-04T18:33:41.427+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 <edoweb:3025500.rdf> <http://purl.org/dc/terms/creator> <https://github.com/edoweb/regal/> .

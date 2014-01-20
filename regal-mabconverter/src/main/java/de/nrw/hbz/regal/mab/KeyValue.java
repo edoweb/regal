@@ -22,8 +22,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
+@SuppressWarnings("javadoc")
 @JsonPropertyOrder({ "key", "value" })
 public class KeyValue {
+
     public KeyValue() {
 	key = null;
 	value = null;
