@@ -47,16 +47,11 @@ public class MabConverterTest {
 
 	transformTestfileAndCompareXmlToExample("HT015954381", "edoweb:3025500");
 	transformTestfileAndCompareXmlToExample("HT014997894", "edoweb:1750745");
-	// transformTestfileAndCompareXmlToExample("HT015381429",
-	// "edoweb:2238512");
-	// transformTestfileAndCompareXmlToExample("HT015780155",
-	// "edoweb:2708089");
-	// transformTestfileAndCompareXmlToExample("HT017091204",
-	// "edoweb:4390058");
-	// transformTestfileAndCompareXmlToExample("HT017297166",
-	// "edoweb:4575674");
-	// transformTestfileAndCompareXmlToExample("HT015004325",
-	// "edoweb:1750774");
+	transformTestfileAndCompareXmlToExample("HT015381429", "edoweb:2238512");
+	transformTestfileAndCompareXmlToExample("HT015780155", "edoweb:2708089");
+	transformTestfileAndCompareXmlToExample("HT017091204", "edoweb:4390058");
+	transformTestfileAndCompareXmlToExample("HT017297166", "edoweb:4575674");
+	transformTestfileAndCompareXmlToExample("HT015004325", "edoweb:1750774");
     }
 
     public void transformTestfileAndCompareXmlToExample(String id,

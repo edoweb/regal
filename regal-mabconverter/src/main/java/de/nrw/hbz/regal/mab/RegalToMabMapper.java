@@ -84,7 +84,7 @@ public class RegalToMabMapper {
     }
 
     private void handleTypes(String subj, String pred, String obj) {
-	if (pred.equals(LobidVocabular.rdfType) && subj.equals(topic)) {
+	if (pred.equals(LobidVocabular.rdfType)) {
 	    if (types.containsKey(subj)) {
 		types.get(subj).add(obj);
 	    } else {
@@ -206,8 +206,11 @@ public class RegalToMabMapper {
 
     private String analyseTypes() {
 	String mabstring = "";
-	if (types.values().contains(LobidVocabular.biboCollection)
-		&& types.values().contains(LobidVocabular.biboMultiVolumeBook))
+
+	List<String> list = types.get(topic);
+
+	if (list.contains(LobidVocabular.biboCollection)
+		&& list.contains(LobidVocabular.biboMultiVolumeBook))
 	    record.veroeffentlichungsSpezifischeAngabenString = "s|||w|||";
 	else
 	    record.veroeffentlichungsSpezifischeAngabenString = "my|||||||||||||";
