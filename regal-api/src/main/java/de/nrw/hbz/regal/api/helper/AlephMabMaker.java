@@ -48,6 +48,7 @@ public class AlephMabMaker {
 	    input = new URL(metadata).openConnection().getInputStream();
 	    MabConverter converter = new MabConverter(node.getPID());
 	    return new String(converter.convert(input).toByteArray(), "utf-8");
+
 	} catch (Exception e) {
 	    throw new AlephException("Conversion Problem!", e);
 	}
