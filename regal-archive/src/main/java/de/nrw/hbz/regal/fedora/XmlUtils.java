@@ -219,7 +219,8 @@ public class XmlUtils {
 	try {
 	    DocumentBuilderFactory factory = DocumentBuilderFactory
 		    .newInstance();
-	    factory.setNamespaceAware(true);
+	    // factory.setNamespaceAware(true);
+	    // factory.isValidating();
 	    DocumentBuilder docBuilder = factory.newDocumentBuilder();
 	    Document doc = docBuilder
 		    .parse(new BufferedInputStream(inputStream));

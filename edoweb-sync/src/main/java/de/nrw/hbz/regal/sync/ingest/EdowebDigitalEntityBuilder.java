@@ -158,11 +158,9 @@ public class EdowebDigitalEntityBuilder implements
 	try {
 	    Element root = XmlUtils.getDocument(dtlDe
 		    .getStream(StreamType.MARC).getFile());
-
 	    XPathFactory factory = XPathFactory.newInstance();
 	    XPath xpath = factory.newXPath();
 	    xpath.setNamespaceContext(new MarcNamespaceContext());
-
 	    XPathExpression expr = xpath.compile("//controlfield[@tag='001']");
 	    Object result = expr.evaluate(root, XPathConstants.NODESET);
 	    NodeList nodes = (NodeList) result;
