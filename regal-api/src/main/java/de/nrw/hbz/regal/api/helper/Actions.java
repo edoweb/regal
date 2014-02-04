@@ -591,7 +591,7 @@ public class Actions {
      * @return A short message
      */
     public String removeFromIndex(String index, String type, String pid) {
-	search.deleteSync(index, type, pid);
+	search.delete(index, type, pid);
 	return pid + " removed from index " + index + "!";
     }
 
@@ -608,7 +608,7 @@ public class Actions {
 	String viewAsString = oaiore(namespace + ":" + p, "application/json");
 	viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
 		(JSONArray) JSONValue.parse(viewAsString)));
-	search.indexSync(namespace, type, namespace + ":" + p, viewAsString);
+	search.index(namespace, type, namespace + ":" + p, viewAsString);
 	return namespace + ":" + p + " indexed!";
     }
 

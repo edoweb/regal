@@ -43,15 +43,17 @@ public class TestSearch {
 		.getContextClassLoader().getResourceAsStream("testData.json"),
 		"utf-8");
 	search = new Search();
-	search.indexSync("test", "monograph", "edoweb:123", testData);
+	search.index("test", "monograph", "edoweb:123", testData);
+
     }
 
     @After
     public void tearDown() {
-	search.deleteSync("test", "type", "edoweb:123");
+	search.delete("test", "type", "edoweb:123");
 	for (int i = 100; i > 0; i--) {
-	    search.deleteSync("test", "monograph", "edoweb:" + i);
+	    search.delete("test", "monograph", "edoweb:" + i);
 	}
+	search.down();
     }
 
     @Test
@@ -61,7 +63,6 @@ public class TestSearch {
 
     @Test
     public void testResourceListing() throws InterruptedException {
-	Thread.sleep(1000);
 	SearchHits hits = search.listResources("test", "monograph", 0, 5);
 	Assert.assertEquals(1, hits.getTotalHits());
     }
@@ -69,7 +70,6 @@ public class TestSearch {
     @Test
     public void testResourceListing_withDefaultValues()
 	    throws InterruptedException {
-	Thread.sleep(1000);
 	SearchHits hits = search.listResources("", "", 0, 10);
 	Assert.assertEquals(1, hits.getTotalHits());
     }
@@ -81,19 +81,16 @@ public class TestSearch {
 
     @Test
     public void testDelete() throws InterruptedException {
-	Thread.sleep(1000);
 	SearchHits hits = search.listResources("test", "monograph", 0, 1);
 	Assert.assertEquals(1, hits.getTotalHits());
-	search.deleteSync("test", "monograph", "edoweb:123");
-	Thread.sleep(1000);
+	search.delete("test", "monograph", "edoweb:123");
 	hits = search.listResources("test", "monograph", 0, 1);
 	Assert.assertEquals(0, hits.getTotalHits());
     }
 
     @Test
     public void testListIds() throws InterruptedException {
-	search.indexSync("test", "monograph", "edoweb:123", testData);
-	Thread.sleep(1000);
+	search.index("test", "monograph", "edoweb:123", testData);
 	List<String> list = search.listIds("test", "monograph", 0, 1);
 	Assert.assertEquals(1, list.size());
 	Assert.assertEquals(list.get(0), "edoweb:123");
@@ -102,16 +99,14 @@ public class TestSearch {
     @Test
     public void testFromUntil() throws InterruptedException {
 	for (int i = 100; i > 0; i--) {
-	    search.indexSync("test", "monograph", "edoweb:" + i, testData);
+	    search.index("test", "monograph", "edoweb:" + i, testData);
 	}
-	Thread.sleep(1000);
 	List<String> list = search.listIds("test", "monograph", 0, 10);
 	Assert.assertEquals(10, list.size());
 	list = search.listIds("test", "monograph", 10, 50);
 	Assert.assertEquals(40, list.size());
 	list = search.listIds("test", "monograph", 60, 61);
 	Assert.assertEquals(1, list.size());
-
 	list = search.listIds("test", "monograph", 100, 150);
 	Assert.assertEquals(1, list.size());
     }
