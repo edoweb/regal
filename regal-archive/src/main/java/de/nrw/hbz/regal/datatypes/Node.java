@@ -49,6 +49,7 @@ public class Node {
     private String namespace = null;
     private String contentType = null;
     private Date lastModified = null;
+    private Date creationDate = null;
 
     private BigInteger fileSize;
 
@@ -461,6 +462,21 @@ public class Node {
      */
     public void removeAllContentModels() {
 	cms = new Vector<Transformer>();
+    }
+
+    /**
+     * @return the createdate of the storage object
+     */
+    public Date getCreationDate() {
+	return creationDate;
+    }
+
+    /**
+     * @param createDate
+     *            the date when this node was created
+     */
+    public void setCreationDate(Date createDate) {
+	creationDate = createDate;
     }
 
 }

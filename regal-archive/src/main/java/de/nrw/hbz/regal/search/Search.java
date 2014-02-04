@@ -56,15 +56,21 @@ public class Search {
     }
 
     Client client = null;
+    Node node = null;
 
     /**
      * Used for testing
      */
     public Search() {
 
-	Node node = nodeBuilder().local(true).node();
+	node = nodeBuilder().local(true).node();
 	client = node.client();
 
+    }
+
+    public void down() {
+	client.admin().indices().prepareDelete().execute().actionGet();
+	node.close();
     }
 
     /**

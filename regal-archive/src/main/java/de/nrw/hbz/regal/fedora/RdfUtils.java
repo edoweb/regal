@@ -75,11 +75,12 @@ public class RdfUtils {
      */
     public static String readRdfToString(URL url, RDFFormat inf,
 	    RDFFormat outf, String accept) {
-
 	Graph myGraph = null;
+	myGraph = readRdfToGraph(url, inf, accept);
+	return graphToString(myGraph, outf);
+    }
 
-	myGraph = readRdfUrlToGraph(url, inf, accept);
-
+    public static String graphToString(Graph myGraph, RDFFormat outf) {
 	StringWriter out = new StringWriter();
 	RDFWriter writer = Rio.createWriter(outf, out);
 	try {
@@ -92,7 +93,13 @@ public class RdfUtils {
 	    throw new RdfException(e);
 	}
 	return out.getBuffer().toString();
+    }
 
+    public static String readRdfToString(InputStream in, RDFFormat inf,
+	    RDFFormat outf, String accept) {
+	Graph myGraph = null;
+	myGraph = readRdfToGraph(in, inf, accept);
+	return graphToString(myGraph, outf);
     }
 
     /**
@@ -104,8 +111,13 @@ public class RdfUtils {
      *            the accept header
      * @return a Graph with the rdf
      */
-    public static Graph readRdfUrlToGraph(URL url, RDFFormat inf, String accept) {
+    public static Graph readRdfToGraph(URL url, RDFFormat inf, String accept) {
 
+	InputStream in = urlToInputStream(url, accept);
+	return readRdfToGraph(in, inf, url.toString());
+    }
+
+    private static InputStream urlToInputStream(URL url, String accept) {
 	URLConnection con = null;
 	InputStream inputStream = null;
 	try {
@@ -116,7 +128,7 @@ public class RdfUtils {
 	} catch (IOException e) {
 	    throw new UrlConnectionException(e);
 	}
-	return readRdfInputstreamToGraph(inputStream, inf, url.toString());
+	return inputStream;
     }
 
     /**
@@ -128,8 +140,8 @@ public class RdfUtils {
      *            see sesame docu
      * @return a Graph representing the rdf in the input stream
      */
-    public static Graph readRdfInputstreamToGraph(InputStream inputStream,
-	    RDFFormat inf, String baseUrl) {
+    public static Graph readRdfToGraph(InputStream inputStream, RDFFormat inf,
+	    String baseUrl) {
 	RDFParser rdfParser = Rio.createParser(inf);
 	org.openrdf.model.Graph myGraph = new TreeModel();
 	StatementCollector collector = new StatementCollector(myGraph);

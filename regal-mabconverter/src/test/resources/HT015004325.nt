@@ -1,0 +1,96 @@
+<edoweb:1750774> <http://lobid.org/vocab/lobid#urn> "urn:nbn:de:hbz:929:" .
+<edoweb:1750774> <http://www.w3.org/2002/07/owl#sameAs> <http://hub.culturegraph.org/resource/HBZ-HT015004325> .
+<edoweb:1750774> <http://lobid.org/vocab/lobid#fulltextOnline> <http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=1750775&custom_att_2=simple_viewer> .
+<edoweb:1750774> <http://www.w3.org/2007/05/powder-s#describedby> <edoweb:1750774/about> .
+<edoweb:1750774> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Book> .
+<edoweb:1750774> <http://rdvocab.info/Elements/otherTitleInformation> "Im Rahmen der Studie zur Weiterentwicklung\n\t\t\t\t\t\t\tder energetischen Verwertung von Biomasse in Rheinland-Pfalz" .
+<edoweb:1750774> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://iflastandards.info/ns/isbd/terms/mediatype/T1002> .
+<edoweb:1750774> <http://rdvocab.info/Elements/publicationStatement> "[Birkenfeld]; 2004" .
+<edoweb:1750774> <http://rdvocab.info/Elements/statementOfResponsibility> "Im Auftrag des Ministeriums f\u00FCr Umwelt und\n\t\t\t\t\t\t\tForsten Rheinland-Pfalz. Institut f\u00FCr angewandtes Stoffmanagement\n\t\t\t\t\t\t\t(IfaS). Verantwortlich: Peter Heck. Projektmanagement: Dunja\n\t\t\t\t\t\t\tHoffmann" .
+<edoweb:1750774> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/dc/terms/BibliographicResource> .
+<edoweb:1750774> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Document> .
+<edoweb:1750774> <http://purl.org/dc/terms/issued> "2004" .
+<edoweb:1750774> <http://purl.org/dc/terms/isPartOf> <http://lobid.org/resource/RPB> .
+<edoweb:1750774> <http://purl.org/dc/terms/contributor> <http://d-nb.info/gnd/102689229> .
+<edoweb:1750774> <http://rdvocab.info/Elements/placeOfPublication> "[Birkenfeld]" .
+<edoweb:1750774> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/vocab/frbr/core#Manifestation> .
+<edoweb:1750774> <http://lobid.org/vocab/lobid#hbzID> "HT015004325" .
+<edoweb:1750774> <http://purl.org/dc/terms/subject> <http://dewey.info/class/570/> .
+<edoweb:1750774> <http://purl.org/dc/terms/title> "\t\t\t\t\t\t\tBiomassenutzung in Rheinland-Pfalz" .
+<edoweb:1750774> <http://purl.org/dc/terms/hasVersion> <http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=1750775&custom_att_2=simple_viewer> .
+<edoweb:1750774> <http://purl.org/dc/terms/subject> <http://dewey.info/class/620/> .
+<edoweb:1750774> <http://umbel.org/umbel#isLike> <http://nbn-resolving.de/urn:nbn:de:hbz:929:> .
+<edoweb:1750774> <http://purl.org/dc/terms/language> <http://id.loc.gov/vocabulary/iso639-2/deu> .
+<edoweb:1750774> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.archiveshub.ac.uk/def/ArchivalResource> .
+<edoweb:1750774> <http://purl.org/dc/terms/creator> <http://d-nb.info/gnd/10061029-8> .
+<edoweb:1750774> <http://iflastandards.info/ns/isbd/elements/P1053> "56 S. : graph. Darst." .
+<edoweb:1750774> <http://purl.org/dc/terms/creator> <http://d-nb.info/gnd/2144892-9> .
+<http://d-nb.info/gnd/102689229> <http://d-nb.info/standards/elementset/gnd#preferredNameForThePerson> "Heck, Peter"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://d-nb.info/gnd/102689229> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#UndifferentiatedPerson> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#gndIdentifier> "5030229-2" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#oldAuthorityNumber> "(DE-588b)5030229-2" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Institute for Computer Science <Koblenz>" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Abteilung Koblenz / Institut f\u00FCr Informatik" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Abteilung Koblenz / Informatik" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Koblenzer Informatikinstitut" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Abteilung Koblenz / Koblenzer Informatikinstitut" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Informatikinstitut <Universit\u00E4t Koblenz-Landau, Abteilung Koblenz>" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Abteilung Koblenz / Informatikinstitut" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Fachbereich Informatik / Institut f\u00FCr Informatik" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Universit\u00E4t Koblenz-Landau / Fachbereich Informatik / Institute for Computer Science" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#preferredNameForTheCorporateBody> "Institut f\u00FCr Informatik <Koblenz>" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#precedingCorporateBody> <http://d-nb.info/gnd/2058779-X> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#hierarchicalSuperiorOfTheCorporateBody> <http://d-nb.info/gnd/5025634-8> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#hierarchicalSuperiorOfTheCorporateBody> <http://d-nb.info/gnd/5293803-7> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#geographicAreaCode> <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE-RP> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#homepage> <http://www.uni-koblenz-landau.de/koblenz/fb4/institute/IFI> .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#dateOfEstablishment> "01.10.1990" .
+<http://d-nb.info/gnd/5030229-2> <http://d-nb.info/standards/elementset/gnd#placeOfBusiness> <http://d-nb.info/gnd/4031410-8> .
+<http://d-nb.info/gnd/5030229-2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#CorporateBody> .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#gndIdentifier> "2144892-9" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#oldAuthorityNumber> "(DE-588b)2144892-9" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Ministerium f\u00FCr Umwelt und Forsten <Rheinland-Pfalz>" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium f\u00FCr Umwelt und Forsten / Arbeits- und Umweltschutzbeh\u00F6rde" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Arbeits- und Umweltschutzbeh\u00F6rde <Rheinland-Pfalz, Ministerium f\u00FCr Umwelt und Forsten>" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium f\u00FCr Umwelt und Forsten / Landesforstverwaltung" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Landesforstverwaltung <Rheinland-Pfalz, Ministerium f\u00FCr Umwelt und Forsten>" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium f\u00FCr Umwelt <Ministerium f\u00FCr Umwelt und Forsten>" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium f\u00FCr Umwelt und Forsten / Wasserwirtschaftsverwaltung" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Wasserwirtschaftsverwaltung <Rheinland-Pfalz, Ministerium f\u00FCr Umwelt und Forsten>" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium f\u00FCr Umwelt und Forsten / Abteilung Wasserwirtschaft" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium f\u00FCr Umwelt und Forsten / Arbeitsgruppe Leitfaden Erdw\u00E4rmesonden" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Arbeitsgruppe Leitfaden Erdw\u00E4rmesonden <Rheinland-Pfalz, Ministerium f\u00FCr Umwelt und Forsten>" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium f\u00FCr Umwelt und Forsten / Referat <1041>" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Landesforstverwaltung <Ministerium f\u00FCr Umwelt und Forsten>" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Minsterium f\u00FCr Umwelt und Forsten / Landesforsten" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Rheinland-Pfalz / Landesforsten <Ministerium f\u00FCr Umwelt und Forsten>" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Landesforsten <Rheinland-Pfalz, Ministerium f\u00FCr Umwelt und Forsten>" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#preferredNameForTheCorporateBody> "Rheinland-Pfalz / Ministerium f\u00FCr Umwelt und Forsten" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#precedingCorporateBody> <http://d-nb.info/gnd/5037463-1> .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#precedingCorporateBody> <http://d-nb.info/gnd/1016608-7> .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#succeedingCorporateBody> <http://d-nb.info/gnd/10153219-2> .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#geographicAreaCode> <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE-RP> .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#dateOfEstablishment> "1994,Okt." .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#dateOfTermination> "2006,Mai" .
+<http://d-nb.info/gnd/2144892-9> <http://d-nb.info/standards/elementset/gnd#hierarchicalSuperiorOfTheCorporateBody> <http://d-nb.info/gnd/4049795-1> .
+<http://d-nb.info/gnd/2144892-9> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#OrganOfCorporateBody> .
+
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#gndIdentifier> "10061029-8" .
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#oldAuthorityNumber> "(DE-588b)10061029-8" .
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Fachhochschule <Trier> / Umwelt-Campus <Birkenfeld, Nahe> / Institut f\u00FCr Angewandtes Stoffstrommanagement" .
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "Fachhochschule <Trier> / Institut f\u00FCr Angewandtes Stoffstrommanagement" .
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#variantNameForTheCorporateBody> "IfaS" .
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#preferredNameForTheCorporateBody> "Institut f\u00FCr Angewandtes Stoffstrommanagement <Birkenfeld, Nahe>" .
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#hierarchicalSuperiorOfTheCorporateBody> <http://d-nb.info/gnd/2172381-3> .
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#geographicAreaCode> <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE> .
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#homepage> <http://ifas.umwelt-campus.de> .
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#placeOfBusiness> <http://d-nb.info/gnd/4060877-3> .
+<http://d-nb.info/gnd/10061029-8> <http://d-nb.info/standards/elementset/gnd#placeOfBusiness> <http://d-nb.info/gnd/4006922-9> .
+<http://d-nb.info/gnd/10061029-8> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://d-nb.info/standards/elementset/gnd#CorporateBody> .
+<http://dewey.info/class/570/2009/08/about.en> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<http://dewey.info/class/570/2009/08/about.en> <http://www.w3.org/2004/02/skos/core#prefLabel> "Life sciences; biology"@en .
+<http://dewey.info/class/620/2009/08/about.en> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<http://dewey.info/class/620/2009/08/about.en> <http://www.w3.org/2004/02/skos/core#prefLabel> "Engineering & allied operations"@en .
+<edoweb:1750774.rdf> <http://www.openarchives.org/ore/terms/describes> <edoweb:1750774> .
+<edoweb:1750774.rdf> <http://purl.org/dc/terms/modified> "2013-12-04T14:44:50.925+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<edoweb:1750774.rdf> <http://purl.org/dc/terms/creator> <https://github.com/edoweb/regal/> .

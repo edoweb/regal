@@ -85,6 +85,7 @@ public class TestSearch {
 	SearchHits hits = search.listResources("test", "monograph", 0, 1);
 	Assert.assertEquals(1, hits.getTotalHits());
 	search.deleteSync("test", "monograph", "edoweb:123");
+	Thread.sleep(1000);
 	hits = search.listResources("test", "monograph", 0, 1);
 	Assert.assertEquals(0, hits.getTotalHits());
     }
