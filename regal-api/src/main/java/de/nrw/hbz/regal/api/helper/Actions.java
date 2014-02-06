@@ -659,7 +659,7 @@ public class Actions {
 	    int until, String getListingFrom) {
 
 	List<String> list = null;
-	if (!getListingFrom.equals("es")) {
+	if (!"es".equals(getListingFrom)) {
 	    if (type == null || type.isEmpty())
 		list = listAllFromRepo(namespace, from, until);
 	    else

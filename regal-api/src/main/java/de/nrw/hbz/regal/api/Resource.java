@@ -219,12 +219,15 @@ public class Resource {
      */
     @DELETE
     @Produces({ "application/json", "application/xml" })
-    public String deleteAllOfType(@QueryParam("type") String type,
-	    @QueryParam("namespace") String namespace,
-	    @QueryParam("from") int from, @QueryParam("until") int until) {
+    public String deleteAllOfType(
+	    @DefaultValue("") @QueryParam("type") String type,
+	    @DefaultValue("") @QueryParam("namespace") String namespace,
+	    @DefaultValue("0") @QueryParam("from") int from,
+	    @DefaultValue("10") @QueryParam("until") int until,
+	    @DefaultValue("es") @QueryParam("getListingFrom") String getListingFrom) {
 	try {
 	    return actions.deleteAll(actions.list(type, namespace, from, until,
-		    "repo"));
+		    getListingFrom));
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
