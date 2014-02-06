@@ -174,7 +174,11 @@ public class Actions {
 
 	String msg = "";
 	Node node = readNode(pid);
-	fedora.deleteComplexObject(pid);
+	try {
+	    fedora.deleteComplexObject(pid);
+	} catch (Exception e) {
+	    msg = e.getMessage();
+	}
 
 	try {
 	    removeFromIndex(node.getNamespace(), node.getContentType(), pid);
