@@ -468,7 +468,7 @@ class FedoraFacade implements FedoraInterface {
     }
 
     @Override
-    public String deleteComplexObject(String rootPID) {
+    public List<String> deleteComplexObject(String rootPID) {
 	if (!nodeExists(rootPID)) {
 	    throw new NodeNotFoundException(rootPID);
 	}
@@ -485,7 +485,7 @@ class FedoraFacade implements FedoraInterface {
 		Node node = readNode(pid);
 		deleteComplexObject(node.getPID());
 	    }
-	return rootPID;
+	return pids;
     }
 
     @Override
