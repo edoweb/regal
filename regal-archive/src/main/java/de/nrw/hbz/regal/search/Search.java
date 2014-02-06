@@ -120,7 +120,6 @@ public class Search {
 	    int until) {
 	if (from >= until)
 	    throw new InvalidRangeException();
-
 	SearchRequestBuilder builder = null;
 	client.admin().indices().refresh(new RefreshRequest()).actionGet();
 	if (index == null || index.equals(""))
