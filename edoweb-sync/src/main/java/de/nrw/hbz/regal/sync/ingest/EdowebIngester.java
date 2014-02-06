@@ -219,7 +219,7 @@ public class EdowebIngester implements IngestInterface {
 	webclient.setMetadata(dtlBean, metadata);
 	webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
 	webclient.makeOaiSet(dtlBean);
-	Vector<DigitalEntity> issues = dtlBean.getParts();
+	Vector<DigitalEntity> issues = getParts(dtlBean);
 	int num = issues.size();
 	int count = 1;
 	logger.info(pid + " Found " + num + " issues.");

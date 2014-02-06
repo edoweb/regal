@@ -489,7 +489,6 @@ public class EdowebDigitalEntityBuilder implements
     }
 
     private void addToTree(DigitalEntity dtlDe, DigitalEntity related) {
-
 	DigitalEntity parent = findParent(dtlDe, related);
 	parent.setIsParent(true);
 	related.setParentPid(parent.getPid());
@@ -498,14 +497,12 @@ public class EdowebDigitalEntityBuilder implements
     }
 
     private DigitalEntity findParent(DigitalEntity dtlDe, DigitalEntity related) {
-
 	if (!(related.getUsageType().compareTo("VIEW") == 0)
 		&& !(related.getUsageType().compareTo("VIEW_MAIN") == 0))
 	    return dtlDe;
 	String groupId = related.getStream(StreamType.DATA).getFileId();
 	String fileId = groupIds2FileIds.get(groupId);
 	String volumeId = this.fileIds2Volume.get(fileId);
-
 	try {
 	    if (groupId == null)
 		throw new NullPointerException(related.getPid()
