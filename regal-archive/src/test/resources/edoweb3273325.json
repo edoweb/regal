@@ -1,0 +1,99 @@
+{
+	"@graph": 
+[ {
+  "@id" : "edoweb:3273325",
+  "@type" : [ "http://purl.org/dc/terms/BibliographicResource", "http://purl.org/ontology/bibo/Newspaper" ],
+  "http://geni-orca.renci.org/owl/topology.owl#hasURN" : [ {
+    "@value" : "urn:nbn:de:hbz:929:02-edoweb:32733252"
+  } ],
+  "http://hbz-nrw.de/regal#contentType" : [ {
+    "@value" : "journal"
+  } ],
+  "http://hbz-nrw.de/regal#hasTransformer" : [ {
+    "@value" : "oaidc"
+  }, {
+    "@value" : "epicur"
+  } ],
+  "http://iflastandards.info/ns/isbd/elements/P1004" : [ {
+    "@value" : "Staatszeitung / A"
+  } ],
+  "http://iflastandards.info/ns/isbd/elements/P1006" : [ {
+    "@value" : "Ausgabe A"
+  }, {
+    "@value" : "Rheinland-Pfalz"
+  }, {
+    "@value" : "Staatszeitung"
+  } ],
+  "http://iflastandards.info/ns/isbd/elements/P1016" : [ {
+    "@value" : "Mainz"
+  } ],
+  "http://lobid.org/vocab/lobid#fulltextOnline" : [ {
+    "@id" : "http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=4915397&custom_att_2=simple_viewer"
+  }, {
+    "@id" : "http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=5187987&custom_att_2=simple_viewer"
+  }, {
+    "@id" : "http://www.rlp.de/aktuelles/staatszeitung_2719/"
+  } ],
+  "http://purl.org/dc/terms/hasPart" : [ {
+    "@id" : "edoweb:3273325-2007"
+  } ],
+  "http://purl.org/dc/terms/issued" : [ {
+    "@value" : "2007 - "
+  } ],
+  "http://purl.org/dc/terms/language" : [ {
+    "@id" : "http://id.loc.gov/vocabulary/iso639-2/deu"
+  } ],
+  "http://purl.org/dc/terms/medium" : [ {
+    "@id" : "http://iflastandards.info/ns/isbd/terms/mediatype/T1002"
+  } ],
+  "http://purl.org/dc/terms/title" : [ {
+    "@value" : "Staatszeitung / A : Staatszeitung : Rheinland-Pfalz : Ausgabe A"
+  } ],
+  "http://purl.org/lobid/lv#hbzID" : [ {
+    "@value" : "HT014646471"
+  } ],
+  "http://purl.org/ontology/bibo/oclcnum" : [ {
+    "@value" : "615210330"
+  } ],
+  "http://www.openarchives.org/ore/terms/aggregates" : [ {
+    "@id" : "edoweb:3273325-2007"
+  } ],
+  "http://www.openarchives.org/ore/terms/isDescribedBy" : [ {
+    "@id" : "edoweb:3273325.rdf"
+  } ],
+  "http://www.openarchives.org/ore/terms/similarTo" : [ {
+    "@id" : "http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid=3273325"
+  }, {
+    "@id" : "http://api.localhost/fedora/objects/edoweb:3273325"
+  } ],
+  "http://www.umbel.org/specifications/vocabulary#isLike" : [ {
+    "@id" : "http://lobid.org/resource/HT014646471"
+  } ],
+  "http://www.w3.org/2002/07/owl#sameAs" : [ {
+    "@id" : "http://ld.zdb-services.de/resource/22210015"
+  }, {
+    "@id" : "http://lobid.org/resource/ZDB2221001-5"
+  } ],
+  "http://www.w3.org/2007/05/powder-s#describedby" : [ {
+    "@id" : "edoweb:3273325/about"
+  } ],
+  "http://xmlns.com/foaf/0.1/isPrimaryTopicOf" : [ {
+    "@id" : "http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT014646471"
+  }, {
+    "@id" : "http://worldcat.org/oclc/615210330"
+  } ]
+}, {
+  "@id" : "edoweb:3273325.rdf",
+  "http://purl.org/dc/terms/created" : [ {
+    "@type" : "http://www.w3.org/2001/XMLSchema#dateTime",
+    "@value" : "2014-02-10T13:05:20.032+01:00"
+  } ],
+  "http://purl.org/dc/terms/modified" : [ {
+    "@type" : "http://www.w3.org/2001/XMLSchema#dateTime",
+    "@value" : "2014-02-10T13:05:25.886+01:00"
+  } ],
+  "http://www.openarchives.org/ore/terms/describes" : [ {
+    "@id" : "edoweb:3273325"
+  } ]
+} ]
+}

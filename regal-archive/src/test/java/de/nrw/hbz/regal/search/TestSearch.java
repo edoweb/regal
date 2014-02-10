@@ -35,30 +35,33 @@ import de.nrw.hbz.regal.fedora.CopyUtils;
 public class TestSearch {
 
     String edoweb2606976 = null;
-    String edoweb2606971_2008 = null;
-    String edoweb2606971_2009 = null;
     String query1 = null;
     Search search = null;
+    private String edoweb3273325;
+    private String edoweb3273325_2007;
+    private String edoweb3273331;
 
     @Before
     public void setUp() throws IOException {
 	edoweb2606976 = CopyUtils.copyToString(
 		Thread.currentThread().getContextClassLoader()
 			.getResourceAsStream("edoweb2606976.json"), "utf-8");
-	// edoweb2606971_2008 = CopyUtils.copyToString(
-	// Thread.currentThread().getContextClassLoader()
-	// .getResourceAsStream("edoweb2606971_2008.json"),
-	// "utf-8");
-	// edoweb2606971_2009 = CopyUtils.copyToString(
-	// Thread.currentThread().getContextClassLoader()
-	// .getResourceAsStream("edoweb2606976_2009.json"),
-	// "utf-8");
+	edoweb3273325 = CopyUtils.copyToString(
+		Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("edoweb3273325.json"), "utf-8");
+	edoweb3273325_2007 = CopyUtils.copyToString(
+		Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("edoweb3273325-2007.json"),
+		"utf-8");
+	edoweb3273331 = CopyUtils.copyToString(
+		Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("edoweb3273331.json"), "utf-8");
 
 	query1 = CopyUtils.copyToString(Thread.currentThread()
 		.getContextClassLoader().getResourceAsStream("query-1.json"),
 		"utf-8");
 	search = new Search();
-	search.index("test", "monograph", "edoweb:123", edoweb2606976);
+	search.index("test", "monograph", "edoweb2606976", edoweb2606976);
 
     }
 
@@ -98,17 +101,17 @@ public class TestSearch {
     public void testDelete() throws InterruptedException {
 	SearchHits hits = search.listResources("test", "monograph", 0, 1);
 	Assert.assertEquals(1, hits.getTotalHits());
-	search.delete("test", "monograph", "edoweb:123");
+	search.delete("test", "monograph", "edoweb2606976");
 	hits = search.listResources("test", "monograph", 0, 1);
 	Assert.assertEquals(0, hits.getTotalHits());
     }
 
     @Test
     public void testListIds() throws InterruptedException {
-	search.index("test", "monograph", "edoweb:123", edoweb2606976);
+	search.index("test", "monograph", "edoweb2606976", edoweb2606976);
 	List<String> list = search.listIds("test", "monograph", 0, 1);
 	Assert.assertEquals(1, list.size());
-	Assert.assertEquals(list.get(0), "edoweb:123");
+	Assert.assertEquals(list.get(0), "edoweb2606976");
     }
 
     @Test
@@ -128,8 +131,15 @@ public class TestSearch {
 
     @Test
     public void mappingTest() {
+
+	search.index("test", "monograph", "edoweb:3273325", edoweb3273325);
+	search.index("test", "monograph", "edoweb:3273325-2007",
+		edoweb3273325_2007);
+	search.index("test", "monograph", "edoweb:3273331", edoweb3273331);
+
 	SearchHits hits = search.query("test",
-		"@graph.http://purl.org/dc/terms/hasPart.@id", "2606971");
+		"@graph.http://purl.org/dc/terms/isPartOf.@id",
+		"edoweb\\:3273325-2007");
 
 	Assert.assertEquals(1, hits.totalHits());
 

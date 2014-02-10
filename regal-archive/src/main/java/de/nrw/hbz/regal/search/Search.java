@@ -18,7 +18,6 @@ package de.nrw.hbz.regal.search;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -31,6 +30,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.search.SearchHit;
@@ -97,10 +97,13 @@ public class Search {
 	    String indexConfig = CopyUtils.copyToString(
 		    Thread.currentThread().getContextClassLoader()
 			    .getResourceAsStream("index-config.json"), "utf-8");
+
 	    client.admin().indices().prepareCreate(index)
 		    .setSource(indexConfig).execute().actionGet();
 
-	} catch (IOException e) {
+	} catch (org.elasticsearch.indices.IndexAlreadyExistsException e) {
+
+	} catch (Exception e) {
 	    throw new SearchException(e);
 	}
     }
@@ -200,10 +203,10 @@ public class Search {
     }
 
     public SearchHits query(String index, String fieldName, String fieldValue) {
-
 	client.admin().indices().refresh(new RefreshRequest()).actionGet();
-	SearchResponse response = client.prepareSearch(index)
-		.setQuery(QueryBuilders.fieldQuery(fieldName, fieldValue))
+	QueryBuilder query = QueryBuilders.boolQuery().must(
+		QueryBuilders.fieldQuery(fieldName, fieldValue));
+	SearchResponse response = client.prepareSearch(index).setQuery(query)
 		.execute().actionGet();
 	return response.getHits();
     }
