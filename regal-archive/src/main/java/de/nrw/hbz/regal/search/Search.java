@@ -18,6 +18,7 @@ package de.nrw.hbz.regal.search;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -30,9 +31,12 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+
+import de.nrw.hbz.regal.fedora.CopyUtils;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -45,8 +49,8 @@ public class Search {
     }
 
     @SuppressWarnings("serial")
-    class SyncSearchCallException extends RuntimeException {
-	public SyncSearchCallException(Throwable e) {
+    class SearchException extends RuntimeException {
+	public SearchException(Throwable e) {
 	    super(e);
 	}
     }
@@ -61,6 +65,9 @@ public class Search {
 
 	node = nodeBuilder().local(true).node();
 	client = node.client();
+
+	client.admin().indices().prepareDelete().execute().actionGet();
+	init("test");
     }
 
     /**
@@ -82,6 +89,20 @@ public class Search {
 	client = new TransportClient(ImmutableSettings.settingsBuilder()
 		.put("cluster.name", cluster).build())
 		.addTransportAddress(server);
+	init("edoweb");
+    }
+
+    private void init(String index) {
+	try {
+	    String indexConfig = CopyUtils.copyToString(
+		    Thread.currentThread().getContextClassLoader()
+			    .getResourceAsStream("index-config.json"), "utf-8");
+	    client.admin().indices().prepareCreate(index)
+		    .setSource(indexConfig).execute().actionGet();
+
+	} catch (IOException e) {
+	    throw new SearchException(e);
+	}
     }
 
     /**
@@ -176,6 +197,15 @@ public class Search {
     public ActionResponse delete(String index, String type, String id) {
 	return client.prepareDelete(index, type, id)
 		.setOperationThreaded(false).execute().actionGet();
+    }
+
+    public SearchHits query(String index, String fieldName, String fieldValue) {
+
+	client.admin().indices().refresh(new RefreshRequest()).actionGet();
+	SearchResponse response = client.prepareSearch(index)
+		.setQuery(QueryBuilders.fieldQuery(fieldName, fieldValue))
+		.execute().actionGet();
+	return response.getHits();
     }
 
 }

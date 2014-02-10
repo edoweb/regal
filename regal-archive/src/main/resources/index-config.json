@@ -1,0 +1,40 @@
+{
+  "settings":{
+  
+  },
+  "mappings":{
+    "all":{
+      "properties":{
+        "@graph.http://purl.org/dc/elements/1.1/creator.@id":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+        "@graph.http://purl.org/ontology/bibo/isbn13.@value":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+        "@graph.http://purl.org/ontology/bibo/isbn10.@value":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+         "@graph.http:\/\/purl.org\/dc\/terms\/isPartOf.@id":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+         "@graph.http:\/\/purl.org\/dc\/terms\/isPartOf.@value":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+         "@graph.http:\/\/purl.org\/dc\/terms\/hasPart.@id":{
+          "type":"string",
+          "index":"not_analyzed"
+        },
+         "@graph.http:\/\/purl.org\/dc\/terms\/hasPart.@value":{
+          "type":"string",
+          "index":"not_analyzed"
+        }
+      }
+    }
+    }
+}
+

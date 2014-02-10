@@ -34,16 +34,31 @@ import de.nrw.hbz.regal.fedora.CopyUtils;
 @SuppressWarnings("javadoc")
 public class TestSearch {
 
-    String testData = null;
+    String edoweb2606976 = null;
+    String edoweb2606971_2008 = null;
+    String edoweb2606971_2009 = null;
+    String query1 = null;
     Search search = null;
 
     @Before
     public void setUp() throws IOException {
-	testData = CopyUtils.copyToString(Thread.currentThread()
-		.getContextClassLoader().getResourceAsStream("testData.json"),
+	edoweb2606976 = CopyUtils.copyToString(
+		Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("edoweb2606976.json"), "utf-8");
+	// edoweb2606971_2008 = CopyUtils.copyToString(
+	// Thread.currentThread().getContextClassLoader()
+	// .getResourceAsStream("edoweb2606971_2008.json"),
+	// "utf-8");
+	// edoweb2606971_2009 = CopyUtils.copyToString(
+	// Thread.currentThread().getContextClassLoader()
+	// .getResourceAsStream("edoweb2606976_2009.json"),
+	// "utf-8");
+
+	query1 = CopyUtils.copyToString(Thread.currentThread()
+		.getContextClassLoader().getResourceAsStream("query-1.json"),
 		"utf-8");
 	search = new Search();
-	search.index("test", "monograph", "edoweb:123", testData);
+	search.index("test", "monograph", "edoweb:123", edoweb2606976);
 
     }
 
@@ -90,7 +105,7 @@ public class TestSearch {
 
     @Test
     public void testListIds() throws InterruptedException {
-	search.index("test", "monograph", "edoweb:123", testData);
+	search.index("test", "monograph", "edoweb:123", edoweb2606976);
 	List<String> list = search.listIds("test", "monograph", 0, 1);
 	Assert.assertEquals(1, list.size());
 	Assert.assertEquals(list.get(0), "edoweb:123");
@@ -99,7 +114,7 @@ public class TestSearch {
     @Test
     public void testFromUntil() throws InterruptedException {
 	for (int i = 100; i > 0; i--) {
-	    search.index("test", "monograph", "edoweb:" + i, testData);
+	    search.index("test", "monograph", "edoweb:" + i, edoweb2606976);
 	}
 	List<String> list = search.listIds("test", "monograph", 0, 10);
 	Assert.assertEquals(10, list.size());
@@ -109,5 +124,14 @@ public class TestSearch {
 	Assert.assertEquals(1, list.size());
 	list = search.listIds("test", "monograph", 100, 150);
 	Assert.assertEquals(1, list.size());
+    }
+
+    @Test
+    public void mappingTest() {
+	SearchHits hits = search.query("test",
+		"@graph.http://purl.org/dc/terms/hasPart.@id", "2606971");
+
+	Assert.assertEquals(1, hits.totalHits());
+
     }
 }
