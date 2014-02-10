@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Vector;
 
@@ -32,6 +33,11 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -44,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -291,4 +298,33 @@ public class XmlUtils {
 	}
 
     }
+
+    /**
+     * Creates a plain xml string of the node and of all it's children. The xml
+     * string has no XML declaration.
+     * 
+     * @param node
+     *            a org.w3c.dom.Node
+     * @return a plain string representation of the node it's children
+     */
+    public static String nodeToString(Node node) {
+	try {
+	    TransformerFactory transFactory = TransformerFactory.newInstance();
+	    Transformer transformer = transFactory.newTransformer();
+	    StringWriter buffer = new StringWriter(1024);
+	    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+		    "yes");
+
+	    transformer
+		    .transform(new DOMSource(node), new StreamResult(buffer));
+	    String str = buffer.toString();
+	    return str;
+	} catch (Exception e) {
+	    e.printStackTrace();
+	} catch (Error error) {
+	    error.printStackTrace();
+	}
+	return "";
+    }
+
 }

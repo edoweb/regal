@@ -17,18 +17,12 @@
 package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.File;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -351,7 +345,8 @@ public class EdowebDigitalEntityBuilder implements
 	try {
 	    File file = new File(dtlDe.getLocation() + File.separator + "."
 		    + dtlDe.getPid() + "_" + type.toString() + ".xml");
-	    File stream = XmlUtils.stringToFile(file, nodeToString(item));
+	    File stream = XmlUtils.stringToFile(file,
+		    XmlUtils.nodeToString(item));
 	    dtlDe.addStream(stream, "application/xml", type);
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
@@ -378,7 +373,7 @@ public class EdowebDigitalEntityBuilder implements
 	Element marc = (Element) ((Element) item)
 		.getElementsByTagName("record").item(0);
 	marc.setAttribute("xmlns", "http://www.loc.gov/MARC21/slim");
-	String xmlStr = nodeToString(marc);
+	String xmlStr = XmlUtils.nodeToString(marc);
 	/*
 	 * FIXME : Workaround for some bug.
 	 */
@@ -447,10 +442,10 @@ public class EdowebDigitalEntityBuilder implements
 		String mimeType = ((Element) item)
 			.getElementsByTagName("mime_type").item(0)
 			.getTextContent();
-		if (type.compareTo(DigitalEntityRelation.include.toString()) == 0
-			&& mimeType.equals("application/pdf")
-			&& (usageType.compareTo(DigitalEntityRelation.ARCHIVE
-				.toString()) != 0)) {
+		if (DigitalEntityRelation.include.toString().equals(type)
+			&& "application/pdf".equals(mimeType)
+			&& DigitalEntityRelation.ARCHIVE.toString().equals(
+				usageType)) {
 		    try {
 			DigitalEntity b = build(entity.getLocation(), relPid);
 			b.setUsageType(usageType);
@@ -533,34 +528,6 @@ public class EdowebDigitalEntityBuilder implements
 	}
 
 	return dtlDe;
-    }
-
-    /**
-     * Creates a plain xml string of the node and of all it's children. The xml
-     * string has no XML declaration.
-     * 
-     * @param node
-     *            a org.w3c.dom.Node
-     * @return a plain string representation of the node it's children
-     */
-    private String nodeToString(Node node) {
-	try {
-	    TransformerFactory transFactory = TransformerFactory.newInstance();
-	    Transformer transformer = transFactory.newTransformer();
-	    StringWriter buffer = new StringWriter(1024);
-	    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-		    "yes");
-
-	    transformer
-		    .transform(new DOMSource(node), new StreamResult(buffer));
-	    String str = buffer.toString();
-	    return str;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	} catch (Error error) {
-	    error.printStackTrace();
-	}
-	return "";
     }
 
 }

@@ -359,8 +359,8 @@ public class EdowebIngester implements IngestInterface {
 	    webclient.autoGenerateMetdata(dtlBean);
 	    webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
 	    webclient.makeOaiSet(dtlBean);
-	    Vector<DigitalEntity> viewMainLinks = getParts(dtlBean);
-	    int numOfVols = viewMainLinks.size();
+	    Vector<DigitalEntity> parts = getParts(dtlBean);
+	    int numOfVols = parts.size();
 	    logger.info(pid + " " + "Found " + numOfVols + " parts.");
 	    logger.info(pid + " " + "Will not update volumes.");
 	    logger.info(pid + " " + "updated.\n");
