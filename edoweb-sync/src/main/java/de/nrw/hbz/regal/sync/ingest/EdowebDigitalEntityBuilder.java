@@ -442,10 +442,10 @@ public class EdowebDigitalEntityBuilder implements
 		String mimeType = ((Element) item)
 			.getElementsByTagName("mime_type").item(0)
 			.getTextContent();
-		if (DigitalEntityRelation.include.toString().equals(type)
-			&& "application/pdf".equals(mimeType)
-			&& DigitalEntityRelation.ARCHIVE.toString().equals(
-				usageType)) {
+		if (type.compareTo(DigitalEntityRelation.include.toString()) == 0
+			&& mimeType.equals("application/pdf")
+			&& (usageType.compareTo(DigitalEntityRelation.ARCHIVE
+				.toString()) != 0)) {
 		    try {
 			DigitalEntity b = build(entity.getLocation(), relPid);
 			b.setUsageType(usageType);
