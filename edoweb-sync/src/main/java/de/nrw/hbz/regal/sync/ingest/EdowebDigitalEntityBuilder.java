@@ -49,64 +49,6 @@ import de.nrw.hbz.regal.sync.extern.StreamType;
  */
 public class EdowebDigitalEntityBuilder implements
 	DigitalEntityBuilderInterface {
-    @SuppressWarnings("javadoc")
-    public class MarcNamespaceContext implements NamespaceContext {
-
-	public String getNamespaceURI(String prefix) {
-	    if (prefix == null)
-		throw new NullPointerException("Null prefix");
-	    else if ("marc".equals(prefix))
-		return "http://www.loc.gov/MARC21/slim";
-	    else if ("xml".equals(prefix))
-		return XMLConstants.XML_NS_URI;
-	    return XMLConstants.NULL_NS_URI;
-	}
-
-	// This method isn't necessary for XPath processing.
-	public String getPrefix(String uri) {
-	    throw new UnsupportedOperationException();
-	}
-
-	// This method isn't necessary for XPath processing either.
-	@SuppressWarnings("rawtypes")
-	public Iterator getPrefixes(String uri) {
-	    throw new UnsupportedOperationException();
-	}
-
-    }
-
-    @SuppressWarnings({ "javadoc", "serial" })
-    public class TypeNotFoundException extends RuntimeException {
-
-	public TypeNotFoundException(String message) {
-	    super(message);
-	}
-
-    }
-
-    @SuppressWarnings({ "javadoc", "serial" })
-    public class CatalogIdNotFoundException extends RuntimeException {
-
-	public CatalogIdNotFoundException(String message) {
-	    super(message);
-	}
-
-	public CatalogIdNotFoundException(Throwable cause) {
-	    super(cause);
-	}
-
-    }
-
-    @SuppressWarnings({ "javadoc", "serial" })
-    public class XPathException extends RuntimeException {
-	public XPathException(Throwable cause) {
-	    super(cause);
-	}
-
-	public XPathException(String message, Throwable cause) {
-	    super(message, cause);
-	}
-    }
 
     final static Logger logger = LoggerFactory
 	    .getLogger(EdowebDigitalEntityBuilder.class);
@@ -116,9 +58,14 @@ public class EdowebDigitalEntityBuilder implements
     @Override
     public DigitalEntity build(String location, String pid) {
 	DigitalEntity dtlDe = buildSimpleBean(location, pid);
-	dtlDe = prepareMetsStructure(dtlDe);
-	dtlDe = addSiblings(dtlDe);
-	dtlDe = addChildren(dtlDe);
+	if (dtlDe.getStream(StreamType.STRUCT_MAP) != null) {
+	    dtlDe = prepareMetsStructure(dtlDe);
+	    dtlDe = addSiblings(dtlDe);
+	    dtlDe = addChildren(dtlDe);
+	} else {
+	    dtlDe = addSiblings(dtlDe);
+	    dtlDe = addDigitoolChildren(dtlDe);
+	}
 	return dtlDe;
     }
 
@@ -415,6 +362,9 @@ public class EdowebDigitalEntityBuilder implements
 			.toString()) == 0) {
 		    DigitalEntity b = buildSimpleBean(entity.getLocation(),
 			    relPid);
+		    logger.info("Add sibling " + b.getPid() + " to "
+			    + entity.getPid() + " utilizing relation "
+			    + usageType);
 		    dtlDe.addRelated(b, usageType);
 		}
 	    }
@@ -447,9 +397,56 @@ public class EdowebDigitalEntityBuilder implements
 			&& (usageType.compareTo(DigitalEntityRelation.ARCHIVE
 				.toString()) != 0)) {
 		    try {
+
 			DigitalEntity b = build(entity.getLocation(), relPid);
+			logger.info(b.getPid() + " is child of "
+				+ dtlDe.getPid());
 			b.setUsageType(usageType);
 			addToTree(entity, b);
+
+		    } catch (Exception e) {
+			// TODO
+			e.printStackTrace();
+		    }
+		}
+	    }
+	} catch (Exception e) {
+
+	}
+	return dtlDe;
+    }
+
+    private DigitalEntity addDigitoolChildren(final DigitalEntity entity) {
+	DigitalEntity dtlDe = entity;
+	try {
+	    Element root = XmlUtils.getDocument(entity.getXml());
+	    NodeList list = root.getElementsByTagName("relation");
+	    for (int i = 0; i < list.getLength(); i++) {
+		Node item = list.item(i);
+		String relPid = ((Element) item).getElementsByTagName("pid")
+			.item(0).getTextContent();
+		String usageType = ((Element) item)
+			.getElementsByTagName("usage_type").item(0)
+			.getTextContent();
+		String type = ((Element) item).getElementsByTagName("type")
+			.item(0).getTextContent();
+		String mimeType = ((Element) item)
+			.getElementsByTagName("mime_type").item(0)
+			.getTextContent();
+		if (type.compareTo(DigitalEntityRelation.include.toString()) == 0
+			&& mimeType.equals("application/pdf")
+			&& (usageType.compareTo(DigitalEntityRelation.ARCHIVE
+				.toString()) != 0)) {
+		    try {
+
+			DigitalEntity b = build(entity.getLocation(), relPid);
+			logger.info(b.getPid() + " is child of "
+				+ dtlDe.getPid());
+			b.setUsageType(usageType);
+			dtlDe.setIsParent(true);
+			b.setParentPid(dtlDe.getPid());
+			dtlDe.addRelated(b,
+				DigitalEntityRelation.part_of.toString());
 
 		    } catch (Exception e) {
 			// TODO
@@ -498,23 +495,22 @@ public class EdowebDigitalEntityBuilder implements
 	String groupId = related.getStream(StreamType.DATA).getFileId();
 	String fileId = groupIds2FileIds.get(groupId);
 	String volumeId = this.fileIds2Volume.get(fileId);
-	try {
-	    if (groupId == null)
-		throw new NullPointerException(related.getPid()
-			+ " stream is unkown!");
-	    if (fileId == null)
-		throw new NullPointerException("streamId: " + groupId
-			+ " mets fileId does not exist!");
-	    if (volumeId == null)
-		throw new NullPointerException("fileId: " + fileId
-			+ " mets volume does not exist!");
-	} catch (NullPointerException e) {
-	    logger.warn(related.getPid() + " (" + related.getLabel()
-		    + "), child of " + dtlDe.getPid() + " : " + e.getMessage()
-		    + " mets relation is broken!");
+
+	String message = null;
+	if (groupId == null)
+	    message = related.getPid() + " stream is unkown!";
+	if (fileId == null)
+	    message = "streamId: " + groupId + " mets fileId does not exist!";
+	if (volumeId == null)
+	    message = "fileId: " + fileId + " mets volume does not exist!";
+
+	if (message != null) {
 	    related.setUsageType(ObjectType.file.toString());
-	    return dtlDe;
+	    throw new NullPointerException(related.getPid() + " ("
+		    + related.getLabel() + "), child of " + dtlDe.getPid()
+		    + " : " + message + " mets relation is broken!");
 	}
+
 	for (RelatedDigitalEntity entity : dtlDe.getRelated()) {
 	    // logger.debug(entity.entity.getPid());
 	    if (entity.entity.getPid().compareTo(volumeId) == 0) {
@@ -530,4 +526,62 @@ public class EdowebDigitalEntityBuilder implements
 	return dtlDe;
     }
 
+    @SuppressWarnings("javadoc")
+    public class MarcNamespaceContext implements NamespaceContext {
+
+	public String getNamespaceURI(String prefix) {
+	    if (prefix == null)
+		throw new NullPointerException("Null prefix");
+	    else if ("marc".equals(prefix))
+		return "http://www.loc.gov/MARC21/slim";
+	    else if ("xml".equals(prefix))
+		return XMLConstants.XML_NS_URI;
+	    return XMLConstants.NULL_NS_URI;
+	}
+
+	// This method isn't necessary for XPath processing.
+	public String getPrefix(String uri) {
+	    throw new UnsupportedOperationException();
+	}
+
+	// This method isn't necessary for XPath processing either.
+	@SuppressWarnings("rawtypes")
+	public Iterator getPrefixes(String uri) {
+	    throw new UnsupportedOperationException();
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class TypeNotFoundException extends RuntimeException {
+
+	public TypeNotFoundException(String message) {
+	    super(message);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class CatalogIdNotFoundException extends RuntimeException {
+
+	public CatalogIdNotFoundException(String message) {
+	    super(message);
+	}
+
+	public CatalogIdNotFoundException(Throwable cause) {
+	    super(cause);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class XPathException extends RuntimeException {
+	public XPathException(Throwable cause) {
+	    super(cause);
+	}
+
+	public XPathException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+    }
 }
