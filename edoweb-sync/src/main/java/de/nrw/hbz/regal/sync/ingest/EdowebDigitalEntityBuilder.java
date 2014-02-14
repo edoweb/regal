@@ -19,7 +19,9 @@ package de.nrw.hbz.regal.sync.ingest;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
@@ -66,7 +68,37 @@ public class EdowebDigitalEntityBuilder implements
 	    dtlDe = addSiblings(dtlDe);
 	    dtlDe = addDigitoolChildren(dtlDe);
 	}
+	dtlDe = removeEmptyVolumes(dtlDe);
 	return dtlDe;
+    }
+
+    private DigitalEntity removeEmptyVolumes(final DigitalEntity entity) {
+	DigitalEntity dtlDe = entity;
+	List<RelatedDigitalEntity> result = new Vector<RelatedDigitalEntity>();
+	List<RelatedDigitalEntity> related = entity.getRelated();
+
+	for (RelatedDigitalEntity d : related) {
+	    if (DigitalEntityRelation.part_of.toString().equals(d.relation)) {
+		if (ObjectType.volume.toString()
+			.equals(d.entity.getUsageType())) {
+		    if (d.entity.getRelated().isEmpty())
+			continue;
+		}
+	    }
+	    result.add(d);
+	}
+	dtlDe.setRelated(result);
+	return dtlDe;
+    }
+
+    private List<DigitalEntity> getParts(DigitalEntity dtlBean) {
+	List<DigitalEntity> links = new Vector<DigitalEntity>();
+	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
+	    if (rel.relation
+		    .compareTo(DigitalEntityRelation.part_of.toString()) == 0)
+		links.add(rel.entity);
+	}
+	return links;
     }
 
     private DigitalEntity buildSimpleBean(String location, String pid) {
@@ -141,98 +173,94 @@ public class EdowebDigitalEntityBuilder implements
     }
 
     private DigitalEntity prepareMetsStructure(final DigitalEntity entity) {
-	Element root = null;
 	DigitalEntity dtlDe = entity;
-	try {
-	    root = XmlUtils.getDocument(entity.getStream(StreamType.STRUCT_MAP)
-		    .getFile());
-	} catch (Exception e) {
-	    return dtlDe;
-	}
-
-	try {
-	    dtlDe = createVolumes(entity, root);
-	} catch (XPathExpressionException e) {
-	    logger.warn(entity.getPid() + " no volumes found.");
-	}
-
-	try {
-	    mapFileIdsToVolumes(entity, root);
-	} catch (XPathExpressionException e) {
-	    logger.warn(entity.getPid() + " no issus found.");
-	}
-	try {
-	    root = XmlUtils.getDocument(entity.getStream(StreamType.FILE_SEC)
-		    .getFile());
-	} catch (Exception e) {
-	    return dtlDe;
-	}
-
-	try {
-	    mapGroupIdsToFileIds(entity, root);
-	} catch (XPathExpressionException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+	dtlDe = createVolumes(entity);
+	mapFileIdsToVolumes(entity);
+	mapGroupIdsToFileIds(entity);
 	return dtlDe;
     }
 
-    private void mapGroupIdsToFileIds(DigitalEntity entity, Element root)
-	    throws XPathExpressionException {
-	XPathFactory xpathFactory = XPathFactory.newInstance();
-	XPath xpath = xpathFactory.newXPath();
-	NodeList volumes = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
-		XPathConstants.NODESET);
-	for (int i = 0; i < volumes.getLength(); i++) {
-	    Element item = (Element) volumes.item(i);
-	    String groupId = item.getAttribute("GROUPID");
-	    String fileId = item.getAttribute("ID");
-	    logger.debug(groupId + " to " + fileId);
-	    groupIds2FileIds.put(groupId, fileId);
-	}
+    private void mapGroupIdsToFileIds(DigitalEntity entity) {
+	try {
+	    Element root = XmlUtils.getDocument(entity.getStream(
+		    StreamType.FILE_SEC).getFile());
 
-    }
-
-    private void mapFileIdsToVolumes(DigitalEntity entity, Element root)
-	    throws XPathExpressionException {
-	XPathFactory xpathFactory = XPathFactory.newInstance();
-	XPath xpath = xpathFactory.newXPath();
-	NodeList volumes = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
-		XPathConstants.NODESET);
-	for (int i = 0; i < volumes.getLength(); i++) {
-	    Element item = (Element) volumes.item(i);
-	    String volumeLabel = item.getAttribute("LABEL");
-	    String volumePid = entity.getPid() + "-" + volumeLabel;
-
-	    NodeList issues = (NodeList) xpath.evaluate("/*/*/*/*/*[@LABEL="
-		    + volumeLabel + "]/*/*", root, XPathConstants.NODESET);
-	    for (int j = 0; j < issues.getLength(); j++) {
-		Element issue = (Element) issues.item(j);
-		String fileId = issue.getAttribute("FILEID");
-		logger.debug("Key: " + fileId + " Value: " + volumePid);
-		fileIds2Volume.put(fileId, volumePid);
+	    XPathFactory xpathFactory = XPathFactory.newInstance();
+	    XPath xpath = xpathFactory.newXPath();
+	    NodeList volumes = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
+		    XPathConstants.NODESET);
+	    for (int i = 0; i < volumes.getLength(); i++) {
+		Element item = (Element) volumes.item(i);
+		String groupId = item.getAttribute("GROUPID");
+		String fileId = item.getAttribute("ID");
+		logger.debug(groupId + " to " + fileId);
+		groupIds2FileIds.put(groupId, fileId);
 	    }
-
+	} catch (XPathExpressionException e) {
+	    logger.warn("", e);
+	} catch (Exception e) {
+	    logger.debug("", e);
 	}
+
     }
 
-    private DigitalEntity createVolumes(DigitalEntity entity, Element root)
-	    throws XPathExpressionException {
+    private void mapFileIdsToVolumes(DigitalEntity entity) {
+	try {
+	    Element root = XmlUtils.getDocument(entity.getStream(
+		    StreamType.STRUCT_MAP).getFile());
+	    XPathFactory xpathFactory = XPathFactory.newInstance();
+	    XPath xpath = xpathFactory.newXPath();
+	    NodeList volumes = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
+		    XPathConstants.NODESET);
+	    for (int i = 0; i < volumes.getLength(); i++) {
+		Element item = (Element) volumes.item(i);
+		String volumeLabel = item.getAttribute("LABEL");
+		String volumePid = entity.getPid() + "-" + volumeLabel;
+
+		NodeList issues = (NodeList) xpath.evaluate(
+			"/*/*/*/*/*[@LABEL=" + volumeLabel + "]/*/*", root,
+			XPathConstants.NODESET);
+
+		for (int j = 0; j < issues.getLength(); j++) {
+		    Element issue = (Element) issues.item(j);
+		    String fileId = issue.getAttribute("FILEID");
+		    logger.debug("Key: " + fileId + " Value: " + volumePid);
+		    fileIds2Volume.put(fileId, volumePid);
+		}
+
+	    }
+	} catch (XPathExpressionException e) {
+	    logger.warn(entity.getPid() + " no issus found.");
+	}
+
+    }
+
+    private DigitalEntity createVolumes(DigitalEntity entity) {
 	DigitalEntity dtlDe = entity;
-	XPathFactory xpathFactory = XPathFactory.newInstance();
-	XPath xpath = xpathFactory.newXPath();
-	NodeList list = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
-		XPathConstants.NODESET);
-	for (int i = 0; i < list.getLength(); i++) {
-	    Element item = (Element) list.item(i);
-	    String volumeLabel = item.getAttribute("LABEL");
-	    String volumePid = dtlDe.getPid() + "-" + volumeLabel;
-	    DigitalEntity volume = new DigitalEntity(entity.getLocation()
-		    + File.separator + volumePid, volumePid);
-	    volume.setLabel(volumeLabel);
-	    volume.setParentPid(dtlDe.getPid());
-	    volume.setUsageType(ObjectType.volume.toString());
-	    dtlDe.addRelated(volume, DigitalEntityRelation.part_of.toString());
+	try {
+	    Element root = XmlUtils.getDocument(entity.getStream(
+		    StreamType.STRUCT_MAP).getFile());
+
+	    XPathFactory xpathFactory = XPathFactory.newInstance();
+	    XPath xpath = xpathFactory.newXPath();
+	    NodeList list = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
+		    XPathConstants.NODESET);
+	    for (int i = 0; i < list.getLength(); i++) {
+		Element item = (Element) list.item(i);
+		String volumeLabel = item.getAttribute("LABEL");
+		String volumePid = dtlDe.getPid() + "-" + volumeLabel;
+		DigitalEntity volume = new DigitalEntity(entity.getLocation()
+			+ File.separator + volumePid, volumePid);
+		volume.setLabel(volumeLabel);
+		volume.setParentPid(dtlDe.getPid());
+		volume.setUsageType(ObjectType.volume.toString());
+		dtlDe.addRelated(volume,
+			DigitalEntityRelation.part_of.toString());
+	    }
+	} catch (XPathExpressionException e) {
+	    logger.warn(entity.getPid() + " no volumes found.");
+	} catch (Exception e) {
+	    logger.debug("", e);
 	}
 	return dtlDe;
     }
@@ -506,9 +534,10 @@ public class EdowebDigitalEntityBuilder implements
 
 	if (message != null) {
 	    related.setUsageType(ObjectType.file.toString());
-	    throw new NullPointerException(related.getPid() + " ("
-		    + related.getLabel() + "), child of " + dtlDe.getPid()
-		    + " : " + message + " mets relation is broken!");
+	    // throw new NullPointerException(related.getPid() + " ("
+	    // + related.getLabel() + "), child of " + dtlDe.getPid()
+	    // + " : " + message + " mets relation is broken!");
+	    return dtlDe;
 	}
 
 	for (RelatedDigitalEntity entity : dtlDe.getRelated()) {
