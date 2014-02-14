@@ -24,7 +24,7 @@
 
 	<groupId>de.nrw.hbz.regal</groupId>
 	<artifactId>regal</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.3.0</version>
 	<packaging>pom</packaging>
 	<name>regal</name>
 	<url>http://www.hbz-nrw.de/</url>
