@@ -319,6 +319,7 @@ class FedoraFacade implements FedoraInterface {
 	    GetObjectProfileResponse prof = new GetObjectProfile(pid).execute();
 	    node.setLabel(prof.getLabel());
 	    node.setLastModified(prof.getLastModifiedDate());
+	    node.setCreationDate(prof.getCreateDate());
 
 	} catch (FedoraClientException e) {
 	    throw new ReadNodeException(pid, e);
@@ -467,7 +468,7 @@ class FedoraFacade implements FedoraInterface {
     }
 
     @Override
-    public String deleteComplexObject(String rootPID) {
+    public List<String> deleteComplexObject(String rootPID) {
 	if (!nodeExists(rootPID)) {
 	    throw new NodeNotFoundException(rootPID);
 	}
@@ -484,7 +485,7 @@ class FedoraFacade implements FedoraInterface {
 		Node node = readNode(pid);
 		deleteComplexObject(node.getPID());
 	    }
-	return rootPID;
+	return pids;
     }
 
     @Override

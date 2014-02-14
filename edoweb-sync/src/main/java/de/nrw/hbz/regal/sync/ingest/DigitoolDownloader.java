@@ -55,85 +55,11 @@ public class DigitoolDownloader extends Downloader {
 	    File digitalEntityFile = getView(pid, baseDir);
 	    getRelated(digitalEntityFile, pid, baseDir);
 	    getStream(digitalEntityFile, pid, baseDir);
-	    // try {
-	    // moveObject(digitalEntityFile, new File(baseDir), pid);
-	    // } catch (ParentNotFoundException e) {
-	    // logger.debug(pid + " " + e);
-	    // }
 	} catch (Exception e) {
 	    logger.error(pid + " " + e);
 	}
 
     }
-
-    // private void moveObject(File digitalEntityFile, File dir, String pid) {
-    //
-    // try {
-    // if (digitalEntityFile != null) {
-    // String ppid = getParent(digitalEntityFile, pid);
-    //
-    // if (ppid != null) {
-    //
-    // String path = getDownloadLocation() + File.separator + ppid;
-    // File parent = new File(path);
-    // if (!parent.exists()) {
-    // FileUtils.deleteDirectory(dir);
-    // throw new ParentNotFoundException(ppid);
-    // } else {
-    // File tdir = new File(parent.getAbsolutePath());
-    // if (!tdir.exists()) {
-    // for (String file : dir.list()) {
-    // File f = new File(dir.getAbsoluteFile()
-    // + File.separator + file);
-    // if (f.isDirectory()) {
-    // FileUtils.moveDirectoryToDirectory(f, tdir,
-    // true);
-    // } else {
-    // File test = new File(tdir + File.separator
-    // + f.getName());
-    // if (test.exists())
-    // test.delete();
-    // FileUtils
-    // .moveFileToDirectory(f, tdir, true);
-    //
-    // }
-    // }
-    //
-    // setUpdated(false);
-    // setDownloaded(true);
-    // } else {
-    // System.out.println("HEY: " + dir.getAbsoluteFile());
-    // for (String file : dir.list()) {
-    // File f = new File(dir.getAbsoluteFile()
-    // + File.separator + file);
-    // if (f.isDirectory()) {
-    // File test = new File(tdir + File.separator
-    // + f.getName());
-    // if (test.exists())
-    // FileUtils.deleteDirectory(test);
-    // FileUtils.moveDirectoryToDirectory(f, tdir,
-    // true);
-    // } else {
-    // File test = new File(tdir + File.separator
-    // + f.getName());
-    // if (test.exists())
-    // test.delete();
-    // FileUtils
-    // .moveFileToDirectory(f, tdir, true);
-    // }
-    // }
-    // setUpdated(true);
-    // setDownloaded(true);
-    // }
-    //
-    // }
-    // FileUtils.deleteDirectory(dir);
-    // }
-    // }
-    // } catch (IOException e) {
-    // throw new DownloadException(e);
-    // }
-    // }
 
     /**
      * @param digitalEntityFile
@@ -201,9 +127,6 @@ public class DigitoolDownloader extends Downloader {
 	    Node item = list.item(i);
 	    String relPid = ((Element) item).getElementsByTagName("pid")
 		    .item(0).getTextContent();
-	    // String usageType = ((Element) item)
-	    // .getElementsByTagName("usage_type").item(0)
-	    // .getTextContent();
 	    File file = new File(baseDir + File.separator + relPid + ".xml");
 	    getXml(file, relPid);
 	    getStream(file, relPid, baseDir);

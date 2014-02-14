@@ -1,4 +1,5 @@
 package de.nrw.hbz.regal;
+
 /*
  * Copyright 2012 hbz NRW (http://www.hbz-nrw.de/)
  *
@@ -78,16 +79,20 @@ public class EdowebTest {
 
 	pidlist = Thread.currentThread().getContextClassLoader()
 		.getResource(pidlist).toString().substring(5);
-	EdowebMain.main(new String[] { "--mode", "PIDL", "--user", user,
-		"--password", password, "--dtl", downloadHost, "-cache",
-		localcache, "--oai", oaiHost, "--set", oaiSet, "--timestamp",
-		oaitimestamp, "--fedoraBase", fedoraUrl, "--host",
-		"http://localhost", "-list", pidlist, "-namespace", "test" });
-	EdowebMain.main(new String[] { "--mode", "DELE", "--user", user,
-		"--password", password, "--dtl", downloadHost, "-cache",
-		localcache, "--oai", oaiHost, "--set", oaiSet, "--timestamp",
-		oaitimestamp, "--fedoraBase", fedoraUrl, "--host",
-		"http://localhost", "-list", pidlist, "-namespace", "test" });
+	EdowebMain
+		.main(new String[] { "--mode", "PIDL", "--user", user,
+			"--password", password, "--dtl", downloadHost,
+			"-cache", localcache, "--oai", oaiHost, "--set",
+			oaiSet, "--timestamp", oaitimestamp, "--fedoraBase",
+			fedoraUrl, "--host", "http://api.localhost", "-list",
+			pidlist, "-namespace", "test" });
+	EdowebMain
+		.main(new String[] { "--mode", "DELE", "--user", user,
+			"--password", password, "--dtl", downloadHost,
+			"-cache", localcache, "--oai", oaiHost, "--set",
+			oaiSet, "--timestamp", oaitimestamp, "--fedoraBase",
+			fedoraUrl, "--host", "http://api.localhost", "-list",
+			pidlist, "-namespace", "test" });
 	File timestamp = new File(oaitimestamp);
 	timestamp.deleteOnExit();
 

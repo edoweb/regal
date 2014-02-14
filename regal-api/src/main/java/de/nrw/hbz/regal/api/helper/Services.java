@@ -95,6 +95,10 @@ class Services {
 
 	    String str = RdfUtils.readRdfToString(lobidUrl, RDFFormat.NTRIPLES,
 		    RDFFormat.NTRIPLES, "text/plain");
+
+	    if (str.contains("http://www.w3.org/2002/07/owl#sameAs")) {
+		str = RdfUtils.followSameAsAndInclude(lobidUrl, pid);
+	    }
 	    str = Pattern.compile(lobidUri).matcher(str)
 		    .replaceAll(Matcher.quoteReplacement(pid))
 		    + "<"
@@ -107,10 +111,6 @@ class Services {
 		    + "> <http://purl.org/lobid/lv#hbzID> \""
 		    + alephid
 		    + "\" .";
-
-	    if (str.contains("http://www.w3.org/2002/07/owl#sameAs")) {
-		str = RdfUtils.followSameAsAndInclude(lobidUrl, pid);
-	    }
 	    File metadataFile = CopyUtils.copyStringToFile(str);
 
 	    node.setMetadataFile(metadataFile.getAbsolutePath());

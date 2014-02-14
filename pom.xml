@@ -17,13 +17,14 @@
 		<nestedClassTests>**/*Test*$*.class</nestedClassTests>
 		<integration.test.skip>false</integration.test.skip>
 		<es.version>0.90.5</es.version>
-		<regal.version>0.2.0</regal.version>
+		<commons.io.version>2.4</commons.io.version>
+		<regal.version>0.3.0</regal.version>
 	</properties>
 
 
 	<groupId>de.nrw.hbz.regal</groupId>
 	<artifactId>regal</artifactId>
-	<version>0.2.0</version>
+	<version>0.3.0</version>
 	<packaging>pom</packaging>
 	<name>regal</name>
 	<url>http://www.hbz-nrw.de/</url>
@@ -184,6 +185,7 @@
 		<module>edoweb-oai</module>
 		<module>ellinet-oai</module>
 		<module>opus-sync</module>
+		<module>regal-mabconverter</module>
 	</modules>
 
 

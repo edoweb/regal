@@ -34,24 +34,44 @@ import de.nrw.hbz.regal.fedora.CopyUtils;
 @SuppressWarnings("javadoc")
 public class TestSearch {
 
-    String testData = null;
+    String edoweb2606976 = null;
+    String query1 = null;
     Search search = null;
+    private String edoweb3273325;
+    private String edoweb3273325_2007;
+    private String edoweb3273331;
 
     @Before
     public void setUp() throws IOException {
-	testData = CopyUtils.copyToString(Thread.currentThread()
-		.getContextClassLoader().getResourceAsStream("testData.json"),
+	edoweb2606976 = CopyUtils.copyToString(
+		Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("edoweb2606976.json"), "utf-8");
+	edoweb3273325 = CopyUtils.copyToString(
+		Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("edoweb3273325.json"), "utf-8");
+	edoweb3273325_2007 = CopyUtils.copyToString(
+		Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("edoweb3273325-2007.json"),
+		"utf-8");
+	edoweb3273331 = CopyUtils.copyToString(
+		Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("edoweb3273331.json"), "utf-8");
+
+	query1 = CopyUtils.copyToString(Thread.currentThread()
+		.getContextClassLoader().getResourceAsStream("query-1.json"),
 		"utf-8");
 	search = new Search();
-	search.indexSync("test", "monograph", "edoweb:123", testData);
+	search.index("test", "monograph", "edoweb2606976", edoweb2606976);
+
     }
 
     @After
     public void tearDown() {
-	search.deleteSync("test", "type", "edoweb:123");
+	search.delete("test", "type", "edoweb:123");
 	for (int i = 100; i > 0; i--) {
-	    search.deleteSync("test", "monograph", "edoweb:" + i);
+	    search.delete("test", "monograph", "edoweb:" + i);
 	}
+	search.down();
     }
 
     @Test
@@ -61,7 +81,6 @@ public class TestSearch {
 
     @Test
     public void testResourceListing() throws InterruptedException {
-	Thread.sleep(1000);
 	SearchHits hits = search.listResources("test", "monograph", 0, 5);
 	Assert.assertEquals(1, hits.getTotalHits());
     }
@@ -69,7 +88,6 @@ public class TestSearch {
     @Test
     public void testResourceListing_withDefaultValues()
 	    throws InterruptedException {
-	Thread.sleep(1000);
 	SearchHits hits = search.listResources("", "", 0, 10);
 	Assert.assertEquals(1, hits.getTotalHits());
     }
@@ -81,37 +99,49 @@ public class TestSearch {
 
     @Test
     public void testDelete() throws InterruptedException {
-	Thread.sleep(1000);
 	SearchHits hits = search.listResources("test", "monograph", 0, 1);
 	Assert.assertEquals(1, hits.getTotalHits());
-	search.deleteSync("test", "monograph", "edoweb:123");
+	search.delete("test", "monograph", "edoweb2606976");
 	hits = search.listResources("test", "monograph", 0, 1);
 	Assert.assertEquals(0, hits.getTotalHits());
     }
 
     @Test
     public void testListIds() throws InterruptedException {
-	search.indexSync("test", "monograph", "edoweb:123", testData);
-	Thread.sleep(1000);
+	search.index("test", "monograph", "edoweb2606976", edoweb2606976);
 	List<String> list = search.listIds("test", "monograph", 0, 1);
 	Assert.assertEquals(1, list.size());
-	Assert.assertEquals(list.get(0), "edoweb:123");
+	Assert.assertEquals(list.get(0), "edoweb2606976");
     }
 
     @Test
     public void testFromUntil() throws InterruptedException {
 	for (int i = 100; i > 0; i--) {
-	    search.indexSync("test", "monograph", "edoweb:" + i, testData);
+	    search.index("test", "monograph", "edoweb:" + i, edoweb2606976);
 	}
-	Thread.sleep(1000);
 	List<String> list = search.listIds("test", "monograph", 0, 10);
 	Assert.assertEquals(10, list.size());
 	list = search.listIds("test", "monograph", 10, 50);
 	Assert.assertEquals(40, list.size());
 	list = search.listIds("test", "monograph", 60, 61);
 	Assert.assertEquals(1, list.size());
-
 	list = search.listIds("test", "monograph", 100, 150);
 	Assert.assertEquals(1, list.size());
+    }
+
+    @Test
+    public void mappingTest() {
+
+	search.index("test", "monograph", "edoweb:3273325", edoweb3273325);
+	search.index("test", "monograph", "edoweb:3273325-2007",
+		edoweb3273325_2007);
+	search.index("test", "monograph", "edoweb:3273331", edoweb3273331);
+
+	SearchHits hits = search.query("test",
+		"@graph.http://purl.org/dc/terms/isPartOf.@id",
+		"edoweb\\:3273325-2007");
+
+	Assert.assertEquals(1, hits.totalHits());
+
     }
 }

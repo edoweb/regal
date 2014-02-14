@@ -1,0 +1,81 @@
+{
+	"@graph": [ {
+  "@id" : "edoweb:3273325-2007",
+  "http://geni-orca.renci.org/owl/topology.owl#hasURN" : [ {
+    "@value" : "urn:nbn:de:hbz:929:02-edoweb:3273325-20071"
+  } ],
+  "http://hbz-nrw.de/regal#contentType" : [ {
+    "@value" : "volume"
+  } ],
+  "http://hbz-nrw.de/regal#hasTransformer" : [ {
+    "@value" : "oaidc"
+  }, {
+    "@value" : "epicur"
+  } ],
+  "http://iflastandards.info/ns/isbd/elements/P1004" : [ {
+    "@value" : "2007"
+  } ],
+  "http://purl.org/dc/terms/hasPart" : [ {
+    "@id" : "edoweb:3273331"
+  }, {
+    "@id" : "edoweb:3273334"
+  }, {
+    "@id" : "edoweb:3273418"
+  }, {
+    "@id" : "edoweb:3273421"
+  }, {
+    "@id" : "edoweb:3273424"
+  }, {
+    "@id" : "edoweb:3273339"
+  }, {
+    "@id" : "edoweb:3273342"
+  }, {
+    "@id" : "edoweb:3273345"
+  } ],
+  "http://purl.org/dc/terms/isPartOf" : [ {
+    "@id" : "edoweb:3273325"
+  } ],
+  "http://purl.org/ontology/bibo/volume" : [ {
+    "@value" : "2007"
+  } ],
+  "http://www.openarchives.org/ore/terms/aggregates" : [ {
+    "@id" : "edoweb:3273331"
+  }, {
+    "@id" : "edoweb:3273334"
+  }, {
+    "@id" : "edoweb:3273418"
+  }, {
+    "@id" : "edoweb:3273421"
+  }, {
+    "@id" : "edoweb:3273424"
+  }, {
+    "@id" : "edoweb:3273339"
+  }, {
+    "@id" : "edoweb:3273342"
+  }, {
+    "@id" : "edoweb:3273345"
+  } ],
+  "http://www.openarchives.org/ore/terms/isAggregatedBy" : [ {
+    "@id" : "edoweb:3273325"
+  } ],
+  "http://www.openarchives.org/ore/terms/isDescribedBy" : [ {
+    "@id" : "edoweb:3273325-2007.rdf"
+  } ],
+  "http://www.openarchives.org/ore/terms/similarTo" : [ {
+    "@id" : "http://api.localhost/fedora/objects/edoweb:3273325-2007"
+  } ]
+}, {
+  "@id" : "edoweb:3273325-2007.rdf",
+  "http://purl.org/dc/terms/created" : [ {
+    "@type" : "http://www.w3.org/2001/XMLSchema#dateTime",
+    "@value" : "2014-02-10T13:05:25.194+01:00"
+  } ],
+  "http://purl.org/dc/terms/modified" : [ {
+    "@type" : "http://www.w3.org/2001/XMLSchema#dateTime",
+    "@value" : "2014-02-10T13:05:50.297+01:00"
+  } ],
+  "http://www.openarchives.org/ore/terms/describes" : [ {
+    "@id" : "edoweb:3273325-2007"
+  } ]
+} ]
+}

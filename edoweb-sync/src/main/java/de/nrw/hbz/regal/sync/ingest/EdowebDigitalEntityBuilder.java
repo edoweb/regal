@@ -17,18 +17,14 @@
 package de.nrw.hbz.regal.sync.ingest;
 
 import java.io.File;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -55,64 +51,6 @@ import de.nrw.hbz.regal.sync.extern.StreamType;
  */
 public class EdowebDigitalEntityBuilder implements
 	DigitalEntityBuilderInterface {
-    @SuppressWarnings("javadoc")
-    public class MarcNamespaceContext implements NamespaceContext {
-
-	public String getNamespaceURI(String prefix) {
-	    if (prefix == null)
-		throw new NullPointerException("Null prefix");
-	    else if ("marc".equals(prefix))
-		return "http://www.loc.gov/MARC21/slim";
-	    else if ("xml".equals(prefix))
-		return XMLConstants.XML_NS_URI;
-	    return XMLConstants.NULL_NS_URI;
-	}
-
-	// This method isn't necessary for XPath processing.
-	public String getPrefix(String uri) {
-	    throw new UnsupportedOperationException();
-	}
-
-	// This method isn't necessary for XPath processing either.
-	@SuppressWarnings("rawtypes")
-	public Iterator getPrefixes(String uri) {
-	    throw new UnsupportedOperationException();
-	}
-
-    }
-
-    @SuppressWarnings({ "javadoc", "serial" })
-    public class TypeNotFoundException extends RuntimeException {
-
-	public TypeNotFoundException(String message) {
-	    super(message);
-	}
-
-    }
-
-    @SuppressWarnings({ "javadoc", "serial" })
-    public class CatalogIdNotFoundException extends RuntimeException {
-
-	public CatalogIdNotFoundException(String message) {
-	    super(message);
-	}
-
-	public CatalogIdNotFoundException(Throwable cause) {
-	    super(cause);
-	}
-
-    }
-
-    @SuppressWarnings({ "javadoc", "serial" })
-    public class XPathException extends RuntimeException {
-	public XPathException(Throwable cause) {
-	    super(cause);
-	}
-
-	public XPathException(String message, Throwable cause) {
-	    super(message, cause);
-	}
-    }
 
     final static Logger logger = LoggerFactory
 	    .getLogger(EdowebDigitalEntityBuilder.class);
@@ -122,10 +60,45 @@ public class EdowebDigitalEntityBuilder implements
     @Override
     public DigitalEntity build(String location, String pid) {
 	DigitalEntity dtlDe = buildSimpleBean(location, pid);
-	dtlDe = prepareMetsStructure(dtlDe);
-	dtlDe = addSiblings(dtlDe);
-	dtlDe = addChildren(dtlDe);
+	if (dtlDe.getStream(StreamType.STRUCT_MAP) != null) {
+	    dtlDe = prepareMetsStructure(dtlDe);
+	    dtlDe = addSiblings(dtlDe);
+	    dtlDe = addChildren(dtlDe);
+	} else {
+	    dtlDe = addSiblings(dtlDe);
+	    dtlDe = addDigitoolChildren(dtlDe);
+	}
+	dtlDe = removeEmptyVolumes(dtlDe);
 	return dtlDe;
+    }
+
+    private DigitalEntity removeEmptyVolumes(final DigitalEntity entity) {
+	DigitalEntity dtlDe = entity;
+	List<RelatedDigitalEntity> result = new Vector<RelatedDigitalEntity>();
+	List<RelatedDigitalEntity> related = entity.getRelated();
+
+	for (RelatedDigitalEntity d : related) {
+	    if (DigitalEntityRelation.part_of.toString().equals(d.relation)) {
+		if (ObjectType.volume.toString()
+			.equals(d.entity.getUsageType())) {
+		    if (d.entity.getRelated().isEmpty())
+			continue;
+		}
+	    }
+	    result.add(d);
+	}
+	dtlDe.setRelated(result);
+	return dtlDe;
+    }
+
+    private List<DigitalEntity> getParts(DigitalEntity dtlBean) {
+	List<DigitalEntity> links = new Vector<DigitalEntity>();
+	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
+	    if (rel.relation
+		    .compareTo(DigitalEntityRelation.part_of.toString()) == 0)
+		links.add(rel.entity);
+	}
+	return links;
     }
 
     private DigitalEntity buildSimpleBean(String location, String pid) {
@@ -140,8 +113,7 @@ public class EdowebDigitalEntityBuilder implements
 	try {
 	    setCatalogId(dtlDe);
 	} catch (CatalogIdNotFoundException e) {
-	    logger.warn(e.getLocalizedMessage() + "\n\t"
-		    + e.getCause().toString());
+	    logger.warn("", e);
 	}
 	loadDataStream(dtlDe, root);
 	linkToParent(dtlDe);
@@ -159,11 +131,9 @@ public class EdowebDigitalEntityBuilder implements
 	try {
 	    Element root = XmlUtils.getDocument(dtlDe
 		    .getStream(StreamType.MARC).getFile());
-
 	    XPathFactory factory = XPathFactory.newInstance();
 	    XPath xpath = factory.newXPath();
 	    xpath.setNamespaceContext(new MarcNamespaceContext());
-
 	    XPathExpression expr = xpath.compile("//controlfield[@tag='001']");
 	    Object result = expr.evaluate(root, XPathConstants.NODESET);
 	    NodeList nodes = (NodeList) result;
@@ -203,98 +173,94 @@ public class EdowebDigitalEntityBuilder implements
     }
 
     private DigitalEntity prepareMetsStructure(final DigitalEntity entity) {
-	Element root = null;
 	DigitalEntity dtlDe = entity;
-	try {
-	    root = XmlUtils.getDocument(entity.getStream(StreamType.STRUCT_MAP)
-		    .getFile());
-	} catch (Exception e) {
-	    return dtlDe;
-	}
-
-	try {
-	    dtlDe = createVolumes(entity, root);
-	} catch (XPathExpressionException e) {
-	    logger.warn(entity.getPid() + " no volumes found.");
-	}
-
-	try {
-	    mapFileIdsToVolumes(entity, root);
-	} catch (XPathExpressionException e) {
-	    logger.warn(entity.getPid() + " no issus found.");
-	}
-	try {
-	    root = XmlUtils.getDocument(entity.getStream(StreamType.FILE_SEC)
-		    .getFile());
-	} catch (Exception e) {
-	    return dtlDe;
-	}
-
-	try {
-	    mapGroupIdsToFileIds(entity, root);
-	} catch (XPathExpressionException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+	dtlDe = createVolumes(entity);
+	mapFileIdsToVolumes(entity);
+	mapGroupIdsToFileIds(entity);
 	return dtlDe;
     }
 
-    private void mapGroupIdsToFileIds(DigitalEntity entity, Element root)
-	    throws XPathExpressionException {
-	XPathFactory xpathFactory = XPathFactory.newInstance();
-	XPath xpath = xpathFactory.newXPath();
-	NodeList volumes = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
-		XPathConstants.NODESET);
-	for (int i = 0; i < volumes.getLength(); i++) {
-	    Element item = (Element) volumes.item(i);
-	    String groupId = item.getAttribute("GROUPID");
-	    String fileId = item.getAttribute("ID");
-	    logger.debug(groupId + " to " + fileId);
-	    groupIds2FileIds.put(groupId, fileId);
-	}
+    private void mapGroupIdsToFileIds(DigitalEntity entity) {
+	try {
+	    Element root = XmlUtils.getDocument(entity.getStream(
+		    StreamType.FILE_SEC).getFile());
 
-    }
-
-    private void mapFileIdsToVolumes(DigitalEntity entity, Element root)
-	    throws XPathExpressionException {
-	XPathFactory xpathFactory = XPathFactory.newInstance();
-	XPath xpath = xpathFactory.newXPath();
-	NodeList volumes = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
-		XPathConstants.NODESET);
-	for (int i = 0; i < volumes.getLength(); i++) {
-	    Element item = (Element) volumes.item(i);
-	    String volumeLabel = item.getAttribute("LABEL");
-	    String volumePid = entity.getPid() + "-" + volumeLabel;
-
-	    NodeList issues = (NodeList) xpath.evaluate("/*/*/*/*/*[@LABEL="
-		    + volumeLabel + "]/*/*", root, XPathConstants.NODESET);
-	    for (int j = 0; j < issues.getLength(); j++) {
-		Element issue = (Element) issues.item(j);
-		String fileId = issue.getAttribute("FILEID");
-		logger.debug("Key: " + fileId + " Value: " + volumePid);
-		fileIds2Volume.put(fileId, volumePid);
+	    XPathFactory xpathFactory = XPathFactory.newInstance();
+	    XPath xpath = xpathFactory.newXPath();
+	    NodeList volumes = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
+		    XPathConstants.NODESET);
+	    for (int i = 0; i < volumes.getLength(); i++) {
+		Element item = (Element) volumes.item(i);
+		String groupId = item.getAttribute("GROUPID");
+		String fileId = item.getAttribute("ID");
+		logger.debug(groupId + " to " + fileId);
+		groupIds2FileIds.put(groupId, fileId);
 	    }
-
+	} catch (XPathExpressionException e) {
+	    logger.warn("", e);
+	} catch (Exception e) {
+	    logger.debug("", e);
 	}
+
     }
 
-    private DigitalEntity createVolumes(DigitalEntity entity, Element root)
-	    throws XPathExpressionException {
+    private void mapFileIdsToVolumes(DigitalEntity entity) {
+	try {
+	    Element root = XmlUtils.getDocument(entity.getStream(
+		    StreamType.STRUCT_MAP).getFile());
+	    XPathFactory xpathFactory = XPathFactory.newInstance();
+	    XPath xpath = xpathFactory.newXPath();
+	    NodeList volumes = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
+		    XPathConstants.NODESET);
+	    for (int i = 0; i < volumes.getLength(); i++) {
+		Element item = (Element) volumes.item(i);
+		String volumeLabel = item.getAttribute("LABEL");
+		String volumePid = entity.getPid() + "-" + volumeLabel;
+
+		NodeList issues = (NodeList) xpath.evaluate(
+			"/*/*/*/*/*[@LABEL=" + volumeLabel + "]/*/*", root,
+			XPathConstants.NODESET);
+
+		for (int j = 0; j < issues.getLength(); j++) {
+		    Element issue = (Element) issues.item(j);
+		    String fileId = issue.getAttribute("FILEID");
+		    logger.debug("Key: " + fileId + " Value: " + volumePid);
+		    fileIds2Volume.put(fileId, volumePid);
+		}
+
+	    }
+	} catch (XPathExpressionException e) {
+	    logger.warn(entity.getPid() + " no issus found.");
+	}
+
+    }
+
+    private DigitalEntity createVolumes(DigitalEntity entity) {
 	DigitalEntity dtlDe = entity;
-	XPathFactory xpathFactory = XPathFactory.newInstance();
-	XPath xpath = xpathFactory.newXPath();
-	NodeList list = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
-		XPathConstants.NODESET);
-	for (int i = 0; i < list.getLength(); i++) {
-	    Element item = (Element) list.item(i);
-	    String volumeLabel = item.getAttribute("LABEL");
-	    String volumePid = dtlDe.getPid() + "-" + volumeLabel;
-	    DigitalEntity volume = new DigitalEntity(entity.getLocation()
-		    + File.separator + volumePid, volumePid);
-	    volume.setLabel(volumeLabel);
-	    volume.setParentPid(dtlDe.getPid());
-	    volume.setUsageType(ObjectType.volume.toString());
-	    dtlDe.addRelated(volume, DigitalEntityRelation.part_of.toString());
+	try {
+	    Element root = XmlUtils.getDocument(entity.getStream(
+		    StreamType.STRUCT_MAP).getFile());
+
+	    XPathFactory xpathFactory = XPathFactory.newInstance();
+	    XPath xpath = xpathFactory.newXPath();
+	    NodeList list = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
+		    XPathConstants.NODESET);
+	    for (int i = 0; i < list.getLength(); i++) {
+		Element item = (Element) list.item(i);
+		String volumeLabel = item.getAttribute("LABEL");
+		String volumePid = dtlDe.getPid() + "-" + volumeLabel;
+		DigitalEntity volume = new DigitalEntity(entity.getLocation()
+			+ File.separator + volumePid, volumePid);
+		volume.setLabel(volumeLabel);
+		volume.setParentPid(dtlDe.getPid());
+		volume.setUsageType(ObjectType.volume.toString());
+		dtlDe.addRelated(volume,
+			DigitalEntityRelation.part_of.toString());
+	    }
+	} catch (XPathExpressionException e) {
+	    logger.warn(entity.getPid() + " no volumes found.");
+	} catch (Exception e) {
+	    logger.debug("", e);
 	}
 	return dtlDe;
     }
@@ -354,7 +320,8 @@ public class EdowebDigitalEntityBuilder implements
 	try {
 	    File file = new File(dtlDe.getLocation() + File.separator + "."
 		    + dtlDe.getPid() + "_" + type.toString() + ".xml");
-	    File stream = XmlUtils.stringToFile(file, nodeToString(item));
+	    File stream = XmlUtils.stringToFile(file,
+		    XmlUtils.nodeToString(item));
 	    dtlDe.addStream(stream, "application/xml", type);
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
@@ -381,7 +348,7 @@ public class EdowebDigitalEntityBuilder implements
 	Element marc = (Element) ((Element) item)
 		.getElementsByTagName("record").item(0);
 	marc.setAttribute("xmlns", "http://www.loc.gov/MARC21/slim");
-	String xmlStr = nodeToString(marc);
+	String xmlStr = XmlUtils.nodeToString(marc);
 	/*
 	 * FIXME : Workaround for some bug.
 	 */
@@ -423,6 +390,9 @@ public class EdowebDigitalEntityBuilder implements
 			.toString()) == 0) {
 		    DigitalEntity b = buildSimpleBean(entity.getLocation(),
 			    relPid);
+		    logger.info("Add sibling " + b.getPid() + " to "
+			    + entity.getPid() + " utilizing relation "
+			    + usageType);
 		    dtlDe.addRelated(b, usageType);
 		}
 	    }
@@ -455,9 +425,56 @@ public class EdowebDigitalEntityBuilder implements
 			&& (usageType.compareTo(DigitalEntityRelation.ARCHIVE
 				.toString()) != 0)) {
 		    try {
+
 			DigitalEntity b = build(entity.getLocation(), relPid);
+			logger.info(b.getPid() + " is child of "
+				+ dtlDe.getPid());
 			b.setUsageType(usageType);
 			addToTree(entity, b);
+
+		    } catch (Exception e) {
+			// TODO
+			e.printStackTrace();
+		    }
+		}
+	    }
+	} catch (Exception e) {
+
+	}
+	return dtlDe;
+    }
+
+    private DigitalEntity addDigitoolChildren(final DigitalEntity entity) {
+	DigitalEntity dtlDe = entity;
+	try {
+	    Element root = XmlUtils.getDocument(entity.getXml());
+	    NodeList list = root.getElementsByTagName("relation");
+	    for (int i = 0; i < list.getLength(); i++) {
+		Node item = list.item(i);
+		String relPid = ((Element) item).getElementsByTagName("pid")
+			.item(0).getTextContent();
+		String usageType = ((Element) item)
+			.getElementsByTagName("usage_type").item(0)
+			.getTextContent();
+		String type = ((Element) item).getElementsByTagName("type")
+			.item(0).getTextContent();
+		String mimeType = ((Element) item)
+			.getElementsByTagName("mime_type").item(0)
+			.getTextContent();
+		if (type.compareTo(DigitalEntityRelation.include.toString()) == 0
+			&& mimeType.equals("application/pdf")
+			&& (usageType.compareTo(DigitalEntityRelation.ARCHIVE
+				.toString()) != 0)) {
+		    try {
+
+			DigitalEntity b = build(entity.getLocation(), relPid);
+			logger.info(b.getPid() + " is child of "
+				+ dtlDe.getPid());
+			b.setUsageType(usageType);
+			dtlDe.setIsParent(true);
+			b.setParentPid(dtlDe.getPid());
+			dtlDe.addRelated(b,
+				DigitalEntityRelation.part_of.toString());
 
 		    } catch (Exception e) {
 			// TODO
@@ -492,7 +509,6 @@ public class EdowebDigitalEntityBuilder implements
     }
 
     private void addToTree(DigitalEntity dtlDe, DigitalEntity related) {
-
 	DigitalEntity parent = findParent(dtlDe, related);
 	parent.setIsParent(true);
 	related.setParentPid(parent.getPid());
@@ -501,7 +517,6 @@ public class EdowebDigitalEntityBuilder implements
     }
 
     private DigitalEntity findParent(DigitalEntity dtlDe, DigitalEntity related) {
-
 	if (!(related.getUsageType().compareTo("VIEW") == 0)
 		&& !(related.getUsageType().compareTo("VIEW_MAIN") == 0))
 	    return dtlDe;
@@ -509,23 +524,22 @@ public class EdowebDigitalEntityBuilder implements
 	String fileId = groupIds2FileIds.get(groupId);
 	String volumeId = this.fileIds2Volume.get(fileId);
 
-	try {
-	    if (groupId == null)
-		throw new NullPointerException(related.getPid()
-			+ " stream is unkown!");
-	    if (fileId == null)
-		throw new NullPointerException("streamId: " + groupId
-			+ " mets fileId does not exist!");
-	    if (volumeId == null)
-		throw new NullPointerException("fileId: " + fileId
-			+ " mets volume does not exist!");
-	} catch (NullPointerException e) {
-	    logger.warn(related.getPid() + " (" + related.getLabel()
-		    + "), child of " + dtlDe.getPid() + " : " + e.getMessage()
-		    + " mets relation is broken!");
+	String message = null;
+	if (groupId == null)
+	    message = related.getPid() + " stream is unkown!";
+	if (fileId == null)
+	    message = "streamId: " + groupId + " mets fileId does not exist!";
+	if (volumeId == null)
+	    message = "fileId: " + fileId + " mets volume does not exist!";
+
+	if (message != null) {
 	    related.setUsageType(ObjectType.file.toString());
+	    // throw new NullPointerException(related.getPid() + " ("
+	    // + related.getLabel() + "), child of " + dtlDe.getPid()
+	    // + " : " + message + " mets relation is broken!");
 	    return dtlDe;
 	}
+
 	for (RelatedDigitalEntity entity : dtlDe.getRelated()) {
 	    // logger.debug(entity.entity.getPid());
 	    if (entity.entity.getPid().compareTo(volumeId) == 0) {
@@ -541,32 +555,62 @@ public class EdowebDigitalEntityBuilder implements
 	return dtlDe;
     }
 
-    /**
-     * Creates a plain xml string of the node and of all it's children. The xml
-     * string has no XML declaration.
-     * 
-     * @param node
-     *            a org.w3c.dom.Node
-     * @return a plain string representation of the node it's children
-     */
-    private String nodeToString(Node node) {
-	try {
-	    TransformerFactory transFactory = TransformerFactory.newInstance();
-	    Transformer transformer = transFactory.newTransformer();
-	    StringWriter buffer = new StringWriter(1024);
-	    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-		    "yes");
+    @SuppressWarnings("javadoc")
+    public class MarcNamespaceContext implements NamespaceContext {
 
-	    transformer
-		    .transform(new DOMSource(node), new StreamResult(buffer));
-	    String str = buffer.toString();
-	    return str;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	} catch (Error error) {
-	    error.printStackTrace();
+	public String getNamespaceURI(String prefix) {
+	    if (prefix == null)
+		throw new NullPointerException("Null prefix");
+	    else if ("marc".equals(prefix))
+		return "http://www.loc.gov/MARC21/slim";
+	    else if ("xml".equals(prefix))
+		return XMLConstants.XML_NS_URI;
+	    return XMLConstants.NULL_NS_URI;
 	}
-	return "";
+
+	// This method isn't necessary for XPath processing.
+	public String getPrefix(String uri) {
+	    throw new UnsupportedOperationException();
+	}
+
+	// This method isn't necessary for XPath processing either.
+	@SuppressWarnings("rawtypes")
+	public Iterator getPrefixes(String uri) {
+	    throw new UnsupportedOperationException();
+	}
+
     }
 
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class TypeNotFoundException extends RuntimeException {
+
+	public TypeNotFoundException(String message) {
+	    super(message);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class CatalogIdNotFoundException extends RuntimeException {
+
+	public CatalogIdNotFoundException(String message) {
+	    super(message);
+	}
+
+	public CatalogIdNotFoundException(Throwable cause) {
+	    super(cause);
+	}
+
+    }
+
+    @SuppressWarnings({ "javadoc", "serial" })
+    public class XPathException extends RuntimeException {
+	public XPathException(Throwable cause) {
+	    super(cause);
+	}
+
+	public XPathException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+    }
 }
