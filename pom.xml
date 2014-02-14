@@ -18,7 +18,7 @@
 		<integration.test.skip>false</integration.test.skip>
 		<es.version>0.90.5</es.version>
 		<commons.io.version>2.4</commons.io.version>
-		<regal.version>0.3.0-SNAPSHOT</regal.version>
+		<regal.version>0.4.0-SNAPSHOT</regal.version>
 	</properties>
 
 
