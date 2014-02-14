@@ -146,6 +146,11 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
+		<dependency>
+			<groupId>de.nrw.hbz.regal</groupId>
+			<artifactId>regal-mabconverter</artifactId>
+			<version>${regal.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>api</finalName>

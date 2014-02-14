@@ -174,10 +174,20 @@ public class Actions {
 
 	String msg = "";
 	Node node = readNode(pid);
-	fedora.deleteComplexObject(pid);
+	List<String> pids = null;
+	try {
+	    pids = fedora.deleteComplexObject(pid);
+	} catch (Exception e) {
+	    msg = e.getMessage();
+	}
 
 	try {
 	    removeFromIndex(node.getNamespace(), node.getContentType(), pid);
+	    if (pids != null) {
+		for (String p : pids)
+		    removeFromIndex(node.getNamespace(), node.getContentType(),
+			    p);
+	    }
 	} catch (Exception e) {
 	    msg = e.getMessage();
 	}
@@ -574,34 +584,6 @@ public class Actions {
 
     /**
      * @param pid
-     *            the pid of the object
-     * @return a epicur display for the pid
-     */
-    public String epicur(String pid) {
-	String url = urnbase + pid;
-	return services.epicur(url, getUrn(pid));
-    }
-
-    /**
-     * @param pid
-     *            The pid of an object
-     * @return The metadata a oaidc-xml
-     */
-    public String oaidc(String pid) {
-	return services.oaidc(pid);
-    }
-
-    /**
-     * @param node
-     *            the node with pdf data
-     * @return the plain text content of the pdf
-     */
-    public String pdfbox(Node node) {
-	return services.pdfbox(node, fedoraExtern);
-    }
-
-    /**
-     * @param pid
      *            the pid of a node that must be published on the oai interface
      * @return A short message.
      */
@@ -619,7 +601,7 @@ public class Actions {
      * @return A short message
      */
     public String removeFromIndex(String index, String type, String pid) {
-	search.deleteSync(index, type, pid);
+	search.delete(index, type, pid);
 	return pid + " removed from index " + index + "!";
     }
 
@@ -633,10 +615,10 @@ public class Actions {
      * @return a short message.
      */
     public String index(String p, String namespace, String type) {
-	String viewAsString = getReM(namespace + ":" + p, "application/json");
+	String viewAsString = oaiore(namespace + ":" + p, "application/json");
 	viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
 		(JSONArray) JSONValue.parse(viewAsString)));
-	search.indexSync(namespace, type, namespace + ":" + p, viewAsString);
+	search.index(namespace, type, namespace + ":" + p, viewAsString);
 	return namespace + ":" + p + " indexed!";
     }
 
@@ -645,29 +627,6 @@ public class Actions {
 	String pid = n.getPID();
 	String p = pid.substring(pid.indexOf(":") + 1);
 	return index(p, namespace, n.getContentType());
-    }
-
-    /**
-     * @param node
-     *            the node with pdf data
-     * @return the plain text content of the pdf
-     */
-    public String itext(Node node) {
-	return services.itext(node, fedoraExtern);
-    }
-
-    /**
-     * @param pid
-     *            the pid
-     * @param format
-     *            application/rdf+xml text/plain application/json
-     * @return a oai_ore resource map
-     */
-    public String getReM(String pid, String format) {
-	List<String> parents = getRelatives(pid, IS_PART_OF);
-	List<String> children = getRelatives(pid, HAS_PART);
-	return representations.getReM(pid, format, fedoraExtern, parents,
-		children);
     }
 
     /**
@@ -710,7 +669,7 @@ public class Actions {
 	    int until, String getListingFrom) {
 
 	List<String> list = null;
-	if (!getListingFrom.equals("es")) {
+	if (!"es".equals(getListingFrom)) {
 	    if (type == null || type.isEmpty())
 		list = listAllFromRepo(namespace, from, until);
 	    else
@@ -840,15 +799,6 @@ public class Actions {
     }
 
     /**
-     * @param node
-     *            a node with a pdf data stream
-     * @return a URL to a PDF/A Conversion
-     */
-    public String pdfa(Node node) {
-	return services.pdfa(node, fedoraExtern);
-    }
-
-    /**
      * Generates a urn
      * 
      * @param pid
@@ -923,13 +873,22 @@ public class Actions {
     }
 
     /**
-     * @param pid
+     * @param node
+     *            pid with namespace:pid
+     * @return a aleph mab xml representation
+     */
+    public String aleph(Node node) {
+	AlephMabMaker am = new AlephMabMaker();
+	return am.aleph(node, server);
+    }
+
+    /**
+     * @param node
      *            pid with namespace:pid
      * @return a aleph mab xml representation
      */
     public String aleph(String pid) {
-	// TODO Auto-generated method stub
-	return null;
+	return aleph(readNode(pid));
     }
 
     /**
@@ -940,4 +899,65 @@ public class Actions {
     public String pdfa(String pid) {
 	return pdfa(readNode(pid));
     }
+
+    /**
+     * @param node
+     *            a node with a pdf data stream
+     * @return a URL to a PDF/A Conversion
+     */
+    public String pdfa(Node node) {
+	return services.pdfa(node, fedoraExtern);
+    }
+
+    /**
+     * @param pid
+     *            the pid of the object
+     * @return a epicur display for the pid
+     */
+    public String epicur(String pid) {
+	String url = urnbase + pid;
+	return services.epicur(url, getUrn(pid));
+    }
+
+    /**
+     * @param pid
+     *            The pid of an object
+     * @return The metadata a oaidc-xml
+     */
+    public String oaidc(String pid) {
+	return services.oaidc(pid);
+    }
+
+    /**
+     * @param node
+     *            the node with pdf data
+     * @return the plain text content of the pdf
+     */
+    public String pdfbox(Node node) {
+	return services.pdfbox(node, fedoraExtern);
+    }
+
+    /**
+     * @param node
+     *            the node with pdf data
+     * @return the plain text content of the pdf
+     */
+    public String itext(Node node) {
+	return services.itext(node, fedoraExtern);
+    }
+
+    /**
+     * @param pid
+     *            the pid
+     * @param format
+     *            application/rdf+xml text/plain application/json
+     * @return a oai_ore resource map
+     */
+    public String oaiore(String pid, String format) {
+	List<String> parents = getRelatives(pid, IS_PART_OF);
+	List<String> children = getRelatives(pid, HAS_PART);
+	return representations.getReM(pid, format, fedoraExtern, parents,
+		children);
+    }
+
 }

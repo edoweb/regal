@@ -21,22 +21,22 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.elasticsearch.action.ActionResponse;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+
+import de.nrw.hbz.regal.fedora.CopyUtils;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
@@ -49,22 +49,33 @@ public class Search {
     }
 
     @SuppressWarnings("serial")
-    class SyncSearchCallException extends RuntimeException {
-	public SyncSearchCallException(Throwable e) {
+    class SearchException extends RuntimeException {
+	public SearchException(Throwable e) {
 	    super(e);
 	}
     }
 
     Client client = null;
+    Node node = null;
 
     /**
      * Used for testing
      */
     public Search() {
 
-	Node node = nodeBuilder().local(true).node();
+	node = nodeBuilder().local(true).node();
 	client = node.client();
 
+	client.admin().indices().prepareDelete().execute().actionGet();
+	init("test");
+    }
+
+    /**
+     * Used for testing. Clean up!
+     */
+    public void down() {
+	client.admin().indices().prepareDelete().execute().actionGet();
+	node.close();
     }
 
     /**
@@ -78,10 +89,23 @@ public class Search {
 	client = new TransportClient(ImmutableSettings.settingsBuilder()
 		.put("cluster.name", cluster).build())
 		.addTransportAddress(server);
+	init("edoweb");
+    }
 
-	// Node node = nodeBuilder().clusterName(cluster).client(true).node();
-	// client = node.client();
+    private void init(String index) {
+	try {
+	    String indexConfig = CopyUtils.copyToString(
+		    Thread.currentThread().getContextClassLoader()
+			    .getResourceAsStream("index-config.json"), "utf-8");
 
+	    client.admin().indices().prepareCreate(index)
+		    .setSource(indexConfig).execute().actionGet();
+
+	} catch (org.elasticsearch.indices.IndexAlreadyExistsException e) {
+
+	} catch (Exception e) {
+	    throw new SearchException(e);
+	}
     }
 
     /**
@@ -96,24 +120,12 @@ public class Search {
      *            the actual item
      * @return the Response
      */
-    public ActionResponse indexSync(String index, String type, String id,
+    public ActionResponse index(String index, String type, String id,
 	    String data) {
 
-	try {
-	    return indexAsync(index, type, id, data).get();
-	} catch (InterruptedException e) {
-	    throw new SyncSearchCallException(e);
-	} catch (ExecutionException e) {
-	    throw new SyncSearchCallException(e);
-	}
-    }
+	return client.prepareIndex(index, type, id).setSource(data).execute()
+		.actionGet();
 
-    private Future<ActionResponse> indexAsync(String index, String type,
-	    String id, String data) {
-	ElasticsearchFuture f = new ElasticsearchFuture();
-	f.exec(client.prepareIndex(index, type, id).setSource(data).execute()
-		.actionGet());
-	return f;
     }
 
     /**
@@ -132,8 +144,8 @@ public class Search {
 	    int until) {
 	if (from >= until)
 	    throw new InvalidRangeException();
-
 	SearchRequestBuilder builder = null;
+	client.admin().indices().refresh(new RefreshRequest()).actionGet();
 	if (index == null || index.equals(""))
 	    builder = client.prepareSearch();
 	else
@@ -185,71 +197,18 @@ public class Search {
      *            the item's id
      * @return the response
      */
-    public ActionResponse deleteSync(String index, String type, String id) {
-	try {
-	    return deleteAsync(index, type, id).get();
-	} catch (InterruptedException e) {
-	    throw new SyncSearchCallException(e);
-	} catch (ExecutionException e) {
-	    throw new SyncSearchCallException(e);
-	}
+    public ActionResponse delete(String index, String type, String id) {
+	return client.prepareDelete(index, type, id)
+		.setOperationThreaded(false).execute().actionGet();
     }
 
-    private ElasticsearchFuture deleteAsync(String index, String type, String id) {
-	ElasticsearchFuture f = new ElasticsearchFuture();
-	f.exec(client.prepareDelete(index, type, id)
-		.setOperationThreaded(false).execute().actionGet());
-	return f;
+    public SearchHits query(String index, String fieldName, String fieldValue) {
+	client.admin().indices().refresh(new RefreshRequest()).actionGet();
+	QueryBuilder query = QueryBuilders.boolQuery().must(
+		QueryBuilders.fieldQuery(fieldName, fieldValue));
+	SearchResponse response = client.prepareSearch(index).setQuery(query)
+		.execute().actionGet();
+	return response.getHits();
     }
 
-    class ElasticsearchFuture implements Future<ActionResponse> {
-	private volatile ActionResponse result = null;
-	private volatile boolean cancelled = false;
-	private final CountDownLatch countDownLatch;
-
-	public ElasticsearchFuture() {
-	    countDownLatch = new CountDownLatch(1);
-	}
-
-	@Override
-	public boolean cancel(final boolean mayInterruptIfRunning) {
-	    if (isDone()) {
-		return false;
-	    } else {
-		countDownLatch.countDown();
-		cancelled = true;
-		return !isDone();
-	    }
-	}
-
-	@Override
-	public ActionResponse get() throws InterruptedException,
-		ExecutionException {
-	    countDownLatch.await();
-	    return result;
-	}
-
-	@Override
-	public ActionResponse get(long timeout, TimeUnit unit)
-		throws InterruptedException, ExecutionException,
-		TimeoutException {
-	    countDownLatch.await(timeout, unit);
-	    return result;
-	}
-
-	@Override
-	public boolean isCancelled() {
-	    return cancelled;
-	}
-
-	@Override
-	public boolean isDone() {
-	    return countDownLatch.getCount() == 0;
-	}
-
-	public void exec(final ActionResponse result) {
-	    this.result = result;
-	    countDownLatch.countDown();
-	}
-    }
 }

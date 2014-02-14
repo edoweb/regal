@@ -219,12 +219,15 @@ public class Resource {
      */
     @DELETE
     @Produces({ "application/json", "application/xml" })
-    public String deleteAllOfType(@QueryParam("type") String type,
-	    @QueryParam("namespace") String namespace,
-	    @QueryParam("from") int from, @QueryParam("until") int until) {
+    public String deleteAllOfType(
+	    @DefaultValue("") @QueryParam("type") String type,
+	    @DefaultValue("") @QueryParam("namespace") String namespace,
+	    @DefaultValue("0") @QueryParam("from") int from,
+	    @DefaultValue("10") @QueryParam("until") int until,
+	    @DefaultValue("es") @QueryParam("getListingFrom") String getListingFrom) {
 	try {
 	    return actions.deleteAll(actions.list(type, namespace, from, until,
-		    "repo"));
+		    getListingFrom));
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
@@ -671,7 +674,7 @@ public class Resource {
     @Produces({ "application/rdf+xml" })
     public Response getReMAsRdfXml(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	String rem = actions.getReM(namespace + ":" + pid,
+	String rem = actions.oaiore(namespace + ":" + pid,
 		"application/rdf+xml");
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
@@ -694,7 +697,7 @@ public class Resource {
     @Produces({ "text/plain" })
     public Response getReMAsNTriple(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	String rem = actions.getReM(namespace + ":" + pid, "text/plain");
+	String rem = actions.oaiore(namespace + ":" + pid, "text/plain");
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
 		.entity(rem);
@@ -716,7 +719,7 @@ public class Resource {
     @Produces({ "application/json" })
     public Response getReMAsJson(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	String rem = actions.getReM(namespace + ":" + pid, "application/json");
+	String rem = actions.oaiore(namespace + ":" + pid, "application/json");
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
 		.entity(rem);
@@ -738,7 +741,7 @@ public class Resource {
     @Produces({ "text/html" })
     public Response getReMAsHtml(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
-	String rem = actions.getReM(namespace + ":" + pid, "text/html");
+	String rem = actions.oaiore(namespace + ":" + pid, "text/html");
 	// return rem;
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
@@ -898,4 +901,17 @@ public class Resource {
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
     }
+
+    @GET
+    @Path("/{pid}.aleph")
+    @Produces({ "application/xml; charset=UTF-8" })
+    public String aleph(@PathParam("pid") String pid, @Context Request request) {
+	try {
+	    return actions.aleph(pid);
+	} catch (ArchiveException e) {
+	    throw new HttpArchiveException(
+		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
+	}
+    }
+
 }

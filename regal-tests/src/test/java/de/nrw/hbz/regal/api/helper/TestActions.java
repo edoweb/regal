@@ -244,8 +244,8 @@ public class TestActions {
     @Test
     public void oaiOre() throws IOException {
 	createTestObject("123");
-	RdfUtils.validate(actions.getReM("test:123", "text/plain"));
-	System.out.println(actions.getReM("test:123", "text/plain"));
+	RdfUtils.validate(actions.oaiore("test:123", "text/plain"));
+	System.out.println(actions.oaiore("test:123", "text/plain"));
     }
 
     @Test
@@ -264,7 +264,7 @@ public class TestActions {
     @Test
     public void html() throws IOException {
 	createTestObject("123");
-	actions.getReM("test:123", "text/html");
+	actions.oaiore("test:123", "text/html");
     }
 
     @Test
@@ -347,6 +347,13 @@ public class TestActions {
 	actions.deleteMetadata("123", "test");
 	Thread.sleep(10000);
 	actions.addUrn("123", "test", "hbz:test:902");
+    }
+
+    @Test
+    public void alephConversion() throws IOException, InterruptedException {
+	createTestObject("123");
+	Node node = actions.readNode("test:123");
+	System.out.println("Start-\"" + actions.aleph(node) + "\"-End");
     }
 
     @After

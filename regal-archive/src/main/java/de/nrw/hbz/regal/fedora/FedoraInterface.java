@@ -169,7 +169,7 @@ public interface FedoraInterface {
      *            The pid that must be deleted
      * @return The pid that has been deleted
      */
-    public String deleteComplexObject(String pid);
+    public List<String> deleteComplexObject(String pid);
 
     /**
      * @param namespace
