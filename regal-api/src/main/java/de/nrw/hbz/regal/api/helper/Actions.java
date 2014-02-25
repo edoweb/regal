@@ -17,7 +17,6 @@
 package de.nrw.hbz.regal.api.helper;
 
 import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_CONTENT_TYPE;
-import static de.nrw.hbz.regal.datatypes.Vocabulary.REL_IS_NODE_TYPE;
 import static de.nrw.hbz.regal.datatypes.Vocabulary.TYPE_OBJECT;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.HAS_PART;
 import static de.nrw.hbz.regal.fedora.FedoraVocabulary.IS_PART_OF;
@@ -726,54 +725,37 @@ public class Actions {
 	if (from >= until || from < 0 || until < 0)
 	    throw new HttpArchiveException(416, "Can not process. From: "
 		    + from + "Until: " + until + ".");
-
+	System.out.println("1");
 	List<String> result = new Vector<String>();
 	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
 	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
 		FedoraVocabulary.N3);
 	List<String> list = RdfUtils.getFedoraSubject(in);
-	if (from >= list.size()) {
+
+	if (namespace != null && !namespace.isEmpty()) {
+	    for (String item : list) {
+		if (item.startsWith(namespace + ":")) {
+		    result.add(item);
+		}
+	    }
+	} else {
+	    result = list;
+	}
+
+	if (from >= result.size()) {
 	    return new Vector<String>();
 	}
-	if (until < list.size()) {
-	    list = list.subList(from, until);
+	if (until < result.size()) {
+	    result = result.subList(from, until);
 	} else {
-	    list = list.subList(from, list.size());
+	    result = result.subList(from, result.size());
 	}
-	if (namespace == null || namespace.isEmpty())
-	    return list;
-	for (String item : list) {
-	    if (item.startsWith(namespace + ":"))
-		result.add(item);
-	}
+
 	return result;
     }
 
     private List<String> listAllFromRepo(String namespace, int from, int until) {
-	if (from >= until || from < 0 || until < 0)
-	    throw new HttpArchiveException(416, "Can not process. From: "
-		    + from + "Until: " + until + ".");
-
-	List<String> result = new Vector<String>();
-	String query = "* <" + REL_IS_NODE_TYPE + "> \"" + TYPE_OBJECT + "\"";
-	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	List<String> list = RdfUtils.getFedoraSubject(in);
-	if (from >= list.size()) {
-	    return new Vector<String>();
-	}
-	if (until < list.size()) {
-	    list = list.subList(from, until);
-	} else {
-	    list = list.subList(from, list.size());
-	}
-	if (namespace == null || namespace.isEmpty())
-	    return list;
-	for (String item : list) {
-	    if (item.startsWith(namespace + ":"))
-		result.add(item);
-	}
-	return result;
+	return listAllFromRepo(TYPE_OBJECT, namespace, from, until);
     }
 
     /**
