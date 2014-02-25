@@ -67,7 +67,7 @@
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<!-- ifla to dc -->
-		<data source="*.http://iflastandards.info/ns/isbd/elements/P1004"
+		<data source="*.http://purl.org/dc/terms/title"
 			name="dc:title">
 			<regexp match="((.*))" format="${1}" />
 		</data>

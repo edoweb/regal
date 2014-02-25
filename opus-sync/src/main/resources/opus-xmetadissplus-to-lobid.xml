@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1">
 	<rules>
 
-		<data source="*.title.value" name="http://iflastandards.info/ns/isbd/elements/P1004">
+		<data source="*.title.value" name="http://purl.org/dc/terms/title">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 
