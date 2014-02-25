@@ -44,7 +44,7 @@ public class TestDigitoolDownloader {
 
 	properties = new Properties();
 	properties.load(getClass().getResourceAsStream(
-		"/testDippDownloader.properties"));
+		"/testEdowebDownloader.properties"));
 
 	piddownloaderServer = properties.getProperty("piddownloader.server");
 	piddownloaderDownloadLocation = properties
