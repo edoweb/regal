@@ -200,7 +200,7 @@ public class RdfUtils {
 	String str = readRdfToString(url, RDFFormat.NTRIPLES,
 		RDFFormat.NTRIPLES, "text/plain");
 	followMe = getSameAsLink(url);
-	if (followMe == null) {
+	if (followMe == null || !followMe.toString().contains("lobid")) {
 	    return str;
 	}
 	String str1 = readRdfToString(followMe, RDFFormat.NTRIPLES,
