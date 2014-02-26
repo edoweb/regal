@@ -171,24 +171,26 @@ public class Actions {
      */
     public String delete(String pid) {
 
-	String msg = "";
-	Node node = readNode(pid);
-	List<String> pids = null;
+	StringBuffer msg = new StringBuffer();
+
+	List<Node> pids = null;
 	try {
 	    pids = fedora.deleteComplexObject(pid);
 	} catch (Exception e) {
-	    msg = e.getMessage();
+	    msg.append("\n" + e);
 	}
 
 	try {
-	    removeFromIndex(node.getNamespace(), node.getContentType(), pid);
 	    if (pids != null) {
-		for (String p : pids)
-		    removeFromIndex(node.getNamespace(), node.getContentType(),
-			    p);
+		for (Node n : pids) {
+
+		    String m = removeFromIndex(n.getNamespace(),
+			    n.getContentType(), n.getPID());
+		    msg.append("\n" + m);
+		}
 	    }
 	} catch (Exception e) {
-	    msg = e.getMessage();
+	    msg.append("\n" + e);
 	}
 
 	return pid + " successfully deleted! \n" + msg + "\n";
@@ -601,7 +603,7 @@ public class Actions {
      */
     public String removeFromIndex(String index, String type, String pid) {
 	search.delete(index, type, pid);
-	return pid + " removed from index " + index + "!";
+	return pid + " of type " + type + " removed from index " + index + "!";
     }
 
     /**

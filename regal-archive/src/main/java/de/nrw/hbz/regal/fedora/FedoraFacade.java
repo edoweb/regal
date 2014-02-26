@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -468,24 +469,45 @@ class FedoraFacade implements FedoraInterface {
     }
 
     @Override
-    public List<String> deleteComplexObject(String rootPID) {
+    public List<Node> deleteComplexObject(String rootPID) {
 	if (!nodeExists(rootPID)) {
 	    throw new NodeNotFoundException(rootPID);
 	}
 	// logger.info("deleteObject");
 
-	deleteNode(rootPID);
-
 	// Find all children
 	List<String> pids = null;
+	List<Node> result = new ArrayList<Node>();
+	result.add(readNode(rootPID));
 	pids = findPids("* <" + IS_PART_OF + "> <" + rootPID + ">", SPO);
 	// Delete all children
 	if (pids != null)
 	    for (String pid : pids) {
 		Node node = readNode(pid);
-		deleteComplexObject(node.getPID());
+		result.addAll(deleteComplexObject(node.getPID()));
 	    }
-	return pids;
+	deleteNode(rootPID);
+	return result;
+    }
+
+    @Override
+    public List<Node> listComplexObject(String rootPID) {
+	if (!nodeExists(rootPID)) {
+	    throw new NodeNotFoundException(rootPID);
+	}
+	Node root = readNode(rootPID);
+	// Find all children
+	List<String> pids = null;
+	List<Node> result = new ArrayList<Node>();
+	result.add(root);
+	pids = findPids("* <" + IS_PART_OF + "> <" + rootPID + ">", SPO);
+	// Delete all children
+	if (pids != null)
+	    for (String pid : pids) {
+		Node node = readNode(pid);
+		result.addAll(listComplexObject(node.getPID()));
+	    }
+	return result;
     }
 
     @Override
