@@ -38,6 +38,8 @@ substituteVars logging.properties $ARCHIVE_HOME/conf/logging.properties
 substituteVars catalina.out $ARCHIVE_HOME/conf/catalina.out
 substituteVars Identify.xml $ARCHIVE_HOME/conf/Identify.xml
 substituteVars proai.properties $ARCHIVE_HOME/conf/proai.properties
+substituteVars robots.txt $ARCHIVE_HOME/conf/robots.txt
+cp favicon.ico $ARCHIVE_HOME/conf/favicon.ico
 }
 
 function substituteVars()
@@ -226,6 +228,8 @@ function copyHtml
 echo "copy html"
 cp -r $ARCHIVE_HOME/src/regal-ui/htdocs/* $ARCHIVE_HOME/html/
 cp $ARCHIVE_HOME/conf/Identify.xml $ARCHIVE_HOME/html/
+cp $ARCHIVE_HOME/conf/robots.txt $ARCHIVE_HOME/html/
+cp $ARCHIVE_HOME/conf/favicon.ico $ARCHIVE_HOME/html/
 echo "Copy api Doku"
 copySwagger
 }
