@@ -92,9 +92,9 @@ urn=`echo $line|grep -o -m1 "urn:nbn:de:hbz:929.*$"`
 cout=`curl -s -i http://nbn-resolving.org/$urn |grep "307"`
 if [ $? -eq 0 ]
 then
-echo "$pid , http://nbn-resolving.org/$urn Success $cout"
+echo "$host/resource/$pid , http://nbn-resolving.org/$urn , $cout , Success"
 else
-echo "$pid , http://nbn-resolving.org/$urn ERROR $cout"
+echo "$host/resource/$pid , http://nbn-resolving.org/$urn , $cout , ERROR"
 fi
 done <pid2urn.sorted.txt
 }
