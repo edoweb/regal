@@ -169,7 +169,7 @@ public interface FedoraInterface {
      *            The pid that must be deleted
      * @return The pid that has been deleted
      */
-    public List<String> deleteComplexObject(String pid);
+    public List<Node> deleteComplexObject(String pid);
 
     /**
      * @param namespace
@@ -224,5 +224,12 @@ public interface FedoraInterface {
      *            the nodes pid
      */
     public void linkParentToNode(String parentPid, String pid);
+
+    /**
+     * @param pid
+     *            pid of root object
+     * @return list of all children and children of children...
+     */
+    public List<Node> listComplexObject(String pid);
 
 }

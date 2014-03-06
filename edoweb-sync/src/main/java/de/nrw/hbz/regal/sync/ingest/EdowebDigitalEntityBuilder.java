@@ -113,7 +113,7 @@ public class EdowebDigitalEntityBuilder implements
 	try {
 	    setCatalogId(dtlDe);
 	} catch (CatalogIdNotFoundException e) {
-	    logger.warn("", e);
+	    logger.debug(pid + " no catalog id found");
 	}
 	loadDataStream(dtlDe, root);
 	linkToParent(dtlDe);
@@ -143,7 +143,7 @@ public class EdowebDigitalEntityBuilder implements
 	    }
 	    String id = nodes.item(0).getTextContent();
 	    dtlDe.addIdentifier(id);
-	    logger.info(dtlDe.getPid() + " add id " + id);
+	    // logger.info(dtlDe.getPid() + " add id " + id);
 	} catch (Exception e) {
 	    throw new CatalogIdNotFoundException(e);
 	}
@@ -166,7 +166,8 @@ public class EdowebDigitalEntityBuilder implements
 	    }
 
 	    dtlBean.setType(nodes.item(0).getTextContent());
-	    logger.info(dtlBean.getPid() + " setType to: " + dtlBean.getType());
+	    // logger.info(dtlBean.getPid() + " setType to: " +
+	    // dtlBean.getType());
 	} catch (XPathExpressionException e) {
 	    throw new XPathException(e);
 	}
@@ -193,7 +194,7 @@ public class EdowebDigitalEntityBuilder implements
 		Element item = (Element) volumes.item(i);
 		String groupId = item.getAttribute("GROUPID");
 		String fileId = item.getAttribute("ID");
-		logger.debug(groupId + " to " + fileId);
+		// logger.debug(groupId + " to " + fileId);
 		groupIds2FileIds.put(groupId, fileId);
 	    }
 	} catch (XPathExpressionException e) {
@@ -224,7 +225,7 @@ public class EdowebDigitalEntityBuilder implements
 		for (int j = 0; j < issues.getLength(); j++) {
 		    Element issue = (Element) issues.item(j);
 		    String fileId = issue.getAttribute("FILEID");
-		    logger.debug("Key: " + fileId + " Value: " + volumePid);
+		    // logger.debug("Key: " + fileId + " Value: " + volumePid);
 		    fileIds2Volume.put(fileId, volumePid);
 		}
 
@@ -390,9 +391,9 @@ public class EdowebDigitalEntityBuilder implements
 			.toString()) == 0) {
 		    DigitalEntity b = buildSimpleBean(entity.getLocation(),
 			    relPid);
-		    logger.info("Add sibling " + b.getPid() + " to "
-			    + entity.getPid() + " utilizing relation "
-			    + usageType);
+		    // logger.info("Add sibling " + b.getPid() + " to "
+		    // + entity.getPid() + " utilizing relation "
+		    // + usageType);
 		    dtlDe.addRelated(b, usageType);
 		}
 	    }
@@ -427,8 +428,8 @@ public class EdowebDigitalEntityBuilder implements
 		    try {
 
 			DigitalEntity b = build(entity.getLocation(), relPid);
-			logger.info(b.getPid() + " is child of "
-				+ dtlDe.getPid());
+			// logger.info(b.getPid() + " is child of "
+			// + dtlDe.getPid());
 			b.setUsageType(usageType);
 			addToTree(entity, b);
 
@@ -468,8 +469,8 @@ public class EdowebDigitalEntityBuilder implements
 		    try {
 
 			DigitalEntity b = build(entity.getLocation(), relPid);
-			logger.info(b.getPid() + " is child of "
-				+ dtlDe.getPid());
+			// logger.info(b.getPid() + " is child of "
+			// + dtlDe.getPid());
 			b.setUsageType(usageType);
 			dtlDe.setIsParent(true);
 			b.setParentPid(dtlDe.getPid());
@@ -529,24 +530,25 @@ public class EdowebDigitalEntityBuilder implements
 	    message = related.getPid() + " stream is unkown!";
 	if (fileId == null)
 	    message = "streamId: " + groupId + " mets fileId does not exist!";
-	if (volumeId == null)
+	if (volumeId == null) {
 	    message = "fileId: " + fileId + " mets volume does not exist!";
 
+	    throw new NullPointerException(message);
+	}
+
 	if (message != null) {
+	    logger.info("-----" + message);
 	    related.setUsageType(ObjectType.file.toString());
-	    // throw new NullPointerException(related.getPid() + " ("
-	    // + related.getLabel() + "), child of " + dtlDe.getPid()
-	    // + " : " + message + " mets relation is broken!");
 	    return dtlDe;
 	}
 
 	for (RelatedDigitalEntity entity : dtlDe.getRelated()) {
 	    // logger.debug(entity.entity.getPid());
 	    if (entity.entity.getPid().compareTo(volumeId) == 0) {
-		logger.debug(related.getPid() + " (" + related.getLabel()
-			+ "), child of " + entity.entity.getPid() + " ("
-			+ entity.entity.getLabel() + ") child of "
-			+ dtlDe.getPid() + " (" + dtlDe.getLabel() + ")");
+		// logger.debug(related.getPid() + " (" + related.getLabel()
+		// + "), child of " + entity.entity.getPid() + " ("
+		// + entity.entity.getLabel() + ") child of "
+		// + dtlDe.getPid() + " (" + dtlDe.getLabel() + ")");
 		related.setUsageType(ObjectType.file.toString());
 		return entity.entity;
 	    }

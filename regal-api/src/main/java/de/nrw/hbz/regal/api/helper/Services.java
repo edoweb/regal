@@ -104,13 +104,7 @@ class Services {
 		    + "<"
 		    + pid
 		    + "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
-		    + lobidUri
-		    + "> .\n"
-		    + "<"
-		    + pid
-		    + "> <http://purl.org/lobid/lv#hbzID> \""
-		    + alephid
-		    + "\" .";
+		    + lobidUri + "> .";
 	    File metadataFile = CopyUtils.copyStringToFile(str);
 
 	    node.setMetadataFile(metadataFile.getAbsolutePath());

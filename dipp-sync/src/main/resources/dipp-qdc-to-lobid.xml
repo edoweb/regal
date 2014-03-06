@@ -17,7 +17,7 @@
 				format="http://iflastandards.info/ns/isbd/terms/mediatype/T1010" />
 		</data>
 		<!-- Map specific fields: -->
-		<data source="title.value" name="http://iflastandards.info/ns/isbd/elements/P1004">
+		<data source="title.value" name="http://purl.org/dc/terms/title">
 			<regexp match="((.*))" format="${1}" />
 		</data>
 		<data source="language.value" name="http://purl.org/dc/terms/language">

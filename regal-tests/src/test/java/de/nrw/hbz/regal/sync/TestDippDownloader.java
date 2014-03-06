@@ -66,7 +66,7 @@ public class TestDippDownloader {
 	    FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation));
 
 	} catch (IOException e) {
-	    e.printStackTrace();
+
 	}
     }
 

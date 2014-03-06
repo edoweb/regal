@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source pidlist.sh
+source functions.sh
 
 type=$1
 server=$2

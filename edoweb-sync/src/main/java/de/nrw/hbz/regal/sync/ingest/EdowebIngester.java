@@ -192,7 +192,7 @@ public class EdowebIngester implements IngestInterface {
 	    String metadata = "<" + pid
 		    + "> <http://purl.org/ontology/bibo/Website> \""
 		    + dtlBean.getLabel() + "\" .\n" + "<" + pid
-		    + "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
+		    + "> <http://purl.org/dc/terms/title> \""
 		    + dtlBean.getLabel() + "\" .\n";
 	    webclient.setMetadata(dtlBean, metadata);
 	    webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
@@ -207,32 +207,51 @@ public class EdowebIngester implements IngestInterface {
     private void updateVolume(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
 	logger.info(pid + " " + "Found eJournal volume.");
-	dtlBean.addTransformer("oaidc");
-	dtlBean.addTransformer("epicur");
-	ObjectType t = ObjectType.volume;
-	webclient.createResource(t, dtlBean);
-	String metadata = "<" + pid
-		+ "> <http://purl.org/ontology/bibo/volume> \""
-		+ dtlBean.getLabel() + "\" .\n" + "<" + pid
-		+ "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
-		+ dtlBean.getLabel() + "\" .\n";
-	webclient.setMetadata(dtlBean, metadata);
-	webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
-	webclient.makeOaiSet(dtlBean);
+	initVolume(dtlBean, pid);
 	Vector<DigitalEntity> issues = getParts(dtlBean);
 	int num = issues.size();
 	int count = 1;
 	logger.info(pid + " Found " + num + " issues.");
 	for (DigitalEntity issue : issues) {
 	    logger.info("Part: " + (count++) + "/" + num);
+	    updateIssue(issue);
+	}
+
+	logger.info(pid + " " + "updated.\n");
+    }
+
+    private void initVolume(DigitalEntity dtlBean, String pid) {
+	try {
+	    dtlBean.addTransformer("oaidc");
+	    dtlBean.addTransformer("epicur");
+	    ObjectType t = ObjectType.volume;
+	    webclient.createResource(t, dtlBean);
+	    String metadata = "<" + pid
+		    + "> <http://purl.org/ontology/bibo/volume> \""
+		    + dtlBean.getLabel() + "\" .\n" + "<" + pid
+		    + "> <http://purl.org/dc/terms/title> \""
+		    + dtlBean.getLabel() + "\" .\n";
+	    webclient.setMetadata(dtlBean, metadata);
+	    webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
+	    webclient.makeOaiSet(dtlBean);
+	} catch (Exception e) {
+	    logger.debug("", e);
+	}
+    }
+
+    private void updateIssue(DigitalEntity issue) {
+	try {
+
 	    issue.addTransformer("oaidc");
 	    issue.addTransformer("epicur");
 	    updateFile(issue);
 	    webclient.addUrn(issue.getPid(), namespace, "hbz:929:02");
 	    webclient.makeOaiSet(issue);
+
+	} catch (Exception e) {
+	    logger.debug("", e);
 	}
 
-	logger.info(pid + " " + "updated.\n");
     }
 
     private void updateFile(DigitalEntity dtlBean) {
@@ -243,7 +262,7 @@ public class EdowebIngester implements IngestInterface {
 	    webclient.createObject(dtlBean, t);
 	    logger.info(pid + " " + "Found file part.");
 	    String metadata = "<" + pid
-		    + "> <http://iflastandards.info/ns/isbd/elements/P1004> \""
+		    + "> <http://purl.org/dc/terms/title> \""
 		    + dtlBean.getLabel() + "\" .\n";
 	    webclient.setMetadata(dtlBean, metadata);
 	    logger.info(pid + " " + "updated.\n");
@@ -327,14 +346,7 @@ public class EdowebIngester implements IngestInterface {
     private void updateJournal(DigitalEntity dtlBean) {
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
-	    logger.info(pid + " Found ejournal.");
-	    logger.info(dtlBean.toString());
-	    dtlBean.addTransformer("oaidc");
-	    dtlBean.addTransformer("epicur");
-	    webclient.createResource(ObjectType.journal, dtlBean);
-	    webclient.autoGenerateMetdata(dtlBean);
-	    webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
-	    webclient.makeOaiSet(dtlBean);
+	    initJournal(dtlBean, pid);
 	    Vector<DigitalEntity> list = getParts(dtlBean);
 	    int numOfVols = list.size();
 	    int count = 1;
@@ -346,6 +358,21 @@ public class EdowebIngester implements IngestInterface {
 	    logger.info(pid + " " + "and all volumes updated.\n");
 	} catch (Exception e) {
 	    logger.error(pid + " " + e.getMessage());
+	}
+    }
+
+    private void initJournal(DigitalEntity dtlBean, String pid) {
+	try {
+	    logger.info(pid + " Found ejournal.");
+	    logger.info(dtlBean.toString());
+	    dtlBean.addTransformer("oaidc");
+	    dtlBean.addTransformer("epicur");
+	    webclient.createResource(ObjectType.journal, dtlBean);
+	    webclient.autoGenerateMetdata(dtlBean);
+	    webclient.addUrn(dtlBean.getPid(), namespace, "hbz:929:02");
+	    webclient.makeOaiSet(dtlBean);
+	} catch (Exception e) {
+	    logger.debug("", e);
 	}
     }
 
