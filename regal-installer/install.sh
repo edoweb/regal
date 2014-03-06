@@ -39,7 +39,7 @@ substituteVars catalina.out $ARCHIVE_HOME/conf/catalina.out
 substituteVars Identify.xml $ARCHIVE_HOME/conf/Identify.xml
 substituteVars proai.properties $ARCHIVE_HOME/conf/proai.properties
 substituteVars robots.txt $ARCHIVE_HOME/conf/robots.txt
-cp favicon.ico $ARCHIVE_HOME/conf/favicon.ico
+cp templates/favicon.ico $ARCHIVE_HOME/conf/favicon.ico
 }
 
 function substituteVars()
