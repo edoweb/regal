@@ -89,12 +89,35 @@ while read line
 do
 pid=`echo $line|grep -o -m1 "^[^,]*"`
 urn=`echo $line|grep -o -m1 "urn:nbn:de:hbz:929.*$"`
-cout=`curl -s -i http://nbn-resolving.org/$urn |grep "307"`
+cout=`curl -s -I http://nbn-resolving.org/$urn`
+out=`echo $cout | grep -o "HTTP........"`
+test=`echo $cout |grep -o "307\|200"`
 if [ $? -eq 0 ]
 then
-echo "$host/resource/$pid , http://nbn-resolving.org/$urn , $cout , Success"
+echo "http://$host/resource/$pid , http://nbn-resolving.org/$urn , $out , Success"
 else
-echo "$host/resource/$pid , http://nbn-resolving.org/$urn , $cout , ERROR"
+echo "http://$host/resource/$pid , http://nbn-resolving.org/$urn , $out , ERROR"
+fi
+done <pid2urn.sorted.txt
+}
+
+function testOai()
+{
+type=$1
+host=$2
+
+pid2urn $type $host >pid2urn.sorted.txt
+while read line
+do
+pid=`echo $line|grep -o -m1 "^[^,]*"`
+cout=`curl -s -i "http://api.edoweb-rlp.de/dnb-urn/?verb=GetRecord&metadataPrefix=oai_dc&identifier=http://api.edoweb-rlp.de/resource/$pid"`
+out=`echo $cout | grep -o "code=.............."`
+test=`echo $cout |grep -o "dc:identifier"`
+if [ $? -eq 0 ]
+then
+echo "http://$host/resource/$pid , http://api.$host/dnb-urn/?verb=GetRecord&metadataPrefix=oai_dc&identifier=http://api.$host/resource/$pid , $out , Success"
+else
+echo "http://$host/resource/$pid , http://api.$host/dnb-urn/?verb=GetRecord&metadataPrefix=oai_dc&identifier=http://api.$host/resource/$pid , $out , ERROR"
 fi
 done <pid2urn.sorted.txt
 }
