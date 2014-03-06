@@ -18,13 +18,13 @@
 		<integration.test.skip>false</integration.test.skip>
 		<es.version>0.90.5</es.version>
 		<commons.io.version>2.4</commons.io.version>
-		<regal.version>0.3.0</regal.version>
+		<regal.version>0.3.1</regal.version>
 	</properties>
 
 
 	<groupId>de.nrw.hbz.regal</groupId>
 	<artifactId>regal</artifactId>
-	<version>0.3.0</version>
+	<version>0.3.1</version>
 	<packaging>pom</packaging>
 	<name>regal</name>
 	<url>http://www.hbz-nrw.de/</url>
