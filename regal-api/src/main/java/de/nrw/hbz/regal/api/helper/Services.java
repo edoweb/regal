@@ -90,7 +90,7 @@ class Services {
 
 	String lobidUri = "http://lobid.org/resource/" + alephid;
 	try {
-	    URL lobidUrl = new URL("http://test.lobid.org/resource?id="
+	    URL lobidUrl = new URL("http://api.lobid.org/resource?id="
 		    + alephid);
 
 	    String str = RdfUtils.readRdfToString(lobidUrl, RDFFormat.NTRIPLES,
@@ -105,12 +105,6 @@ class Services {
 		    + pid
 		    + "> <http://www.umbel.org/specifications/vocabulary#isLike> <"
 		    + lobidUri + "> .";
-	    // + "\n"
-	    // + "<"
-	    // + pid
-	    // + "> <http://purl.org/lobid/lv#hbzID> \""
-	    // + alephid
-	    // + "\" .";
 	    File metadataFile = CopyUtils.copyStringToFile(str);
 
 	    node.setMetadataFile(metadataFile.getAbsolutePath());
