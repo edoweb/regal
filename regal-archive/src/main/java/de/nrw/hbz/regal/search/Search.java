@@ -202,6 +202,15 @@ public class Search {
 		.setOperationThreaded(false).execute().actionGet();
     }
 
+    /**
+     * @param index
+     *            the elastic search index
+     * @param fieldName
+     *            the field to search in
+     * @param fieldValue
+     *            the value to search for
+     * @return all hits
+     */
     public SearchHits query(String index, String fieldName, String fieldValue) {
 	client.admin().indices().refresh(new RefreshRequest()).actionGet();
 	QueryBuilder query = QueryBuilders.boolQuery().must(

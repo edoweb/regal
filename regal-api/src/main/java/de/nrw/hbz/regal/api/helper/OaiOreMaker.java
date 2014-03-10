@@ -205,7 +205,6 @@ public class OaiOreMaker {
 	    // Things
 	    URI aggregation = f.createURI(/* uriPrefix + */pid);
 	    URI rem = f.createURI(/* uriPrefix + */pid + ".rdf");
-	    URI regal = f.createURI("https://github.com/edoweb/regal/");
 	    URI data = f.createURI(aggregation.stringValue() + "/data");
 	    URI fulltext = f.createURI(aggregation.stringValue() + "/fulltext");
 	    Literal cType = f.createLiteral(node.getContentType());
@@ -231,7 +230,6 @@ public class OaiOreMaker {
 	    URI hasPart = f.createURI(dctermsNamespace, "hasPart");
 	    URI modified = f.createURI(dctermsNamespace, "modified");
 	    URI created = f.createURI(dctermsNamespace, "created");
-	    URI creator = f.createURI(dctermsNamespace, "creator");
 	    URI dcFormat = f.createURI(dctermsNamespace, "format");
 	    URI dcHasFormat = f.createURI(dctermsNamespace, "hasFormat");
 	    // rdfs

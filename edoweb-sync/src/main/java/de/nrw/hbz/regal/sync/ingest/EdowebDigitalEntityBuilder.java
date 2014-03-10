@@ -91,16 +91,6 @@ public class EdowebDigitalEntityBuilder implements
 	return dtlDe;
     }
 
-    private List<DigitalEntity> getParts(DigitalEntity dtlBean) {
-	List<DigitalEntity> links = new Vector<DigitalEntity>();
-	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
-	    if (rel.relation
-		    .compareTo(DigitalEntityRelation.part_of.toString()) == 0)
-		links.add(rel.entity);
-	}
-	return links;
-    }
-
     private DigitalEntity buildSimpleBean(String location, String pid) {
 	DigitalEntity dtlDe = new DigitalEntity(location, pid);
 	dtlDe.setXml(new File(dtlDe.getLocation() + File.separator + pid

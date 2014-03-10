@@ -28,6 +28,7 @@ import de.nrw.hbz.regal.mab.MabConverter;
  */
 public class AlephMabMaker {
 
+    @SuppressWarnings({ "javadoc", "serial" })
     public class AlephException extends RuntimeException {
 
 	public AlephException(String message, Throwable cause) {
@@ -40,6 +41,13 @@ public class AlephMabMaker {
 
     }
 
+    /**
+     * @param node
+     *            the node to create a mab xml entry for
+     * @param uriPrefix
+     *            server host
+     * @return a string containing mab xml for the obeject
+     */
     public String aleph(Node node, String uriPrefix) {
 	try {
 	    String pid = node.getPID();

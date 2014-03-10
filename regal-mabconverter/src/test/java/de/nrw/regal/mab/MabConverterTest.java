@@ -64,6 +64,7 @@ public class MabConverterTest {
 	// xmlCompare(output, expected);
     }
 
+    @SuppressWarnings("unused")
     private void xmlCompare(File output, File expected)
 	    throws FileNotFoundException, SAXException, IOException {
 	XMLUnit.setIgnoreWhitespace(true);
@@ -84,6 +85,7 @@ public class MabConverterTest {
 		.getResourceAsStream(name);
     }
 
+    @SuppressWarnings("unused")
     private File initOutputFile(String output) throws IOException {
 	File file = new File(output);
 	if (file.exists()) {

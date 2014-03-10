@@ -73,6 +73,16 @@ public enum ObjectType {
      * linked to transformer objects in order to provide conversion services on
      * fedora level.
      */
-    transformer
+    transformer,
+    /**
+     * A person object holds information about a person. If possible, resources
+     * should link to global person URIs like GND.
+     */
+    person,
+    /**
+     * A subject object holds information about a subject. If possible,
+     * resources should link to global subject URIs like DDC or GND.
+     */
+    subject
 
 }
