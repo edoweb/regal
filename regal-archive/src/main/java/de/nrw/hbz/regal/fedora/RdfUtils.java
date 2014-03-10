@@ -80,6 +80,15 @@ public class RdfUtils {
 	return graphToString(myGraph, outf);
     }
 
+    /**
+     * Transforms a graph to a string.
+     * 
+     * @param myGraph
+     *            a sesame rdf graph
+     * @param outf
+     *            the expected output format
+     * @return a rdf string
+     */
     public static String graphToString(Graph myGraph, RDFFormat outf) {
 	StringWriter out = new StringWriter();
 	RDFWriter writer = Rio.createWriter(outf, out);
@@ -95,10 +104,21 @@ public class RdfUtils {
 	return out.getBuffer().toString();
     }
 
+    /**
+     * @param in
+     *            a rdf input stream
+     * @param inf
+     *            the rdf format of the input stream
+     * @param outf
+     *            the output format
+     * @param baseUrl
+     *            usually the url of the resource
+     * @return a string representation
+     */
     public static String readRdfToString(InputStream in, RDFFormat inf,
-	    RDFFormat outf, String accept) {
+	    RDFFormat outf, String baseUrl) {
 	Graph myGraph = null;
-	myGraph = readRdfToGraph(in, inf, accept);
+	myGraph = readRdfToGraph(in, inf, baseUrl);
 	return graphToString(myGraph, outf);
     }
 

@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -219,18 +220,6 @@ public class Actions {
 	fedora.deleteDatastream(pid, "data");
 	index(readNode(pid));
 	return pid + ": data - datastream successfully deleted! ";
-    }
-
-    /**
-     * @param type
-     *            The objectTyp
-     * @return A list of pids with type {@type}
-     */
-    public List<String> findByType(String type) {
-	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
-	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	return RdfUtils.getFedoraSubject(in);
     }
 
     /**
@@ -443,12 +432,7 @@ public class Actions {
      * @return a message
      */
     public String deleteByQuery(String query) {
-	List<String> objects = null;
-	try {
-	    objects = fedora.findNodes(query);
-	} catch (Exception e) {
-
-	}
+	List<String> objects = listByQuery(query);
 	return deleteAll(objects);
     }
 
@@ -671,12 +655,9 @@ public class Actions {
 
 	List<String> list = null;
 	if (!"es".equals(getListingFrom)) {
-	    if (type == null || type.isEmpty())
-		list = listAllFromRepo(namespace, from, until);
-	    else
-		list = listAllFromRepo(type, namespace, from, until);
+	    list = listRepo(type, namespace, from, until);
 	} else {
-	    list = listAllFromSearch(type, namespace, from, until);
+	    list = listSearch(type, namespace, from, until);
 	}
 
 	return list;
@@ -693,10 +674,95 @@ public class Actions {
      *            show only hits ending at this index
      * @return A list of pids with type {@type}
      */
-    public List<String> listAllFromSearch(String type, String namespace,
-	    int from, int until) {
+    public List<String> listSearch(String type, String namespace, int from,
+	    int until) {
 
 	return search.listIds(namespace, type, from, until);
+    }
+
+    private List<String> listRepo(String type, String namespace, int from,
+	    int until) {
+
+	if (from < 0 || until <= from)
+	    throw new HttpArchiveException(316,
+		    "until and from not sensible. choose a valid range, please.");
+	if (type == null || type.isEmpty())
+	    return listRepoNamespace(namespace, from, until);
+	if (namespace == null || namespace.isEmpty())
+	    return listRepoType(type, from, until);
+
+	List<String> list = listRepo(type, namespace);
+
+	return sublist(list, from, until);
+
+    }
+
+    private List<String> listRepo(String type, String namespace) {
+	List<String> result = new ArrayList<String>();
+	List<String> typedList = listRepoType(type);
+	if (namespace != null && !namespace.isEmpty()) {
+	    for (String item : typedList) {
+		if (item.startsWith(namespace + ":")) {
+		    result.add(item);
+		}
+	    }
+	    return result;
+	} else {
+	    return typedList;
+	}
+    }
+
+    private List<String> listRepoType(String type) {
+	List<String> typedList;
+	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
+	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
+		FedoraVocabulary.N3);
+	typedList = RdfUtils.getFedoraSubject(in);
+	return typedList;
+    }
+
+    private List<String> listRepoType(String type, int from, int until) {
+	List<String> list = listRepoType(type);
+	return sublist(list, from, until);
+
+    }
+
+    /**
+     * List all pids within a namespace
+     * 
+     * @param namespace
+     *            a valid namespace
+     * @return a list of pids
+     */
+    public List<String> listRepoNamespace(String namespace) {
+	return listByQuery(namespace + ":*");
+    }
+
+    private List<String> listRepoNamespace(String namespace, int from, int until) {
+	List<String> list = listRepoNamespace(namespace);
+	return sublist(list, from, until);
+
+    }
+
+    private List<String> listByQuery(String query) {
+	List<String> objects = null;
+	try {
+	    objects = fedora.findNodes(query);
+	} catch (Exception e) {
+
+	}
+	return objects;
+    }
+
+    private List<String> sublist(List<String> list, int from, int until) {
+	if (from >= list.size()) {
+	    return new Vector<String>();
+	}
+	if (until < list.size()) {
+	    return list.subList(from, until);
+	} else {
+	    return list.subList(from, list.size());
+	}
     }
 
     /**
@@ -720,44 +786,6 @@ public class Actions {
 
 	return representations.getAllOfTypeAsHtml(list, type, namespace, from,
 		until, getListingFrom);
-    }
-
-    private List<String> listAllFromRepo(String type, String namespace,
-	    int from, int until) {
-	if (from >= until || from < 0 || until < 0)
-	    throw new HttpArchiveException(416, "Can not process. From: "
-		    + from + "Until: " + until + ".");
-	System.out.println("1");
-	List<String> result = new Vector<String>();
-	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
-	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	List<String> list = RdfUtils.getFedoraSubject(in);
-
-	if (namespace != null && !namespace.isEmpty()) {
-	    for (String item : list) {
-		if (item.startsWith(namespace + ":")) {
-		    result.add(item);
-		}
-	    }
-	} else {
-	    result = list;
-	}
-
-	if (from >= result.size()) {
-	    return new Vector<String>();
-	}
-	if (until < result.size()) {
-	    result = result.subList(from, until);
-	} else {
-	    result = result.subList(from, result.size());
-	}
-
-	return result;
-    }
-
-    private List<String> listAllFromRepo(String namespace, int from, int until) {
-	return listAllFromRepo(TYPE_OBJECT, namespace, from, until);
     }
 
     /**
@@ -867,7 +895,7 @@ public class Actions {
     }
 
     /**
-     * @param node
+     * @param pid
      *            pid with namespace:pid
      * @return a aleph mab xml representation
      */

@@ -215,6 +215,8 @@ public class Resource {
      *            show only hits starting at this index
      * @param until
      *            show only hits ending at this index
+     * @param getListingFrom
+     *            allowed values are es and repo
      * @return A message and status code 200 if ok and 500 if not
      */
     @DELETE
@@ -226,6 +228,7 @@ public class Resource {
 	    @DefaultValue("10") @QueryParam("until") int until,
 	    @DefaultValue("es") @QueryParam("getListingFrom") String getListingFrom) {
 	try {
+
 	    return actions.deleteAll(actions.list(type, namespace, from, until,
 		    getListingFrom));
 	} catch (ArchiveException e) {
@@ -660,6 +663,52 @@ public class Resource {
 	return updateDC(pid, namespace, content);
     }
 
+    // @GET
+    // @Path("/{namespace}:{pid}/oaisets")
+    // @Produces({ "application/xml", "application/json" })
+    // public ObjectList readOaiSets(@PathParam("pid") String pid,
+    // @PathParam("namespace") String namespace) {
+    //
+    // }
+    //
+    // @PUT
+    // @Path("/{namespace}:{pid}/oaisets")
+    // @Produces({ "application/xml", "application/json" })
+    // public String updateOaiSets(@PathParam("pid") String pid,
+    // @PathParam("namespace") String namespace, ObjectList setlist) {
+    //
+    // }
+    //
+    // @DELETE
+    // @Path("/{namespace}:{pid}/oaisets")
+    // @Produces({ "application/xml", "application/json" })
+    // public String deleteOaiSets(@PathParam("pid") String pid,
+    // @PathParam("namespace") String namespace) {
+    //
+    // }
+
+    /**
+     * Assign the resource to a handfull of standard oaisets (in dependence to
+     * /metadata).
+     * 
+     * @param pid
+     *            the pid of the resource
+     * @param namespace
+     *            namespace of the resource
+     * @return human readable message
+     */
+    @POST
+    @Path("/{namespace}:{pid}/oaisets/init")
+    @Produces({ "application/xml", "application/json" })
+    public String initOaiSets(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	try {
+	    return actions.makeOAISet(namespace + ":" + pid);
+	} catch (RuntimeException e) {
+	    throw new HttpArchiveException(500, e);
+	}
+    }
+
     /**
      * Returns a OAI-ORE representation as rdf+xml.
      * 
@@ -902,6 +951,13 @@ public class Resource {
 	}
     }
 
+    /**
+     * @param pid
+     *            a pid with namespace
+     * @param request
+     *            request for context information
+     * @return a aleph mab xml representation
+     */
     @GET
     @Path("/{pid}.aleph")
     @Produces({ "application/xml; charset=UTF-8" })
