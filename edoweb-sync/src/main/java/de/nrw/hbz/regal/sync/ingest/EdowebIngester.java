@@ -307,7 +307,11 @@ public class EdowebIngester implements IngestInterface {
 
     }
 
-    private void updateMonographs(DigitalEntity dtlBean) {
+    /**
+     * @param dtlBean
+     *            a dtlBean representing a monograph
+     */
+    protected void updateMonographs(DigitalEntity dtlBean) {
 
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
