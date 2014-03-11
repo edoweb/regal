@@ -91,7 +91,7 @@ public class EdowebDigitalEntityBuilder implements
 	return dtlDe;
     }
 
-    private DigitalEntity buildSimpleBean(String location, String pid) {
+    DigitalEntity buildSimpleBean(String location, String pid) {
 	DigitalEntity dtlDe = new DigitalEntity(location, pid);
 	dtlDe.setXml(new File(dtlDe.getLocation() + File.separator + pid
 		+ ".xml"));
@@ -117,7 +117,7 @@ public class EdowebDigitalEntityBuilder implements
      * @param dtlDe
      *            the digital entity
      */
-    protected void setCatalogId(DigitalEntity dtlDe) {
+    void setCatalogId(DigitalEntity dtlDe) {
 	try {
 	    Element root = XmlUtils.getDocument(dtlDe
 		    .getStream(StreamType.MARC).getFile());

@@ -29,15 +29,12 @@ import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 public class EllinetIngester extends EdowebIngester {
     final static Logger logger = LoggerFactory.getLogger(EllinetIngester.class);
 
-    private String namespace = "ellinet";
-    String host = null;
-    Webclient webclient = null;
-
     @Override
     public void init(String host, String user, String password, String ns) {
 	this.namespace = ns;
 	this.host = host;
 	webclient = new Webclient(namespace, user, password, host);
+	webclient.initContentModels();
     }
 
     @Override

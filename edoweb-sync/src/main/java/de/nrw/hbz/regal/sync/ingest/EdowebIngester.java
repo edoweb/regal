@@ -34,7 +34,7 @@ import de.nrw.hbz.regal.sync.extern.StreamType;
 public class EdowebIngester implements IngestInterface {
     final static Logger logger = LoggerFactory.getLogger(EdowebIngester.class);
 
-    private String namespace = "edoweb";
+    String namespace = "edoweb";
 
     Webclient webclient = null;
     String host = null;
