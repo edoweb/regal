@@ -220,7 +220,7 @@ public class RdfUtils {
 	String str = readRdfToString(url, RDFFormat.NTRIPLES,
 		RDFFormat.NTRIPLES, "text/plain");
 	followMe = getSameAsLink(url);
-	if (followMe == null || !followMe.toString().contains("lobid")) {
+	if (followMe == null) {
 	    return str;
 	}
 	String str1 = readRdfToString(followMe, RDFFormat.NTRIPLES,
@@ -245,7 +245,10 @@ public class RdfUtils {
 	    while (result.hasNext()) {
 		BindingSet bindingSet = result.next();
 		Value valueOfY = bindingSet.getValue("y");
-		return new URL(valueOfY.stringValue());
+
+		if (valueOfY.toString().contains("lobid")) {
+		    return new URL(valueOfY.stringValue());
+		}
 	    }
 	} catch (Exception e) {
 	    throw new RdfException(e);
