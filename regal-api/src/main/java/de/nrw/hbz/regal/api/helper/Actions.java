@@ -122,7 +122,7 @@ public class Actions {
 		"/externalLinks.properties"));
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
-	search = new Search(escluster);
+	search = new Search(escluster, "index-config.json");
     }
 
     /**
@@ -591,6 +591,19 @@ public class Actions {
     }
 
     /**
+     * @param index
+     *            the elasticsearch index prefixed with "public_"
+     * @param type
+     *            the type of the resource
+     * @param pid
+     *            The pid to remove from index
+     * @return A short message
+     */
+    public String removeFromPublicIndex(String index, String type, String pid) {
+	return removeFromIndex("public_" + index, type, pid);
+    }
+
+    /**
      * @param p
      *            The pid that must be indexed
      * @param namespace
@@ -600,6 +613,7 @@ public class Actions {
      * @return a short message.
      */
     public String index(String p, String namespace, String type) {
+	search.init(namespace, "index-config.json");
 	String viewAsString = oaiore(namespace + ":" + p, "application/json");
 	viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
 		(JSONArray) JSONValue.parse(viewAsString)));
@@ -612,6 +626,27 @@ public class Actions {
 	String pid = n.getPID();
 	String p = pid.substring(pid.indexOf(":") + 1);
 	return index(p, namespace, n.getContentType());
+    }
+
+    /**
+     * @param p
+     *            pid
+     * @param namespace
+     *            namespace is used as index. Schema is public_$namespace
+     * @param type
+     *            type
+     * @return a message
+     */
+    public String publicIndex(String p, String namespace, String type) {
+
+	String index = "public_" + namespace;
+	search.init(index, "public-index-config.json");
+	String viewAsString = oaiore(namespace + ":" + p,
+		"application/json+compact");
+	// viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
+	// JSONValue.parse(viewAsString)));
+	search.index(index, type, namespace + ":" + p, viewAsString);
+	return namespace + ":" + p + " indexed!";
     }
 
     /**

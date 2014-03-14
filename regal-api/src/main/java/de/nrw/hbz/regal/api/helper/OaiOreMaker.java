@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.openrdf.model.BNode;
@@ -30,6 +31,10 @@ import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stringtemplate.v4.ST;
+
+import com.github.jsonldjava.core.JsonLdOptions;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.utils.JSONUtils;
 
 import de.nrw.hbz.regal.datatypes.Node;
 import de.nrw.hbz.regal.datatypes.Transformer;
@@ -105,21 +110,36 @@ public class OaiOreMaker {
 
     private String write(String format) {
 	try {
-	    if (format.compareTo("text/html") == 0) {
+	    if ("text/html".equals(format)) {
 		return getHtml();
+	    } else if ("application/json+compact".equals(format)) {
+		URL contextUrl = new URL(server + "/edoweb-resources.json");
+		StringWriter out = new StringWriter();
+		RDFWriter writer = null;
+		writer = configureWriter("application/json", out, writer);
+		String jsonString = write(out, writer);
+		Object json = JSONUtils.fromString(jsonString);
+		@SuppressWarnings("rawtypes")
+		Map context = (Map) JSONUtils.fromURL(contextUrl);
+		JsonLdOptions options = new JsonLdOptions();
+		Map<String, Object> normalized = (Map<String, Object>) JsonLdProcessor
+			.compact(json, context, options);
+		normalized.remove("@context");
+		normalized.put("@context", contextUrl.toString());
+		return JSONUtils.toPrettyString(normalized);
 	    }
 	    StringWriter out = new StringWriter();
 	    RDFWriter writer = null;
-	    String result = null;
 	    writer = configureWriter(format, out, writer);
-	    return write(out, writer, result);
+	    return write(out, writer);
 	} catch (Exception e) {
 	    throw new WriteRdfException(e);
 	}
     }
 
-    private String write(StringWriter out, RDFWriter writer, String result)
+    private String write(StringWriter out, RDFWriter writer)
 	    throws RepositoryException {
+	String result = null;
 	try {
 
 	    writer.startRDF();
@@ -142,11 +162,11 @@ public class OaiOreMaker {
 
     private RDFWriter configureWriter(String format, StringWriter out,
 	    RDFWriter writer) {
-	if (format.equals("application/rdf+xml")) {
+	if ("application/rdf+xml".equals(format)) {
 	    writer = Rio.createWriter(RDFFormat.RDFXML, out);
-	} else if (format.compareTo("text/plain") == 0) {
+	} else if ("text/plain".equals(format)) {
 	    writer = Rio.createWriter(RDFFormat.NTRIPLES, out);
-	} else if (format.compareTo("application/json") == 0) {
+	} else if ("application/json".equals(format)) {
 	    writer = Rio.createWriter(RDFFormat.JSONLD, out);
 	    writer.getWriterConfig().set(JSONLDSettings.JSONLD_MODE,
 		    JSONLDMode.EXPAND);

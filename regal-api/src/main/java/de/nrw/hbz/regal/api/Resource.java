@@ -263,6 +263,29 @@ public class Resource {
     }
 
     /**
+     * Returns OAI-ORE as json-ld compact
+     * 
+     * @param pid
+     *            the pid of the resource
+     * @param namespace
+     *            the namespace of the resource
+     * @return a json representation of the resource
+     * @throws URISyntaxException
+     *             if redirection goes wrong
+     */
+    @GET
+    @Path("/{namespace}:{pid}")
+    @Produces({ "application/json+compact" })
+    public Response getJsonCompact(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) throws URISyntaxException {
+	// return about(namespace + ":" + pid);
+	return Response
+		.temporaryRedirect(
+			new java.net.URI("../resource/" + namespace + ":" + pid
+				+ ".json+compact")).status(303).build();
+    }
+
+    /**
      * Returns OAI-ORE as json-ld
      * 
      * @param pid
@@ -769,6 +792,29 @@ public class Resource {
     public Response getReMAsJson(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
 	String rem = actions.oaiore(namespace + ":" + pid, "application/json");
+	ResponseBuilder res = Response.ok()
+		.lastModified(actions.getLastModified(namespace + ":" + pid))
+		.entity(rem);
+
+	return res.build();
+    }
+
+    /**
+     * Returns a OAI-ORE representation as json-ld.
+     * 
+     * @param pid
+     *            the pid of the resource the pid of the resource
+     * @param namespace
+     *            the namespace of the resource
+     * @return an aggregated representation of the resource
+     */
+    @GET
+    @Path("/{namespace}:{pid}.json+compact")
+    @Produces({ "application/json+compact" })
+    public Response getReMAsJsonCompact(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	String rem = actions.oaiore(namespace + ":" + pid,
+		"application/json+compact");
 	ResponseBuilder res = Response.ok()
 		.lastModified(actions.getLastModified(namespace + ":" + pid))
 		.entity(rem);

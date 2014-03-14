@@ -119,7 +119,12 @@
 		<dependency>
 			<groupId>com.github.jsonld-java</groupId>
 			<artifactId>jsonld-java-sesame</artifactId>
-			<version>0.2</version>
+			<version>0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.jsonld-java</groupId>
+			<artifactId>jsonld-java</artifactId>
+			<version>0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>

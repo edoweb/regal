@@ -50,7 +50,6 @@ public class Utils {
      */
     public Utils() throws IOException {
 	actions = Actions.getInstance();
-	actions = Actions.getInstance();
     }
 
     /**
@@ -145,6 +144,50 @@ public class Utils {
 	    @QueryParam("type") final String type) {
 
 	return actions.removeFromIndex(namespace, type, pid);
+
+    }
+
+    /**
+     * Add an object to the elasticsearch index
+     * 
+     * @param pid
+     *            the pid to be indexed
+     * @param namespace
+     *            the namespace of the resource
+     * @param type
+     *            the type of the resource
+     * @return a message
+     */
+    @POST
+    @Path("/public_index/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String publicIndex(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace,
+	    @QueryParam("type") final String type) {
+
+	return actions.publicIndex(pid, namespace, type);
+
+    }
+
+    /**
+     * Removes an object from the elasticsearch index
+     * 
+     * @param pid
+     *            the pid of the object
+     * @param namespace
+     *            the namespace of the object
+     * @param type
+     *            the type of the object
+     * @return a message
+     */
+    @DELETE
+    @Path("/public_index/{namespace}:{pid}")
+    @Produces({ "application/json", "application/xml" })
+    public String removeFromPublicIndex(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace,
+	    @QueryParam("type") final String type) {
+
+	return actions.removeFromPublicIndex(namespace, type, pid);
 
     }
 

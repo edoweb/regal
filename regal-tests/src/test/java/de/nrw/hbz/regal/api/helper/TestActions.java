@@ -243,6 +243,8 @@ public class TestActions {
 	createTestObject("123");
 	RdfUtils.validate(actions.oaiore("test:123", "text/plain"));
 	System.out.println(actions.oaiore("test:123", "text/plain"));
+	System.out.println(actions.oaiore("test:123",
+		"application/json+compact"));
     }
 
     @Test

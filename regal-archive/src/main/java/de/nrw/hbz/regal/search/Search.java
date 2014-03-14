@@ -67,7 +67,7 @@ public class Search {
 	client = node.client();
 
 	client.admin().indices().prepareDelete().execute().actionGet();
-	init("test");
+	init("test", "index-config.json");
     }
 
     /**
@@ -83,20 +83,20 @@ public class Search {
      *            the name must match to the one provided in
      *            elasticsearch/conf/elasticsearch.yml
      */
-    public Search(String cluster) {
+    public Search(String cluster, String config) {
 	InetSocketTransportAddress server = new InetSocketTransportAddress(
 		"localhost", 9300);
 	client = new TransportClient(ImmutableSettings.settingsBuilder()
 		.put("cluster.name", cluster).build())
 		.addTransportAddress(server);
-	init("edoweb");
+	init("edoweb", config);
     }
 
-    private void init(String index) {
+    public void init(String index, String config) {
 	try {
-	    String indexConfig = CopyUtils.copyToString(
-		    Thread.currentThread().getContextClassLoader()
-			    .getResourceAsStream("index-config.json"), "utf-8");
+	    String indexConfig = CopyUtils.copyToString(Thread.currentThread()
+		    .getContextClassLoader().getResourceAsStream(config),
+		    "utf-8");
 
 	    client.admin().indices().prepareCreate(index)
 		    .setSource(indexConfig).execute().actionGet();
