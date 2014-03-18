@@ -213,18 +213,23 @@ public class RdfUtils {
      *            a url pointing to rdf data
      * @param pid
      *            the pid will become a subject
+     * @param format
+     *            the input format
+     * @param accept
+     *            the accept header for url call - must correspond to format
+     *            param.
      * @return the original string plus the data from the sameAs resource
      */
-    public static String followSameAsAndInclude(URL url, String pid) {
+    public static String followSameAsAndInclude(URL url, String pid,
+	    RDFFormat format, String accept) {
 	URL followMe = null;
-	String str = readRdfToString(url, RDFFormat.NTRIPLES,
-		RDFFormat.NTRIPLES, "text/plain");
+	String str = readRdfToString(url, format, RDFFormat.NTRIPLES, accept);
 	followMe = getSameAsLink(url);
 	if (followMe == null) {
 	    return str;
 	}
-	String str1 = readRdfToString(followMe, RDFFormat.NTRIPLES,
-		RDFFormat.NTRIPLES, "text/plain");
+	String str1 = readRdfToString(followMe, format, RDFFormat.NTRIPLES,
+		accept);
 	str1 = Pattern.compile(followMe.toString()).matcher(str1)
 		.replaceAll(Matcher.quoteReplacement(pid));
 	return str + "\n" + str1;
