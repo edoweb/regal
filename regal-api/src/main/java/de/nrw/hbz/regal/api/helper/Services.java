@@ -94,7 +94,7 @@ class Services {
 		    + alephid);
 
 	    String str = RdfUtils.readRdfToString(lobidUrl, RDFFormat.TURTLE,
-		    RDFFormat.NTRIPLES, "text/plain");
+		    RDFFormat.NTRIPLES, "text/turtle");
 
 	    if (str.contains("http://www.w3.org/2002/07/owl#sameAs")) {
 		str = RdfUtils.followSameAsAndInclude(lobidUrl, pid);
