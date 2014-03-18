@@ -93,11 +93,14 @@ class Services {
 	    URL lobidUrl = new URL("http://api.lobid.org/resource?id="
 		    + alephid);
 
-	    String str = RdfUtils.readRdfToString(lobidUrl, RDFFormat.TURTLE,
-		    RDFFormat.NTRIPLES, "text/turtle");
+	    RDFFormat inFormat = RDFFormat.TURTLE;
+	    String accept = "text/turtle";
+	    String str = RdfUtils.readRdfToString(lobidUrl, inFormat,
+		    RDFFormat.NTRIPLES, accept);
 
 	    if (str.contains("http://www.w3.org/2002/07/owl#sameAs")) {
-		str = RdfUtils.followSameAsAndInclude(lobidUrl, pid);
+		str = RdfUtils.followSameAsAndInclude(lobidUrl, pid, inFormat,
+			accept);
 	    }
 	    str = Pattern.compile(lobidUri).matcher(str)
 		    .replaceAll(Matcher.quoteReplacement(pid))
