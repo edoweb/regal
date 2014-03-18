@@ -80,6 +80,15 @@ public class RdfUtils {
 	return graphToString(myGraph, outf);
     }
 
+    /**
+     * Transforms a graph to a string.
+     * 
+     * @param myGraph
+     *            a sesame rdf graph
+     * @param outf
+     *            the expected output format
+     * @return a rdf string
+     */
     public static String graphToString(Graph myGraph, RDFFormat outf) {
 	StringWriter out = new StringWriter();
 	RDFWriter writer = Rio.createWriter(outf, out);
@@ -95,10 +104,21 @@ public class RdfUtils {
 	return out.getBuffer().toString();
     }
 
+    /**
+     * @param in
+     *            a rdf input stream
+     * @param inf
+     *            the rdf format of the input stream
+     * @param outf
+     *            the output format
+     * @param baseUrl
+     *            usually the url of the resource
+     * @return a string representation
+     */
     public static String readRdfToString(InputStream in, RDFFormat inf,
-	    RDFFormat outf, String accept) {
+	    RDFFormat outf, String baseUrl) {
 	Graph myGraph = null;
-	myGraph = readRdfToGraph(in, inf, accept);
+	myGraph = readRdfToGraph(in, inf, baseUrl);
 	return graphToString(myGraph, outf);
     }
 
@@ -193,18 +213,23 @@ public class RdfUtils {
      *            a url pointing to rdf data
      * @param pid
      *            the pid will become a subject
+     * @param format
+     *            the input format
+     * @param accept
+     *            the accept header for url call - must correspond to format
+     *            param.
      * @return the original string plus the data from the sameAs resource
      */
-    public static String followSameAsAndInclude(URL url, String pid) {
+    public static String followSameAsAndInclude(URL url, String pid,
+	    RDFFormat format, String accept) {
 	URL followMe = null;
-	String str = readRdfToString(url, RDFFormat.NTRIPLES,
-		RDFFormat.NTRIPLES, "text/plain");
+	String str = readRdfToString(url, format, RDFFormat.NTRIPLES, accept);
 	followMe = getSameAsLink(url);
-	if (followMe == null || !followMe.toString().contains("lobid")) {
+	if (followMe == null) {
 	    return str;
 	}
-	String str1 = readRdfToString(followMe, RDFFormat.NTRIPLES,
-		RDFFormat.NTRIPLES, "text/plain");
+	String str1 = readRdfToString(followMe, format, RDFFormat.NTRIPLES,
+		accept);
 	str1 = Pattern.compile(followMe.toString()).matcher(str1)
 		.replaceAll(Matcher.quoteReplacement(pid));
 	return str + "\n" + str1;
@@ -225,7 +250,10 @@ public class RdfUtils {
 	    while (result.hasNext()) {
 		BindingSet bindingSet = result.next();
 		Value valueOfY = bindingSet.getValue("y");
-		return new URL(valueOfY.stringValue());
+
+		if (valueOfY.toString().contains("lobid")) {
+		    return new URL(valueOfY.stringValue());
+		}
 	    }
 	} catch (Exception e) {
 	    throw new RdfException(e);
