@@ -82,6 +82,8 @@ public class Search {
      * @param cluster
      *            the name must match to the one provided in
      *            elasticsearch/conf/elasticsearch.yml
+     * @param config
+     *            elasticsearch mapping
      */
     public Search(String cluster, String config) {
 	InetSocketTransportAddress server = new InetSocketTransportAddress(
@@ -92,6 +94,12 @@ public class Search {
 	init("edoweb", config);
     }
 
+    /**
+     * @param index
+     *            the index will be inititiated
+     * @param config
+     *            an elasticsearch mapping
+     */
     public void init(String index, String config) {
 	try {
 	    String indexConfig = CopyUtils.copyToString(Thread.currentThread()
