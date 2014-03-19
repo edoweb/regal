@@ -5,112 +5,122 @@
 		{
 			"properties": 
 			{
-				"@graph.isPartOf.@id": 
+				"@graph.isPartOf": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.subject.@id": 
+				"@graph.subject": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.hasURN.@id": 
+				"@graph.hasURN": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.hasPart.@id": 
+				"@graph.hasPart": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.hasVersion.@id": 
+				"@graph.hasVersion": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.issued.@id": 
+				"@graph.issued": 
 				{
 					"type": "date",
 					"index": "not_analyzed"
 				},
-				"@graph.language.@id": 
+				"@graph.language": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.fulltextOnline.@id": 
+				"@graph.fulltextOnline": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.hbzId.@id": 
+				"@graph.hbzId": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.urn.@id": 
+				"@graph.urn": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.exemplar.@id": 
+				"@graph.exemplar": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.similar.@id": 
+				"@graph.similar": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.aggregates.@id": 
+				"@graph.aggregates": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.isDescribedBy.@id": 
+				"@graph.isDescribedBy": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.similarTo.@id": 
+				"@graph.similarTo": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.isLike.@id": 
+				"@graph.isLike": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.sameAs.@id": 
+				"@graph.sameAs": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.describedBy.@id": 
+				"@graph.describedBy": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.isPrimaryTopic.@id": 
+				"@graph.isPrimaryTopic": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.created.@id": 
+				"@graph.created": 
 				{
 					"type": "date",
 					"index": "not_analyzed"
 				},
-				"@graph.modified.@id": 
+				"@graph.modified": 
 				{
 					"type": "date",
+					"index": "not_analyzed"
+				},
+				"@graph.contributorName": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.creatorName": 
+				{
+					"type": "string",
 					"index": "not_analyzed"
 				}
 			}
@@ -120,112 +130,122 @@
 		{
 			"properties": 
 			{
-				"@graph.isPartOf.@id": 
+				"@graph.isPartOf": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.subject.@id": 
+				"@graph.subject": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.hasURN.@id": 
+				"@graph.hasURN": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.hasPart.@id": 
+				"@graph.hasPart": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.hasVersion.@id": 
+				"@graph.hasVersion": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.issued.@id": 
+				"@graph.issued": 
 				{
 					"type": "date",
 					"index": "not_analyzed"
 				},
-				"@graph.language.@id": 
+				"@graph.language": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.fulltextOnline.@id": 
+				"@graph.fulltextOnline": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.hbzId.@id": 
+				"@graph.hbzId": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.urn.@id": 
+				"@graph.urn": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.exemplar.@id": 
+				"@graph.exemplar": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.similar.@id": 
+				"@graph.similar": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.aggregates.@id": 
+				"@graph.aggregates": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.isDescribedBy.@id": 
+				"@graph.isDescribedBy": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.similarTo.@id": 
+				"@graph.similarTo": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.isLike.@id": 
+				"@graph.isLike": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.sameAs.@id": 
+				"@graph.sameAs": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.describedBy.@id": 
+				"@graph.describedBy": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.isPrimaryTopic.@id": 
+				"@graph.isPrimaryTopic": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.created.@id": 
+				"@graph.created": 
 				{
 					"type": "date",
 					"index": "not_analyzed"
 				},
-				"@graph.modified.@id": 
+				"@graph.modified": 
 				{
 					"type": "date",
+					"index": "not_analyzed"
+				},
+				"@graph.contributorName": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.creatorName": 
+				{
+					"type": "string",
 					"index": "not_analyzed"
 				}
 			}
@@ -235,112 +255,122 @@
 		{
 			"properties": 
 			{
-				"@graph.isPartOf.@id": 
+				"@graph.isPartOf": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.subject.@id": 
+				"@graph.subject": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.hasURN.@id": 
+				"@graph.hasURN": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.hasPart.@id": 
+				"@graph.hasPart": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.hasVersion.@id": 
+				"@graph.hasVersion": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.issued.@id": 
+				"@graph.issued": 
 				{
 					"type": "date",
 					"index": "not_analyzed"
 				},
-				"@graph.language.@id": 
+				"@graph.language": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.fulltextOnline.@id": 
+				"@graph.fulltextOnline": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.hbzId.@id": 
+				"@graph.hbzId": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.urn.@id": 
+				"@graph.urn": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.exemplar.@id": 
+				"@graph.exemplar": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.similar.@id": 
+				"@graph.similar": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.aggregates.@id": 
+				"@graph.aggregates": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.isDescribedBy.@id": 
+				"@graph.isDescribedBy": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.similarTo.@id": 
+				"@graph.similarTo": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.isLike.@id": 
+				"@graph.isLike": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.sameAs.@id": 
+				"@graph.sameAs": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.describedBy.@id": 
+				"@graph.describedBy": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.isPrimaryTopic.@id": 
+				"@graph.isPrimaryTopic": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.created.@id": 
+				"@graph.created": 
 				{
 					"type": "date",
 					"index": "not_analyzed"
 				},
-				"@graph.modified.@id": 
+				"@graph.modified": 
 				{
 					"type": "date",
+					"index": "not_analyzed"
+				},
+				"@graph.contributorName": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.creatorName": 
+				{
+					"type": "string",
 					"index": "not_analyzed"
 				}
 			}
@@ -350,114 +380,124 @@
 		{
 			"properties": 
 			{
-				"@graph.isPartOf.@id": 
+				"@graph.isPartOf": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.subject.@id": 
+				"@graph.subject": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.hasURN.@id": 
+				"@graph.hasURN": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.hasPart.@id": 
+				"@graph.hasPart": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.hasVersion.@id": 
+				"@graph.hasVersion": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.issued.@id": 
+				"@graph.issued": 
 				{
 					"type": "date",
 					"index": "not_analyzed"
 				},
-				"@graph.language.@id": 
+				"@graph.language": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.fulltextOnline.@id": 
+				"@graph.fulltextOnline": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.hbzId.@id": 
+				"@graph.hbzId": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.urn.@id": 
+				"@graph.urn": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.exemplar.@id": 
+				"@graph.exemplar": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.similar.@id": 
+				"@graph.similar": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.aggregates.@id": 
+				"@graph.aggregates": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.isDescribedBy.@id": 
+				"@graph.isDescribedBy": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.similarTo.@id": 
+				"@graph.similarTo": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.isLike.@id": 
+				"@graph.isLike": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.sameAs.@id": 
+				"@graph.sameAs": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.describedBy.@id": 
+				"@graph.describedBy": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				}
 				,
-				"@graph.isPrimaryTopic.@id": 
+				"@graph.isPrimaryTopic": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.created.@id": 
+				"@graph.created": 
 				{
 					"type": "date",
 					"index": "not_analyzed"
 				},
-				"@graph.modified.@id": 
+				"@graph.modified": 
 				{
 					"type": "date",
 					"index": "not_analyzed"
-				}			
+				}	,
+				"@graph.contributorName": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.creatorName": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				}		
 			}
 		}
 	}
