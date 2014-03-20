@@ -190,12 +190,6 @@
 			"@type": "@id"
 		},
 
-		"fulltextOnline": 
-		{
-			"@id": "http://lobid.org/vocab/lobid#fulltextOnline",
-			"@type": "@id"
-		},
-
 		"wikipedia": 
 		{
 			"@id": "http://purl.org/ontology/mo/wikipedia",
@@ -318,13 +312,6 @@
 			"@id": "http://xmlns.com/foaf/0.1/isPrimaryTopicOf",
 			"@type": "@id"
 		},
-
-		"primaryTopic": 
-		{
-			"@id": "http://xmlns.com/foaf/0.1/primaryTopic",
-			"@type": "@id"
-		},
-
 		"describedBy": 
 		{
 			"@id": "http://www.w3.org/2007/05/powder-s#describedby",
@@ -381,19 +368,6 @@
 			"@id": "http://www.umbel.org/specifications/vocabulary#isLike",
 			"@type": "@id"
 		},
-
-		"created": 
-		{
-			"@id": "http://purl.org/dc/terms/created",
-			"@type": "@id"
-		},
-
-		"modified": 
-		{
-			"@id": "http://purl.org/dc/terms/modified",
-			"@type": "@id"
-		},
-
 		"describes": 
 		{
 			"@id": "http://www.openarchives.org/ore/terms/describes",
@@ -411,7 +385,6 @@
 		"label":"http://www.w3.org/2000/01/rdf-schema#label",
 		"format":"http://purl.org/dc/terms/format",
 		"checksum":"http://downlode.org/Code/RDF/File_Properties/schema#checksum",
-		"doi":"http://purl.org/ontology/bibo/doi",
 		"hasTransformer":"http://hbz-nrw.de/regal#hasTransformer",
 		"created":"http://purl.org/dc/terms/created",
 		"modified":"http://purl.org/dc/terms/modified"

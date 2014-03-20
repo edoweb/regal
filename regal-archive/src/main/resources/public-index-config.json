@@ -138,14 +138,12 @@
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.preferredNameForTheSubjectHeading
-				": 
+				"@graph.preferredNameForTheSubjectHeading": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.preferredNameForThePlaceOrGeographicName
-				": 
+				"@graph.preferredNameForThePlaceOrGeographicName": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
@@ -296,14 +294,12 @@
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.preferredNameForTheSubjectHeading
-				": 
+				"@graph.preferredNameForTheSubjectHeading": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.preferredNameForThePlaceOrGeographicName
-				": 
+				"@graph.preferredNameForThePlaceOrGeographicName": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
@@ -453,14 +449,12 @@
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.preferredNameForTheSubjectHeading
-				": 
+				"@graph.preferredNameForTheSubjectHeading": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.preferredNameForThePlaceOrGeographicName
-				": 
+				"@graph.preferredNameForThePlaceOrGeographicName": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
@@ -610,14 +604,12 @@
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.preferredNameForTheSubjectHeading
-				": 
+				"@graph.preferredNameForTheSubjectHeading": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
 				},
-				"@graph.preferredNameForThePlaceOrGeographicName
-				": 
+				"@graph.preferredNameForThePlaceOrGeographicName": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
