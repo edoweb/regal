@@ -122,7 +122,40 @@
 				{
 					"type": "string",
 					"index": "not_analyzed"
+				},
+				"@graph.contributor": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.creator": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForThePerson": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForTheSubjectHeading
+				": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForThePlaceOrGeographicName
+				": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.prefLabel.value": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
 				}
+				
 			}
 		},
 
@@ -244,6 +277,38 @@
 					"index": "not_analyzed"
 				},
 				"@graph.creatorName": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.contributor": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.creator": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForThePerson": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForTheSubjectHeading
+				": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForThePlaceOrGeographicName
+				": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.prefLabel.value": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
@@ -372,6 +437,38 @@
 				{
 					"type": "string",
 					"index": "not_analyzed"
+				},
+				"@graph.contributor": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.creator": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForThePerson": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForTheSubjectHeading
+				": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForThePlaceOrGeographicName
+				": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.prefLabel.value": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
 				}
 			}
 		},
@@ -494,6 +591,38 @@
 					"index": "not_analyzed"
 				},
 				"@graph.creatorName": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.contributor": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.creator": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForThePerson": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForTheSubjectHeading
+				": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.preferredNameForThePlaceOrGeographicName
+				": 
+				{
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"@graph.prefLabel.value": 
 				{
 					"type": "string",
 					"index": "not_analyzed"
