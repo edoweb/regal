@@ -34,7 +34,7 @@
 				},
 				"@graph.issued": 
 				{
-					"type": "date",
+					"type": "string",
 					"index": "not_analyzed"
 				},
 				"@graph.language": 
@@ -190,7 +190,7 @@
 				},
 				"@graph.issued": 
 				{
-					"type": "date",
+					"type": "string",
 					"index": "not_analyzed"
 				},
 				"@graph.language": 
@@ -345,7 +345,7 @@
 				},
 				"@graph.issued": 
 				{
-					"type": "date",
+					"type": "string",
 					"index": "not_analyzed"
 				},
 				"@graph.language": 
@@ -500,7 +500,7 @@
 				},
 				"@graph.issued": 
 				{
-					"type": "date",
+					"type": "string",
 					"index": "not_analyzed"
 				},
 				"@graph.language": 
