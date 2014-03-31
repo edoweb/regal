@@ -28,69 +28,8 @@ import java.util.Map;
 @SuppressWarnings("javadoc")
 public class MabRecord {
 
-    public MabRecord() {
-	this.satzlaenge = null;
-	this.satzstatus = null;
-	this.versionsangabe = null;
-	this.datenanfangsadresse = null;
-	this.nichtBenutzt_17_22 = null;
-	this.satztyp = null;
-	this.segId_datum_version = null;
-	this.id = null;
-	this.indikator = null;
-	this.datumDerErsterfassung = null;
-	this.datumDerUebernahme = null;
-	this.datumLetzteKorrektur = null;
-	this.datumDerErstellungAustauschsatz = null;
-	this.datumLetzteTransaktion = null;
-	this.datumVorletzteTransaktion = null;
-	this.versionsnummerLetzteTransaktion = null;
-	this.versionsnummerVorletzteTransaktion = null;
-	this.idUeberordnung = null;
-	this.idPauschalverweisung = null;
-	this.idTiteldatensatz = null;
-	this.idZielsatz = null;
-	this.idUmgelenkterSatz = null;
-	this.idGelieferterDatensatz_Ueberregional = null;
-	this.idGelieferterDatensatz_Regional = null;
-	this.idGelieferteerDatensatz_Lokal = null;
-	this.idPrimaerform_Ueberregional = null;
-	this.idPrimaerform_Regional = null;
-	this.idPrimaerform_Lokal = null;
-	this.idSekundaerform_Ueberregional = null;
-	this.idSekundaerform_Regional = null;
-	this.idSekundaerform_Lokal = null;
-	this.idZuKorrigierenderSatz_MabTitel = null;
-	this.idZuKorrigierenderSatz_MabPnd = null;
-	this.idZuKorrigierenderSatz_MabGkd = null;
-	this.idZuKorrigierenderSatz_MabSwd = null;
-	this.idZuKorrigierenderSatz_MabNotat = null;
-	this.idZuKorrigierenderSatz_MabAdress = null;
-	this.idUeberregionale_DDB = null;
-	this.idUeberregionale_BNB = null;
-	this.idUeberregionale_CasaliniLibri = null;
-	this.idUeberregionale_ekz = null;
-	this.idUeberregionale_BNF = null;
-	this.idUeberregionale_ZKA = null;
-	this.idUeberregionale_LoC = null;
-	this.idUeberregionale_OCLC = null;
-	this.idUeberregionale_ZDB = null;
-
-	this.veroeffentlichungsSpezifischeAngaben = null;
-	this.hauptsachtitelAnsetzung = null;
-	this.hauptsachtitelVorlage = null;
-	this.doi = null;
-
-	this.personen = new HashMap<String, Person>();
-	this.parallelSachtitel = new ArrayList<String>();
-	this.weitereSachtitel = new ArrayList<String>();
-	this.klassifikationDdc = new HashMap<String, Subject>();
-	this.klassifikationDnb = new HashMap<String, Subject>();
-	this.klassifikationRpb = new HashMap<String, Subject>();
-    }
-
-    public final String leader = "------M2.01200024------h";
-    public final String LDR = "------M2.01200024------h";
+    public final String leader = "00740nM2.01200024------h";
+    public final String LDR = "00740nM2.01200024------h";
     public final String FMT = "MH";
     /*- 
     http://www.dnb.de/SharedDocs/Downloads/DE/DNB/standardisierung/mabTitelBibliographischeDaten2001.txt;jsessionid=899A9F945EADFCFECDD616AD246D45F7.prod-worker2?__blob=publicationFile
@@ -120,12 +59,12 @@ public class MabRecord {
     	               p = provisorischer Datensatz
     	               u = umgelenkter Datensatz
     	               v = unveraenderter Datensatz*/
-    public Satzstatus satzstatus;
+    public Satzstatus satzstatus = null;
 
     /*-
     	6 - 9          Versionsangabe
      */
-    public String versionsangabe;
+    public String versionsangabe = null;
     /*-
     	10             Indikatorlaenge
      */
@@ -137,11 +76,11 @@ public class MabRecord {
     /*-
     	12 - 16        Datenanfangsadresse
      */
-    public String datenanfangsadresse;
+    public String datenanfangsadresse = null;
     /*-
     	17 - 22        nicht benutzt
      */
-    public String nichtBenutzt_17_22;
+    public String nichtBenutzt_17_22 = null;
     /*-
     	23             Satztyp
     	               h = Hauptsatz fuer Titeldaten (MAB-TITEL)
@@ -179,23 +118,23 @@ public class MabRecord {
 
     	               c = Redaktionssatz
      */
-    public Satztyp satztyp;
+    public Satztyp satztyp = null;
     /*-
 
     	001-029   SEGMENT IDENTIFIKATIONSNUMMERN, DATUMS- UND VERSIONS-
     	          ANGABEN
      */
-    public String segId_datum_version;
+    public String segId_datum_version = null;
     /*-
     	001       IDENTIFIKATIONSNUMMER DES DATENSATZES
      */
-    public String id;
+    public String id = null;
     /*-
     	          Indikator:
     	          Blank = nicht definiert
 
      */
-    public String indikator;
+    public String indikator = null;
     /*-
     	002       DATUM DER ERSTERFASSUNG / FREMDDATENUEBERNAHME
 
@@ -204,8 +143,8 @@ public class MabRecord {
     	          b = Datum der Fremddatenuebernahme
 
      */
-    public String datumDerErsterfassung;
-    public String datumDerUebernahme;
+    public String datumDerErsterfassung = null;
+    public String datumDerUebernahme = null;
     /*-
     	003       DATUM DER LETZTEN KORREKTUR
 
@@ -213,14 +152,14 @@ public class MabRecord {
     	          Blank = nicht definiert
 
      */
-    public String datumLetzteKorrektur;
+    public String datumLetzteKorrektur = null;
     /*-
     	004       ERSTELLUNGSDATUM DES AUSTAUSCHSATZES
 
     	          Indikator:
     	          Blank = nicht definiert
      */
-    public String datumDerErstellungAustauschsatz;
+    public String datumDerErstellungAustauschsatz = null;
     /*-
 
     	005       TRANSAKTIONSDATUM
@@ -230,8 +169,8 @@ public class MabRecord {
     	          v = vorletzte Transaktion
 
      */
-    public String datumLetzteTransaktion;
-    public String datumVorletzteTransaktion;
+    public String datumLetzteTransaktion = null;
+    public String datumVorletzteTransaktion = null;
     /*-
     	006       VERSIONSNUMMER
 
@@ -239,8 +178,8 @@ public class MabRecord {
     	          n = letzte Transaktion
     	          v = vorletzte Transaktion
      */
-    public String versionsnummerLetzteTransaktion;
-    public String versionsnummerVorletzteTransaktion;
+    public String versionsnummerLetzteTransaktion = null;
+    public String versionsnummerVorletzteTransaktion = null;
     /*-
 
     	010       IDENTIFIKATIONSNUMMER DES DIREKT UEBERGEORDNETEN
@@ -249,7 +188,7 @@ public class MabRecord {
     	          Indikator:
     	          blank = nicht definiert
      */
-    public String idUeberordnung;
+    public String idUeberordnung = null;
     /*-
 
     	011       IDENTIFIKATIONSNUMMER DER VERKNUEPFTEN SAETZE FUER
@@ -258,7 +197,7 @@ public class MabRecord {
     	          Indikator:
     	          blank = nicht definiert
      */
-    public String idPauschalverweisung;
+    public String idPauschalverweisung = null;
     /*-
 
     	012       IDENTIFIKATIONSNUMMER DES TITELDATENSATZES (MAB-LOKAL)
@@ -266,7 +205,7 @@ public class MabRecord {
     	          Indikator:
     	          blank = nicht definiert
      */
-    public String idTiteldatensatz;
+    public String idTiteldatensatz = null;
     /*-
 
     	015       IDENTIFIKATIONSNUMMER DES ZIELSATZES
@@ -274,7 +213,7 @@ public class MabRecord {
     	          Indikator:
     	          Blank = nicht definiert
      */
-    public String idZielsatz;
+    public String idZielsatz = null;
     /*-
 
     	016       IDENTIFIKATIONSNUMMER DES UMGELENKTEN SATZES
@@ -283,7 +222,7 @@ public class MabRecord {
     	          Blank = nicht definiert
 
      */
-    public String idUmgelenkterSatz;
+    public String idUmgelenkterSatz = null;
     /*-
     	020       IDENTIFIKATIONSNUMMER EINES GELIEFERTEN DATENSATZES
 
@@ -294,9 +233,9 @@ public class MabRecord {
     	          c     = Lokale Identifikationsnummer
 
      */
-    public String idGelieferterDatensatz_Ueberregional;
-    public String idGelieferterDatensatz_Regional;
-    public String idGelieferteerDatensatz_Lokal;
+    public String idGelieferterDatensatz_Ueberregional = null;
+    public String idGelieferterDatensatz_Regional = null;
+    public String idGelieferteerDatensatz_Lokal = null;
     /*-
     	021       IDENTIFIKATIONSNUMMER DER PRIMAERFORM
 
@@ -306,9 +245,9 @@ public class MabRecord {
     	          b     = Regionale Identifikationsnummer
     	          c     = Lokale Identifikationsnummer
      */
-    public String idPrimaerform_Ueberregional;
-    public String idPrimaerform_Regional;
-    public String idPrimaerform_Lokal;
+    public String idPrimaerform_Ueberregional = null;
+    public String idPrimaerform_Regional = null;
+    public String idPrimaerform_Lokal = null;
     /*-
 
     	022       IDENTIFIKATIONSNUMMER DER SEKUNDAERFORM
@@ -319,9 +258,9 @@ public class MabRecord {
     	          b     = Regionale Identifikationsnummer
     	          c     = Lokale Identifikationsnummer
      */
-    public String idSekundaerform_Ueberregional;
-    public String idSekundaerform_Regional;
-    public String idSekundaerform_Lokal;
+    public String idSekundaerform_Ueberregional = null;
+    public String idSekundaerform_Regional = null;
+    public String idSekundaerform_Lokal = null;
     /*-
 
     	023       IDENTIFIKATIONSNUMMER DES ZU KORRIGIERENDEN SATZES
@@ -339,12 +278,12 @@ public class MabRecord {
     	          $a    = Identifikationsnummer des zu korrigierenden Datensatzes
 
      */
-    public String idZuKorrigierenderSatz_MabTitel;
-    public String idZuKorrigierenderSatz_MabPnd;
-    public String idZuKorrigierenderSatz_MabGkd;
-    public String idZuKorrigierenderSatz_MabSwd;
-    public String idZuKorrigierenderSatz_MabNotat;
-    public String idZuKorrigierenderSatz_MabAdress;
+    public String idZuKorrigierenderSatz_MabTitel = null;
+    public String idZuKorrigierenderSatz_MabPnd = null;
+    public String idZuKorrigierenderSatz_MabGkd = null;
+    public String idZuKorrigierenderSatz_MabSwd = null;
+    public String idZuKorrigierenderSatz_MabNotat = null;
+    public String idZuKorrigierenderSatz_MabAdress = null;
 
     /*-
     	025       UEBERREGIONALE IDENTIFIKATIONSNUMMER
@@ -362,15 +301,15 @@ public class MabRecord {
     	          z     = ZDB
 
      */
-    public String idUeberregionale_DDB;
-    public String idUeberregionale_BNB;
-    public String idUeberregionale_CasaliniLibri;
-    public String idUeberregionale_ekz;
-    public String idUeberregionale_BNF;
-    public String idUeberregionale_ZKA;
-    public String idUeberregionale_LoC;
-    public String idUeberregionale_OCLC;
-    public String idUeberregionale_ZDB;
+    public String idUeberregionale_DDB = null;
+    public String idUeberregionale_BNB = null;
+    public String idUeberregionale_CasaliniLibri = null;
+    public String idUeberregionale_ekz = null;
+    public String idUeberregionale_BNF = null;
+    public String idUeberregionale_ZKA = null;
+    public String idUeberregionale_LoC = null;
+    public String idUeberregionale_OCLC = null;
+    public String idUeberregionale_ZDB = null;
     /*-
     	026       REGIONALE IDENTIFIKATIONSNUMMER
 
@@ -567,7 +506,7 @@ public class MabRecord {
     	          c     = Laendercode der SWD
     	          z     = sonstiger Laendercode
      */
-    String laenderCodeDINEN23166;
+    public String laenderCodeDINEN23166 = "DE";
     /*-
 
     	037       SPRACHENCODE
@@ -579,7 +518,7 @@ public class MabRecord {
     	          c     = Sprachencode nach Z39.53 (USMARC, UNIMARC)
     	          z     = Sonstiger Sprachencode
      */
-    String sprachenCodeDIN2335;
+    public String sprachenCodeDIN2335 = "ger";
     /*-
 
     	038       CODE FUER HERKUNFTSSPRACHE / SPRACHE DES ORIGINALS
@@ -755,7 +694,7 @@ public class MabRecord {
     	        11-13  Anzahl der physischen Einheiten
 
      */
-    public final String datentraeger = "|||||||g|||||";
+    public final String datentraeger = "||||||||g|||||";
     /*-
     	051     VEROEFFENTLICHUNGSSPEZIFISCHE ANGABEN ZU BEGRENZTEN
     	        WERKEN
@@ -828,7 +767,7 @@ public class MabRecord {
     	               s = Land (Provinz)
     	               u = sonstige amtliche Druckschrift
      */
-    VeroeffentlichungsSpezifischeAngaben veroeffentlichungsSpezifischeAngaben;
+    public VeroeffentlichungsSpezifischeAngaben veroeffentlichungsSpezifischeAngaben = null;
     public String veroeffentlichungsSpezifischeAngabenString = null;
     /*-
 
@@ -1414,7 +1353,7 @@ public class MabRecord {
 
 
      */
-    public Map<String, Person> personen;
+    public Map<String, Person> personen = new HashMap<String, Person>();
 
     /*-  2--       SEGMENT KOERPERSCHAFTSNAMEN
 
@@ -1504,7 +1443,7 @@ public class MabRecord {
       	          b     = zusaetzliche Nebeneintragung mit dem Sachtitel
 
      */
-    public String hauptsachtitelAnsetzung;
+    public String hauptsachtitelAnsetzung = null;
     /*-
       	331       HAUPTSACHTITEL IN VORLAGEFORM ODER MISCHFORM
 
@@ -1514,7 +1453,7 @@ public class MabRecord {
       	          b     = zusaetzliche Nebeneintragung mit dem Sachtitel
 
      */
-    public String hauptsachtitelVorlage;
+    public String hauptsachtitelVorlage = null;
     /*-
       	333       ZU ERGAENZENDE URHEBER ZUM HAUPTSACHTITEL
 
@@ -1529,7 +1468,7 @@ public class MabRecord {
       	          blank = nicht definiert
 
      */
-    String allgemeineMaterialbenennung = "Elektronische Ressource";
+    public String allgemeineMaterialbenennung = "Elektronische Ressource";
     /*-
       	335       ZUSAETZE ZUM HAUPTSACHTITEL
 
@@ -1587,7 +1526,7 @@ public class MabRecord {
       	355       ZUSAETZE ZUM 4. PARALLELSACHTITEL
 
      */
-    public List<String> parallelSachtitel;
+    public List<String> parallelSachtitel = new ArrayList<String>();
     /*-
       	359       VERFASSERANGABE
 
@@ -1633,7 +1572,7 @@ public class MabRecord {
       	              Sachtitel
 
      */
-    public List<String> weitereSachtitel;
+    public List<String> weitereSachtitel = new ArrayList<String>();
     /*-
       	376       NORMIERTE ZEITSCHRIFTENTITEL
 
@@ -1719,10 +1658,10 @@ public class MabRecord {
       	          u     = nicht spezifiziert
 
      */
-    public String ersterVerlagsort;
-    public String ersterDruckort;
-    public String ersterVertriebsort;
-    public String ersterAuslieferungsort;
+    public String ersterVerlagsort = null;
+    public String ersterDruckort = null;
+    public String ersterVertriebsort = null;
+    public String ersterAuslieferungsort = null;
 
     /*-
       	411       ADRESSE DES 1. VERLEGERS, DRUCKERS USW.
@@ -1741,9 +1680,9 @@ public class MabRecord {
       	          c     = Auslieferer
       	          u     = nicht spezifiziert
      */
-    public String ersterVerleger;
-    public String ersterVertrieb;
-    public String ersterAuslieferer;
+    public String ersterVerleger = null;
+    public String ersterVertrieb = null;
+    public String ersterAuslieferer = null;
 
     /*-
       	415       ORT(E) DES 2. VERLEGERS, DRUCKERS USW.
@@ -1796,11 +1735,11 @@ public class MabRecord {
       	          p     = Publikationsdatum bei Tontraegern (P-Datum)
 
      */
-    public String erscheinungsjahrVorlage;
-    public String erscheinungsjahrAnsetzung;
-    public String erscheinungsjahrErsterBand;
-    public String erscheinungsjahrLetzterBand;
-    public String publikationsDatumTontraeger;
+    public String erscheinungsjahrVorlage = null;
+    public String erscheinungsjahrAnsetzung = null;
+    public String erscheinungsjahrErsterBand = null;
+    public String erscheinungsjahrLetzterBand = null;
+    public String publikationsDatumTontraeger = null;
     /*-
       	426       DATUMSANGABEN
 
@@ -1850,7 +1789,7 @@ public class MabRecord {
       	                  Einheiten
 
      */
-    public String umfang;
+    public String umfang = null;
     /*-
       	434       ILLUSTRATIONSANGABE / TECHNISCHE ANGABEN ZU TONTRAEGERN
 
@@ -1897,9 +1836,9 @@ public class MabRecord {
       	          b     = 1. Gesamttitel ohne Zaehlung der Stuecktitel
 
      */
-    public String gesamttitelMitZaehlungDerStuecktitel;
-    public String gesamttitelMitZaehlungDerStuecktitelHierarchisch;
-    public String gesamttitelOhneZaehlungDerStuecktitel;
+    public String gesamttitelMitZaehlungDerStuecktitel = null;
+    public String gesamttitelMitZaehlungDerStuecktitelHierarchisch = null;
+    public String gesamttitelOhneZaehlungDerStuecktitel = null;
     /*-
       	452       STANDARDNUMMERN DES 1. GESAMTTITELS
 
@@ -1923,7 +1862,7 @@ public class MabRecord {
       	                  Sammelwerk
 
      */
-    public String idGesamttitel;
+    public String idGesamttitel = null;
 
     /*-
       	454       1. GESAMTTITEL IN ANSETZUNGSFORM
@@ -2428,7 +2367,7 @@ public class MabRecord {
       	          Indikator:
       	          blank = nicht definiert
      */
-    public String doi;
+    public String doi = null;
     /*-
 
       	553       ARTIKELNUMMER
@@ -2972,8 +2911,8 @@ public class MabRecord {
       	          $A    = Beziehung
 
      */
-    public String urn;
-    public String httpAdresse;
+    public String urn = null;
+    public String httpAdresse = null;
     /*-
       	659       ERGAENZENDE BEMERKUNGEN ZUR COMPUTERDATEI
 
@@ -3107,9 +3046,9 @@ public class MabRecord {
       	          z     = ZDB-Systematik
      */
 
-    public Map<String, Subject> klassifikationDdc;
-    public Map<String, Subject> klassifikationDnb;
-    public Map<String, Subject> klassifikationRpb;
+    public Map<String, Subject> klassifikationDdc = new HashMap<String, Subject>();
+    public Map<String, Subject> klassifikationDnb = new HashMap<String, Subject>();
+    public Map<String, Subject> klassifikationRpb = new HashMap<String, Subject>();
 
     /*-
 
