@@ -881,7 +881,8 @@ public class Actions {
     public String addUrn(String pid, String namespace, String snid) {
 	String subject = namespace + ":" + pid;
 	String urn = services.generateUrn(subject, snid);
-	String hasUrn = "http://geni-orca.renci.org/owl/topology.owl#hasURN";
+	String hasUrnOld = "http://geni-orca.renci.org/owl/topology.owl#hasURN";
+	String hasUrn = "http://purl.org/lobid/lv#urn";
 
 	String metadata = null;
 	if (fedora.dataStreamExists(subject, "metadata")) {
