@@ -184,8 +184,10 @@ public class Actions {
 	try {
 	    if (pids != null) {
 		for (Node n : pids) {
-
 		    String m = removeFromIndex(n.getNamespace(),
+			    n.getContentType(), n.getPID());
+		    msg.append("\n" + m);
+		    m = removeFromPublicIndex(n.getNamespace(),
 			    n.getContentType(), n.getPID());
 		    msg.append("\n" + m);
 		}
