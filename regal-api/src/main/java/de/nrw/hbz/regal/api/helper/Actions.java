@@ -179,12 +179,7 @@ public class Actions {
 	try {
 	    if (pids != null) {
 		for (Node n : pids) {
-		    String m = removeFromIndex(n.getNamespace(),
-			    n.getContentType(), n.getPID());
-		    msg.append("\n" + m);
-		    m = removeFromPublicIndex(n.getNamespace(),
-			    n.getContentType(), n.getPID());
-		    msg.append("\n" + m);
+		    msg.append("\n" + removeIdFromPublicAndPrivateIndex(n));
 		}
 	    }
 	} catch (Exception e) {
@@ -192,6 +187,22 @@ public class Actions {
 	}
 
 	return pid + " successfully deleted! \n" + msg + "\n";
+    }
+
+    private String removeIdFromPublicAndPrivateIndex(Node n) {
+	StringBuffer msg = new StringBuffer();
+	try {
+	    String namespace = n.getNamespace();
+	    String m = removeFromIndex(namespace, n.getContentType(),
+		    n.getPID());
+	    msg.append("\n" + m);
+	    m = removeFromIndex("public_" + namespace, n.getContentType(),
+		    n.getPID());
+	    msg.append("\n" + m);
+	} catch (Exception e) {
+	    msg.append("\n" + e);
+	}
+	return msg.toString();
     }
 
     /**
@@ -579,7 +590,7 @@ public class Actions {
      * @param type
      *            the type of the resource
      * @param pid
-     *            The pid to remove from index
+     *            The namespaced pid to remove from index
      * @return A short message
      */
     public String removeFromIndex(String index, String type, String pid) {
@@ -588,54 +599,27 @@ public class Actions {
     }
 
     /**
-     * @param index
-     *            the elasticsearch index prefixed with "public_"
-     * @param type
-     *            the type of the resource
-     * @param pid
-     *            The pid to remove from index
-     * @return A short message
-     */
-    public String removeFromPublicIndex(String index, String type, String pid) {
-	return removeFromIndex("public_" + index, type, pid);
-    }
-
-    /**
      * @param p
-     *            The pid that must be indexed
-     * @param namespace
-     *            the namespace of the pid
+     *            The pid with namespace that must be indexed
+     * @param index
+     *            the name of the index. Convention is to use the namespace of
+     *            the pid.
      * @param type
      *            the type of the resource
      * @return a short message.
      */
-    public String index(String p, String namespace, String type) {
-	String index = namespace;
+    public String index(String p, String index, String type) {
 	search.init(index, "public-index-config.json");
-	String viewAsString = oaiore(namespace + ":" + p,
+	String jsonCompactStr = oaiore(index + ":" + p,
 		"application/json+compact");
-	search.index(index, type, namespace + ":" + p, viewAsString);
-	return namespace + ":" + p + " indexed!";
+	search.index(index, type, p, jsonCompactStr);
+	return index + ":" + p + " indexed!";
     }
 
     private String index(Node n) {
 	String namespace = n.getNamespace();
 	String pid = n.getPID();
-	String p = pid.substring(pid.indexOf(":") + 1);
-	return index(p, namespace, n.getContentType());
-    }
-
-    /**
-     * @param p
-     *            pid
-     * @param namespace
-     *            namespace is used as index. Schema is public_$namespace
-     * @param type
-     *            type
-     * @return a message
-     */
-    public String publicIndex(String p, String namespace, String type) {
-	return index(p, "public_" + namespace, type);
+	return index(pid, namespace, n.getContentType());
     }
 
     /**

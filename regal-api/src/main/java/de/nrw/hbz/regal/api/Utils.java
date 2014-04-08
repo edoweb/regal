@@ -121,7 +121,7 @@ public class Utils {
 	    @PathParam("namespace") String namespace,
 	    @QueryParam("type") final String type) {
 
-	return actions.index(pid, namespace, type);
+	return actions.index(namespace + ":" + pid, namespace, type);
 
     }
 
@@ -143,7 +143,7 @@ public class Utils {
 	    @PathParam("namespace") String namespace,
 	    @QueryParam("type") final String type) {
 
-	return actions.removeFromIndex(namespace, type, pid);
+	return actions.removeFromIndex(namespace, type, namespace + ":" + pid);
 
     }
 
@@ -165,7 +165,8 @@ public class Utils {
 	    @PathParam("namespace") String namespace,
 	    @QueryParam("type") final String type) {
 
-	return actions.publicIndex(pid, namespace, type);
+	return actions
+		.index(namespace + ":" + pid, "public_" + namespace, type);
 
     }
 
@@ -187,7 +188,8 @@ public class Utils {
 	    @PathParam("namespace") String namespace,
 	    @QueryParam("type") final String type) {
 
-	return actions.removeFromPublicIndex(namespace, type, pid);
+	return actions.removeFromIndex("public_" + namespace, type, namespace
+		+ ":" + pid);
 
     }
 
