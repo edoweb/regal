@@ -35,14 +35,9 @@ import java.util.Vector;
 
 import javax.ws.rs.core.Response;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
@@ -615,11 +610,11 @@ public class Actions {
      * @return a short message.
      */
     public String index(String p, String namespace, String type) {
-	search.init(namespace, "index-config.json");
-	String viewAsString = oaiore(namespace + ":" + p, "application/json");
-	viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
-		(JSONArray) JSONValue.parse(viewAsString)));
-	search.index(namespace, type, namespace + ":" + p, viewAsString);
+	String index = namespace;
+	search.init(index, "public-index-config.json");
+	String viewAsString = oaiore(namespace + ":" + p,
+		"application/json+compact");
+	search.index(index, type, namespace + ":" + p, viewAsString);
 	return namespace + ":" + p + " indexed!";
     }
 
@@ -640,15 +635,7 @@ public class Actions {
      * @return a message
      */
     public String publicIndex(String p, String namespace, String type) {
-
-	String index = "public_" + namespace;
-	search.init(index, "public-index-config.json");
-	String viewAsString = oaiore(namespace + ":" + p,
-		"application/json+compact");
-	// viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
-	// JSONValue.parse(viewAsString)));
-	search.index(index, type, namespace + ":" + p, viewAsString);
-	return namespace + ":" + p + " indexed!";
+	return index(p, "public_" + namespace, type);
     }
 
     /**
