@@ -610,10 +610,9 @@ public class Actions {
      */
     public String index(String p, String index, String type) {
 	search.init(index, "public-index-config.json");
-	String jsonCompactStr = oaiore(index + ":" + p,
-		"application/json+compact");
+	String jsonCompactStr = oaiore(p, "application/json+compact");
 	search.index(index, type, p, jsonCompactStr);
-	return index + ":" + p + " indexed!";
+	return p + " indexed!";
     }
 
     private String index(Node n) {
