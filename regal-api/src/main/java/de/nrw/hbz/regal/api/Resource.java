@@ -833,7 +833,7 @@ public class Resource {
      */
     @GET
     @Path("/{namespace}:{pid}.html")
-    @Produces({ "text/html" })
+    @Produces({ "text/html ; charset=UTF-8" })
     public Response getReMAsHtml(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
 	String rem = actions.oaiore(namespace + ":" + pid, "text/html");
