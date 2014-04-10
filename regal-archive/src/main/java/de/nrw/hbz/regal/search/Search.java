@@ -67,7 +67,7 @@ public class Search {
 	client = node.client();
 
 	client.admin().indices().prepareDelete().execute().actionGet();
-	init("test", "index-config.json");
+	init("test", "public-index-config.json");
     }
 
     /**
@@ -222,7 +222,7 @@ public class Search {
     public SearchHits query(String index, String fieldName, String fieldValue) {
 	client.admin().indices().refresh(new RefreshRequest()).actionGet();
 	QueryBuilder query = QueryBuilders.boolQuery().must(
-		QueryBuilders.fieldQuery(fieldName, fieldValue));
+		QueryBuilders.matchQuery(fieldName, fieldValue));
 	SearchResponse response = client.prepareSearch(index).setQuery(query)
 		.execute().actionGet();
 	return response.getHits();
