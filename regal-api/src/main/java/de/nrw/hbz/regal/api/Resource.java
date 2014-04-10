@@ -472,13 +472,17 @@ public class Resource {
 		    .getEntityAs(String.class);
 
 	    String name = "data";
-	    if (multiPart.getBodyParts().size() == 3) {
+	    String md5Hash = null;
+	    if (multiPart.getBodyParts().size() > 2) {
 		name = multiPart.getBodyParts().get(2)
+			.getEntityAs(String.class);
+	    } else if (multiPart.getBodyParts().size() > 3) {
+		md5Hash = multiPart.getBodyParts().get(3)
 			.getEntityAs(String.class);
 	    }
 	    return actions.updateData(namespace + ":" + pid, multiPart
 		    .getBodyParts().get(0).getEntityAs(InputStream.class),
-		    mimeType, name);
+		    mimeType, name, md5Hash);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);

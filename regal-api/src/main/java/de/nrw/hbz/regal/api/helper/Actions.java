@@ -289,12 +289,14 @@ public class Actions {
      *            the mimetype of the file
      * @param name
      *            the name of the file
+     * @param md5Hash
+     *            a hash for the content. Can be null.
      * @return A short message
      * @throws IOException
      *             if data can not be written to a tmp file
      */
     public String updateData(String pid, InputStream content, String mimeType,
-	    String name) throws IOException {
+	    String name, String md5Hash) throws IOException {
 	if (content == null) {
 	    throw new HttpArchiveException(406, pid
 		    + " you've tried to upload an empty stream."
@@ -310,6 +312,15 @@ public class Actions {
 	    fedora.updateNode(node);
 	}
 	index(node);
+	if (md5Hash != null) {
+	    node = fedora.readNode(pid);
+	    String fedoraHash = node.getChecksum();
+	    if (!md5Hash.equals(fedoraHash)) {
+		throw new HttpArchiveException(417, pid + " expected a MD5 of"
+			+ fedoraHash + " but you provided a MD5 value of "
+			+ md5Hash);
+	    }
+	}
 	return pid + " data successfully updated!";
     }
 

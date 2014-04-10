@@ -251,9 +251,12 @@ public class DigitalEntity {
      *            a mimetype, e.g. application/pdf
      * @param type
      *            a stream type
+     * @param md5Hash
+     *            a md5 hash to control transmission
      */
-    public void addStream(File file, String mime, StreamType type) {
-	streams.put(type, new Stream(file, mime, type));
+    public void addStream(File file, String mime, StreamType type,
+	    String md5Hash) {
+	streams.put(type, new Stream(file, mime, type, md5Hash));
 
     }
 
@@ -266,9 +269,12 @@ public class DigitalEntity {
      *            a stream type
      * @param fileId
      *            a id for the file
+     * @param md5Hash
+     *            an md5Hash to control transmission
      */
-    public void addStream(File file, String mime, StreamType type, String fileId) {
-	streams.put(type, new Stream(file, mime, type, fileId));
+    public void addStream(File file, String mime, StreamType type,
+	    String fileId, String md5Hash) {
+	streams.put(type, new Stream(file, mime, type, fileId, md5Hash));
 
     }
 

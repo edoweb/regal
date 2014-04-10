@@ -273,6 +273,8 @@ public class Webclient {
 	    logger.info("Upload: " + dataStream.getFile().getAbsolutePath());
 	    multiPart.bodyPart(new BodyPart(uploadFileName.substring(0,
 		    uploadFileName.indexOf('.')), MediaType.TEXT_PLAIN_TYPE));
+	    multiPart.bodyPart(new BodyPart(dataStream.getMd5Hash(),
+		    MediaType.TEXT_PLAIN_TYPE));
 	    data.type("multipart/mixed").post(multiPart);
 
 	} catch (UniformInterfaceException e) {

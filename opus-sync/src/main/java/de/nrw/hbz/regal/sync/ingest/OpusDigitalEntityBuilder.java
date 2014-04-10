@@ -28,6 +28,7 @@ import org.w3c.dom.NodeList;
 import de.nrw.hbz.regal.fedora.XmlUtils;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
+import de.nrw.hbz.regal.sync.extern.Md5Checksum;
 import de.nrw.hbz.regal.sync.extern.StreamType;
 
 /**
@@ -60,7 +61,9 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 	    DigitalEntity dtlDe) {
 	// dtlDe = new DigitalEntity(baseDir);
 	File file = new File(baseDir + File.separator + pid + ".xml");
-	dtlDe.addStream(file, "application/xml", StreamType.xMetaDissPlus);
+	String md5Hash = getMd5(file);
+	dtlDe.addStream(file, "application/xml", StreamType.xMetaDissPlus,
+		md5Hash);
 	try {
 	    Vector<String> files = new Vector<String>();
 
@@ -99,9 +102,11 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 
 		if (f.endsWith("pdf")) {
 		    i++;
-		    dtlDe.addStream(new File(baseDir + File.separator + pid
-			    + "_" + i + ".pdf"), "application/pdf",
-			    StreamType.DATA);
+		    File fi = new File(baseDir + File.separator + pid + "_" + i
+			    + ".pdf");
+		    String md5h = getMd5(fi);
+		    dtlDe.addStream(fi, "application/pdf", StreamType.DATA,
+			    md5h);
 
 		}
 
@@ -114,6 +119,11 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 
 	return dtlDe;
 
+    }
+
+    private String getMd5(File stream) {
+	Md5Checksum md5 = new Md5Checksum();
+	return md5.getMd5Checksum(stream);
     }
 
 }

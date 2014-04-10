@@ -42,6 +42,7 @@ import de.nrw.hbz.regal.fedora.XmlUtils;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityRelation;
+import de.nrw.hbz.regal.sync.extern.Md5Checksum;
 import de.nrw.hbz.regal.sync.extern.RelatedDigitalEntity;
 import de.nrw.hbz.regal.sync.extern.StreamType;
 
@@ -313,7 +314,8 @@ public class EdowebDigitalEntityBuilder implements
 		    + dtlDe.getPid() + "_" + type.toString() + ".xml");
 	    File stream = XmlUtils.stringToFile(file,
 		    XmlUtils.nodeToString(item));
-	    dtlDe.addStream(stream, "application/xml", type);
+	    String md5Hash = getMd5(stream);
+	    dtlDe.addStream(stream, "application/xml", type, md5Hash);
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -328,11 +330,17 @@ public class EdowebDigitalEntityBuilder implements
 	    File file = new File(dtlDe.getLocation() + File.separator + "."
 		    + dtlDe.getPid() + "_" + type.toString() + ".xml");
 	    File stream = XmlUtils.stringToFile(file, getMarc(item));
-	    dtlDe.addStream(stream, "application/xml", type);
+	    String md5Hash = getMd5(stream);
+	    dtlDe.addStream(stream, "application/xml", type, md5Hash);
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
+    }
+
+    private String getMd5(File stream) {
+	Md5Checksum md5 = new Md5Checksum();
+	return md5.getMd5Checksum(stream);
     }
 
     private String getMarc(Node item) {

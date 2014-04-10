@@ -80,7 +80,7 @@ public class TestActions {
 	actions.updateDC("test:" + pid, dc);
 	actions.updateData("test:" + pid, Thread.currentThread()
 		.getContextClassLoader().getResourceAsStream("test.pdf"),
-		"application/pdf", "TestFile");
+		"application/pdf", "TestFile", null);
 	actions.updateMetadata("test:" + pid, CopyUtils.copyToString(
 		Thread.currentThread().getContextClassLoader()
 			.getResourceAsStream("test.nt"), "utf-8"));

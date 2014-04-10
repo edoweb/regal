@@ -31,6 +31,7 @@ import org.w3c.dom.NodeList;
 import de.nrw.hbz.regal.fedora.XmlUtils;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
+import de.nrw.hbz.regal.sync.extern.Md5Checksum;
 import de.nrw.hbz.regal.sync.extern.StreamType;
 
 /**
@@ -121,15 +122,21 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 	buildRelated("rel:hasDependent", dtlDe, baseDir);
 
 	File content = new File(baseDir + File.separator + "content.zip");
-
+	String md5Hash = getMd5(content);
 	if (content.exists()) {
-	    dtlDe.addStream(content, "application/zip", StreamType.DATA);
+	    dtlDe.addStream(content, "application/zip", StreamType.DATA,
+		    md5Hash);
 	} else {
 
 	}
 
 	return dtlDe;
 
+    }
+
+    private String getMd5(File stream) {
+	Md5Checksum md5 = new Md5Checksum();
+	return md5.getMd5Checksum(stream);
     }
 
     private void buildRelated(String relation, DigitalEntity dtlDe,
