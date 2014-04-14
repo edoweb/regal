@@ -94,6 +94,7 @@ public class MabConverterTest {
 		.getResourceAsStream(name);
     }
 
+    @SuppressWarnings("unused")
     private File initOutputFile(String output) throws IOException {
 	File file = new File(output);
 	if (file.exists()) {

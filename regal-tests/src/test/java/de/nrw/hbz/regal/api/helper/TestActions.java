@@ -38,6 +38,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
 import de.nrw.hbz.regal.fedora.CopyUtils;
 import de.nrw.hbz.regal.fedora.RdfUtils;
 import de.nrw.hbz.regal.fedora.XmlUtils;
+import de.nrw.hbz.regal.sync.extern.Md5Checksum;
 
 /**
  * 
@@ -353,6 +354,37 @@ public class TestActions {
 	createTestObject("123");
 	Node node = actions.readNode("test:123");
 	System.out.println("Start-\"" + actions.aleph(node) + "\"-End");
+    }
+
+    @Test(expected = HttpArchiveException.class)
+    public void checksumTest_shouldFail() throws IOException {
+	createTestObject("123");
+	try {
+	    String msg = actions.updateData("test:123", Thread.currentThread()
+		    .getContextClassLoader().getResourceAsStream("test.pdf"),
+		    "application/pdf", "TestFile", "34");
+	    System.out.println(msg);
+	} catch (HttpArchiveException e) {
+	    System.out.println(e);
+	    throw e;
+	}
+    }
+
+    @Test
+    public void checksumTest_shouldSucceed() throws IOException {
+	createTestObject("123");
+	try {
+	    Md5Checksum c = new Md5Checksum();
+	    String md5 = c.getMd5Checksum(Thread.currentThread()
+		    .getContextClassLoader().getResourceAsStream("test.pdf"));
+	    String msg = actions.updateData("test:123", Thread.currentThread()
+		    .getContextClassLoader().getResourceAsStream("test.pdf"),
+		    "application/pdf", "TestFile", md5);
+	    System.out.println(msg);
+	} catch (HttpArchiveException e) {
+	    System.out.println(e);
+	    throw e;
+	}
     }
 
     @After

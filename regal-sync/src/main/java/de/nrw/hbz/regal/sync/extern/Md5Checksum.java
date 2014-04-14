@@ -2,6 +2,7 @@ package de.nrw.hbz.regal.sync.extern;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 
@@ -26,9 +27,20 @@ public class Md5Checksum {
      * @return checksum as byte array
      */
     public byte[] createChecksum(File file) {
-	try {
-	    InputStream fis = new FileInputStream(file);
 
+	InputStream fis;
+	try {
+	    fis = new FileInputStream(file);
+
+	    return createChecksum(fis);
+	} catch (FileNotFoundException e) {
+	    throw new Md5ChecksumException(e);
+	}
+
+    }
+
+    public byte[] createChecksum(InputStream fis) {
+	try {
 	    byte[] buffer = new byte[1024];
 	    MessageDigest complete = MessageDigest.getInstance("MD5");
 	    int numRead;
@@ -64,6 +76,21 @@ public class Md5Checksum {
      */
     public String getMd5Checksum(File file) {
 	byte[] b = createChecksum(file);
+	String result = "";
+
+	for (int i = 0; i < b.length; i++) {
+	    result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+	}
+	return result;
+    }
+
+    /**
+     * @param InputStream
+     *            the input stream you want to get the checksum from
+     * @return the checksum as string
+     */
+    public String getMd5Checksum(InputStream in) {
+	byte[] b = createChecksum(in);
 	String result = "";
 
 	for (int i = 0; i < b.length; i++) {

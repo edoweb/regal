@@ -47,6 +47,7 @@ import de.nrw.hbz.regal.sync.extern.Md5Checksum;
  */
 public class DigitoolDownloader extends Downloader {
 
+    @SuppressWarnings("serial")
     public class ChecksumNotMatchException extends RuntimeException {
 
     }
