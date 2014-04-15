@@ -448,7 +448,9 @@ public class Resource {
     }
 
     /**
-     * Updates the actual data of the aggregated resource
+     * Updates the actual data of the aggregated resource. Takes data, mimetype,
+     * name, md5Checksum as form parameters. Returns a HTTP 417 if the md5 does
+     * not match.
      * 
      * @param pid
      *            the pid of the resource the pid of the resource
@@ -456,9 +458,20 @@ public class Resource {
      *            the namespace of the resource
      * @param multiPart
      *            The data is transfered as multipart data in order to provide
-     *            upload of large files
+     *            upload of large files. Example call:
+     *            <code> curl -i -uadmin:admin -XPUT http://localhost/resource/test:1234/data --form "data=@test.pdf" --form "type=application/pdf" --form "label=putTheFileNameInHere" "checksum=123456789" -H "Content-Type:multipart/mixed";echo</code>
+     *            The api supports four form parameters which must occur in the
+     *            described order: First param: a file to upload. Second param:
+     *            the mime type of the file. Third param (optional): a name for
+     *            the file. Fourth param (optional): a md5 checksum. If no
+     *            checksum is provided, the api will accept any data stream. If
+     *            checksum is provided AND the md5 does not match to the api's
+     *            calculation, a HTTP 417 is returned to the client. The client
+     *            should NOT IGNORE a HTTP 417 albeit the provided but
+     *            presumably broken data stream is stored.
+     * 
      * @return A human readable message and a status code of 200 if successful
-     *         an of 500 if not.
+     *         an of 500 if not. Wrong checksum will lead to a 417.
      */
     @PUT
     @Path("/{namespace}:{pid}/data")
@@ -476,7 +489,8 @@ public class Resource {
 	    if (multiPart.getBodyParts().size() > 2) {
 		name = multiPart.getBodyParts().get(2)
 			.getEntityAs(String.class);
-	    } else if (multiPart.getBodyParts().size() > 3) {
+	    }
+	    if (multiPart.getBodyParts().size() > 3) {
 		md5Hash = multiPart.getBodyParts().get(3)
 			.getEntityAs(String.class);
 	    }
