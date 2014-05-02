@@ -332,6 +332,8 @@ public class EdowebIngester implements IngestInterface {
 	} catch (IllegalArgumentException e) {
 	    logger.warn(e.getMessage());
 	    // webclient.createResource(ObjectType.monograph, dtlBean);
+	} catch (Exception e) {
+	    logger.warn(e.getMessage());
 	}
 
 	Vector<DigitalEntity> list = getParts(dtlBean);

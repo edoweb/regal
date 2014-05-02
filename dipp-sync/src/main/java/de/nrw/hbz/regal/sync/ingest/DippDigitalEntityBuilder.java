@@ -124,7 +124,7 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 	File content = new File(baseDir + File.separator + "content.zip");
 	String md5Hash = getMd5(content);
 	if (content.exists()) {
-	    dtlDe.addStream(content, "application/zip", StreamType.DATA,
+	    dtlDe.addStream(content, "application/zip", StreamType.DATA, null,
 		    md5Hash);
 	} else {
 

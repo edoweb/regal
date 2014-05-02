@@ -63,7 +63,7 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 	File file = new File(baseDir + File.separator + pid + ".xml");
 	String md5Hash = getMd5(file);
 	dtlDe.addStream(file, "application/xml", StreamType.xMetaDissPlus,
-		md5Hash);
+		null, md5Hash);
 	try {
 	    Vector<String> files = new Vector<String>();
 
@@ -106,7 +106,7 @@ public class OpusDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 			    + ".pdf");
 		    String md5h = getMd5(fi);
 		    dtlDe.addStream(fi, "application/pdf", StreamType.DATA,
-			    md5h);
+			    null, md5h);
 
 		}
 

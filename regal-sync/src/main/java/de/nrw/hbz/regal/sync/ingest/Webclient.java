@@ -270,7 +270,7 @@ public class Webclient {
 	    multiPart.bodyPart(new BodyPart(uploadFileMimeType,
 		    MediaType.TEXT_PLAIN_TYPE));
 
-	    logger.info("Upload: " + dataStream.getFile().getAbsolutePath());
+	    logger.info("Upload: " + dataStream);
 	    multiPart.bodyPart(new BodyPart(uploadFileName.substring(0,
 		    uploadFileName.indexOf('.')), MediaType.TEXT_PLAIN_TYPE));
 	    multiPart.bodyPart(new BodyPart(dataStream.getMd5Hash(),

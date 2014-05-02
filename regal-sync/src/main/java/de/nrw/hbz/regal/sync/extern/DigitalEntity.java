@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Vector;
 
 import de.nrw.hbz.regal.fedora.XmlUtils;
@@ -244,21 +245,22 @@ public class DigitalEntity {
 	related.add(relation);
     }
 
-    /**
-     * @param file
-     *            a file
-     * @param mime
-     *            a mimetype, e.g. application/pdf
-     * @param type
-     *            a stream type
-     * @param md5Hash
-     *            a md5 hash to control transmission
-     */
-    public void addStream(File file, String mime, StreamType type,
-	    String md5Hash) {
-	streams.put(type, new Stream(file, mime, type, md5Hash));
-
-    }
+    // /**
+    // * @param file
+    // * a file
+    // * @param mime
+    // * a mimetype, e.g. application/pdf
+    // * @param type
+    // * a stream type
+    // * @param md5Hash
+    // * a md5 hash to control transmission
+    // */
+    // public void addStream(File file, String mime, StreamType type,String
+    // fileId,
+    // String md5Hash) {
+    // streams.put(type, new Stream(file, mime, type, md5Hash));
+    //
+    // }
 
     /**
      * @param file
@@ -347,15 +349,24 @@ public class DigitalEntity {
     public String toString(DigitalEntity digitalEntity, int depth, int indent) {
 	StringBuffer buffer = new StringBuffer();
 	buffer.append(indent(indent));
-	buffer.append(digitalEntity.getPid() + " (" + digitalEntity.getLabel()
-		+ ") usage_type:" + digitalEntity.getUsageType() + "  parent:"
-		+ digitalEntity.getParentPid());
+	buffer.append(digitalEntity.getPid() + ", " + digitalEntity.getLabel()
+		+ " , " + digitalEntity.getUsageType() + ",\n "
+		+ indent(indent + 2) + digitalEntity.listStreams(indent + 2));
 	if (depth != 0) {
 	    for (RelatedDigitalEntity related : digitalEntity.getRelated()) {
-		buffer.append(toString(related.entity, depth - 1, indent + 1));
+		buffer.append(related.relation + ", "
+			+ toString(related.entity, depth - 1, indent + 1));
 	    }
 	}
 	return buffer.toString();
+    }
+
+    private String listStreams(int indent) {
+	StringBuilder sb = new StringBuilder();
+	for (Entry<StreamType, Stream> e : streams.entrySet()) {
+	    sb.append(e.getKey() + "," + e.getValue() + "\n" + indent(indent));
+	}
+	return sb.toString();
     }
 
     private String indent(int indent) {

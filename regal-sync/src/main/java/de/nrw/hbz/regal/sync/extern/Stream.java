@@ -36,24 +36,6 @@ public class Stream {
      *            the mime type of file's data
      * @param type
      *            a type (how is it used in the application context)
-     * @param md5Hash
-     *            a md5 hash value to control transmission
-     */
-    public Stream(File file, String mimeType, StreamType type, String md5Hash) {
-	super();
-	this.file = file;
-	this.mimeType = mimeType;
-	this.type = type;
-	this.md5Hash = md5Hash;
-    }
-
-    /**
-     * @param file
-     *            well it is a file
-     * @param mimeType
-     *            the mime type of file's data
-     * @param type
-     *            a type (how is it used in the application context)
      * @param fileId
      *            a id for the file (comes from digitool)
      * @param md5Hash
@@ -145,4 +127,9 @@ public class Stream {
 	this.md5Hash = md5Hash;
     }
 
+    @Override
+    public String toString() {
+	return getFile().getAbsolutePath() + ", " + getMimeType() + ", "
+		+ getMd5Hash() + ", " + type + ", " + fileId;
+    }
 }
