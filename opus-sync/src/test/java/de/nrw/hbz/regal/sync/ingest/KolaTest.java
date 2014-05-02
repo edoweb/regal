@@ -82,7 +82,6 @@ public class KolaTest {
 
     }
 
-    @Test
     public void mainTest() throws URISyntaxException {
 
 	pidlist = Thread.currentThread().getContextClassLoader()

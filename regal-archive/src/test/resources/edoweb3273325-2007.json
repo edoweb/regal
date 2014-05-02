@@ -1,81 +1,30 @@
 {
-	"@graph": [ {
-  "@id" : "edoweb:3273325-2007",
-  "http://geni-orca.renci.org/owl/topology.owl#hasURN" : [ {
-    "@value" : "urn:nbn:de:hbz:929:02-edoweb:3273325-20071"
+  "@graph" : [ {
+    "@id" : "edoweb:3273325-2007",
+    "contentType" : "volume",
+    "hasTransformer" : [ "oaidc", "epicur" ],
+    "hasPart" : [ "edoweb:3273331", "edoweb:3273334", "edoweb:3273418", "edoweb:3273421", "edoweb:3273424", "edoweb:3273339", "edoweb:3273342", "edoweb:3273345", "edoweb:3273348", "edoweb:3273351", "edoweb:3273356", "edoweb:3273359", "edoweb:3273362", "edoweb:3273365", "edoweb:3273368", "edoweb:3273376", "edoweb:3273379", "edoweb:3273382", "edoweb:3273385", "edoweb:3273401", "edoweb:3273404", "edoweb:3273407", "edoweb:3273410", "edoweb:3273413", "edoweb:3273373", "edoweb:3273390", "edoweb:3273393", "edoweb:3273396" ],
+    "isPartOf" : "edoweb:3273325",
+    "title" : "2007",
+    "urn" : "urn:nbn:de:hbz:929:02-edoweb:3273325-20071",
+    "volume" : "2007",
+    "aggregates" : [ "edoweb:3273331", "edoweb:3273334", "edoweb:3273418", "edoweb:3273421", "edoweb:3273424", "edoweb:3273339", "edoweb:3273342", "edoweb:3273345", "edoweb:3273348", "edoweb:3273351", "edoweb:3273356", "edoweb:3273359", "edoweb:3273362", "edoweb:3273365", "edoweb:3273368", "edoweb:3273376", "edoweb:3273379", "edoweb:3273382", "edoweb:3273385", "edoweb:3273401", "edoweb:3273404", "edoweb:3273407", "edoweb:3273410", "edoweb:3273413", "edoweb:3273373", "edoweb:3273390", "edoweb:3273393", "edoweb:3273396" ],
+    "isAggregatedBy" : {
+      "@id" : "edoweb:3273325"
+    },
+    "isDescribedBy" : "edoweb:3273325-2007.rdf",
+    "similarTo" : "http://api.localhost/fedora/objects/edoweb:3273325-2007"
+  }, {
+    "@id" : "edoweb:3273325-2007.rdf",
+    "created" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2014-05-02T11:25:23.373+02:00"
+    },
+    "modified" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2014-05-02T11:26:28.384+02:00"
+    },
+    "describes" : "edoweb:3273325-2007"
   } ],
-  "http://hbz-nrw.de/regal#contentType" : [ {
-    "@value" : "volume"
-  } ],
-  "http://hbz-nrw.de/regal#hasTransformer" : [ {
-    "@value" : "oaidc"
-  }, {
-    "@value" : "epicur"
-  } ],
-  "http://iflastandards.info/ns/isbd/elements/P1004" : [ {
-    "@value" : "2007"
-  } ],
-  "http://purl.org/dc/terms/hasPart" : [ {
-    "@id" : "edoweb:3273331"
-  }, {
-    "@id" : "edoweb:3273334"
-  }, {
-    "@id" : "edoweb:3273418"
-  }, {
-    "@id" : "edoweb:3273421"
-  }, {
-    "@id" : "edoweb:3273424"
-  }, {
-    "@id" : "edoweb:3273339"
-  }, {
-    "@id" : "edoweb:3273342"
-  }, {
-    "@id" : "edoweb:3273345"
-  } ],
-  "http://purl.org/dc/terms/isPartOf" : [ {
-    "@id" : "edoweb:3273325"
-  } ],
-  "http://purl.org/ontology/bibo/volume" : [ {
-    "@value" : "2007"
-  } ],
-  "http://www.openarchives.org/ore/terms/aggregates" : [ {
-    "@id" : "edoweb:3273331"
-  }, {
-    "@id" : "edoweb:3273334"
-  }, {
-    "@id" : "edoweb:3273418"
-  }, {
-    "@id" : "edoweb:3273421"
-  }, {
-    "@id" : "edoweb:3273424"
-  }, {
-    "@id" : "edoweb:3273339"
-  }, {
-    "@id" : "edoweb:3273342"
-  }, {
-    "@id" : "edoweb:3273345"
-  } ],
-  "http://www.openarchives.org/ore/terms/isAggregatedBy" : [ {
-    "@id" : "edoweb:3273325"
-  } ],
-  "http://www.openarchives.org/ore/terms/isDescribedBy" : [ {
-    "@id" : "edoweb:3273325-2007.rdf"
-  } ],
-  "http://www.openarchives.org/ore/terms/similarTo" : [ {
-    "@id" : "http://api.localhost/fedora/objects/edoweb:3273325-2007"
-  } ]
-}, {
-  "@id" : "edoweb:3273325-2007.rdf",
-  "http://purl.org/dc/terms/created" : [ {
-    "@type" : "http://www.w3.org/2001/XMLSchema#dateTime",
-    "@value" : "2014-02-10T13:05:25.194+01:00"
-  } ],
-  "http://purl.org/dc/terms/modified" : [ {
-    "@type" : "http://www.w3.org/2001/XMLSchema#dateTime",
-    "@value" : "2014-02-10T13:05:50.297+01:00"
-  } ],
-  "http://www.openarchives.org/ore/terms/describes" : [ {
-    "@id" : "edoweb:3273325-2007"
-  } ]
-} ]
+  "@context" : "http://api.localhost/edoweb-resources.json"
 }

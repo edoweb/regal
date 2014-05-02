@@ -1,185 +1,57 @@
 {
-	"@graph": 
-	[
-		{
-			"http://purl.org/dc/terms/language": 
-			[
-				{
-					"@id": "http://id.loc.gov/vocabulary/iso639-2/deu"
-				}
-			],
-
-			"http://purl.org/dc/terms/medium": 
-			[
-				{
-					"@id": "http://iflastandards.info/ns/isbd/terms/mediatype/T1002"
-				}
-			],
-
-			"http://www.umbel.org/specifications/vocabulary#isLike": 
-			[
-				{
-					"@id": "http://lobid.org/resource/HT015700117"
-				}
-			],
-
-			"http://hbz-nrw.de/regal#contentType": 
-			[
-				{
-					"@value": "monograph"
-				}
-			],
-
-			"@type": 
-			[
-				"http://purl.org/dc/terms/BibliographicResource",
-				"http://purl.org/ontology/bibo/Book",
-				"http://purl.org/vocab/frbr/core#Manifestation"
-			],
-
-			"http://iflastandards.info/ns/isbd/elements/P1053": 
-			[
-				{
-					"@value": "179 S. : Kt."
-				}
-			],
-
-			"http://purl.org/dc/terms/issued": 
-			[
-				{
-					"@value": "2006"
-				}
-			],
-
-			"http://purl.org/dc/terms/subject": 
-			[
-				{
-					"@id": "http://dewey.info/class/710/"
-				}
-			],
-
-			"http://purl.org/dc/terms/title": 
-			[
-				{
-					"@value": "Entwicklung mit Augenmaß : Landesentwicklungsprogramm Rheinland-Pfalz ; Entwurfsfassung zum Anhörungs- und Beteiligungsverfahren gemäß §8 Abs. 1 Landesplanungsgesetz : Entwurf des Landesentwicklungsprogramms (LEP IV)"
-				}
-			],
-
-			"http://xmlns.com/foaf/0.1/isPrimaryTopicOf": 
-			[
-				{
-					"@id": "http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT015700117"
-				}
-			],
-
-			"http://iflastandards.info/ns/isbd/elements/P1016": 
-			[
-				{
-					"@value": "Mainz"
-				}
-			],
-
-			"http://www.openarchives.org/ore/terms/isDescribedBy": 
-			[
-				{
-					"@id": "edoweb:2606976.rdf"
-				}
-			],
-
-			"http://iflastandards.info/ns/isbd/elements/P1004": 
-			[
-				{
-					"@value": "Entwicklung mit Augenmaß"
-				}
-			],
-
-			"http://iflastandards.info/ns/isbd/elements/P1017": 
-			[
-				{
-					"@value": "[Ministerium des Innern und für Sport]"
-				}
-			],
-
-			"http://www.openarchives.org/ore/terms/similarTo": 
-			[
-				{
-					"@id": "http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid=2606976"
-				},
-
-				{
-					"@id": "http://localhost/objects/edoweb:2606976"
-				}
-			],
-
-			"http://iflastandards.info/ns/isbd/elements/P1006": 
-			[
-				{
-					"@value": "Entwurf des Landesentwicklungsprogramms (LEP IV)"
-				},
-
-				{
-					"@value": "Landesentwicklungsprogramm Rheinland-Pfalz ; Entwurfsfassung zum Anhörungs- und Beteiligungsverfahren gemäß §8 Abs. 1 Landesplanungsgesetz"
-				}
-			],
-
-			"http://lobid.org/vocab/lobid#fulltextOnline": 
-			[
-				{
-					"@id": "http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=2606977&custom_att_2=simple_viewer"
-				}
-			],
-
-			"@id": "edoweb:2606976",
-			"http://www.w3.org/2007/05/powder-s#describedby": 
-			[
-				{
-					"@id": "edoweb:2606976/about"
-				}
-			],
-
-			"http://purl.org/lobid/lv#hbzID": 
-			[
-				{
-					"@value": "HT015700117"
-				}
-			]
-		},
-
-		{
-			"http://purl.org/dc/terms/creator": 
-			[
-				{
-					"@id": "https://github.com/edoweb/regal/"
-				}
-			],
-
-			"http://purl.org/dc/terms/modified": 
-			[
-				{
-					"@value": "2013-10-11T11:27:35.587+02:00",
-					"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
-				}
-			],
-
-			"http://www.openarchives.org/ore/terms/describes": 
-			[
-				{
-					"@id": "edoweb:2606976"
-				}
-			],
-
-			"@id": "edoweb:2606976.rdf"
-		},
-
-		{
-			"@id": "http://dewey.info/class/710/2009/08/about.en",
-			"http://www.w3.org/2004/02/skos/core#prefLabel": 
-			[
-				{
-					"@value": "Civic & landscape art",
-					"@language": "en"
-				}
-			]
-		}
-	]
+  "@graph" : [ {
+    "@id" : "edoweb:2606976",
+    "@type" : [ "http://data.archiveshub.ac.uk/def/ArchivalResource", "http://iflastandards.info/ns/isbd/terms/mediatype/T1002", "http://purl.org/dc/terms/BibliographicResource", "http://purl.org/ontology/bibo/Book", "http://purl.org/ontology/bibo/Document", "http://purl.org/vocab/frbr/core#Manifestation" ],
+    "contentType" : "monograph",
+    "hasTransformer" : [ "oaidc", "epicur" ],
+    "extent" : "179 S. : Kt.",
+    "publisher" : "[Ministerium des Innern und für Sport]",
+    "creator" : "http://d-nb.info/gnd/2062455-4",
+    "hasPart" : [ "edoweb:2606979", "edoweb:2606980", "edoweb:2606981", "edoweb:2606982", "edoweb:2606983", "edoweb:2606984", "edoweb:2606985", "edoweb:2606986", "edoweb:2606987", "edoweb:2606988", "edoweb:2606989", "edoweb:2606990", "edoweb:2606991", "edoweb:2606992", "edoweb:2606993", "edoweb:2606994", "edoweb:2606995", "edoweb:2606996", "edoweb:2606997", "edoweb:2606998", "edoweb:2606999", "edoweb:2607000", "edoweb:2607001" ],
+    "hasVersion" : "http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=2606977&custom_att_2=simple_viewer",
+    "isPartOf" : [ "http://lobid.org/resource/Edoweb", "http://lobid.org/resource/RPB" ],
+    "issued" : "2006",
+    "language" : "http://id.loc.gov/vocabulary/iso639-2/deu",
+    "subject" : [ "http://dewey.info/class/710/", "http://purl.org/lobid/rpb#n570100" ],
+    "title" : "Entwicklung mit Augenmaß",
+    "fulltextOnline" : "http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=2606977&custom_att_2=simple_viewer",
+    "hbzId" : "HT015700117",
+    "urn" : "urn:nbn:de:hbz:929:02-edoweb:26069762",
+    "exemplar" : "http://lobid.org/item/HT015700117%3ADE-929",
+    "otherTitleInformation" : "Landesentwicklungsprogramm Rheinland-Pfalz ; Entwurfsfassung zum Anhörungs- und Beteiligungsverfahren gemäß §8 Abs. 1 Landesplanungsgesetz",
+    "placeOfPublication" : "[Mainz]",
+    "publicationStatement" : "[Mainz]; [Ministerium des Innern und für Sport]; 2006",
+    "statementOfResponsibility" : "[Hrsg.: Ministerium des Innern und für Sport ...]",
+    "aggregates" : [ "edoweb:2606979", "edoweb:2606980", "edoweb:2606981", "edoweb:2606982", "edoweb:2606983", "edoweb:2606984", "edoweb:2606985", "edoweb:2606986", "edoweb:2606987", "edoweb:2606988", "edoweb:2606989", "edoweb:2606990", "edoweb:2606991", "edoweb:2606992", "edoweb:2606993", "edoweb:2606994", "edoweb:2606995", "edoweb:2606996", "edoweb:2606997", "edoweb:2606998", "edoweb:2606999", "edoweb:2607000", "edoweb:2607001" ],
+    "isDescribedBy" : "edoweb:2606976.rdf",
+    "similarTo" : [ "http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid=2606976", "http://api.localhost/fedora/objects/edoweb:2606976" ],
+    "isLike" : "http://lobid.org/resource/HT015700117",
+    "sameAs" : "http://hub.culturegraph.org/resource/HBZ-HT015700117",
+    "describedBy" : "edoweb:2606976/about",
+    "isPrimaryTopicOf" : "http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT015700117"
+  }, {
+    "@id" : "edoweb:2606976.rdf",
+    "created" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2014-05-02T11:55:38.537+02:00"
+    },
+    "modified" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2014-05-02T11:56:26.196+02:00"
+    },
+    "describes" : "edoweb:2606976"
+  }, {
+    "@id" : "edoweb:2606976/about",
+    "primaryTopic" : "edoweb:2606976"
+  }, {
+    "@id" : "http://d-nb.info/gnd/2062455-4",
+    "preferredNameForTheCorporateBody" : "Rheinland-Pfalz / Ministerium des Innern und für Sport"
+  }, {
+    "@id" : "http://dewey.info/class/710/2009/08/about.en",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Civic & landscape art"
+    }
+  } ],
+  "@context" : "http://api.localhost/edoweb-resources.json"
 }

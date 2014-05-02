@@ -23,7 +23,6 @@ import java.net.URISyntaxException;
 import java.util.Properties;
 
 import org.junit.Before;
-import org.junit.Test;
 
 import de.nrw.hbz.regal.sync.DippMain;
 
@@ -74,7 +73,6 @@ public class DippTest {
 	localcache = properties.getProperty("piddownloader.downloadLocation");
     }
 
-    @Test
     public void testMapping() throws URISyntaxException {
 	DippMapping mapping = new DippMapping();
 	File file = new File(Thread.currentThread().getContextClassLoader()
@@ -82,7 +80,6 @@ public class DippTest {
 	System.out.println(mapping.map(file, "dipp:1002"));
     }
 
-    @Test
     public void mainTest() throws URISyntaxException {
 
 	pidlist = Thread.currentThread().getContextClassLoader()
