@@ -39,6 +39,7 @@ substituteVars catalina.out $ARCHIVE_HOME/conf/catalina.out
 substituteVars Identify.xml $ARCHIVE_HOME/conf/Identify.xml
 substituteVars proai.properties $ARCHIVE_HOME/conf/proai.properties
 substituteVars robots.txt $ARCHIVE_HOME/conf/robots.txt
+substituteVars tomcat.conf $ARCHIVE_HOME/conf/tomcat.conf
 cp templates/favicon.ico $ARCHIVE_HOME/conf/favicon.ico
 }
 
@@ -79,29 +80,28 @@ else
 	cd -
 fi
 
-if [ -f fcrepo-installer-3.6.1.jar ]
+if [ -f fcrepo-installer-3.7.1.jar ]
 then
 	echo "fcrepo is already here! Stop downloading!"
 else
-	wget http://repo1.maven.org/maven2/org/fcrepo/fcrepo-installer/3.6.1/fcrepo-installer-3.6.1.jar
+	wget http://sourceforge.net/projects/fedora-commons/files/fedora/3.7.1/fcrepo-installer-3.7.1.jar 
 fi
 
-if [ -f elasticsearch-0.90.5.tar.gz]
+if [ -f elasticsearch-1.1.0.tar.gz ]
 then
 	echo "elasticsearch is already here! Stop downloading!"
 else
-	wget http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.5.tar.gz
+	wget http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.0.tar.gz
 fi
 
 echo "install fedora"
 export FEDORA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora
 export CATALINA_ARCHIVE_HOME=$ARCHIVE_HOME/fedora/tomcat
-java -jar fcrepo-installer-3.6.1.jar  $ARCHIVE_HOME/conf/install.properties
+java -jar fcrepo-installer-3.7.1.jar  $ARCHIVE_HOME/conf/install.properties
 
 echo "install elasticsearch"
-tar -xzf elasticsearch-0.90.5.tar.gz
-mv elasticsearch-0.90.5 $ARCHIVE_HOME/elasticsearch
-$ARCHIVE_HOME/elasticsearch/bin/elasticsearch
+tar -xzf elasticsearch-1.1.0.tar.gz
+mv elasticsearch-1.1.0 $ARCHIVE_HOME/elasticsearch
 pwd
 cp variables.conf $ARCHIVE_HOME/bin/
 cp -r templates $ARCHIVE_HOME/bin/

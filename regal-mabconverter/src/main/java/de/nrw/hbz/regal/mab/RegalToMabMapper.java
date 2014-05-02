@@ -70,7 +70,8 @@ public class RegalToMabMapper {
     private void mapStatement(Statement st) {
 
 	String pred = st.getPredicate().stringValue();
-	String obj = st.getObject().stringValue();
+	String obj = org.apache.commons.lang3.StringEscapeUtils.escapeXml(st
+		.getObject().stringValue());
 	String subj = st.getSubject().stringValue();
 
 	handleFreeFields(subj, pred, obj);
@@ -96,7 +97,8 @@ public class RegalToMabMapper {
     }
 
     private void handleFreeFields(String subj, String pred, String obj) {
-	if ("http://lobid.org/vocab/lobid#hbzID".equals(pred))
+
+	if ("http://purl.org/lobid/lv#hbzID".equals(pred))
 	    record.id = obj;
 	else if ("http://purl.org/dc/terms/created".equals(pred))
 	    record.datumDerErsterfassung = obj;
@@ -116,8 +118,6 @@ public class RegalToMabMapper {
 	else if ("http://iflastandards.info/ns/isbd/elements/P1053"
 		.equals(pred))
 	    record.umfang = obj;
-	else if ("http://purl.org/dc/terms/language".equals(pred))
-	    record.laenderCodeDINEN23166 = obj;
 	else if ("http://lobid.org/vocab/lobid#urn".equals(pred))
 	    record.urn = obj;
 	else if ("http://lobid.org/vocab/lobid#fulltextOnline".equals(pred))
@@ -142,6 +142,17 @@ public class RegalToMabMapper {
 	    Subject subject = record.klassifikationDdc.get(mySubject);
 	    subject.label = obj;
 	    record.klassifikationDdc.put(mySubject, subject);
+	} else if (obj.contains("http://purl.org/lobid/rpb#n")) {
+	    String mySubject = obj
+		    .replace("http://purl.org/lobid/rpb#n", "rpb");
+	    if (!record.klassifikationRpb.containsKey(mySubject)) {
+		Subject subject = record.new Subject(mySubject);
+		record.klassifikationRpb.put(mySubject, subject);
+	    }
+	    Subject subject = record.klassifikationRpb.get(mySubject);
+	    subject.label = mySubject;
+	    record.klassifikationRpb.put(mySubject, subject);
+
 	}
     }
 

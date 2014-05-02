@@ -19,6 +19,7 @@ package de.nrw.regal.mab;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,12 +27,14 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.antlr.runtime.RecognitionException;
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import de.nrw.hbz.regal.fedora.XmlUtils;
 import de.nrw.hbz.regal.mab.MabConverter;
 
 /**
@@ -60,7 +63,14 @@ public class MabConverterTest {
 	InputStream in = getResourceAsStream(id + ".nt");
 
 	ByteArrayOutputStream os = transformTestFile(in, recordId);
-	System.out.println(os.toString());
+	String str = os.toString();
+	System.out.println(str);
+	File output = File.createTempFile("mabconverterOut", "xml");
+	XmlUtils.stringToFile(output, str);
+	File expected = File.createTempFile("mabconverter", "xml");
+	FileOutputStream out = new FileOutputStream(expected);
+	IOUtils.copy(getResourceAsStream(id + ".xml"), out);
+
 	// xmlCompare(output, expected);
     }
 
@@ -84,6 +94,7 @@ public class MabConverterTest {
 		.getResourceAsStream(name);
     }
 
+    @SuppressWarnings("unused")
     private File initOutputFile(String output) throws IOException {
 	File file = new File(output);
 	if (file.exists()) {

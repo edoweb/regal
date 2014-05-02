@@ -23,6 +23,44 @@ curl -s -u ${user}:${password} -XPOST "http://$server/utils/index/$i?type=$type"
 done
 }
 
+function public_index()
+{
+type=$1
+user=$2
+password=$3
+server=$4
+for i in `pidlist $type $server repo 0 10000`
+do
+curl -s -u ${user}:${password} -XPOST "http://$server/utils/public_index/$i?type=$type";echo
+done
+}
+
+function delete()
+{
+type=$1
+user=$2
+password=$3
+server=$4
+for i in `pidlist $type $server repo 0 10000`
+do
+curl -s -u ${user}:${password} -XDELETE "http://$server/resource/$i";echo
+done
+}
+
+
+function lobidify()
+{
+type=$1
+user=$2
+password=$3
+server=$4
+for i in `pidlist $type $server repo 0 10000`
+do
+curl -s -u ${user}:${password} -XPOST "http://$server/utils/lobidify/$i";echo
+done
+}
+
+
 function generateIdTable()
 {
 type=$1

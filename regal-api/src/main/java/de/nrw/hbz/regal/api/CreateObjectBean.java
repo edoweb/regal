@@ -13,9 +13,11 @@ import de.nrw.hbz.regal.api.helper.ObjectType;
  */
 @XmlRootElement
 public class CreateObjectBean {
+
     String type = null;
     String parentPid = null;
     List<String> transformer = null;
+    List<String> indexes = null;
 
     /**
      * Default constructor
@@ -23,6 +25,7 @@ public class CreateObjectBean {
      */
     public CreateObjectBean() {
 	transformer = new Vector<String>();
+	indexes = new Vector<String>();
     }
 
     /**
@@ -76,6 +79,22 @@ public class CreateObjectBean {
      */
     public void setParentPid(String parentPid) {
 	this.parentPid = parentPid;
+    }
+
+    /**
+     * @return a list of indexes, that are updated on create/modify
+     */
+    public List<String> getIndexes() {
+	return indexes;
+    }
+
+    /**
+     * @param indexes
+     *            a list of indexes, that are updated on create/modify, valid
+     *            values so far: null, public, private
+     */
+    public void setIndexes(List<String> indexes) {
+	this.indexes = indexes;
     }
 
 }

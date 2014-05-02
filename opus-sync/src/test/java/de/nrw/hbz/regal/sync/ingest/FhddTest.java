@@ -82,7 +82,6 @@ public class FhddTest {
 
     }
 
-    @Test
     public void mainTest() throws URISyntaxException {
 
 	pidlist = Thread.currentThread().getContextClassLoader()

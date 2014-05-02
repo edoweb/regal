@@ -69,4 +69,10 @@ public class HttpArchiveException extends WebApplicationException {
 	super(cause, Response.status(status).entity(cause.getMessage()).build());
 
     }
+
+    @Override
+    public String toString() {
+	return this.getResponse().getStatus() + " "
+		+ this.getResponse().getEntity().toString();
+    }
 }

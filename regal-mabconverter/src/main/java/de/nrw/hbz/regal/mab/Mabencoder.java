@@ -73,7 +73,7 @@ public class Mabencoder {
 	int cC = 1;
 	while (persons.hasNext()) {
 	    Person p = persons.next();
-	    if (p.type.equals(PersonType.natuerlichePerson)) {
+	    if (PersonType.natuerlichePerson.equals(p.type)) {
 		st.add("person" + cP, p);
 		cP++;
 	    } else {

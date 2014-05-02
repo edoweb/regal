@@ -7,4 +7,5 @@ user=$2
 password=$3
 server=$4
 
-index $type $user $password $server
+delete $type $user $password $server
+

@@ -34,7 +34,7 @@ import de.nrw.hbz.regal.sync.extern.StreamType;
 public class EdowebIngester implements IngestInterface {
     final static Logger logger = LoggerFactory.getLogger(EdowebIngester.class);
 
-    private String namespace = "edoweb";
+    String namespace = "edoweb";
 
     Webclient webclient = null;
     String host = null;
@@ -307,7 +307,11 @@ public class EdowebIngester implements IngestInterface {
 
     }
 
-    private void updateMonographs(DigitalEntity dtlBean) {
+    /**
+     * @param dtlBean
+     *            a dtlBean representing a monograph
+     */
+    protected void updateMonographs(DigitalEntity dtlBean) {
 
 	String pid = namespace + ":" + dtlBean.getPid();
 	try {
@@ -328,6 +332,8 @@ public class EdowebIngester implements IngestInterface {
 	} catch (IllegalArgumentException e) {
 	    logger.warn(e.getMessage());
 	    // webclient.createResource(ObjectType.monograph, dtlBean);
+	} catch (Exception e) {
+	    logger.warn(e.getMessage());
 	}
 
 	Vector<DigitalEntity> list = getParts(dtlBean);

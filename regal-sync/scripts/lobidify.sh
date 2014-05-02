@@ -2,4 +2,10 @@
 
 source functions.sh
 
-index $1 $2 $3 $4
+
+type=$1
+user=$2
+password=$3
+server=$4
+
+lobidify $type $user $password $server

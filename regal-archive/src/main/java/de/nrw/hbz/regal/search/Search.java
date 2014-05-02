@@ -62,19 +62,17 @@ public class Search {
      * Used for testing
      */
     public Search() {
-
 	node = nodeBuilder().local(true).node();
 	client = node.client();
-
-	client.admin().indices().prepareDelete().execute().actionGet();
-	init("test");
+	client.admin().indices().prepareDelete("_all").execute().actionGet();
+	init("test", "public-index-config.json");
     }
 
     /**
      * Used for testing. Clean up!
      */
     public void down() {
-	client.admin().indices().prepareDelete().execute().actionGet();
+	client.admin().indices().prepareDelete("_all").execute().actionGet();
 	node.close();
     }
 
@@ -82,22 +80,29 @@ public class Search {
      * @param cluster
      *            the name must match to the one provided in
      *            elasticsearch/conf/elasticsearch.yml
+     * @param config
+     *            elasticsearch mapping
      */
-    public Search(String cluster) {
+    public Search(String cluster, String config) {
 	InetSocketTransportAddress server = new InetSocketTransportAddress(
 		"localhost", 9300);
 	client = new TransportClient(ImmutableSettings.settingsBuilder()
 		.put("cluster.name", cluster).build())
 		.addTransportAddress(server);
-	init("edoweb");
+	init("edoweb", config);
     }
 
-    private void init(String index) {
+    /**
+     * @param index
+     *            the index will be inititiated
+     * @param config
+     *            an elasticsearch mapping
+     */
+    public void init(String index, String config) {
 	try {
-	    String indexConfig = CopyUtils.copyToString(
-		    Thread.currentThread().getContextClassLoader()
-			    .getResourceAsStream("index-config.json"), "utf-8");
-
+	    String indexConfig = CopyUtils.copyToString(Thread.currentThread()
+		    .getContextClassLoader().getResourceAsStream(config),
+		    "utf-8");
 	    client.admin().indices().prepareCreate(index)
 		    .setSource(indexConfig).execute().actionGet();
 
@@ -202,10 +207,19 @@ public class Search {
 		.setOperationThreaded(false).execute().actionGet();
     }
 
+    /**
+     * @param index
+     *            the elastic search index
+     * @param fieldName
+     *            the field to search in
+     * @param fieldValue
+     *            the value to search for
+     * @return all hits
+     */
     public SearchHits query(String index, String fieldName, String fieldValue) {
 	client.admin().indices().refresh(new RefreshRequest()).actionGet();
 	QueryBuilder query = QueryBuilders.boolQuery().must(
-		QueryBuilders.fieldQuery(fieldName, fieldValue));
+		QueryBuilders.matchQuery(fieldName, fieldValue));
 	SearchResponse response = client.prepareSearch(index).setQuery(query)
 		.execute().actionGet();
 	return response.getHits();

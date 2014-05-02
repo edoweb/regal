@@ -27,6 +27,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +38,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.nrw.hbz.regal.fedora.XmlUtils;
+import de.nrw.hbz.regal.sync.extern.Md5Checksum;
 
 /**
  * 
@@ -44,6 +46,11 @@ import de.nrw.hbz.regal.fedora.XmlUtils;
  * 
  */
 public class DigitoolDownloader extends Downloader {
+
+    @SuppressWarnings("serial")
+    public class ChecksumNotMatchException extends RuntimeException {
+
+    }
 
     final static Logger logger = LoggerFactory
 	    .getLogger(DigitoolDownloader.class);
@@ -91,21 +98,41 @@ public class DigitoolDownloader extends Downloader {
 	File streamFile = new File(path);
 	URL url = null;
 	if (fileExtension.compareTo(".zip") == 0) {
-	    // System.out.println("Found zip!");
 	    url = new URL(server + "/webclient/DeliveryManager?pid=" + pid
 		    + "&custom_att_2=default_viewer");
-	    // System.out.println("wget -O test.zip \"" + url.toString() +
-	    // "\"");
 	} else {
-	    // System.out.println("Found not zip!");
 	    url = new URL(server + "/webclient/DeliveryManager?pid=" + pid
 		    + "&amp;custom_att_2=simple_viewer");
 	}
-
 	HttpURLConnection con = (HttpURLConnection) url.openConnection();
 	con.setInstanceFollowRedirects(true);
-
 	copy(con.getInputStream(), streamFile);
+	String digitoolMd5 = getDigitoolMd5(root);
+	String md5 = getMd5(streamFile);
+	logger.info(pid + " md5: " + digitoolMd5 + " , " + md5);
+
+	/*
+	 * if null we cannot prove incorrect (sic!) transmission and therefore
+	 * will NOT throw an exception
+	 */
+	if (digitoolMd5 != null && !digitoolMd5.equals(md5))
+	    throw new ChecksumNotMatchException();
+    }
+
+    private String getMd5(File stream) {
+	Md5Checksum md5 = new Md5Checksum();
+	return md5.getMd5Checksum(stream);
+    }
+
+    private String getDigitoolMd5(Element root) {
+	List<Element> elements = XmlUtils
+		.getElements(
+			"//checksum/checksumMethod[text()=\"MD5\"]/following-sibling::checksumValue[1]",
+			root, null);
+	if (elements.size() != 1)
+	    return null;
+	else
+	    return elements.get(0).getTextContent();
     }
 
     /**

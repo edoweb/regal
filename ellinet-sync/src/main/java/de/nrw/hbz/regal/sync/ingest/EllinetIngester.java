@@ -19,7 +19,6 @@ package de.nrw.hbz.regal.sync.ingest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.nrw.hbz.regal.api.helper.ObjectType;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 
 /**
@@ -27,18 +26,15 @@ import de.nrw.hbz.regal.sync.extern.DigitalEntity;
  * @author Jan Schnasse, schnasse@hbz-nrw.de
  * 
  */
-public class EllinetIngester implements IngestInterface {
+public class EllinetIngester extends EdowebIngester {
     final static Logger logger = LoggerFactory.getLogger(EllinetIngester.class);
-
-    private String namespace = "ellinet";
-    String host = null;
-    Webclient webclient = null;
 
     @Override
     public void init(String host, String user, String password, String ns) {
 	this.namespace = ns;
 	this.host = host;
 	webclient = new Webclient(namespace, user, password, host);
+	webclient.initContentModels();
     }
 
     @Override
@@ -69,19 +65,6 @@ public class EllinetIngester implements IngestInterface {
     @Override
     public void update(DigitalEntity dtlBean) {
 	ingest(dtlBean);
-    }
-
-    private void updateMonographs(DigitalEntity dtlBean) {
-	String pid = namespace + ":" + dtlBean.getPid();
-	try {
-	    webclient.createObject(dtlBean, ObjectType.monograph);
-	    logger.info(pid + " Found monograph.");
-	    webclient.autoGenerateMetdata(dtlBean);
-	    webclient.makeOaiSet(dtlBean);
-	    logger.info(pid + " " + "updated.\n");
-	} catch (IllegalArgumentException e) {
-	    logger.debug(e.getMessage());
-	}
     }
 
     @Override
