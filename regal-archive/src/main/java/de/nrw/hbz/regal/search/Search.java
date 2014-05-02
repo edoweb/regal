@@ -62,11 +62,9 @@ public class Search {
      * Used for testing
      */
     public Search() {
-
 	node = nodeBuilder().local(true).node();
 	client = node.client();
-
-	client.admin().indices().prepareDelete().execute().actionGet();
+	client.admin().indices().prepareDelete("_all").execute().actionGet();
 	init("test", "public-index-config.json");
     }
 
@@ -74,7 +72,7 @@ public class Search {
      * Used for testing. Clean up!
      */
     public void down() {
-	client.admin().indices().prepareDelete().execute().actionGet();
+	client.admin().indices().prepareDelete("_all").execute().actionGet();
 	node.close();
     }
 
@@ -105,7 +103,6 @@ public class Search {
 	    String indexConfig = CopyUtils.copyToString(Thread.currentThread()
 		    .getContextClassLoader().getResourceAsStream(config),
 		    "utf-8");
-
 	    client.admin().indices().prepareCreate(index)
 		    .setSource(indexConfig).execute().actionGet();
 
