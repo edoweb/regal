@@ -327,4 +327,36 @@ public class XmlUtils {
 	return "";
     }
 
+    public static Element getNamespaceAwareDocument(File file) {
+	try {
+	    return getNamespaceAwareDocument(new FileInputStream(file));
+	} catch (FileNotFoundException e) {
+	    throw new XmlException(e);
+	}
+    }
+
+    private static Element getNamespaceAwareDocument(InputStream inputStream) {
+	try {
+	    DocumentBuilderFactory factory = DocumentBuilderFactory
+		    .newInstance();
+	    factory.setNamespaceAware(true);
+	    factory.isValidating();
+	    DocumentBuilder docBuilder = factory.newDocumentBuilder();
+	    Document doc = docBuilder
+		    .parse(new BufferedInputStream(inputStream));
+	    Element root = doc.getDocumentElement();
+	    root.normalize();
+	    return root;
+	} catch (FileNotFoundException e) {
+	    throw new XmlException(e);
+	} catch (SAXException e) {
+	    throw new XmlException(e);
+	} catch (IOException e) {
+	    throw new XmlException(e);
+	} catch (ParserConfigurationException e) {
+	    throw new XmlException(e);
+	}
+
+    }
+
 }

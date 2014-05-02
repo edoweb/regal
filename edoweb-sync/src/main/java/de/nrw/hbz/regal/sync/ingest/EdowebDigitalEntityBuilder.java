@@ -42,6 +42,7 @@ import de.nrw.hbz.regal.fedora.XmlUtils;
 import de.nrw.hbz.regal.sync.extern.DigitalEntity;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityBuilderInterface;
 import de.nrw.hbz.regal.sync.extern.DigitalEntityRelation;
+import de.nrw.hbz.regal.sync.extern.Md5Checksum;
 import de.nrw.hbz.regal.sync.extern.RelatedDigitalEntity;
 import de.nrw.hbz.regal.sync.extern.StreamType;
 
@@ -91,17 +92,7 @@ public class EdowebDigitalEntityBuilder implements
 	return dtlDe;
     }
 
-    private List<DigitalEntity> getParts(DigitalEntity dtlBean) {
-	List<DigitalEntity> links = new Vector<DigitalEntity>();
-	for (RelatedDigitalEntity rel : dtlBean.getRelated()) {
-	    if (rel.relation
-		    .compareTo(DigitalEntityRelation.part_of.toString()) == 0)
-		links.add(rel.entity);
-	}
-	return links;
-    }
-
-    private DigitalEntity buildSimpleBean(String location, String pid) {
+    DigitalEntity buildSimpleBean(String location, String pid) {
 	DigitalEntity dtlDe = new DigitalEntity(location, pid);
 	dtlDe.setXml(new File(dtlDe.getLocation() + File.separator + pid
 		+ ".xml"));
@@ -127,7 +118,7 @@ public class EdowebDigitalEntityBuilder implements
      * @param dtlDe
      *            the digital entity
      */
-    protected void setCatalogId(DigitalEntity dtlDe) {
+    void setCatalogId(DigitalEntity dtlDe) {
 	try {
 	    Element root = XmlUtils.getDocument(dtlDe
 		    .getStream(StreamType.MARC).getFile());
@@ -194,7 +185,7 @@ public class EdowebDigitalEntityBuilder implements
 		Element item = (Element) volumes.item(i);
 		String groupId = item.getAttribute("GROUPID");
 		String fileId = item.getAttribute("ID");
-		// logger.debug(groupId + " to " + fileId);
+		logger.debug(groupId + " to " + fileId);
 		groupIds2FileIds.put(groupId, fileId);
 	    }
 	} catch (XPathExpressionException e) {
@@ -225,7 +216,7 @@ public class EdowebDigitalEntityBuilder implements
 		for (int j = 0; j < issues.getLength(); j++) {
 		    Element issue = (Element) issues.item(j);
 		    String fileId = issue.getAttribute("FILEID");
-		    // logger.debug("Key: " + fileId + " Value: " + volumePid);
+		    logger.debug("Key: " + fileId + " Value: " + volumePid);
 		    fileIds2Volume.put(fileId, volumePid);
 		}
 
@@ -246,6 +237,7 @@ public class EdowebDigitalEntityBuilder implements
 	    XPath xpath = xpathFactory.newXPath();
 	    NodeList list = (NodeList) xpath.evaluate("/*/*/*/*/*", root,
 		    XPathConstants.NODESET);
+	    logger.debug("create volumes for: " + entity.getPid());
 	    for (int i = 0; i < list.getLength(); i++) {
 		Element item = (Element) list.item(i);
 		String volumeLabel = item.getAttribute("LABEL");
@@ -257,6 +249,7 @@ public class EdowebDigitalEntityBuilder implements
 		volume.setUsageType(ObjectType.volume.toString());
 		dtlDe.addRelated(volume,
 			DigitalEntityRelation.part_of.toString());
+		logger.debug("Create volume " + volume.getPid());
 	    }
 	} catch (XPathExpressionException e) {
 	    logger.warn(entity.getPid() + " no volumes found.");
@@ -276,7 +269,15 @@ public class EdowebDigitalEntityBuilder implements
 		.item(0).getTextContent();
 	String fileId = ((Element) streamRef).getElementsByTagName("file_id")
 		.item(0).getTextContent();
-	dtlDe.addStream(file, mime, StreamType.DATA, fileId);
+	if (!file.exists()) {
+	    logger.error("The file " + filename
+		    + " found in DTL Xml does not exist.");
+	    return;
+	}
+	logger.debug("found data stream " + file + "," + mime + ","
+		+ StreamType.DATA + "," + fileId);
+
+	dtlDe.addStream(file, mime, StreamType.DATA, fileId, getMd5(file));
     }
 
     private void loadMetadataStreams(DigitalEntity dtlDe, Element root) {
@@ -323,7 +324,8 @@ public class EdowebDigitalEntityBuilder implements
 		    + dtlDe.getPid() + "_" + type.toString() + ".xml");
 	    File stream = XmlUtils.stringToFile(file,
 		    XmlUtils.nodeToString(item));
-	    dtlDe.addStream(stream, "application/xml", type);
+	    String md5Hash = getMd5(stream);
+	    dtlDe.addStream(stream, "application/xml", type, null, md5Hash);
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -338,11 +340,17 @@ public class EdowebDigitalEntityBuilder implements
 	    File file = new File(dtlDe.getLocation() + File.separator + "."
 		    + dtlDe.getPid() + "_" + type.toString() + ".xml");
 	    File stream = XmlUtils.stringToFile(file, getMarc(item));
-	    dtlDe.addStream(stream, "application/xml", type);
+	    String md5Hash = getMd5(stream);
+	    dtlDe.addStream(stream, "application/xml", type, null, md5Hash);
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
+    }
+
+    private String getMd5(File stream) {
+	Md5Checksum md5 = new Md5Checksum();
+	return md5.getMd5Checksum(stream);
     }
 
     private String getMarc(Node item) {
@@ -391,9 +399,9 @@ public class EdowebDigitalEntityBuilder implements
 			.toString()) == 0) {
 		    DigitalEntity b = buildSimpleBean(entity.getLocation(),
 			    relPid);
-		    // logger.info("Add sibling " + b.getPid() + " to "
-		    // + entity.getPid() + " utilizing relation "
-		    // + usageType);
+		    logger.debug("Add sibling " + b.getPid() + " to "
+			    + entity.getPid() + " utilizing relation "
+			    + usageType);
 		    dtlDe.addRelated(b, usageType);
 		}
 	    }
@@ -428,8 +436,8 @@ public class EdowebDigitalEntityBuilder implements
 		    try {
 
 			DigitalEntity b = build(entity.getLocation(), relPid);
-			// logger.info(b.getPid() + " is child of "
-			// + dtlDe.getPid());
+			logger.debug(b.getPid() + " is child of "
+				+ dtlDe.getPid());
 			b.setUsageType(usageType);
 			addToTree(entity, b);
 
@@ -525,19 +533,24 @@ public class EdowebDigitalEntityBuilder implements
 	String fileId = groupIds2FileIds.get(groupId);
 	String volumeId = this.fileIds2Volume.get(fileId);
 
+	logger.debug("search for parent of " + related);
+	logger.debug("group id: " + groupId + ", groupId: " + fileId
+		+ ", volumeId: " + volumeId);
+
 	String message = null;
 	if (groupId == null)
-	    message = related.getPid() + " stream is unkown!";
+	    message = related.getPid() + " stream is unkown!\n";
 	if (fileId == null)
-	    message = "streamId: " + groupId + " mets fileId does not exist!";
+	    message += "streamId: " + groupId
+		    + " mets fileId does not exist!\n";
 	if (volumeId == null) {
-	    message = "fileId: " + fileId + " mets volume does not exist!";
+	    message += "fileId: " + fileId + " mets volume does not exist!\n";
 
 	    throw new NullPointerException(message);
 	}
 
 	if (message != null) {
-	    logger.info("-----" + message);
+	    logger.debug("-----" + message);
 	    related.setUsageType(ObjectType.file.toString());
 	    return dtlDe;
 	}

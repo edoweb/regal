@@ -64,15 +64,18 @@ public class EllinetDigitalEntityBuilder extends EdowebDigitalEntityBuilder {
 
     }
 
-    protected void setCatalogId(DigitalEntity dtlDe) {
+    @Override
+    void setCatalogId(DigitalEntity dtlDe) {
 
-	Element root = XmlUtils.getDocument(dtlDe.getStream(StreamType.DC)
-		.getFile());
+	Element root = XmlUtils.getNamespaceAwareDocument(dtlDe.getStream(
+		StreamType.DC).getFile());
+
 	XPathFactory factory = XPathFactory.newInstance();
 	XPath xpath = factory.newXPath();
 	xpath.setNamespaceContext(new DcNamespaceContext());
 	try {
 	    XPathExpression expr = xpath.compile("//dc:alephsyncid");
+
 	    Object result = expr.evaluate(root, XPathConstants.NODESET);
 	    NodeList nodes = (NodeList) result;
 	    if (nodes.getLength() != 1) {
@@ -87,4 +90,5 @@ public class EllinetDigitalEntityBuilder extends EdowebDigitalEntityBuilder {
 	}
 
     }
+
 }

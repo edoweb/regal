@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -34,14 +35,9 @@ import java.util.Vector;
 
 import javax.ws.rs.core.Response;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
 
 import de.nrw.hbz.regal.api.CreateObjectBean;
 import de.nrw.hbz.regal.api.DCBeanAnnotated;
@@ -121,7 +117,7 @@ public class Actions {
 		"/externalLinks.properties"));
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
-	search = new Search(escluster);
+	search = new Search(escluster, "public-index-config.json");
     }
 
     /**
@@ -183,10 +179,7 @@ public class Actions {
 	try {
 	    if (pids != null) {
 		for (Node n : pids) {
-
-		    String m = removeFromIndex(n.getNamespace(),
-			    n.getContentType(), n.getPID());
-		    msg.append("\n" + m);
+		    msg.append("\n" + removeIdFromPublicAndPrivateIndex(n));
 		}
 	    }
 	} catch (Exception e) {
@@ -194,6 +187,22 @@ public class Actions {
 	}
 
 	return pid + " successfully deleted! \n" + msg + "\n";
+    }
+
+    private String removeIdFromPublicAndPrivateIndex(Node n) {
+	StringBuffer msg = new StringBuffer();
+	try {
+	    String namespace = n.getNamespace();
+	    String m = removeFromIndex(namespace, n.getContentType(),
+		    n.getPID());
+	    msg.append("\n" + m);
+	    m = removeFromIndex("public_" + namespace, n.getContentType(),
+		    n.getPID());
+	    msg.append("\n" + m);
+	} catch (Exception e) {
+	    msg.append("\n" + e);
+	}
+	return msg.toString();
     }
 
     /**
@@ -219,18 +228,6 @@ public class Actions {
 	fedora.deleteDatastream(pid, "data");
 	index(readNode(pid));
 	return pid + ": data - datastream successfully deleted! ";
-    }
-
-    /**
-     * @param type
-     *            The objectTyp
-     * @return A list of pids with type {@type}
-     */
-    public List<String> findByType(String type) {
-	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
-	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	return RdfUtils.getFedoraSubject(in);
     }
 
     /**
@@ -292,12 +289,14 @@ public class Actions {
      *            the mimetype of the file
      * @param name
      *            the name of the file
+     * @param md5Hash
+     *            a hash for the content. Can be null.
      * @return A short message
      * @throws IOException
      *             if data can not be written to a tmp file
      */
     public String updateData(String pid, InputStream content, String mimeType,
-	    String name) throws IOException {
+	    String name, String md5Hash) throws IOException {
 	if (content == null) {
 	    throw new HttpArchiveException(406, pid
 		    + " you've tried to upload an empty stream."
@@ -313,6 +312,15 @@ public class Actions {
 	    fedora.updateNode(node);
 	}
 	index(node);
+	if (md5Hash != null) {
+	    node = fedora.readNode(pid);
+	    String fedoraHash = node.getChecksum();
+	    if (!md5Hash.equals(fedoraHash)) {
+		throw new HttpArchiveException(417, pid + " expected a MD5 of "
+			+ fedoraHash + " but you provided a MD5 value of "
+			+ md5Hash);
+	    }
+	}
 	return pid + " data successfully updated!";
     }
 
@@ -443,12 +451,7 @@ public class Actions {
      * @return a message
      */
     public String deleteByQuery(String query) {
-	List<String> objects = null;
-	try {
-	    objects = fedora.findNodes(query);
-	} catch (Exception e) {
-
-	}
+	List<String> objects = listByQuery(query);
 	return deleteAll(objects);
     }
 
@@ -565,8 +568,10 @@ public class Actions {
 	    String metadataAdress = fedoraExtern + "/objects/" + pid
 		    + "/datastreams/metadata/content";
 	    URL url = new URL(metadataAdress);
-	    List<String> urns = RdfUtils.findRdfObjects(pid,
-		    "http://geni-orca.renci.org/owl/topology.owl#hasURN", url,
+	    String newUrn = "http://purl.org/lobid/lv#urn";
+	    // String oldUrn =
+	    // "http://geni-orca.renci.org/owl/topology.owl#hasURN";
+	    List<String> urns = RdfUtils.findRdfObjects(pid, newUrn, url,
 		    RDFFormat.NTRIPLES, "text/plain");
 	    if (urns == null || urns.isEmpty()) {
 		throw new UrnException("Found no urn!");
@@ -598,7 +603,7 @@ public class Actions {
      * @param type
      *            the type of the resource
      * @param pid
-     *            The pid to remove from index
+     *            The namespaced pid to remove from index
      * @return A short message
      */
     public String removeFromIndex(String index, String type, String pid) {
@@ -608,26 +613,25 @@ public class Actions {
 
     /**
      * @param p
-     *            The pid that must be indexed
-     * @param namespace
-     *            the namespace of the pid
+     *            The pid with namespace that must be indexed
+     * @param index
+     *            the name of the index. Convention is to use the namespace of
+     *            the pid.
      * @param type
      *            the type of the resource
      * @return a short message.
      */
-    public String index(String p, String namespace, String type) {
-	String viewAsString = oaiore(namespace + ":" + p, "application/json");
-	viewAsString = JSONObject.toJSONString(ImmutableMap.of("@graph",
-		(JSONArray) JSONValue.parse(viewAsString)));
-	search.index(namespace, type, namespace + ":" + p, viewAsString);
-	return namespace + ":" + p + " indexed!";
+    public String index(String p, String index, String type) {
+	search.init(index, "public-index-config.json");
+	String jsonCompactStr = oaiore(p, "application/json+compact");
+	search.index(index, type, p, jsonCompactStr);
+	return p + " indexed!";
     }
 
     private String index(Node n) {
 	String namespace = n.getNamespace();
 	String pid = n.getPID();
-	String p = pid.substring(pid.indexOf(":") + 1);
-	return index(p, namespace, n.getContentType());
+	return index(pid, namespace, n.getContentType());
     }
 
     /**
@@ -671,12 +675,9 @@ public class Actions {
 
 	List<String> list = null;
 	if (!"es".equals(getListingFrom)) {
-	    if (type == null || type.isEmpty())
-		list = listAllFromRepo(namespace, from, until);
-	    else
-		list = listAllFromRepo(type, namespace, from, until);
+	    list = listRepo(type, namespace, from, until);
 	} else {
-	    list = listAllFromSearch(type, namespace, from, until);
+	    list = listSearch(type, namespace, from, until);
 	}
 
 	return list;
@@ -693,10 +694,95 @@ public class Actions {
      *            show only hits ending at this index
      * @return A list of pids with type {@type}
      */
-    public List<String> listAllFromSearch(String type, String namespace,
-	    int from, int until) {
+    public List<String> listSearch(String type, String namespace, int from,
+	    int until) {
 
 	return search.listIds(namespace, type, from, until);
+    }
+
+    private List<String> listRepo(String type, String namespace, int from,
+	    int until) {
+
+	if (from < 0 || until <= from)
+	    throw new HttpArchiveException(316,
+		    "until and from not sensible. choose a valid range, please.");
+	if (type == null || type.isEmpty())
+	    return listRepoNamespace(namespace, from, until);
+	if (namespace == null || namespace.isEmpty())
+	    return listRepoType(type, from, until);
+
+	List<String> list = listRepo(type, namespace);
+
+	return sublist(list, from, until);
+
+    }
+
+    private List<String> listRepo(String type, String namespace) {
+	List<String> result = new ArrayList<String>();
+	List<String> typedList = listRepoType(type);
+	if (namespace != null && !namespace.isEmpty()) {
+	    for (String item : typedList) {
+		if (item.startsWith(namespace + ":")) {
+		    result.add(item);
+		}
+	    }
+	    return result;
+	} else {
+	    return typedList;
+	}
+    }
+
+    private List<String> listRepoType(String type) {
+	List<String> typedList;
+	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
+	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
+		FedoraVocabulary.N3);
+	typedList = RdfUtils.getFedoraSubject(in);
+	return typedList;
+    }
+
+    private List<String> listRepoType(String type, int from, int until) {
+	List<String> list = listRepoType(type);
+	return sublist(list, from, until);
+
+    }
+
+    /**
+     * List all pids within a namespace
+     * 
+     * @param namespace
+     *            a valid namespace
+     * @return a list of pids
+     */
+    public List<String> listRepoNamespace(String namespace) {
+	return listByQuery(namespace + ":*");
+    }
+
+    private List<String> listRepoNamespace(String namespace, int from, int until) {
+	List<String> list = listRepoNamespace(namespace);
+	return sublist(list, from, until);
+
+    }
+
+    private List<String> listByQuery(String query) {
+	List<String> objects = null;
+	try {
+	    objects = fedora.findNodes(query);
+	} catch (Exception e) {
+
+	}
+	return objects;
+    }
+
+    private List<String> sublist(List<String> list, int from, int until) {
+	if (from >= list.size()) {
+	    return new Vector<String>();
+	}
+	if (until < list.size()) {
+	    return list.subList(from, until);
+	} else {
+	    return list.subList(from, list.size());
+	}
     }
 
     /**
@@ -720,44 +806,6 @@ public class Actions {
 
 	return representations.getAllOfTypeAsHtml(list, type, namespace, from,
 		until, getListingFrom);
-    }
-
-    private List<String> listAllFromRepo(String type, String namespace,
-	    int from, int until) {
-	if (from >= until || from < 0 || until < 0)
-	    throw new HttpArchiveException(416, "Can not process. From: "
-		    + from + "Until: " + until + ".");
-	System.out.println("1");
-	List<String> result = new Vector<String>();
-	String query = "* <" + REL_CONTENT_TYPE + "> \"" + type + "\"";
-	InputStream in = fedora.findTriples(query, FedoraVocabulary.SPO,
-		FedoraVocabulary.N3);
-	List<String> list = RdfUtils.getFedoraSubject(in);
-
-	if (namespace != null && !namespace.isEmpty()) {
-	    for (String item : list) {
-		if (item.startsWith(namespace + ":")) {
-		    result.add(item);
-		}
-	    }
-	} else {
-	    result = list;
-	}
-
-	if (from >= result.size()) {
-	    return new Vector<String>();
-	}
-	if (until < result.size()) {
-	    result = result.subList(from, until);
-	} else {
-	    result = result.subList(from, result.size());
-	}
-
-	return result;
-    }
-
-    private List<String> listAllFromRepo(String namespace, int from, int until) {
-	return listAllFromRepo(TYPE_OBJECT, namespace, from, until);
     }
 
     /**
@@ -796,7 +844,11 @@ public class Actions {
     public String replaceUrn(String pid, String namespace, String snid) {
 	String subject = namespace + ":" + pid;
 	String urn = services.generateUrn(subject, snid);
-	String hasUrn = "http://geni-orca.renci.org/owl/topology.owl#hasURN";
+
+	// String hasUrnOld =
+	// "http://geni-orca.renci.org/owl/topology.owl#hasURN";
+
+	String hasUrn = "http://purl.org/lobid/lv#urn";
 	// String sameAs = "http://www.w3.org/2002/07/owl#sameAs";
 	String metadata = readMetadata(subject);
 	metadata = RdfUtils.replaceTriple(subject, hasUrn, urn, true, metadata);
@@ -818,7 +870,9 @@ public class Actions {
     public String addUrn(String pid, String namespace, String snid) {
 	String subject = namespace + ":" + pid;
 	String urn = services.generateUrn(subject, snid);
-	String hasUrn = "http://geni-orca.renci.org/owl/topology.owl#hasURN";
+	// String hasUrnOld =
+	// "http://geni-orca.renci.org/owl/topology.owl#hasURN";
+	String hasUrn = "http://purl.org/lobid/lv#urn";
 
 	String metadata = null;
 	if (fedora.dataStreamExists(subject, "metadata")) {
@@ -867,7 +921,7 @@ public class Actions {
     }
 
     /**
-     * @param node
+     * @param pid
      *            pid with namespace:pid
      * @return a aleph mab xml representation
      */

@@ -215,6 +215,8 @@ public class Resource {
      *            show only hits starting at this index
      * @param until
      *            show only hits ending at this index
+     * @param getListingFrom
+     *            allowed values are es and repo
      * @return A message and status code 200 if ok and 500 if not
      */
     @DELETE
@@ -226,6 +228,7 @@ public class Resource {
 	    @DefaultValue("10") @QueryParam("until") int until,
 	    @DefaultValue("es") @QueryParam("getListingFrom") String getListingFrom) {
 	try {
+
 	    return actions.deleteAll(actions.list(type, namespace, from, until,
 		    getListingFrom));
 	} catch (ArchiveException e) {
@@ -257,6 +260,29 @@ public class Resource {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
 	}
+    }
+
+    /**
+     * Returns OAI-ORE as json-ld compact
+     * 
+     * @param pid
+     *            the pid of the resource
+     * @param namespace
+     *            the namespace of the resource
+     * @return a json representation of the resource
+     * @throws URISyntaxException
+     *             if redirection goes wrong
+     */
+    @GET
+    @Path("/{namespace}:{pid}")
+    @Produces({ "application/json+compact" })
+    public Response getJsonCompact(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) throws URISyntaxException {
+	// return about(namespace + ":" + pid);
+	return Response
+		.temporaryRedirect(
+			new java.net.URI("../resource/" + namespace + ":" + pid
+				+ ".json+compact")).status(303).build();
     }
 
     /**
@@ -422,7 +448,9 @@ public class Resource {
     }
 
     /**
-     * Updates the actual data of the aggregated resource
+     * Updates the actual data of the aggregated resource. Takes data, mimetype,
+     * name, md5Checksum as form parameters. Returns a HTTP 417 if the md5 does
+     * not match.
      * 
      * @param pid
      *            the pid of the resource the pid of the resource
@@ -430,9 +458,20 @@ public class Resource {
      *            the namespace of the resource
      * @param multiPart
      *            The data is transfered as multipart data in order to provide
-     *            upload of large files
+     *            upload of large files. Example call:
+     *            <code> curl -i -uadmin:admin -XPUT http://localhost/resource/test:1234/data --form "data=@test.pdf" --form "type=application/pdf" --form "label=putTheFileNameInHere" "checksum=123456789" -H "Content-Type:multipart/mixed";echo</code>
+     *            The api supports four form parameters which must occur in the
+     *            described order: First param: a file to upload. Second param:
+     *            the mime type of the file. Third param (optional): a name for
+     *            the file. Fourth param (optional): a md5 checksum. If no
+     *            checksum is provided, the api will accept any data stream. If
+     *            checksum is provided AND the md5 does not match to the api's
+     *            calculation, a HTTP 417 is returned to the client. The client
+     *            should NOT IGNORE a HTTP 417 albeit the provided but
+     *            presumably broken data stream is stored.
+     * 
      * @return A human readable message and a status code of 200 if successful
-     *         an of 500 if not.
+     *         an of 500 if not. Wrong checksum will lead to a 417.
      */
     @PUT
     @Path("/{namespace}:{pid}/data")
@@ -446,13 +485,18 @@ public class Resource {
 		    .getEntityAs(String.class);
 
 	    String name = "data";
-	    if (multiPart.getBodyParts().size() == 3) {
+	    String md5Hash = null;
+	    if (multiPart.getBodyParts().size() > 2) {
 		name = multiPart.getBodyParts().get(2)
+			.getEntityAs(String.class);
+	    }
+	    if (multiPart.getBodyParts().size() > 3) {
+		md5Hash = multiPart.getBodyParts().get(3)
 			.getEntityAs(String.class);
 	    }
 	    return actions.updateData(namespace + ":" + pid, multiPart
 		    .getBodyParts().get(0).getEntityAs(InputStream.class),
-		    mimeType, name);
+		    mimeType, name, md5Hash);
 	} catch (ArchiveException e) {
 	    throw new HttpArchiveException(
 		    Status.INTERNAL_SERVER_ERROR.getStatusCode(), e);
@@ -660,6 +704,52 @@ public class Resource {
 	return updateDC(pid, namespace, content);
     }
 
+    // @GET
+    // @Path("/{namespace}:{pid}/oaisets")
+    // @Produces({ "application/xml", "application/json" })
+    // public ObjectList readOaiSets(@PathParam("pid") String pid,
+    // @PathParam("namespace") String namespace) {
+    //
+    // }
+    //
+    // @PUT
+    // @Path("/{namespace}:{pid}/oaisets")
+    // @Produces({ "application/xml", "application/json" })
+    // public String updateOaiSets(@PathParam("pid") String pid,
+    // @PathParam("namespace") String namespace, ObjectList setlist) {
+    //
+    // }
+    //
+    // @DELETE
+    // @Path("/{namespace}:{pid}/oaisets")
+    // @Produces({ "application/xml", "application/json" })
+    // public String deleteOaiSets(@PathParam("pid") String pid,
+    // @PathParam("namespace") String namespace) {
+    //
+    // }
+
+    /**
+     * Assign the resource to a handfull of standard oaisets (in dependence to
+     * /metadata).
+     * 
+     * @param pid
+     *            the pid of the resource
+     * @param namespace
+     *            namespace of the resource
+     * @return human readable message
+     */
+    @POST
+    @Path("/{namespace}:{pid}/oaisets/init")
+    @Produces({ "application/xml", "application/json" })
+    public String initOaiSets(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	try {
+	    return actions.makeOAISet(namespace + ":" + pid);
+	} catch (RuntimeException e) {
+	    throw new HttpArchiveException(500, e);
+	}
+    }
+
     /**
      * Returns a OAI-ORE representation as rdf+xml.
      * 
@@ -728,6 +818,29 @@ public class Resource {
     }
 
     /**
+     * Returns a OAI-ORE representation as json-ld.
+     * 
+     * @param pid
+     *            the pid of the resource the pid of the resource
+     * @param namespace
+     *            the namespace of the resource
+     * @return an aggregated representation of the resource
+     */
+    @GET
+    @Path("/{namespace}:{pid}.json+compact")
+    @Produces({ "application/json+compact" })
+    public Response getReMAsJsonCompact(@PathParam("pid") String pid,
+	    @PathParam("namespace") String namespace) {
+	String rem = actions.oaiore(namespace + ":" + pid,
+		"application/json+compact");
+	ResponseBuilder res = Response.ok()
+		.lastModified(actions.getLastModified(namespace + ":" + pid))
+		.entity(rem);
+
+	return res.build();
+    }
+
+    /**
      * Returns a OAI-ORE representation as html.
      * 
      * @param pid
@@ -738,7 +851,7 @@ public class Resource {
      */
     @GET
     @Path("/{namespace}:{pid}.html")
-    @Produces({ "text/html" })
+    @Produces({ "text/html ; charset=UTF-8" })
     public Response getReMAsHtml(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace) {
 	String rem = actions.oaiore(namespace + ":" + pid, "text/html");
@@ -902,6 +1015,13 @@ public class Resource {
 	}
     }
 
+    /**
+     * @param pid
+     *            a pid with namespace
+     * @param request
+     *            request for context information
+     * @return a aleph mab xml representation
+     */
     @GET
     @Path("/{pid}.aleph")
     @Produces({ "application/xml; charset=UTF-8" })

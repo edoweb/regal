@@ -64,9 +64,9 @@ public class TestDigitoolDownloader {
 		+ File.separator + "3025500"));
 	DownloaderInterface downloader = new DigitoolDownloader();
 	downloader.init(piddownloaderServer, piddownloaderDownloadLocation);
-	downloader.download("3025500");
+	downloader.download("4000748");
 	Assert.assertTrue(new File(piddownloaderDownloadLocation
-		+ File.separator + "3025500").exists());
+		+ File.separator + "4000748").exists());
 	FileUtils.deleteDirectory(new File(piddownloaderDownloadLocation
 		+ File.separator + "3025500"));
 	downloader.download("3237400");

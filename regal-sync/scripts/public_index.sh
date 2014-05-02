@@ -7,4 +7,4 @@ user=$2
 password=$3
 server=$4
 
-index $type $user $password $server
+public_index $type $user $password $server

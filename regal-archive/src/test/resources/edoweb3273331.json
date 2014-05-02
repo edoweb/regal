@@ -1,81 +1,53 @@
 {
-	"@graph": 
-[ {
-  "@id" : "_:node18gds2ooqx1",
-  "http://downlode.org/Code/RDF/File_Properties/schema#checksumValue" : [ {
-    "@value" : "5517c2b0419468b0f9894b0d722c6bf3"
-  } ],
-  "http://downlode.org/Code/RDF/File_Properties/schema#generator" : [ {
-    "@id" : "http://en.wikipedia.org/wiki/MD5"
-  } ],
-  "http://www.w3.org/2000/01/rdf-schema#type" : [ {
-    "@id" : "http://downlode.org/Code/RDF/File_Properties/schema#Checksum"
-  } ]
-}, {
-  "@id" : "edoweb:3273331",
-  "http://geni-orca.renci.org/owl/topology.owl#hasURN" : [ {
-    "@value" : "urn:nbn:de:hbz:929:02-edoweb:32733312"
-  } ],
-  "http://hbz-nrw.de/regal#contentType" : [ {
-    "@value" : "file"
-  } ],
-  "http://hbz-nrw.de/regal#hasData" : [ {
-    "@id" : "edoweb:3273331/data"
-  } ],
-  "http://hbz-nrw.de/regal#hasTransformer" : [ {
-    "@value" : "oaidc"
+  "@graph" : [ {
+    "@id" : "_:node18mu4sffax1",
+    "checksumValue" : "5517c2b0419468b0f9894b0d722c6bf3",
+    "generator" : {
+      "@id" : "http://en.wikipedia.org/wiki/MD5"
+    },
+    "type" : {
+      "@id" : "http://downlode.org/Code/RDF/File_Properties/schema#Checksum"
+    }
   }, {
-    "@value" : "epicur"
+    "@id" : "edoweb:3273331",
+    "contentType" : "file",
+    "hasData" : {
+      "@id" : "edoweb:3273331/data"
+    },
+    "hasTransformer" : [ "oaidc", "epicur" ],
+    "isPartOf" : "edoweb:3273325-2007",
+    "title" : "10_2007",
+    "urn" : "urn:nbn:de:hbz:929:02-edoweb:32733312",
+    "aggregates" : "edoweb:3273331/data",
+    "isAggregatedBy" : {
+      "@id" : "edoweb:3273325-2007"
+    },
+    "isDescribedBy" : "edoweb:3273331.rdf",
+    "similarTo" : "http://api.localhost/fedora/objects/edoweb:3273331"
+  }, {
+    "@id" : "edoweb:3273331.rdf",
+    "created" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2014-05-02T11:25:24.898+02:00"
+    },
+    "modified" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2014-05-02T11:25:27.027+02:00"
+    },
+    "describes" : "edoweb:3273331"
+  }, {
+    "@id" : "edoweb:3273331/data",
+    "checksum" : {
+      "@id" : "_:node18mu4sffax1"
+    },
+    "size" : "337403",
+    "format" : "application/pdf",
+    "label" : "StaatsZeitung_Nr"
+  }, {
+    "@id" : "http://en.wikipedia.org/wiki/MD5",
+    "type" : {
+      "@id" : "http://xmlns.com/wordnet/1.6/Algorithm"
+    }
   } ],
-  "http://iflastandards.info/ns/isbd/elements/P1004" : [ {
-    "@value" : "10_2007"
-  } ],
-  "http://purl.org/dc/terms/isPartOf" : [ {
-    "@id" : "edoweb:3273325-2007"
-  } ],
-  "http://www.openarchives.org/ore/terms/aggregates" : [ {
-    "@id" : "edoweb:3273331/data"
-  } ],
-  "http://www.openarchives.org/ore/terms/isAggregatedBy" : [ {
-    "@id" : "edoweb:3273325-2007"
-  } ],
-  "http://www.openarchives.org/ore/terms/isDescribedBy" : [ {
-    "@id" : "edoweb:3273331.rdf"
-  } ],
-  "http://www.openarchives.org/ore/terms/similarTo" : [ {
-    "@id" : "http://api.localhost/fedora/objects/edoweb:3273331"
-  } ]
-}, {
-  "@id" : "edoweb:3273331.rdf",
-  "http://purl.org/dc/terms/created" : [ {
-    "@type" : "http://www.w3.org/2001/XMLSchema#dateTime",
-    "@value" : "2014-02-10T13:05:27.548+01:00"
-  } ],
-  "http://purl.org/dc/terms/modified" : [ {
-    "@type" : "http://www.w3.org/2001/XMLSchema#dateTime",
-    "@value" : "2014-02-10T13:05:30.743+01:00"
-  } ],
-  "http://www.openarchives.org/ore/terms/describes" : [ {
-    "@id" : "edoweb:3273331"
-  } ]
-}, {
-  "@id" : "edoweb:3273331/data",
-  "http://downlode.org/Code/RDF/File_Properties/schema#checksum" : [ {
-    "@id" : "_:node18gds2ooqx1"
-  } ],
-  "http://downlode.org/Code/RDF/File_Properties/schema#size" : [ {
-    "@value" : "337403"
-  } ],
-  "http://purl.org/dc/terms/format" : [ {
-    "@value" : "application/pdf"
-  } ],
-  "http://www.w3.org/2000/01/rdf-schema#label" : [ {
-    "@value" : "StaatsZeitung_Nr"
-  } ]
-}, {
-  "@id" : "http://en.wikipedia.org/wiki/MD5",
-  "http://www.w3.org/2000/01/rdf-schema#type" : [ {
-    "@id" : "http://xmlns.com/wordnet/1.6/Algorithm"
-  } ]
-} ]
+  "@context" : "http://api.localhost/edoweb-resources.json"
 }

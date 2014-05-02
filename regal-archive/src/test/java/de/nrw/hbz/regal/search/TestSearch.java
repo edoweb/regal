@@ -137,11 +137,11 @@ public class TestSearch {
 		edoweb3273325_2007);
 	search.index("test", "monograph", "edoweb:3273331", edoweb3273331);
 
-	SearchHits hits = search.query("test",
-		"@graph.http://purl.org/dc/terms/isPartOf.@id",
-		"edoweb\\:3273325-2007");
+	SearchHits hits = search.query("test", "@graph.isPartOf",
+		"edoweb:3273325-2007");
 
 	Assert.assertEquals(1, hits.totalHits());
+	Assert.assertEquals("edoweb:3273331", hits.getHits()[0].getId());
 
     }
 }

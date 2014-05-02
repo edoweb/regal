@@ -1,8 +1,9 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <record xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.ddb.de/professionell/mabxml/mabxml-1.xsd">
+
 	$if(record.leader)$<leader>$record.leader$</leader>$endif$
 	
-    $if(record.LDR)$<controlfield tag="LDR">$record.LDR$</controlfield>$endif$
+	$if(record.LDR)$<controlfield tag="LDR">$record.LDR$</controlfield>$endif$
     
 	$if(record.FMT)$<controlfield tag="FMT">$record.FMT$</controlfield>$endif$
 

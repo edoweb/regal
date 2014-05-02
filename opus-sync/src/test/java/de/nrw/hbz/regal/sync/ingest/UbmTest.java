@@ -73,7 +73,6 @@ public class UbmTest {
 	localcache = properties.getProperty("piddownloader.downloadLocation");
     }
 
-    @Test
     public void mappingTest() throws URISyntaxException {
 	OpusMapping mapping = new OpusMapping();
 	File file = new File(Thread.currentThread().getContextClassLoader()
