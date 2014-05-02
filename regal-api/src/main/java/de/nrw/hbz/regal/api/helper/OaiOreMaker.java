@@ -126,6 +126,7 @@ public class OaiOreMaker {
 			.compact(json, context, options);
 		normalized.remove("@context");
 		normalized.put("@context", contextUrl.toString());
+
 		return JSONUtils.toPrettyString(normalized);
 	    }
 	    StringWriter out = new StringWriter();
@@ -151,10 +152,17 @@ public class OaiOreMaker {
 		writer.handleStatement(statement);
 	    }
 	    writer.endRDF();
+	    out.flush();
 	    result = out.toString();
 
 	} catch (RDFHandlerException e) {
 	    logger.error(e.getMessage());
+	} finally {
+	    try {
+		out.close();
+	    } catch (IOException e) {
+		logger.error(e.getMessage());
+	    }
 	}
 
 	return result;

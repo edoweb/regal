@@ -3,6 +3,7 @@ package de.nrw.hbz.regal.sync.extern;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 
@@ -52,10 +53,15 @@ public class Md5Checksum {
 		}
 	    } while (numRead != -1);
 
-	    fis.close();
 	    return complete.digest();
 	} catch (Exception e) {
 	    throw new Md5ChecksumException(e);
+	} finally {
+	    try {
+		fis.close();
+	    } catch (IOException e) {
+		throw new Md5ChecksumException(e);
+	    }
 	}
     }
 
