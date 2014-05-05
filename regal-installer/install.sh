@@ -23,6 +23,7 @@ mkdir -v $ARCHIVE_HOME/bin
 mkdir -v -p $ARCHIVE_HOME/proai/cache
 mkdir -v -p $ARCHIVE_HOME/proai/sessions
 mkdir -v -p $ARCHIVE_HOME/proai/schemas
+ln -s $ARCHIVE_HOME/bin/variables.conf $ARCHIVE_HOME/bin/scripts/variables.conf
 }
 
 function createConfig()

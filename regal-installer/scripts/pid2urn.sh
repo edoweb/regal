@@ -2,4 +2,6 @@
 
 source functions.sh
 
-generateIdTable $1 $2
+type=$1
+
+pid2urn $type 
