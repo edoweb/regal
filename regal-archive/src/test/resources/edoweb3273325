@@ -1,0 +1,56 @@
+{
+  "@graph" : [ {
+    "@id" : "edoweb:3273325",
+    "@type" : [ "http://iflastandards.info/ns/isbd/terms/mediatype/T1002", "http://purl.org/dc/terms/BibliographicResource", "http://purl.org/ontology/bibo/Collection", "http://purl.org/ontology/bibo/Newspaper", "http://purl.org/ontology/bibo/Periodical", "http://rdvocab.info/termList/RDACarrierType/1018" ],
+    "contentType" : "journal",
+    "hasTransformer" : [ "oaidc", "epicur" ],
+    "publisher" : "[s.n.]",
+    "bibliographicCitation" : "Periodizität: wöchentl.; nicht mehr im Internet verfügbar",
+    "creator" : "http://d-nb.info/gnd/35789-3",
+    "hasPart" : [ "edoweb:3273325-2007", "edoweb:3273325-2008", "edoweb:3273325-2009", "edoweb:3273325-2010", "edoweb:3273325-2011", "edoweb:3273325-2012", "edoweb:3273325-2013" ],
+    "hasVersion" : [ "http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=4915397&custom_att_2=simple_viewer", "http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=5456704&custom_att_2=simple_viewer" ],
+    "issued" : "2007 - 2013",
+    "language" : "http://id.loc.gov/vocabulary/iso639-2/deu",
+    "subject" : "http://dewey.info/class/350/",
+    "title" : "Staatszeitung / A",
+    "fulltextOnline" : [ "http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=4915397&custom_att_2=simple_viewer", "http://digitool.hbz-nrw.de:1801/webclient/DeliveryManager?pid=5456704&custom_att_2=simple_viewer" ],
+    "hbzId" : "HT014646471",
+    "urn" : "urn:nbn:de:hbz:929:02-edoweb:32733252",
+    "exemplar" : "http://lobid.org/item/ZDB2221001-5%3ADE-929",
+    "otherTitleInformation" : "Ausgabe A, Elektronische Ressource",
+    "placeOfPublication" : "Mainz",
+    "publicationStatement" : "Mainz; [s.n.]",
+    "statementOfResponsibility" : "Hrsg.: Staatskanzlei ; Der Präsident des Landtags",
+    "aggregates" : [ "edoweb:3273325-2007", "edoweb:3273325-2008", "edoweb:3273325-2009", "edoweb:3273325-2010", "edoweb:3273325-2011", "edoweb:3273325-2012", "edoweb:3273325-2013" ],
+    "isDescribedBy" : "edoweb:3273325.rdf",
+    "similarTo" : [ "http://klio.hbz-nrw.de:1801/webclient/MetadataManager?pid=3273325", "http://api.localhost/fedora/objects/edoweb:3273325" ],
+    "isLike" : "http://lobid.org/resource/HT014646471",
+    "sameAs" : [ "edoweb:3273325", "http://hub.culturegraph.org/resource/ZDB-ZDB2221001-5", "http://ld.zdb-services.de/resource/2221001-5", "http://lobid.org/resource/ZDB2221001-5" ],
+    "describedBy" : "edoweb:3273325/about",
+    "isPrimaryTopicOf" : "http://193.30.112.134/F/?func=find-c&ccl_term=IDN%3DHT014646471"
+  }, {
+    "@id" : "edoweb:3273325.rdf",
+    "created" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2014-05-02T11:25:18.984+02:00"
+    },
+    "modified" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2014-05-02T11:33:57.505+02:00"
+    },
+    "describes" : "edoweb:3273325"
+  }, {
+    "@id" : "edoweb:3273325/about",
+    "primaryTopic" : "edoweb:3273325"
+  }, {
+    "@id" : "http://d-nb.info/gnd/35789-3",
+    "preferredNameForThePlaceOrGeographicName" : "Rheinland-Pfalz"
+  }, {
+    "@id" : "http://dewey.info/class/350/2009/08/about.en",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Public administration & military science"
+    }
+  } ],
+  "@context" : "http://api.localhost/edoweb-resources.json"
+}

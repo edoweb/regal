@@ -19,6 +19,7 @@ package de.nrw.hbz.regal.search;
 import java.io.IOException;
 import java.util.List;
 
+import org.elasticsearch.index.mapper.MapperParsingException;
 import org.elasticsearch.search.SearchHits;
 import org.junit.After;
 import org.junit.Assert;
@@ -36,10 +37,11 @@ public class TestSearch {
 
     String edoweb2606976 = null;
     String query1 = null;
-    Search search = null;
+    SearchMock search = null;
     private String edoweb3273325;
     private String edoweb3273325_2007;
     private String edoweb3273331;
+    private String edowebMappingTest;
 
     @Before
     public void setUp() throws IOException {
@@ -57,10 +59,14 @@ public class TestSearch {
 		Thread.currentThread().getContextClassLoader()
 			.getResourceAsStream("edoweb3273331.json"), "utf-8");
 
+	edowebMappingTest = CopyUtils
+		.copyToString(Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("edowebMappingTest.json"), "utf-8");
+
 	query1 = CopyUtils.copyToString(Thread.currentThread()
 		.getContextClassLoader().getResourceAsStream("query-1.json"),
 		"utf-8");
-	search = new Search();
+	search = new SearchMock("test", "public-index-config.json");
 	search.index("test", "monograph", "edoweb2606976", edoweb2606976);
 
     }
@@ -131,17 +137,44 @@ public class TestSearch {
 
     @Test
     public void mappingTest() {
-
 	search.index("test", "monograph", "edoweb:3273325", edoweb3273325);
 	search.index("test", "monograph", "edoweb:3273325-2007",
 		edoweb3273325_2007);
 	search.index("test", "monograph", "edoweb:3273331", edoweb3273331);
-
 	SearchHits hits = search.query("test", "@graph.isPartOf",
 		"edoweb:3273325-2007");
-
 	Assert.assertEquals(1, hits.totalHits());
 	Assert.assertEquals("edoweb:3273331", hits.getHits()[0].getId());
+    }
 
+    @Test
+    public void indexTest() {
+	search.index("test", "monograph", "edoweb:3273325", edoweb3273325);
+	search.index("test", "monograph", "edoweb:3273325-2007",
+		edoweb3273325_2007);
+	search.index("test", "monograph", "edoweb:3273331", edoweb3273331);
+    }
+
+    @Test(expected = MapperParsingException.class)
+    public void esSettings_fails() {
+	search.down();
+	search = new SearchMock("test", "public-index-config_fails.json");
+	System.out.println("Fails with: "
+		+ search.getSettings("test", "monograph"));
+	search.index("test", "monograph",
+		"edoweb:f1c9954d-f4d0-4d91-8f47-0a9c8f46df9b",
+		edowebMappingTest);
+
+    }
+
+    @Test
+    public void esSettings_succeed() {
+	search.down();
+	search = new SearchMock("test", "public-index-config_succeed.json");
+	search.index("test", "monograph",
+		"edoweb:f1c9954d-f4d0-4d91-8f47-0a9c8f46df9b",
+		edowebMappingTest);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
     }
 }

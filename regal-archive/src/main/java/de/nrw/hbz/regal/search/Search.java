@@ -16,8 +16,7 @@
  */
 package de.nrw.hbz.regal.search;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -27,12 +26,11 @@ import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.cluster.metadata.IndexMetaData;
+import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.node.Node;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 
@@ -42,7 +40,7 @@ import de.nrw.hbz.regal.fedora.CopyUtils;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
-public class Search {
+class Search {
 
     @SuppressWarnings("serial")
     class InvalidRangeException extends RuntimeException {
@@ -56,40 +54,9 @@ public class Search {
     }
 
     Client client = null;
-    Node node = null;
 
-    /**
-     * Used for testing
-     */
-    public Search() {
-	node = nodeBuilder().local(true).node();
-	client = node.client();
-	client.admin().indices().prepareDelete("_all").execute().actionGet();
-	init("test", "public-index-config.json");
-    }
-
-    /**
-     * Used for testing. Clean up!
-     */
-    public void down() {
-	client.admin().indices().prepareDelete("_all").execute().actionGet();
-	node.close();
-    }
-
-    /**
-     * @param cluster
-     *            the name must match to the one provided in
-     *            elasticsearch/conf/elasticsearch.yml
-     * @param config
-     *            elasticsearch mapping
-     */
-    public Search(String cluster, String config) {
-	InetSocketTransportAddress server = new InetSocketTransportAddress(
-		"localhost", 9300);
-	client = new TransportClient(ImmutableSettings.settingsBuilder()
-		.put("cluster.name", cluster).build())
-		.addTransportAddress(server);
-	init("edoweb", config);
+    public Search(Client client) {
+	this.client = client;
     }
 
     /**
@@ -223,6 +190,19 @@ public class Search {
 	SearchResponse response = client.prepareSearch(index).setQuery(query)
 		.execute().actionGet();
 	return response.getHits();
+    }
+
+    public String getSettings(String index, String type) {
+	try {
+	    ClusterState clusterState = client.admin().cluster().prepareState()
+		    .setIndices(index).execute().actionGet().getState();
+	    IndexMetaData inMetaData = clusterState.getMetaData().index(index);
+	    MappingMetaData metad = inMetaData.mapping(type);
+	    return metad.getSourceAsMap().toString();
+	} catch (IOException e) {
+	    throw new SearchException(e);
+	}
+
     }
 
 }
