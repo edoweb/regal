@@ -49,40 +49,104 @@ public class SearchFacade {
 	init("edoweb", config);
     }
 
+    /**
+     * @param index
+     *            the index will be inititiated
+     * @param config
+     *            an elasticsearch mapping
+     */
     public void init(String index, String config) {
 	search.init(index, config);
     }
 
-    public int hashCode() {
-	return search.hashCode();
-    }
-
-    public boolean equals(Object obj) {
-	return search.equals(obj);
-    }
-
+    /**
+     * @param index
+     *            name of the elasticsearch index. will be created, if not
+     *            exists.
+     * @param type
+     *            the type of the indexed item
+     * @param id
+     *            the id of the indexed item
+     * @param data
+     *            the actual item
+     * @return the Response
+     */
     public ActionResponse index(String index, String type, String id,
 	    String data) {
 	return search.index(index, type, id, data);
     }
 
+    /**
+     * @param index
+     *            name of the elasticsearch index. will be created, if not
+     *            exists.
+     * @param type
+     *            the type of the indexed item
+     * @param from
+     *            use from and until to page through the results
+     * @param until
+     *            use from and until to page through the results
+     * @return hits for the search
+     */
     public SearchHits listResources(String index, String type, int from,
 	    int until) {
 	return search.listResources(index, type, from, until);
     }
 
+    /**
+     * Gives a list of id's
+     * 
+     * @param index
+     *            name of the elasticsearch index. will be created, if not
+     *            exists.
+     * @param type
+     *            the type of the indexed item
+     * @param from
+     *            use from and until to page through the results
+     * @param until
+     *            use from and until to page through the results
+     * @return a list of ids
+     */
     public List<String> listIds(String index, String type, int from, int until) {
 	return search.listIds(index, type, from, until);
     }
 
+    /**
+     * Deletes a certain item
+     * 
+     * @param index
+     *            name of the elasticsearch index. will be created, if not
+     *            exists.
+     * @param type
+     *            the type of the indexed item
+     * @param id
+     *            the item's id
+     * @return the response
+     */
     public ActionResponse delete(String index, String type, String id) {
 	return search.delete(index, type, id);
     }
 
+    /**
+     * @param index
+     *            the elastic search index
+     * @param fieldName
+     *            the field to search in
+     * @param fieldValue
+     *            the value to search for
+     * @return all hits
+     */
     public SearchHits query(String index, String fieldName, String fieldValue) {
 	return search.query(index, fieldName, fieldValue);
     }
 
+    /**
+     * @param index
+     *            the index you want the settings for
+     * @param type
+     *            the type
+     * @return settings for a particular type and index
+     */
     public String getSettings(String index, String type) {
 	return search.getSettings(index, type);
     }

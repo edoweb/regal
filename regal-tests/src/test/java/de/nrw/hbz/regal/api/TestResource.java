@@ -101,7 +101,7 @@ public class TestResource {
     }
 
     public void delete(ObjectType type) throws FileNotFoundException,
-	    IOException, URISyntaxException {
+	    IOException {
 	String namespace = "test";
 	String pid = "d20c7a72-bb6c-40aa-bf12-ad38f7e0cb9c";
 	create(pid, namespace, type);
@@ -116,8 +116,7 @@ public class TestResource {
 	create(pid, namespace, type);
     }
 
-    private void delete(String pid, String namespace) throws IOException,
-	    URISyntaxException {
+    private void delete(String pid, String namespace) throws IOException {
 	Resource resource = new Resource();
 	resource.delete(pid, namespace);
 	resource = new Resource();
@@ -125,7 +124,7 @@ public class TestResource {
 	    resource.getReMAsJson(pid, namespace);
 	    Assert.fail();
 	} catch (ArchiveException e) {
-
+	    // TODO this looks a bit clumsy
 	}
     }
 
@@ -144,7 +143,7 @@ public class TestResource {
 	    resource.get(String.class);
 	    Assert.fail();
 	} catch (UniformInterfaceException e) {
-
+	    // TODO uses expected annotation instead?
 	}
     }
 
@@ -299,7 +298,7 @@ public class TestResource {
     }
 
     @Test
-    public void deleteData() throws IOException, URISyntaxException {
+    public void deleteData() throws IOException {
 	Resource resource = new Resource();
 	create("123", "test", ObjectType.monograph);
 	resource.readData("123", "test");
@@ -313,7 +312,7 @@ public class TestResource {
     }
 
     @Test
-    public void deleteMetadata() throws IOException, URISyntaxException {
+    public void deleteMetadata() throws IOException {
 	Resource resource = new Resource();
 	create("123", "test", ObjectType.monograph);
 	resource.readMetadata("123", "test");
@@ -340,8 +339,7 @@ public class TestResource {
     }
 
     @Test
-    public void removeNodesTransformer() throws InterruptedException,
-	    IOException {
+    public void removeNodesTransformer() throws IOException {
 	createTransformer();
 	create("123", "test", ObjectType.monograph);
 	addTransformer("123", "test", "testepicur");
@@ -431,7 +429,7 @@ public class TestResource {
 		    .getProperty("apiUrl") + "/utils/deleteByQuery/CM:test*");
 	    deleteTestCM.delete();
 	} catch (Exception e) {
-
+	    e.printStackTrace();
 	}
     }
 }

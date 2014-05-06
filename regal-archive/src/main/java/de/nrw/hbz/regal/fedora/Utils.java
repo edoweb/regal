@@ -195,7 +195,8 @@ public class Utils {
 			new AddRelationship(pid).predicate(link.getPredicate())
 				.object(link.getObject(), true).execute();
 		    } catch (Exception e2) {
-
+			// TODO WTF?
+			logger.debug("", e2);
 		    }
 
 		}
@@ -429,6 +430,7 @@ public class Utils {
 
 			    link.setLiteral(false);
 			} catch (URISyntaxException e) {
+			    logger.debug("", e);
 			}
 
 			node.addRelation(link);
@@ -616,6 +618,7 @@ public class Utils {
 
 		    }
 		} catch (Exception e) {
+		    logger.debug("", e);
 		}
 	    }
     }

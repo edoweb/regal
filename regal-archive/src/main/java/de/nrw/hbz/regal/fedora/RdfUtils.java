@@ -53,6 +53,8 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 import org.openrdf.rio.helpers.StatementCollector;
 import org.openrdf.sail.memory.MemoryStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.regal.datatypes.Link;
 
@@ -61,6 +63,8 @@ import de.nrw.hbz.regal.datatypes.Link;
  * 
  */
 public class RdfUtils {
+
+    final static Logger logger = LoggerFactory.getLogger(RdfUtils.class);
 
     /**
      * @param url
@@ -262,7 +266,7 @@ public class RdfUtils {
 		try {
 		    result.close();
 		} catch (QueryEvaluationException e) {
-
+		    logger.debug("", e);
 		}
 	}
 
@@ -377,7 +381,7 @@ public class RdfUtils {
 		    URI object = f.createURI(link.getObject());
 		    con.add(subject, predicate, object);
 		} catch (IllegalArgumentException e) {
-
+		    logger.warn("", e);
 		}
 	    }
 	}

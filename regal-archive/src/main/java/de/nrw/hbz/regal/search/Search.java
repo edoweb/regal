@@ -33,6 +33,8 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.nrw.hbz.regal.fedora.CopyUtils;
 
@@ -41,9 +43,11 @@ import de.nrw.hbz.regal.fedora.CopyUtils;
  * 
  */
 class Search {
+    final static Logger logger = LoggerFactory.getLogger(Search.class);
 
     @SuppressWarnings("serial")
     class InvalidRangeException extends RuntimeException {
+	// It is just there to be thrown
     }
 
     @SuppressWarnings("serial")
@@ -55,17 +59,11 @@ class Search {
 
     Client client = null;
 
-    public Search(Client client) {
+    Search(Client client) {
 	this.client = client;
     }
 
-    /**
-     * @param index
-     *            the index will be inititiated
-     * @param config
-     *            an elasticsearch mapping
-     */
-    public void init(String index, String config) {
+    void init(String index, String config) {
 	try {
 	    String indexConfig = CopyUtils.copyToString(Thread.currentThread()
 		    .getContextClassLoader().getResourceAsStream(config),
@@ -74,46 +72,20 @@ class Search {
 		    .setSource(indexConfig).execute().actionGet();
 
 	} catch (org.elasticsearch.indices.IndexAlreadyExistsException e) {
-
+	    logger.debug("", e);
 	} catch (Exception e) {
 	    throw new SearchException(e);
 	}
     }
 
-    /**
-     * @param index
-     *            name of the elasticsearch index. will be created, if not
-     *            exists.
-     * @param type
-     *            the type of the indexed item
-     * @param id
-     *            the id of the indexed item
-     * @param data
-     *            the actual item
-     * @return the Response
-     */
-    public ActionResponse index(String index, String type, String id,
-	    String data) {
+    ActionResponse index(String index, String type, String id, String data) {
 
 	return client.prepareIndex(index, type, id).setSource(data).execute()
 		.actionGet();
 
     }
 
-    /**
-     * @param index
-     *            name of the elasticsearch index. will be created, if not
-     *            exists.
-     * @param type
-     *            the type of the indexed item
-     * @param from
-     *            use from and until to page through the results
-     * @param until
-     *            use from and until to page through the results
-     * @return hits for the search
-     */
-    public SearchHits listResources(String index, String type, int from,
-	    int until) {
+    SearchHits listResources(String index, String type, int from, int until) {
 	if (from >= until)
 	    throw new InvalidRangeException();
 	SearchRequestBuilder builder = null;
@@ -132,21 +104,7 @@ class Search {
 	return response.getHits();
     }
 
-    /**
-     * Gives a list of id's
-     * 
-     * @param index
-     *            name of the elasticsearch index. will be created, if not
-     *            exists.
-     * @param type
-     *            the type of the indexed item
-     * @param from
-     *            use from and until to page through the results
-     * @param until
-     *            use from and until to page through the results
-     * @return a list of ids
-     */
-    public List<String> listIds(String index, String type, int from, int until) {
+    List<String> listIds(String index, String type, int from, int until) {
 	SearchHits hits = listResources(index, type, from, until);
 	Iterator<SearchHit> it = hits.iterator();
 	List<String> list = new Vector<String>();
@@ -157,33 +115,12 @@ class Search {
 	return list;
     }
 
-    /**
-     * Deletes a certain item
-     * 
-     * @param index
-     *            name of the elasticsearch index. will be created, if not
-     *            exists.
-     * @param type
-     *            the type of the indexed item
-     * @param id
-     *            the item's id
-     * @return the response
-     */
-    public ActionResponse delete(String index, String type, String id) {
+    ActionResponse delete(String index, String type, String id) {
 	return client.prepareDelete(index, type, id)
 		.setOperationThreaded(false).execute().actionGet();
     }
 
-    /**
-     * @param index
-     *            the elastic search index
-     * @param fieldName
-     *            the field to search in
-     * @param fieldValue
-     *            the value to search for
-     * @return all hits
-     */
-    public SearchHits query(String index, String fieldName, String fieldValue) {
+    SearchHits query(String index, String fieldName, String fieldValue) {
 	client.admin().indices().refresh(new RefreshRequest()).actionGet();
 	QueryBuilder query = QueryBuilders.boolQuery().must(
 		QueryBuilders.matchQuery(fieldName, fieldValue));
@@ -192,7 +129,7 @@ class Search {
 	return response.getHits();
     }
 
-    public String getSettings(String index, String type) {
+    String getSettings(String index, String type) {
 	try {
 	    ClusterState clusterState = client.admin().cluster().prepareState()
 		    .setIndices(index).execute().actionGet().getState();

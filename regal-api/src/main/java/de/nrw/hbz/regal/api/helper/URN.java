@@ -66,7 +66,7 @@ public class URN {
 	return String.valueOf(checksum.charAt(checksum.length() - 1));
     }
 
-    private char[] urnMap(String urn) {
+    private char[] urnMap(String myurn) {
 	Properties mKonkordanz = new Properties();
 	mKonkordanz.setProperty("0", "1");
 
@@ -144,7 +144,7 @@ public class URN {
 
 	mKonkordanz.setProperty(":", "17");
 
-	char[] urnArray = urn.toLowerCase().toCharArray();
+	char[] urnArray = myurn.toLowerCase().toCharArray();
 
 	StringBuffer strBuf = new StringBuffer();
 

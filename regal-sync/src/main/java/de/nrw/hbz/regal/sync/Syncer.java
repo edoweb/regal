@@ -207,9 +207,9 @@ public class Syncer {
 
     }
 
-    private void showHelp(Options options) {
+    private void showHelp(Options opts) {
 	HelpFormatter help = new HelpFormatter();
-	help.printHelp(" ", options);
+	help.printHelp(" ", opts);
     }
 
     private void run() {
@@ -378,10 +378,10 @@ public class Syncer {
 	}
     }
 
-    void pidl(String pidListFile) {
+    void pidl(String pidFile) {
 	Vector<String> pids;
 
-	pids = readPidlist(pidListFile);
+	pids = readPidlist(pidFile);
 	int size = pids.size();
 	for (int i = 0; i < size; i++) {
 	    try {
@@ -414,9 +414,9 @@ public class Syncer {
 
     }
 
-    void dele(String pidListFile) {
+    void dele(String pidFile) {
 	Vector<String> pids;
-	pids = readPidlist(pidListFile);
+	pids = readPidlist(pidFile);
 	int size = pids.size();
 	for (int i = 0; i < size; i++) {
 	    logger.info((i + 1) + " / " + size);
@@ -426,8 +426,8 @@ public class Syncer {
 	}
     }
 
-    private Vector<String> readPidlist(String pidListFile) {
-	File file = new File(pidListFile);
+    private Vector<String> readPidlist(String pidFile) {
+	File file = new File(pidFile);
 	Vector<String> result = new Vector<String>();
 	BufferedReader reader = null;
 	String str = null;

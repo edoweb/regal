@@ -40,6 +40,11 @@ public class Md5Checksum {
 
     }
 
+    /**
+     * @param fis
+     *            a input stream
+     * @return a byte array containing a md5 checksum
+     */
     public byte[] createChecksum(InputStream fis) {
 	try {
 	    byte[] buffer = new byte[1024];
@@ -91,7 +96,7 @@ public class Md5Checksum {
     }
 
     /**
-     * @param InputStream
+     * @param in
      *            the input stream you want to get the checksum from
      * @return the checksum as string
      */

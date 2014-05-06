@@ -37,6 +37,11 @@ class SearchMock {
 
     /**
      * Used for testing
+     * 
+     * @param indexName
+     *            es index
+     * @param configName
+     *            name of a config file in classpath
      */
     public SearchMock(String indexName, String configName) {
 	node = nodeBuilder().local(true).node();

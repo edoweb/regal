@@ -406,7 +406,7 @@ public class EdowebDigitalEntityBuilder implements
 		}
 	    }
 	} catch (Exception e) {
-
+	    logger.warn("", e);
 	}
 
 	return dtlDe;
@@ -448,7 +448,7 @@ public class EdowebDigitalEntityBuilder implements
 		}
 	    }
 	} catch (Exception e) {
-
+	    logger.warn("", e);
 	}
 	return dtlDe;
     }
@@ -492,7 +492,7 @@ public class EdowebDigitalEntityBuilder implements
 		}
 	    }
 	} catch (Exception e) {
-
+	    logger.warn("", e);
 	}
 	return dtlDe;
     }
@@ -513,7 +513,7 @@ public class EdowebDigitalEntityBuilder implements
 		}
 	    }
 	} catch (Exception e) {
-
+	    logger.warn("", e);
 	}
     }
 

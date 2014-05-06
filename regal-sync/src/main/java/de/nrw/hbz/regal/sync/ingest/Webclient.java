@@ -346,14 +346,14 @@ public class Webclient {
     /**
      * @param id
      *            pid without namespace
-     * @param namespace
+     * @param ns
      *            namespace of the pid
      * @param snid
      *            urn subnamespace id
      */
-    public void addUrn(String id, String namespace, String snid) {
+    public void addUrn(String id, String ns, String snid) {
 	WebResource resource = webclient.resource(endpoint
-		+ "/utils/addUrn?id=" + id + "&namespace=" + namespace
+		+ "/utils/addUrn?id=" + id + "&namespace=" + ns
 		+ "&snid=" + snid);
 	resource.post();
     }

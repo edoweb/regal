@@ -18,7 +18,6 @@ package de.nrw.hbz.regal.api.helper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +61,7 @@ public class TestActions {
     }
 
     @Test
-    public void testFindByType() throws IOException, InterruptedException {
+    public void testFindByType() throws IOException {
 	createTestObject("123");
 	List<String> list = actions.list("monograph", "test", 0, 10, "es");
 	Assert.assertTrue(list.get(0).equals("test:123"));
@@ -106,7 +105,7 @@ public class TestActions {
     }
 
     @Test
-    public void epicurAddAndReplace() throws IOException, URISyntaxException {
+    public void epicurAddAndReplace() throws IOException {
 	createTestObject("123");
 
 	String assumed = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
@@ -163,7 +162,7 @@ public class TestActions {
     }
 
     @Test(expected = ArchiveException.class)
-    public void epicurAddAndAdd() throws IOException, URISyntaxException {
+    public void epicurAddAndAdd() throws IOException {
 	createTestObject("123");
 
 	String assumed = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<epicur xmlns=\"urn:nbn:de:1111-2004033116\" xsi:schemaLocation=\"urn:nbn:de:1111-2004033116 http://www.persistent-identifier.de/xepicur/version1.0/xepicur.xsd\">\n"
@@ -197,7 +196,7 @@ public class TestActions {
     }
 
     @Test
-    public void pdfa() throws IOException, URISyntaxException {
+    public void pdfa() throws IOException {
 
 	createTestObject("123");
 	Node node = actions.readNode("test:123");
@@ -210,7 +209,7 @@ public class TestActions {
     }
 
     @Test
-    public void pdfbox() throws IOException, URISyntaxException {
+    public void pdfbox() throws IOException {
 	createTestObject("123");
 	Node node = actions.readNode("test:123");
 	String response = actions.pdfbox(node);
@@ -220,7 +219,7 @@ public class TestActions {
     }
 
     @Test
-    public void itext() throws IOException, URISyntaxException {
+    public void itext() throws IOException {
 	createTestObject("123");
 	Node node = actions.readNode("test:123");
 	String response = actions.itext(node);
@@ -281,8 +280,7 @@ public class TestActions {
     }
 
     @Test
-    public void removeNodesTransformer() throws InterruptedException,
-	    IOException {
+    public void removeNodesTransformer() throws IOException {
 	createTestObject("123");
 	actions.addTransformer("123", "test", "testepicur");
 	actions.addTransformer("123", "test", "testoaidc");
@@ -350,7 +348,7 @@ public class TestActions {
     }
 
     @Test
-    public void alephConversion() throws IOException, InterruptedException {
+    public void alephConversion() throws IOException {
 	createTestObject("123");
 	Node node = actions.readNode("test:123");
 	System.out.println("Start-\"" + actions.aleph(node) + "\"-End");
@@ -388,7 +386,7 @@ public class TestActions {
     }
 
     @After
-    public void tearDown() throws IOException {
-	// cleanUp();
+    public void tearDown() {
+	cleanUp();
     }
 }

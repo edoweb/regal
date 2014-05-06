@@ -27,12 +27,16 @@ import java.net.URLConnection;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
  * 
  */
 public class CopyUtils {
+
+    final static Logger logger = LoggerFactory.getLogger(CopyUtils.class);
 
     /**
      * @param content
@@ -77,7 +81,7 @@ public class CopyUtils {
 		if (out != null)
 		    out.close();
 	    } catch (IOException e) {
-
+		logger.debug("", e);
 	    }
 	}
     }
