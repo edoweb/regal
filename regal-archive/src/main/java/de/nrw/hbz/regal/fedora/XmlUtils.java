@@ -327,6 +327,11 @@ public class XmlUtils {
 	return "";
     }
 
+    /**
+     * @param file
+     *            an xml file
+     * @return the root element in a namespace aware manner
+     */
     public static Element getNamespaceAwareDocument(File file) {
 	try {
 	    return getNamespaceAwareDocument(new FileInputStream(file));

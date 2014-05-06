@@ -205,11 +205,11 @@ public class OaiOreMaker {
 
     private RepositoryConnection createRdfRepository()
 	    throws RepositoryException {
-	RepositoryConnection con = null;
+	RepositoryConnection mycon = null;
 	SailRepository myRepository = new SailRepository(new MemoryStore());
 	myRepository.initialize();
-	con = myRepository.getConnection();
-	return con;
+	mycon = myRepository.getConnection();
+	return mycon;
     }
 
     private void closeRdfRepository() {
@@ -387,7 +387,7 @@ public class OaiOreMaker {
     private String getHtml(String rdf, String mime, String pid) {
 
 	String result = "";
-	RepositoryConnection con = null;
+	RepositoryConnection mycon = null;
 	try {
 	    java.net.URL fileLocation = Thread.currentThread()
 		    .getContextClassLoader().getResource("html.html");
@@ -419,11 +419,11 @@ public class OaiOreMaker {
 	    SailRepository myRepository = new SailRepository(new MemoryStore());
 
 	    myRepository.initialize();
-	    con = myRepository.getConnection();
+	    mycon = myRepository.getConnection();
 	    String baseURI = "";
 	    try {
-		con.add(new StringReader(rdf), baseURI, RDFFormat.N3);
-		RepositoryResult<Statement> statements = con.getStatements(
+		mycon.add(new StringReader(rdf), baseURI, RDFFormat.N3);
+		RepositoryResult<Statement> statements = mycon.getStatements(
 			null, null, null, false);
 		while (statements.hasNext()) {
 		    Statement statement = statements.next();
@@ -470,7 +470,7 @@ public class OaiOreMaker {
 	finally {
 	    if (con != null) {
 		try {
-		    con.close();
+		    mycon.close();
 		} catch (RepositoryException e) {
 		    logger.error(e.getMessage());
 		    e.printStackTrace();

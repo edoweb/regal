@@ -766,11 +766,9 @@ public class Actions {
 
     private List<String> listByQuery(String query) {
 	List<String> objects = null;
-	try {
-	    objects = fedora.findNodes(query);
-	} catch (Exception e) {
 
-	}
+	objects = fedora.findNodes(query);
+
 	return objects;
     }
 
@@ -880,8 +878,6 @@ public class Actions {
 	    if (RdfUtils.hasTriple(subject, hasUrn, urn, metadata))
 		throw new ArchiveException(subject + "already has a urn: "
 			+ metadata);
-	} else {
-
 	}
 	metadata = RdfUtils.addTriple(subject, hasUrn, urn, true, metadata);
 	updateMetadata(namespace + ":" + pid, metadata);

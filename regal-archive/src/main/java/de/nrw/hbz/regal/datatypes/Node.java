@@ -132,6 +132,7 @@ public class Node {
 	for (Link link : relsExt) {
 	    if (link.getPredicate().compareTo(pred) == 0
 		    && link.getObject().compareTo(obj) == 0) {
+		// enter here and you will not be part of the new triple vector
 
 	    } else {
 		newRels.add(link);

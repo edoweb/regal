@@ -55,7 +55,7 @@ public class TestDigitoolDownloader {
 
     @Before
     public void setUp() {
-
+	// fill me up
     }
 
     @Test
@@ -74,6 +74,6 @@ public class TestDigitoolDownloader {
 
     @After
     public void tearDown() {
-
+	// fill me up
     }
 }

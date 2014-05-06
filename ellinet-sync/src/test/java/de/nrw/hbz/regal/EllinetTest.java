@@ -19,7 +19,6 @@ package de.nrw.hbz.regal;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -73,7 +72,7 @@ public class EllinetTest {
 	localcache = properties.getProperty("piddownloader.downloadLocation");
     }
 
-    public void mainTest() throws URISyntaxException {
+    public void mainTest() {
 
 	pidlist = Thread.currentThread().getContextClassLoader()
 		.getResource(pidlist).toString().substring(5);

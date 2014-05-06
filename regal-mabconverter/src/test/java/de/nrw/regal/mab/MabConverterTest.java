@@ -23,10 +23,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.List;
 
-import org.antlr.runtime.RecognitionException;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -45,8 +43,7 @@ import de.nrw.hbz.regal.mab.MabConverter;
 public class MabConverterTest {
 
     @Test
-    public void transformTestfilesAndCompareXmlToExample() throws IOException,
-	    URISyntaxException, RecognitionException, SAXException {
+    public void transformTestfilesAndCompareXmlToExample() throws IOException {
 
 	transformTestfileAndCompareXmlToExample("HT015954381", "edoweb:3025500");
 	transformTestfileAndCompareXmlToExample("HT014997894", "edoweb:1750745");
@@ -58,8 +55,7 @@ public class MabConverterTest {
     }
 
     public void transformTestfileAndCompareXmlToExample(String id,
-	    String recordId) throws IOException, URISyntaxException,
-	    RecognitionException, SAXException {
+	    String recordId) throws IOException {
 	InputStream in = getResourceAsStream(id + ".nt");
 
 	ByteArrayOutputStream os = transformTestFile(in, recordId);
@@ -74,6 +70,7 @@ public class MabConverterTest {
 	// xmlCompare(output, expected);
     }
 
+    @SuppressWarnings("unused")
     private void xmlCompare(File output, File expected)
 	    throws FileNotFoundException, SAXException, IOException {
 	XMLUnit.setIgnoreWhitespace(true);
@@ -88,8 +85,7 @@ public class MabConverterTest {
 
     }
 
-    private InputStream getResourceAsStream(String name)
-	    throws URISyntaxException {
+    private InputStream getResourceAsStream(String name) {
 	return Thread.currentThread().getContextClassLoader()
 		.getResourceAsStream(name);
     }
@@ -107,8 +103,7 @@ public class MabConverterTest {
     }
 
     private ByteArrayOutputStream transformTestFile(InputStream input,
-	    String topic) throws IOException, URISyntaxException,
-	    RecognitionException {
+	    String topic) throws IOException {
 	MabConverter converter = new MabConverter(topic);
 	return converter.convert(input);
     }
