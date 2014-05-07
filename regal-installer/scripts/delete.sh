@@ -2,4 +2,7 @@
 
 source functions.sh
 
-listCatalogIds $1 $2 $3 $4 $5
+type=$1
+
+delete $type 
+

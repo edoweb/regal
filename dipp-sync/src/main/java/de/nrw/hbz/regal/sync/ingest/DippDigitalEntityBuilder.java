@@ -126,8 +126,6 @@ public class DippDigitalEntityBuilder implements DigitalEntityBuilderInterface {
 	if (content.exists()) {
 	    dtlDe.addStream(content, "application/zip", StreamType.DATA, null,
 		    md5Hash);
-	} else {
-
 	}
 
 	return dtlDe;

@@ -27,7 +27,6 @@ import static de.nrw.hbz.regal.fedora.FedoraVocabulary.SPO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -323,8 +322,6 @@ class FedoraFacade implements FedoraInterface {
 	    node.setCreationDate(prof.getCreateDate());
 
 	} catch (FedoraClientException e) {
-	    throw new ReadNodeException(pid, e);
-	} catch (RemoteException e) {
 	    throw new ReadNodeException(pid, e);
 	}
 

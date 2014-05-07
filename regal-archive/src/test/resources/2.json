@@ -1,0 +1,12 @@
+{
+  "@graph" : [ {
+    "@id" : "edoweb:a601c448-b370-4bc5-b2ba-367b53ecc513",
+       "creatorName" : [ {
+      "@id" : "http://d-nb.info/gnd/17227530X"
+    }, {
+      "@id" : "http://d-nb.info/gnd/14326723X"
+    } ],
+    "http://purl.org/dc/terms/creator" : "Hier geht ein Literal"
+  
+  } ]
+}

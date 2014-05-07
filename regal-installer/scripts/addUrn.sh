@@ -1,8 +1,10 @@
 #! /bin/bash
 
-server=$2
-snid=$3
-passwd=$4
+source variables.conf
+
+snid=$1
+server=$BACKEND
+passwd=$ARCHIVE_PASSWORD
 
 ./pidreporter.sh regal-epicur.properties
 ./pidreporter.sh regal-oai_dc.properties

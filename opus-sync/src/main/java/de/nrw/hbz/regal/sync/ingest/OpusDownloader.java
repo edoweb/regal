@@ -59,7 +59,7 @@ public class OpusDownloader extends Downloader {
 	    logger.error(e.getMessage());
 
 	} catch (IOException e) {
-
+	    logger.warn("", e);
 	}
 
     }

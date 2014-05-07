@@ -353,9 +353,9 @@ public class DigitalEntity {
 		+ " , " + digitalEntity.getUsageType() + ",\n "
 		+ indent(indent + 2) + digitalEntity.listStreams(indent + 2));
 	if (depth != 0) {
-	    for (RelatedDigitalEntity related : digitalEntity.getRelated()) {
-		buffer.append(related.relation + ", "
-			+ toString(related.entity, depth - 1, indent + 1));
+	    for (RelatedDigitalEntity rel : digitalEntity.getRelated()) {
+		buffer.append(rel.relation + ", "
+			+ toString(rel.entity, depth - 1, indent + 1));
 	    }
 	}
 	return buffer.toString();

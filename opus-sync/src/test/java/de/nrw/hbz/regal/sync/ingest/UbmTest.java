@@ -73,6 +73,7 @@ public class UbmTest {
 	localcache = properties.getProperty("piddownloader.downloadLocation");
     }
 
+    @Test
     public void mappingTest() throws URISyntaxException {
 	OpusMapping mapping = new OpusMapping();
 	File file = new File(Thread.currentThread().getContextClassLoader()
@@ -81,8 +82,7 @@ public class UbmTest {
 
     }
 
-    @Test
-    public void mainTest() throws URISyntaxException {
+    public void mainTest() {
 
 	pidlist = Thread.currentThread().getContextClassLoader()
 		.getResource(pidlist).toString().substring(5);

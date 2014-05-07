@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.io.FileUtils;
@@ -48,8 +47,6 @@ public class DippMapping {
 	try {
 	    System.out.println(file.getAbsolutePath());
 	    return flux(file, pid);
-	} catch (URISyntaxException e) {
-	    logger.error(e.getMessage());
 	} catch (IOException e) {
 	    logger.error(e.getMessage());
 	} catch (RecognitionException e) {
@@ -58,8 +55,8 @@ public class DippMapping {
 	return null;
     }
 
-    private String flux(File file, String pid) throws URISyntaxException,
-	    IOException, RecognitionException {
+    private String flux(File file, String pid) throws IOException,
+	    RecognitionException {
 	File outfile = File.createTempFile("lobid", "rdf");
 	outfile.deleteOnExit();
 	System.out.println(Thread.currentThread().getContextClassLoader()

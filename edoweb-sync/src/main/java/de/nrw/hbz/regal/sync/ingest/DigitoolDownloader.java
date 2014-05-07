@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -47,13 +45,10 @@ import de.nrw.hbz.regal.sync.extern.Md5Checksum;
  */
 public class DigitoolDownloader extends Downloader {
 
-    @SuppressWarnings("serial")
+    @SuppressWarnings({ "serial", "javadoc" })
     public class ChecksumNotMatchException extends RuntimeException {
 
     }
-
-    final static Logger logger = LoggerFactory
-	    .getLogger(DigitoolDownloader.class);
 
     @Override
     protected void downloadObject(File downloadDirectory, String pid) {

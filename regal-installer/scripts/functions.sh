@@ -1,12 +1,14 @@
 #! /bin/bash
 
+source variables.conf
+
 function pidlist()
 {
+server=$BACKEND
 type=$1
-server=$2
-fromSrc=$3
-from=$4
-until=$5
+fromSrc=$2
+from=$3
+until=$4
 curl -XGET "http://$server/resource?type=$type&getListingFrom=$fromSrc&from=$from&until=$until" 2> /dev/null| sed s/"{\"list\":"/""/g | sed s/"\,"/"\n"/g | sed s/"\"\([^\"]*\)".*/"\1"/g | sed s/"^\["/""/g
 echo
 }
@@ -14,10 +16,10 @@ echo
 function index()
 {
 type=$1
-user=$2
-password=$3
-server=$4
-for i in `pidlist $type $server repo 0 10000`
+user=$ARCHIVE_USER
+password=$ARCHIVE_PASSWORD
+server=$BACKEND
+for i in `pidlist $type repo 0 10000`
 do
 curl -s -u ${user}:${password} -XPOST "http://$server/utils/index/$i?type=$type";echo
 done
@@ -26,10 +28,10 @@ done
 function public_index()
 {
 type=$1
-user=$2
-password=$3
-server=$4
-for i in `pidlist $type $server repo 0 10000`
+user=$ARCHIVE_USER
+password=$ARCHIVE_PASSWORD
+server=$BACKEND
+for i in `pidlist $type repo 0 10000`
 do
 curl -s -u ${user}:${password} -XPOST "http://$server/utils/public_index/$i?type=$type";echo
 done
@@ -38,10 +40,10 @@ done
 function delete()
 {
 type=$1
-user=$2
-password=$3
-server=$4
-for i in `pidlist $type $server repo 0 10000`
+user=$ARCHIVE_USER
+password=$ARCHIVE_PASSWORD
+server=$BACKEND
+for i in `pidlist $type repo 0 10000`
 do
 curl -s -u ${user}:${password} -XDELETE "http://$server/resource/$i";echo
 done
@@ -51,10 +53,10 @@ done
 function lobidify()
 {
 type=$1
-user=$2
-password=$3
-server=$4
-for i in `pidlist $type $server repo 0 10000`
+user=$ARCHIVE_USER
+password=$ARCHIVE_PASSWORD
+server=$BACKEND
+for i in `pidlist $type repo 0 10000`
 do
 curl -s -u ${user}:${password} -XPOST "http://$server/utils/lobidify/$i";echo
 done
@@ -64,8 +66,8 @@ done
 function generateIdTable()
 {
 type=$1
-host=$2
-api=api.$2
+host=$FRONTEND
+api=$BACKEND
 
 list=`pidlist $type $api es 0 30000`
 
@@ -88,9 +90,9 @@ done
 function listCatalogIds ()
 {
 type=$1
-server=$2
+server=$BACKEND
 
-pidlist=`pidlist $type $server repo 0 10000`
+pidlist=`pidlist $type repo 0 10000`
 for i in $pidlist;do TT=`curl -s http://${server}/fedora/objects/$i/datastreams/DC/content|grep -o "HT[^<]*\|TT[^<]*"`; echo $i,$TT;done >tmp
 
 sort tmp |uniq
@@ -103,7 +105,7 @@ function pid2urn()
 type=$1
 host=$2
 
-generateIdTable $type $host > idTable.txt
+generateIdTable $type > idTable.txt
 while read line
 do 
 #echo $line
@@ -120,7 +122,7 @@ function testUrn()
 {
 
 type=$1
-host=$2
+host=$FRONTEND
 
 pid2urn $type $host >pid2urn.sorted.txt
 while read line
@@ -142,7 +144,7 @@ done <pid2urn.sorted.txt
 function testOai()
 {
 type=$1
-host=$2
+host=$FRONTEND
 
 pid2urn $type $host >pid2urn.sorted.txt
 while read line

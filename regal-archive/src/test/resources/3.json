@@ -1,0 +1,25 @@
+{
+  "@graph" : [ {
+    "@id" : "edoweb:ad744673-5ded-43a0-90c0-3f8f2223b4be",
+    "@type" : [ "http://purl.org/dc/terms/BibliographicResource", "http://purl.org/vocab/frbr/core#Manifestation" ],
+    "contentType" : "monograph",
+    "hasTransformer" : [ "MonographObjectModel", "pdfObjectModel", "headObjectModel" ],
+    "P1004" : "NSG-Album Hinterköpfchen",
+    "language" : "http://id.loc.gov/vocabulary/iso639-2/ger",
+    "hbzId" : "HT017686656",
+    "isDescribedBy" : "edoweb:ad744673-5ded-43a0-90c0-3f8f2223b4be.rdf",
+    "similarTo" : "http://api.edoweb-test.hbz-nrw.de/fedora/objects/edoweb:ad744673-5ded-43a0-90c0-3f8f2223b4be"
+  }, {
+    "@id" : "edoweb:ad744673-5ded-43a0-90c0-3f8f2223b4be.rdf",
+    "created" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2013-11-05T11:05:45.383+01:00"
+    },
+    "modified" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2013-11-05T11:05:46.798+01:00"
+    },
+    "describes" : "edoweb:ad744673-5ded-43a0-90c0-3f8f2223b4be"
+  } ],
+  "@context" : "http://api.edoweb-test.hbz-nrw.de/edoweb-resources.json"
+}

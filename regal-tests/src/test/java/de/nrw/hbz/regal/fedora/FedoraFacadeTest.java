@@ -169,7 +169,7 @@ public class FedoraFacadeTest {
     }
 
     @Test
-    public void removeNodesTransformer() throws InterruptedException {
+    public void removeNodesTransformer() {
 	facade.createNode(object);
 	object.removeTransformer("testepicur");
 

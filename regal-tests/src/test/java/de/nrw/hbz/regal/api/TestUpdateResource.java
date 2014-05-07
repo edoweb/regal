@@ -60,12 +60,12 @@ public class TestUpdateResource {
     }
 
     @After
-    public void tearDown() throws IOException {
+    public void tearDown() {
 	cleanUp();
     }
 
     @Test
-    public void testRestUpdate() throws FileNotFoundException, IOException {
+    public void testRestUpdate() {
 	createRestMonograph();
 	createRestJournal();
 	moveRestMonographAsArticleToJournal();
@@ -148,7 +148,7 @@ public class TestUpdateResource {
 		    .getProperty("apiUrl") + "/utils/deleteNamespace/testCM");
 	    deleteTestCM.delete();
 	} catch (Exception e) {
-
+	    e.printStackTrace();
 	}
     }
 }

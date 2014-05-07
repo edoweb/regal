@@ -4393,7 +4393,7 @@ public class MabRecord {
     public class Koerperschaft {
 	public String nameAnsetzungsform;
 	public String nameVerweisungsform;
-	public String id;
+	public String koerperschaft_id;
 	public String koerperschaft;
     }
 

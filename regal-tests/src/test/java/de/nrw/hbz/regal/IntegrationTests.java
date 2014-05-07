@@ -19,5 +19,5 @@ import de.nrw.hbz.regal.sync.TestEdowebDigitalEntityBuilder;
 	TestDigitoolDownloader.class, TestDippDownloader.class,
 	TestEdowebDigitalEntityBuilder.class })
 public class IntegrationTests {
-
+    // Just used by junit framework
 }

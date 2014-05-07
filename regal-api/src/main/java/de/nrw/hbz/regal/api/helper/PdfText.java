@@ -21,6 +21,8 @@ import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
@@ -36,6 +38,9 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  * 
  */
 public class PdfText {
+
+    final static Logger logger = LoggerFactory.getLogger(PdfText.class);
+
     /**
      * @param pdfFile
      *            this file will be extracted.
@@ -58,7 +63,7 @@ public class PdfText {
 		try {
 		    doc.close();
 		} catch (IOException e) {
-
+		    logger.warn("", e);
 		}
 	    }
 	}

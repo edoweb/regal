@@ -19,7 +19,6 @@ package de.nrw.hbz.regal.fedora;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.rmi.RemoteException;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.List;
@@ -48,8 +47,7 @@ import de.nrw.hbz.regal.exceptions.ArchiveException;
  */
 public class DublinCoreHandler {
 
-    static void readFedoraDcToNode(Node node) throws RemoteException,
-	    FedoraClientException {
+    static void readFedoraDcToNode(Node node) throws FedoraClientException {
 
 	FedoraResponse response = new GetDatastreamDissemination(node.getPID(),
 		"DC").download(true).execute();

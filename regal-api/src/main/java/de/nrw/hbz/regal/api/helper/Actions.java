@@ -53,7 +53,7 @@ import de.nrw.hbz.regal.fedora.FedoraVocabulary;
 import de.nrw.hbz.regal.fedora.RdfException;
 import de.nrw.hbz.regal.fedora.RdfUtils;
 import de.nrw.hbz.regal.fedora.UrlConnectionException;
-import de.nrw.hbz.regal.search.Search;
+import de.nrw.hbz.regal.search.SearchFacade;
 
 /**
  * Actions provide a single class to access the archive. All endpoints are using
@@ -93,7 +93,7 @@ public class Actions {
     private String fedoraExtern = null;
     private String server = null;
     private String urnbase = null;
-    private Search search = null;
+    private SearchFacade search = null;
     private String escluster = null;
 
     // String namespace = null;
@@ -117,7 +117,7 @@ public class Actions {
 		"/externalLinks.properties"));
 	services = new Services(fedora, server);
 	representations = new Representations(fedora, server);
-	search = new Search(escluster, "public-index-config.json");
+	search = new SearchFacade(escluster, "public-index-config.json");
     }
 
     /**
@@ -766,11 +766,7 @@ public class Actions {
 
     private List<String> listByQuery(String query) {
 	List<String> objects = null;
-	try {
-	    objects = fedora.findNodes(query);
-	} catch (Exception e) {
-
-	}
+	objects = fedora.findNodes(query);
 	return objects;
     }
 
@@ -880,8 +876,6 @@ public class Actions {
 	    if (RdfUtils.hasTriple(subject, hasUrn, urn, metadata))
 		throw new ArchiveException(subject + "already has a urn: "
 			+ metadata);
-	} else {
-
 	}
 	metadata = RdfUtils.addTriple(subject, hasUrn, urn, true, metadata);
 	updateMetadata(namespace + ":" + pid, metadata);

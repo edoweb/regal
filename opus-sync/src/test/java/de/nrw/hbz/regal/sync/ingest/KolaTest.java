@@ -82,7 +82,7 @@ public class KolaTest {
 
     }
 
-    public void mainTest() throws URISyntaxException {
+    public void mainTest() {
 
 	pidlist = Thread.currentThread().getContextClassLoader()
 		.getResource(pidlist).toString().substring(5);
