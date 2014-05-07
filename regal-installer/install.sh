@@ -40,7 +40,7 @@ substituteVars catalina.out $ARCHIVE_HOME/conf/catalina.out
 substituteVars Identify.xml $ARCHIVE_HOME/conf/Identify.xml
 substituteVars proai.properties $ARCHIVE_HOME/conf/proai.properties
 substituteVars robots.txt $ARCHIVE_HOME/conf/robots.txt
-substitudeVars tomcat.conf $ARCHIVE_HOME/conf/tomcat.conf
+substituteVars tomcat.conf $ARCHIVE_HOME/conf/tomcat.conf
 cp templates/favicon.ico $ARCHIVE_HOME/conf/favicon.ico
 }
 
@@ -107,7 +107,7 @@ pwd
 cp variables.conf $ARCHIVE_HOME/bin/
 cp -r templates $ARCHIVE_HOME/bin/
 cd $ARCHIVE_HOME/src/
-mvn clean install -DskipTests
+mvn clean install -DskipTests >> $ARCHIVE_HOME/logs/regal-build.log
 cd -
 }
 
@@ -133,8 +133,8 @@ cd $ARCHIVE_HOME/src
 git pull
 git checkout master
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
-echo "Start maven build. If this is your first regal installation, downloading all dependencies can take a lot of time."
-mvn -e clean install -DskipTests --settings settings.xml
+echo -e "Start maven build. If this is your first regal installation, downloading all dependencies can take a lot of time. You can follow the process with tail -f $ARCHIVE_HOME/logs/regal-build.log"
+mvn -e clean install -DskipTests --settings settings.xml >> $ARCHIVE_HOME/logs/regal-build.log
 cd -
 }
 
@@ -151,8 +151,8 @@ function configApi()
 {
 cd $ARCHIVE_HOME/src
 cp  $ARCHIVE_HOME/conf/api.properties $ARCHIVE_HOME/src/regal-api/src/main/resources
-echo "Start maven build. If this is your first regal installation, downloading all dependencies can take a lot of time."
-mvn -e clean install -DskipTests --settings settings.xml
+echo "Start maven build. If this is your first regal installation, downloading all dependencies can take a lot of time. You can follow the process with tail -f $ARCHIVE_HOME/logs/regal-build.log"
+mvn -e clean install -DskipTests --settings settings.xml >> $ARCHIVE_HOME/logs/regal-build.log 
 cd -
 }
 
@@ -182,7 +182,7 @@ cp $ARCHIVE_HOME/html/doc/service.json templates
 cp $ARCHIVE_HOME/html/index.html templates
 substituteVars service.json $ARCHIVE_HOME/html/doc/service.json
 substituteVars index.html $ARCHIVE_HOME/html/index.html
-correctSwagger utils;
+correctSwagger utils > /dev/null 2>&1;
 correctSwagger resource;
 fi
 }
@@ -207,7 +207,6 @@ buildModule
 
 copyHtml
 
-updateInstaller
 }
 
 function setSystemVars
@@ -217,12 +216,6 @@ export CATALINA_HOME=$FEDORA_HOME/tomcat
 
 }
 
-function updateInstaller
-{
-SRC=$ARCHIVE_HOME/src
-echo "Update installer"
-cp $SRC/regal-installer/install.sh $ARCHIVE_HOME/bin/
-}
 
 function copyHtml
 {
@@ -255,8 +248,8 @@ SRC=$ARCHIVE_HOME/src
 WEBAPPS=$ARCHIVE_HOME/fedora/tomcat/webapps
 cd $SRC/regal-api
 echo "Install Webapi"
-mvn war:war -DskipTests
-mvn package
+mvn war:war -DskipTests >> $ARCHIVE_HOME/logs/regal-build.log
+mvn package >> $ARCHIVE_HOME/logs/regal-build.log
 cd -
 rm -rf  $WEBAPPS/api*
 cp $SRC/regal-api/target/api.war $WEBAPPS/api.war
@@ -290,11 +283,11 @@ SYNCER_DEST=$ARCHIVE_HOME/sync/${MODULE}sync.jar
 if [ -n "$MODULE" ]
 then
 	cd $SRC
-	mvn install -DskipTests
+	mvn install -DskipTests >> $ARCHIVE_HOME/logs/regal-build.log
 	cd -
 	echo "Generate Module $MODULE, templates can be found in $ARCHIVE_HOME/sync"
 	cd $ARCHIVE_HOME/src/${MODULE}-sync
-	mvn -q -e assembly:assembly -DskipTests --settings ../settings.xml
+	mvn -q -e assembly:assembly -DskipTests --settings ../settings.xml >> $ARCHIVE_HOME/logs/regal-build.log
 	cd -
 	cp $SYNCER_SRC $SYNCER_DEST 
 	
@@ -316,7 +309,9 @@ then
 	cat $MODULE_CONF variables.conf > $ARCHIVE_HOME/sync/${NAMESPACE}Variables.conf.tmpl
 fi
 }
+
 usage="Wrong usage! Please try with: \n -u to update to last release \n -u test to update to last test build. \n -ext <sync.conf>. to create a sync module.";
+
 if [ $# -eq 0 ]
 then
 	makeDir
@@ -329,7 +324,7 @@ then
     
     if [ $1 == "-u" ]
     then
-	makeDir
+	makeDir > /dev/null 2>&1
 	createConfig
 	copyConfig
 	updateMaster
@@ -341,7 +336,7 @@ then
 else
     if [[ $1 == "-u" ]] && [[ $2 == "test" ]]
     then
-	makeDir
+	makeDir > /dev/null 2>&1
 	createConfig
 	copyConfig
 	updateTest
@@ -349,7 +344,7 @@ else
 	rollout	
     elif [[ $1 == "-u" ]] && [[ $2 == "local" ]]
     then
-	makeDir
+	makeDir > /dev/null 2>&1
 	createConfig
 	copyConfig
 	configApi
