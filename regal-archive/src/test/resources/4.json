@@ -1,0 +1,23 @@
+{
+	"@graph": 
+	[
+		{
+			"@id": "edoweb:f1c9954d-f4d0-4d91-8f47-0a9c8f46df9b"
+		},
+
+		{
+			"@id": "edoweb:f1c9954d-f4d0-4d91-8f47-0a9c8f46df9b.rdf",
+			"creatorName": "1",
+			"created": 
+			{
+				"@type": "xsd:dateTime",
+				"@value": "2014-04-28T14:49:43.425+02:00"
+			}
+		},
+
+		{
+			"@id": "http://d-nb.info/gnd/175667551.rdf",
+			"creatorName": "0"
+		}
+	]
+}

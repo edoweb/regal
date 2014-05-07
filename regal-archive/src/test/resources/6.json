@@ -1,0 +1,18 @@
+{
+	"@graph": 
+	[
+		{
+			"@id": "edoweb:549b92ee-d0a0-4471-83dc-799b08f3c0f6",
+			"creatorName": 
+			[
+				{
+					"@id": "http://d-nb.info/gnd/136007929"
+				},
+
+				{
+					"@id": "http://d-nb.info/gnd/159378664"
+				}
+			]
+		}
+	]
+}
