@@ -381,7 +381,7 @@ public class RdfUtils {
 		    URI object = f.createURI(link.getObject());
 		    con.add(subject, predicate, object);
 		} catch (IllegalArgumentException e) {
-		    logger.warn("", e);
+		    logger.debug("", e);
 		}
 	    }
 	}
