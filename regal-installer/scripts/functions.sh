@@ -19,7 +19,7 @@ type=$1
 user=$ARCHIVE_USER
 password=$ARCHIVE_PASSWORD
 server=$BACKEND
-for i in `pidlist $type $server repo 0 10000`
+for i in `pidlist $type repo 0 10000`
 do
 curl -s -u ${user}:${password} -XPOST "http://$server/utils/index/$i?type=$type";echo
 done
@@ -31,7 +31,7 @@ type=$1
 user=$ARCHIVE_USER
 password=$ARCHIVE_PASSWORD
 server=$BACKEND
-for i in `pidlist $type $server repo 0 10000`
+for i in `pidlist $type repo 0 10000`
 do
 curl -s -u ${user}:${password} -XPOST "http://$server/utils/public_index/$i?type=$type";echo
 done
@@ -43,7 +43,7 @@ type=$1
 user=$ARCHIVE_USER
 password=$ARCHIVE_PASSWORD
 server=$BACKEND
-for i in `pidlist $type $server repo 0 10000`
+for i in `pidlist $type repo 0 10000`
 do
 curl -s -u ${user}:${password} -XDELETE "http://$server/resource/$i";echo
 done
@@ -56,7 +56,7 @@ type=$1
 user=$ARCHIVE_USER
 password=$ARCHIVE_PASSWORD
 server=$BACKEND
-for i in `pidlist $type $server repo 0 10000`
+for i in `pidlist $type repo 0 10000`
 do
 curl -s -u ${user}:${password} -XPOST "http://$server/utils/lobidify/$i";echo
 done
@@ -92,7 +92,7 @@ function listCatalogIds ()
 type=$1
 server=$BACKEND
 
-pidlist=`pidlist $type $server repo 0 10000`
+pidlist=`pidlist $type repo 0 10000`
 for i in $pidlist;do TT=`curl -s http://${server}/fedora/objects/$i/datastreams/DC/content|grep -o "HT[^<]*\|TT[^<]*"`; echo $i,$TT;done >tmp
 
 sort tmp |uniq
