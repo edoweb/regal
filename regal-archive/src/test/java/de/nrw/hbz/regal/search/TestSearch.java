@@ -38,10 +38,9 @@ public class TestSearch {
     String edoweb2606976 = null;
     String query1 = null;
     SearchMock search = null;
-    private String edoweb3273325;
-    private String edoweb3273325_2007;
-    private String edoweb3273331;
-    private String edowebMappingTest;
+    private String edoweb3273325, edoweb3273325_2007, edoweb3273331,
+	    edowebMappingTest, drupalOne, drupalTwo, drupalThree, drupalFour,
+	    drupalFive, drupalSix;
 
     @Before
     public void setUp() throws IOException {
@@ -58,10 +57,28 @@ public class TestSearch {
 	edoweb3273331 = CopyUtils.copyToString(
 		Thread.currentThread().getContextClassLoader()
 			.getResourceAsStream("edoweb3273331.json"), "utf-8");
-
 	edowebMappingTest = CopyUtils
 		.copyToString(Thread.currentThread().getContextClassLoader()
 			.getResourceAsStream("edowebMappingTest.json"), "utf-8");
+	drupalOne = CopyUtils
+		.copyToString(Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("1.json"), "utf-8");
+
+	drupalTwo = CopyUtils
+		.copyToString(Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("2.json"), "utf-8");
+	drupalThree = CopyUtils
+		.copyToString(Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("3.json"), "utf-8");
+	drupalFour = CopyUtils
+		.copyToString(Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("4.json"), "utf-8");
+	drupalFive = CopyUtils
+		.copyToString(Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("5.json"), "utf-8");
+	drupalSix = CopyUtils
+		.copyToString(Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("6.json"), "utf-8");
 
 	query1 = CopyUtils.copyToString(Thread.currentThread()
 		.getContextClassLoader().getResourceAsStream("query-1.json"),
@@ -176,5 +193,82 @@ public class TestSearch {
 		edowebMappingTest);
 	System.out.println("Succeeds with: "
 		+ search.getSettings("test", "monograph"));
+    }
+
+    @Test(expected = MapperParsingException.class)
+    public void esSettingsDrupalBulk_fail() {
+	search.down();
+	search = new SearchMock("test", "public-index-config_succeed.json");
+	search.index("test", "monograph",
+		"edoweb:1fe8fb0c-e844-4c07-9df3-7bf28d125e28", drupalOne);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+	search.index("test", "monograph",
+		"edoweb:a601c448-b370-4bc5-b2ba-367b53ecc513", drupalTwo);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+	search.index("test", "monograph",
+		"edoweb:ad744673-5ded-43a0-90c0-3f8f2223b4be", drupalThree);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+
+	// Here it goes off
+	search.index("test", "monograph",
+		"edoweb:f1c9954d-f4d0-4d91-8f47-0a9c8f46df9b", drupalFour);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+    }
+
+    @Test
+    public void esSettingsDrupalBulk_succeed() {
+	search.down();
+	search = new SearchMock("test", "public-index-config_succeed.json");
+	search.index("test", "monograph",
+		"edoweb:1fe8fb0c-e844-4c07-9df3-7bf28d125e28", drupalOne);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+	search = new SearchMock("test", "public-index-config_succeed.json");
+	search.index("test", "monograph",
+		"edoweb:a601c448-b370-4bc5-b2ba-367b53ecc513", drupalTwo);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+	search = new SearchMock("test", "public-index-config_succeed.json");
+	search.index("test", "monograph",
+		"edoweb:ad744673-5ded-43a0-90c0-3f8f2223b4be", drupalThree);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+	search = new SearchMock("test", "public-index-config_succeed.json");
+	search.index("test", "monograph",
+		"edoweb:f1c9954d-f4d0-4d91-8f47-0a9c8f46df9b", drupalFour);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+	search = new SearchMock("test", "public-index-config_succeed.json");
+	search.index("test", "monograph",
+		"edoweb:ad462c5d-f566-41f9-986d-744c10bbd450", drupalFive);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+	search = new SearchMock("test", "public-index-config_succeed.json");
+	search.index("test", "monograph",
+		"edoweb:549b92ee-d0a0-4471-83dc-799b08f3c0f6", drupalSix);
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+
+    }
+
+    @Test(expected = MapperParsingException.class)
+    public void esSettingsDrupalBulk_withNestedSettings_failsDirectly() {
+	search.down();
+	search = new SearchMock("test",
+		"public-index-config_different_succeed.json");
+
+	System.out.println("Succeeds with: "
+		+ search.getSettings("test", "monograph"));
+
+	search.index("test", "monograph",
+		"edoweb:ad462c5d-f566-41f9-986d-744c10bbd450", drupalFour);
+
+	search.index("test", "monograph",
+		"edoweb:a601c448-b370-4bc5-b2ba-367b53ecc513", drupalOne);
+
     }
 }

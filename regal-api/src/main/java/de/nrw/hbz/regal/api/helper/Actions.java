@@ -766,9 +766,7 @@ public class Actions {
 
     private List<String> listByQuery(String query) {
 	List<String> objects = null;
-
 	objects = fedora.findNodes(query);
-
 	return objects;
     }
 
