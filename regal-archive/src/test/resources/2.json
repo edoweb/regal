@@ -5,8 +5,7 @@
       "@id" : "http://d-nb.info/gnd/17227530X"
     }, {
       "@id" : "http://d-nb.info/gnd/14326723X"
-    } ],
-    "http://purl.org/dc/terms/creator" : "Hier geht ein Literal"
+    } ]
   
   } ]
 }

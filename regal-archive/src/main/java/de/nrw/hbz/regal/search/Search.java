@@ -131,6 +131,8 @@ class Search {
 
     String getSettings(String index, String type) {
 	try {
+
+	    client.admin().indices().refresh(new RefreshRequest()).actionGet();
 	    ClusterState clusterState = client.admin().cluster().prepareState()
 		    .setIndices(index).execute().actionGet().getState();
 	    IndexMetaData inMetaData = clusterState.getMetaData().index(index);

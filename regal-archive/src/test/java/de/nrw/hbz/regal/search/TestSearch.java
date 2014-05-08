@@ -197,26 +197,80 @@ public class TestSearch {
 
     @Test(expected = MapperParsingException.class)
     public void esSettingsDrupalBulk_fail() {
+	// Make sure everything is fresh
 	search.down();
+
+	/*-
+	 *  Initalize index with very simple mapping
+	 * {
+	 * "mappings": 
+	 * {
+	 *	"monograph": 
+	 *	{
+	 *		"properties": 
+	 *		{
+	 *			"@graph": 
+	 *			{
+	 *				"properties": 
+	 *				{
+	 *					"creatorName": 
+	 *					{
+	 *						"type": "string",
+	 *						"index": "not_analyzed"
+	 *					}
+	 *				 }
+	 *			 }
+	 *		 }
+	 *	 }
+	 * }
+	 * }
+	 * 
+	 */
 	search = new SearchMock("test", "public-index-config_succeed.json");
+
+	/*-
+	 *Index
+	 * {
+	 * "@graph": 
+	 * [
+	 * 	{
+	 * 	"@id" : "edoweb:1fe8fb0c-e844-4c07-9df3-7bf28d125e28",
+	 * 		"creatorName": 
+	 * 		{
+	 * 			"@id": "http://d-nb.info/gnd/171948629"
+	 * 		}
+	 * 	}
+	 * ]
+	 * }
+	 */
 	search.index("test", "monograph",
 		"edoweb:1fe8fb0c-e844-4c07-9df3-7bf28d125e28", drupalOne);
-	System.out.println("Succeeds with: "
-		+ search.getSettings("test", "monograph"));
-	search.index("test", "monograph",
-		"edoweb:a601c448-b370-4bc5-b2ba-367b53ecc513", drupalTwo);
-	System.out.println("Succeeds with: "
-		+ search.getSettings("test", "monograph"));
-	search.index("test", "monograph",
-		"edoweb:ad744673-5ded-43a0-90c0-3f8f2223b4be", drupalThree);
-	System.out.println("Succeeds with: "
-		+ search.getSettings("test", "monograph"));
 
+	// Print mapping
+	System.out.println("\nCurrent Mapping: "
+		+ search.getSettings("test", "monograph") + "\n");
+
+	/*- 
+	 * Index
+	 * {
+	 * "@graph": 
+	 * [
+	 * 	{
+	 * 		"@id": "edoweb:f1c9954d-f4d0-4d91-8f47-0a9c8f46df9b",
+	 * 		"creatorName": "1"
+	 * 	}
+	 * ]
+	 * }
+	 */
 	// Here it goes off
-	search.index("test", "monograph",
-		"edoweb:f1c9954d-f4d0-4d91-8f47-0a9c8f46df9b", drupalFour);
-	System.out.println("Succeeds with: "
-		+ search.getSettings("test", "monograph"));
+	try {
+	    search.index("test", "monograph",
+		    "edoweb:f1c9954d-f4d0-4d91-8f47-0a9c8f46df9b", drupalFour);
+	} catch (MapperParsingException e) {
+	    e.printStackTrace();
+	    throw e;
+	}
+
     }
 
     @Test
