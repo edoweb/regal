@@ -1,6 +1,0 @@
-{
-	"from" : 0, "size" : 10,
-	"match" : {
-        "http://purl.org/dc/terms/hasPart" : "edoweb:2606971"
-    }
-}
