@@ -468,26 +468,32 @@ class FedoraFacade implements FedoraInterface {
 	DublinCoreHandler.readDcToNode(node, in, dcNamespace);
     }
 
-    @Override
-    public List<Node> deleteComplexObject(String rootPID) {
-	if (!nodeExists(rootPID)) {
-	    throw new NodeNotFoundException(rootPID);
-	}
-	// logger.info("deleteObject");
+ @Override
+     public List<Node> deleteComplexObject(String rootPID) {
+     if (!nodeExists(rootPID)) {
+	 throw new NodeNotFoundException(rootPID);
+     }
+     System.out.println("Delete complexe object " + rootPID);
+     Node parent = readNode(rootPID);
 
-	// Find all children
-	List<String> pids = null;
-	List<Node> result = new ArrayList<Node>();
-	result.add(readNode(rootPID));
-	pids = findPids("* <" + IS_PART_OF + "> <" + rootPID + ">", SPO);
-	// Delete all children
-	if (pids != null)
-	    for (String pid : pids) {
-		Node node = readNode(pid);
-		result.addAll(deleteComplexObject(node.getPID()));
+     List<Node> result = new ArrayList<Node>();
+     result.add(parent);
+
+     deleteChildren(parent);
+     System.out.println("Delete parent " + rootPID);
+     deleteNode(rootPID);
+     return result;
+ }
+
+    private void deleteChildren(Node parent) {
+	List<Link> rels = parent.getRelsExt();
+	for (Link r : rels) {
+	    if (HAS_PART.equals(r.getPredicate())) {
+		deleteComplexObject(r.getObject());
 	    }
-	deleteNode(rootPID);
-	return result;
+
+	}
+
     }
 
     @Override

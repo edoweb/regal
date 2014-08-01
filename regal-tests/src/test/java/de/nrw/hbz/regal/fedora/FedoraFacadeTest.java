@@ -154,7 +154,39 @@ public class FedoraFacadeTest {
 	facade.deleteNode(object.getPID());
 	Assert.assertFalse(facade.nodeExists(object.getPID()));
     }
+  
+     @Test
+      public void deleteNodeComplex() throws InterruptedException {
+      if (!facade.nodeExists(object.getPID()))
+	  facade.createNode(object);
 
+      Node child = new Node().setNamespace("test").setPID("test:2345")
+	  .setLabel("Ein Testobjekt").setFileLabel("test")
+	  .setType(Vocabulary.TYPE_OBJECT);
+      child.setContentType("monograph");
+      facade.createNode(child);
+      facade.unlinkParent(child);
+      facade.linkToParent(child, object.getPID());
+      facade.linkParentToNode(object.getPID(), child.getPID());
+
+      Node grandchild = new Node().setNamespace("test").setPID("test:23456")
+	  .setLabel("Ein Testobjekt").setFileLabel("test")
+	  .setType(Vocabulary.TYPE_OBJECT);
+      grandchild.setContentType("monograph");
+      facade.createNode(grandchild);
+      facade.unlinkParent(grandchild);
+      facade.linkToParent(grandchild, child.getPID());
+      facade.linkParentToNode(child.getPID(), grandchild.getPID());
+
+      System.out.println(facade.deleteComplexObject(object.getPID()));
+
+      Assert.assertFalse(facade.nodeExists(object.getPID()));
+      System.out.println("Deleted: " + object.getPID());
+      Assert.assertFalse(facade.nodeExists(child.getPID()));
+      System.out.println("Deleted: " + child.getPID());
+      Assert.assertFalse(facade.nodeExists(grandchild.getPID()));
+      System.out.println("Deleted: " + grandchild.getPID());
+  }
     @Test
     public void createTransformer() {
 	facade.createNode(object);

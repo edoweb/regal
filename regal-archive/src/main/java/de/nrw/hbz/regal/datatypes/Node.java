@@ -478,5 +478,8 @@ public class Node {
     public void setCreationDate(Date createDate) {
 	creationDate = createDate;
     }
-
+@Override
+    public String toString(){
+    return getPID();
+}
 }
