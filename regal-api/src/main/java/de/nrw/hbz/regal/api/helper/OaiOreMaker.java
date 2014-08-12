@@ -1,5 +1,5 @@
 package de.nrw.hbz.regal.api.helper;
-
+import java.util.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -113,19 +113,19 @@ public class OaiOreMaker {
 	    if ("text/html".equals(format)) {
 		return getHtml();
 	    } else if ("application/json+compact".equals(format)) {
-		URL contextUrl = new URL(server + "/edoweb-resources.json");
+                URL contextUrl = new URL(server + "/edoweb-resources.json");
 		StringWriter out = new StringWriter();
 		RDFWriter writer = null;
 		writer = configureWriter("application/json", out, writer);
 		String jsonString = write(out, writer);
 		Object json = JSONUtils.fromString(jsonString);
 		@SuppressWarnings("rawtypes")
-		Map context = (Map) JSONUtils.fromURL(contextUrl);
+		    Map context = (Map) JSONUtils.fromURL(contextUrl);
 		JsonLdOptions options = new JsonLdOptions();
-		Map<String, Object> normalized = (Map<String, Object>) JsonLdProcessor
-			.compact(json, context, options);
+		Map<String, Object> normalized = (Map<String, Object>) expandSimpleValues((Map<String, Object>) JsonLdProcessor
+											  .compact(json, context, options));
 		normalized.remove("@context");
-		normalized.put("@context", contextUrl.toString());
+		normalized.put("@context",contextUrl.toString());
 
 		return JSONUtils.toPrettyString(normalized);
 	    }
@@ -136,6 +136,50 @@ public class OaiOreMaker {
 	} catch (Exception e) {
 	    throw new WriteRdfException(e);
 	}
+    }
+
+    private Object expandSimpleValues(Object element) {
+
+	if (element instanceof String) {
+	    final List<Object> result = new ArrayList<Object>();
+	    final Map<String, Object> actualValues = new LinkedHashMap<String, Object>();
+	    actualValues.put("@value", element);
+	    result.add(actualValues);
+	    return result;
+	}
+	if (element instanceof List) {
+	    final List<Object> result = new ArrayList<Object>();
+	    for (final Object item : (List<Object>) element) {
+		final Object compactedItem = expandSimpleValues(item);
+		if (compactedItem != null) {
+		    result.add(compactedItem);
+		}
+	    }
+	    return result;
+	}
+	if (element instanceof Map) {
+
+	    Map<String, Object> result = new LinkedHashMap<String, Object>();
+	    for (Map.Entry<String, Object> c : ((Map<String, Object>) element)
+		     .entrySet()) {
+		String key = c.getKey();
+		Object value = c.getValue();
+		if ("@value".equals(key)) {
+		    result.put(key, value);
+		} else if ("@id".equals(key)) {
+		    result.put(key, value);
+		} else if ("@type".equals(key)) {
+		    result.put(key, value);
+		} else if ("@language".equals(key)) {
+		    result.put(key, value);
+		} else {
+		    result.put(key, expandSimpleValues(value));
+		}
+	    }
+	    return result;
+	}
+
+	return element;
     }
 
     private String write(StringWriter out, RDFWriter writer)
