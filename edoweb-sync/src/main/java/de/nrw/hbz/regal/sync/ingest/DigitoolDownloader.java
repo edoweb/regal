@@ -88,8 +88,7 @@ public class DigitoolDownloader extends Downloader {
 	    streamDir.mkdir();
 	}
 	String path = streamDir.getAbsolutePath() + File.separator + filename;
-
-	String fileExtension = path.substring(path.lastIndexOf('.'));
+	String fileExtension = getFileExtension(path);
 	File streamFile = new File(path);
 	URL url = null;
 	if (fileExtension.compareTo(".zip") == 0) {
@@ -112,6 +111,16 @@ public class DigitoolDownloader extends Downloader {
 	 */
 	if (digitoolMd5 != null && !digitoolMd5.equals(md5))
 	    throw new ChecksumNotMatchException();
+    }
+
+    private String getFileExtension(String path) {
+	String result = "";
+	try {
+	    result = path.substring(path.lastIndexOf('.'));
+	} catch (IndexOutOfBoundsException e) {
+	    // ignore
+	}
+	return result;
     }
 
     private String getMd5(File stream) {
@@ -293,3 +302,4 @@ public class DigitoolDownloader extends Downloader {
 
     }
 }
+
