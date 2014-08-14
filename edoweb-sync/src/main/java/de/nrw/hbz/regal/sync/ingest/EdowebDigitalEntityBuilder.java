@@ -105,7 +105,7 @@ public class EdowebDigitalEntityBuilder implements
 	try {
 	    setCatalogId(dtlDe);
 	} catch (CatalogIdNotFoundException e) {
-	    logger.debug(pid + " no catalog id found");
+	    logger.debug("", e);
 	}
 	loadDataStream(dtlDe, root);
 	linkToParent(dtlDe);
