@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.xml.XMLConstants;
@@ -193,20 +194,6 @@ public class EdowebDigitalEntityBuilder implements
 
     }
 
-    private String normalizeLabel(final String volumeLabel) {
-
-	String[] parts = volumeLabel.split("\\s|-");
-	String camelCaseString = "";
-	for (String part : parts) {
-	    camelCaseString = camelCaseString + toProperCase(part);
-	}
-	return camelCaseString.replace(":", "-").replace("/", "-");
-    }
-
-    String toProperCase(String s) {
-	return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
-    }
-
     private DigitalEntity createTree(final DigitalEntity entity) {
 	DigitalEntity dtlDe = entity;
 	try {
@@ -259,13 +246,26 @@ public class EdowebDigitalEntityBuilder implements
 
     private DigitalEntity createDigitalEntity(ObjectType type, String label,
 	    String parentPid, String location) {
-	String pid = parentPid + "-" + normalizeLabel(label);
+	String prefix = prefix(parentPid);
+	String pid = prefix + "-" + uuid();
 	DigitalEntity entity = new DigitalEntity(location + File.separator
 		+ pid, pid);
 	entity.setLabel(label);
 	entity.setParentPid(parentPid);
 	entity.setUsageType(type.toString());
 	return entity;
+    }
+
+    private String prefix(String pid) {
+	if (!pid.contains("-"))
+	    return pid;
+	else
+	    return pid.split("-")[0];
+    }
+
+    private String uuid() {
+	Long uuid = UUID.randomUUID().getMostSignificantBits();
+	return Long.toHexString(uuid);
     }
 
     private void loadDataStream(DigitalEntity dtlDe, Element root) {
