@@ -211,7 +211,7 @@ public class EdowebDigitalEntityBuilder implements
 		logger.debug("Create volume " + v.getPid());
 		List<Element> issues = XmlUtils.getElements("./div", volume,
 			null);
-		if (issues == null)
+		if (issues == null || issues.isEmpty())
 		    mapFileIdToDigitalEntity(v, volume);
 		else {
 		    for (Element issue : issues) {
@@ -525,6 +525,10 @@ public class EdowebDigitalEntityBuilder implements
 
     private void addToTree(DigitalEntity dtlDe, DigitalEntity related) {
 	DigitalEntity parent = findParent(dtlDe, related);
+	if (parent == null) {
+	    logger.info(related.getPid() + " is not longer part of tree.");
+	    return;
+	}
 	parent.setIsParent(true);
 	related.setParentPid(parent.getPid());
 	parent.addRelated(related, DigitalEntityRelation.part_of.toString());
@@ -540,12 +544,10 @@ public class EdowebDigitalEntityBuilder implements
 	String groupId = related.getStream(StreamType.DATA).getFileId();
 	String fileId = groupIds2FileIds.get(groupId);
 	DigitalEntity parent = this.filedIds2DigitalEntity.get(fileId);
-	if (parent == null) {
-	    return dtlDe;
-	} else {
+	if (parent != null) {
 	    related.setUsageType(ObjectType.file.toString());
-	    return parent;
 	}
+	return parent;
     }
 
     @SuppressWarnings("javadoc")
