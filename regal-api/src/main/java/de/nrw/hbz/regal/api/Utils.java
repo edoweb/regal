@@ -119,9 +119,11 @@ public class Utils {
     @Produces({ "application/json", "application/xml" })
     public String index(@PathParam("pid") String pid,
 	    @PathParam("namespace") String namespace,
-	    @QueryParam("type") final String type) {
+	    @QueryParam("type") final String type,
+	    @DefaultValue("") @QueryParam("index") String index) {
 
-	return actions.index(namespace + ":" + pid, namespace, type);
+	String curIndex = index.isEmpty() ? namespace : index;
+	return actions.index(namespace + ":" + pid, curIndex, type);
 
     }
 
