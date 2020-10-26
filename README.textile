@@ -1,4 +1,4 @@
-!https://raw.github.com/edoweb/regal/gh-pages/img/logo.png!
+!https://raw.github.com/edoweb/regal/gh-pages/img/to.science.png!
 
 *This is the old regal repository*
 The refactored version can be found in
@@ -9,7 +9,7 @@ The refactored version can be found in
 
 h1. About
 
-Regal - repository for electronic documents and bibliographic data 
+to.science - Toolbox Open Science - Repository and API for digital knowledge 
 
 For more information visit the "wiki":https://github.com/edoweb/edoweb2/wiki/
 
