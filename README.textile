@@ -1,4 +1,4 @@
-!https://raw.github.com/edoweb/regal/to.science.png!
+!https://github.com/edoweb/regal/to.science.png!
 
 *This is the old regal repository*
 The refactored version can be found in
