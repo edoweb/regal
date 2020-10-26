@@ -3,9 +3,9 @@
 *This is the old regal repository*
 The refactored version can be found in
 
-"regal-api":https://github.com/edoweb/regal-api
-"regal-import":https://github.com/edoweb/regal-import
-"regal-install":https://github.com/edoweb/regal-install
+"to.science-api":https://github.com/edoweb/regal-api
+"to.science-import":https://github.com/edoweb/regal-import
+"to.science-install":https://github.com/edoweb/regal-install
 
 h1. About
 
