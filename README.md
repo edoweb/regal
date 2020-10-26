@@ -1,4 +1,4 @@
-![to.science Logo](/to.science.png "to.science Logo")
+![to.science Logo](to.science.png "to.science Logo")
 
 *This is the old regal repository*
 The refactored version can be found in
